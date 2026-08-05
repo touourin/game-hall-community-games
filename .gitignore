@@ -1,0 +1,15 @@
+# macOS and editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Python test artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Frontend test artifacts
+node_modules/
+coverage/
+*.log

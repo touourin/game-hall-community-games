@@ -1,6 +1,6 @@
 # 第三方游戏接入手册
 
-本地开发目录 `/Users/ourin/project/game-hall/third_party_games` 是本项目放置第三方游戏源码的唯一位置；服务器上的对应位置是 `/opt/game-hall/third_party_games`。每款游戏拥有一个完全独立的子目录，不要把某款第三方游戏的页面、规则、图片或后端逻辑散落到 `frontend/src`、`backend/app` 或其他主项目目录。
+本仓库作为 Git Submodule 挂载到游戏大厅的 `/Users/ourin/project/game-hall/third_party_games`；服务器上的对应位置是 `/opt/game-hall/third_party_games`。本仓库根目录就是大厅中的 `third_party_games/`，每款游戏拥有一个完全独立的子目录，不要把某款第三方游戏的页面、规则、图片或后端逻辑散落到大厅的 `frontend/src`、`backend/app` 或其他主项目目录。
 
 插件通过清单自动注册，不需要修改大厅、路由、房间页、账号系统、Socket 连接或后端游戏注册表。启用后，游戏会出现在大厅的“第三方游戏”入口中，并复用现有的账号、游客、创建/加入房间、邀请、聊天、断线保护、对局战绩、排行榜和响应式房间外壳。
 
@@ -11,7 +11,7 @@
 目录名和插件 ID 必须一致，并以 `plugin-` 开头：
 
 ```text
-third_party_games/
+<本仓库根目录>/
 ├── README.md
 ├── plugin.schema.json
 ├── plugin-counter-demo/             # 默认关闭的最小模板
@@ -37,11 +37,13 @@ third_party_games/
 
 ## 二、最快接入一款新游戏
 
-在项目根目录执行：
+直接克隆本仓库开发时，在本仓库根目录执行：
 
 ```bash
-cp -R third_party_games/plugin-counter-demo third_party_games/plugin-your-game
+cp -R plugin-counter-demo plugin-your-game
 ```
+
+如果是从游戏大厅主仓库进入该子模块，也可以执行 `cp -R third_party_games/plugin-counter-demo third_party_games/plugin-your-game`。
 
 然后依次完成：
 
@@ -54,7 +56,7 @@ cp -R third_party_games/plugin-counter-demo third_party_games/plugin-your-game
 7. 最后把 `enabled` 改为 `true`，重新执行测试和构建。
 8. 重启服务。插件会自动出现在“第三方游戏”入口，无需再改大厅代码。
 
-接入框架已经存在后，一款普通新插件的提交原则上只能修改 `third_party_games/plugin-your-game/`。如果 `git diff --name-only` 还出现该目录以外的文件，应先确认它确实是所有插件都需要的通用框架升级，并将其与单款游戏代码分开审查。
+接入框架已经存在后，一款普通新插件的提交原则上只能修改本仓库的 `plugin-your-game/`。如果 `git diff --name-only` 还出现该目录以外的文件，应先确认它确实是所有插件都需要的通用框架升级，并将其与单款游戏代码分开审查。
 
 可以先阅读默认示例：
 
@@ -291,13 +293,14 @@ npm run build
 
 `npm test` 会自动发现所有 `plugin-*/tests/test_*.py`，也会运行插件目录里的 `*.test.ts` / `*.spec.ts`，因此每款游戏的测试文件仍然只需放在自己的插件目录中。
 
-测试和构建全部通过后：
+以下命令需要在已经初始化本子模块的游戏大厅主仓库根目录执行。测试和构建全部通过后：
 
 1. 将当前插件 `manifest.json` 的 `enabled` 改为 `true`。
 2. 再运行一次 `npm test && npm run build`。
 3. 在桌面端和手机端进入“第三方游戏”，检查入口、建房、加入、操作、重连、结束和战绩。
-4. 提交插件目录及必要的通用框架变更。
-5. 服务器拉取代码并执行 `python3 scripts/restart.py --pull`。
+4. 在本仓库提交并推送插件目录。
+5. 由游戏大厅主仓库更新 `third_party_games` 子模块指针并完成主项目测试。
+6. 服务器拉取主仓库代码并执行 `python3 scripts/restart.py --pull`；脚本会同步到主仓库固定的子模块提交。
 
 ## 八、常见问题
 

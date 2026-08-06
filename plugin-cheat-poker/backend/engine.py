@@ -19,12 +19,10 @@ SUITS = (
 )
 PILE_LIMIT = 15
 MAX_PLAY = 3
-FIXED_HAND_SIZE_BY_PLAYER_COUNT = {
-    2: 15,
-    3: 15,
-    4: 10,
-    5: 10,
-    6: 9,
+WINNER_SCORES_BY_PLAYER_COUNT = {
+    4: (3,),
+    5: (3, 1),
+    6: (3, 2, 1),
 }
 
 
@@ -77,7 +75,7 @@ class CheatPokerState:
 class CheatPokerEngine:
     key = "plugin-cheat-poker"
     name = "欺诈者"
-    min_players = 2
+    min_players = 4
     max_players = 6
 
     def __init__(self, rng: random.Random | random.SystemRandom | None = None) -> None:
@@ -89,7 +87,7 @@ class CheatPokerEngine:
     def start(self, room: ArcadeRoom) -> None:
         players = [player for player in room.players if not player.left_room]
         if not self.min_players <= len(players) <= self.max_players:
-            raise GameRuleError("欺诈者需要 2–6 位玩家")
+            raise GameRuleError("欺诈者需要 4–6 位玩家")
 
         if room.options.get("firstPlayer") == "host":
             dealer = next(
@@ -104,13 +102,7 @@ class CheatPokerEngine:
         hands = {player.id: [] for player in ordered_players}
         deck = self._new_deck()
         self.rng.shuffle(deck)
-        hand_size = FIXED_HAND_SIZE_BY_PLAYER_COUNT.get(len(turn_order))
-        cards_to_deal = (
-            deck
-            if hand_size is None
-            else deck[:hand_size * len(turn_order)]
-        )
-        for index, card in enumerate(cards_to_deal):
+        for index, card in enumerate(deck):
             hands[turn_order[index % len(turn_order)]].append(card)
         for player_id in turn_order:
             hands[player_id] = self._sort_cards(hands[player_id])
@@ -120,7 +112,7 @@ class CheatPokerEngine:
             turn_order=turn_order,
             hands=hands,
             current_player_id=dealer.id,
-            winner_target=(len(players) + 1) // 2,
+            winner_target=len(WINNER_SCORES_BY_PLAYER_COUNT[len(players)]),
             history=[{
                 "type": "start",
                 "message": f"{dealer.name} 担任庄家并首先开牌",
@@ -470,7 +462,9 @@ class CheatPokerEngine:
         winners = list(state.rankings[:state.winner_target])
         scores = {player.id: -1 for player in room.players}
         for index, player_id in enumerate(winners):
-            scores[player_id] = state.winner_target - index
+            scores[player_id] = WINNER_SCORES_BY_PLAYER_COUNT[
+                len(state.turn_order)
+            ][index]
         state.scores = scores
         state.current_player_id = None
         names = [room.player(player_id).name for player_id in winners]

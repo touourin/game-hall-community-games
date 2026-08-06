@@ -267,7 +267,7 @@ function isRed(card: CheatCard): boolean {
 
         <div v-if="snapshot.phase === 'finished'" class="settlement">
           <Trophy :size="24" />
-          <div><strong>获胜排名</strong><span>积分按名次递减，未晋级玩家 −1</span></div>
+          <div><strong>获胜排名</strong><span>按人数与名次计分，未晋级玩家 −1</span></div>
           <ol>
             <li v-for="(playerId, index) in game.rankings ?? []" :key="playerId">
               <b>第 {{ index + 1 }} 名</b>
@@ -363,6 +363,7 @@ function isRed(card: CheatCard): boolean {
           <li>大小王均为癞子；声明中的每一张牌都必须匹配才算实话。</li>
           <li>达到 15 张后不能续牌：质疑，或相信并封存。</li>
           <li>最后一手仍能被揭发，通过后才正式获得排名。</li>
+          <li>4/5/6 人局分别取前 1/2/3 名；积分为 3、3/1、3/2/1，其余 −1。</li>
         </ul>
       </section>
     </div>

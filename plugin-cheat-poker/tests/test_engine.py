@@ -4,6 +4,8 @@ import random
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from backend.app.arcade.models import ArcadePlayer, ArcadeRoom
 from backend.app.games.plugins import discover_game_plugins
 
@@ -53,8 +55,15 @@ def different_rank(rank: str) -> str:
     return "A" if rank != "A" else "K"
 
 
-def test_deals_all_54_cards_and_hides_other_players_hands() -> None:
-    game, room, players = started_room(5)
+@pytest.mark.parametrize(
+    ("player_count", "cards_per_player"),
+    ((2, 15), (3, 15), (4, 10), (5, 10), (6, 9)),
+)
+def test_deals_fixed_equal_hands_and_hides_other_players_cards(
+    player_count: int,
+    cards_per_player: int,
+) -> None:
+    game, room, players = started_room(player_count)
     state = room.state
     counts = [len(state.hands[player.id]) for player in players]
     all_card_ids = [
@@ -63,19 +72,18 @@ def test_deals_all_54_cards_and_hides_other_players_hands() -> None:
         for card in state.hands[player.id]
     ]
 
-    assert sum(counts) == 54
-    assert max(counts) - min(counts) <= 1
-    assert len(set(all_card_ids)) == 54
+    assert counts == [cards_per_player] * player_count
+    assert len(set(all_card_ids)) == cards_per_player * player_count
+    assert state.pile == []
+    assert state.archived_count == 0
     assert state.dealer_player_id == players[0].id
     assert state.current_player_id == players[0].id
-    assert state.winner_target == 3
+    assert state.winner_target == (player_count + 1) // 2
 
     view = game.view(room, players[0])
-    assert len(view["hand"]) == counts[0]
-    assert view["cardCounts"][players[1].id] == counts[1]
+    assert len(view["hand"]) == cards_per_player
+    assert view["cardCounts"][players[1].id] == cards_per_player
     assert "hands" not in view
-
-
 def test_a_lie_on_the_last_card_is_challenged_before_ranking() -> None:
     game, room, players = started_room()
     state = room.state

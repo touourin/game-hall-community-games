@@ -19,6 +19,13 @@ SUITS = (
 )
 PILE_LIMIT = 15
 MAX_PLAY = 3
+FIXED_HAND_SIZE_BY_PLAYER_COUNT = {
+    2: 15,
+    3: 15,
+    4: 10,
+    5: 10,
+    6: 9,
+}
 
 
 @dataclass(frozen=True)
@@ -97,7 +104,13 @@ class CheatPokerEngine:
         hands = {player.id: [] for player in ordered_players}
         deck = self._new_deck()
         self.rng.shuffle(deck)
-        for index, card in enumerate(deck):
+        hand_size = FIXED_HAND_SIZE_BY_PLAYER_COUNT.get(len(turn_order))
+        cards_to_deal = (
+            deck
+            if hand_size is None
+            else deck[:hand_size * len(turn_order)]
+        )
+        for index, card in enumerate(cards_to_deal):
             hands[turn_order[index % len(turn_order)]].append(card)
         for player_id in turn_order:
             hands[player_id] = self._sort_cards(hands[player_id])

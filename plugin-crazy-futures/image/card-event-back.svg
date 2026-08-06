@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="750" height="1050" viewBox="0 0 750 1050">
+  <defs>
+      <linearGradient id="cardBg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#FFFDF6"/>
+        <stop offset="1" stop-color="#F8E2CA"/>
+      </linearGradient>
+      <linearGradient id="hero" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#4B2630"/>
+        <stop offset="0.58" stop-color="#B65735"/>
+        <stop offset="1" stop-color="#102A43"/>
+      </linearGradient>
+      <linearGradient id="backBg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#071E2F"/>
+        <stop offset="0.48" stop-color="#4B2630"/>
+        <stop offset="1" stop-color="#B65735"/>
+      </linearGradient>
+      <pattern id="microGrid" width="30" height="30" patternUnits="userSpaceOnUse">
+        <path d="M30 0H0V30" fill="none" stroke="#FFFFFF" stroke-width="1" opacity="0.065"/>
+        <path d="M0 30L30 0" stroke="#FFFFFF" stroke-width="0.7" opacity="0.035"/>
+      </pattern>
+      <pattern id="dotField" width="24" height="24" patternUnits="userSpaceOnUse">
+        <circle cx="12" cy="12" r="1.6" fill="#FFFFFF" opacity="0.10"/>
+      </pattern>
+      <clipPath id="cardClip"><rect x="15" y="15" width="720" height="1020" rx="48"/></clipPath>
+      <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+        <feDropShadow dx="0" dy="12" stdDeviation="13" flood-color="#071E2F" flood-opacity="0.28"/>
+      </filter>
+    </defs>
+  <rect width="750" height="1050" fill="#EAF0F1"/>
+  <g filter="url(#shadow)">
+    <rect x="15" y="15" width="720" height="1020" rx="48" fill="url(#backBg)" stroke="#4B2630" stroke-width="10"/>
+  </g>
+  <g clip-path="url(#cardClip)">
+    <rect x="15" y="15" width="720" height="1020" fill="url(#microGrid)"/>
+    <rect x="15" y="15" width="720" height="1020" fill="url(#dotField)"/>
+    <circle cx="375" cy="525" r="300" fill="none" stroke="#FFB568" stroke-width="5" opacity="0.1" stroke-dasharray="12 11"/><circle cx="375" cy="525" r="266" fill="none" stroke="#FFB568" stroke-width="2" opacity="0.125" stroke-dasharray="4 14"/><circle cx="375" cy="525" r="232" fill="none" stroke="#FFB568" stroke-width="2" opacity="0.15000000000000002" stroke-dasharray="12 11"/><circle cx="375" cy="525" r="198" fill="none" stroke="#FFB568" stroke-width="2" opacity="0.17500000000000002" stroke-dasharray="4 14"/><circle cx="375" cy="525" r="164" fill="none" stroke="#FFB568" stroke-width="2" opacity="0.2" stroke-dasharray="12 11"/><circle cx="375" cy="525" r="130" fill="none" stroke="#FFB568" stroke-width="2" opacity="0.225" stroke-dasharray="4 14"/><circle cx="375" cy="525" r="96" fill="none" stroke="#FFB568" stroke-width="2" opacity="0.25" stroke-dasharray="12 11"/><circle cx="375" cy="525" r="62" fill="none" stroke="#FFB568" stroke-width="2" opacity="0.275" stroke-dasharray="4 14"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(0 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(22.5 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(45 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(67.5 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(90 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(112.5 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(135 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(157.5 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(180 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(202.5 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(225 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(247.5 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(270 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(292.5 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(315 375 525)"/><path d="M375 184V108" stroke="#FFB568" stroke-width="5" stroke-linecap="round" opacity="0.30" transform="rotate(337.5 375 525)"/>
+    <path d="M15 15H245L375 162L505 15H735V190L612 315L735 440V610L612 735L735 860V1035H505L375 888L245 1035H15V860L138 735L15 610V440L138 315L15 190Z" fill="#FFB568" opacity="0.075"/>
+  </g>
+
+  <rect x="39" y="39" width="672" height="972" rx="34" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.72"/>
+  <rect x="54" y="54" width="642" height="942" rx="26" fill="none" stroke="#FFB568" stroke-width="3" stroke-dasharray="14 10" opacity="0.72"/>
+
+  <g id="brand-top">
+    <text x="375" y="104" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','Source Han Sans SC',Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="5" fill="#D8E7EA">CRAZY FUTURES</text>
+    <rect x="319" y="126" width="112" height="45" rx="22.5" fill="#FFB568"/>
+    <text x="375" y="158" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','Source Han Sans SC',Arial,sans-serif" font-size="28" font-weight="900" fill="#4B2630">E</text>
+  </g>
+
+  <g id="category-emblem">
+    <circle cx="375" cy="520" r="220" fill="#061C2B" fill-opacity="0.66" stroke="#FFB568" stroke-width="8"/>
+    <circle cx="375" cy="520" r="195" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-dasharray="8 11" opacity="0.46"/>
+    <g transform="translate(375 520) scale(0.9)" fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="0" cy="0" r="108" stroke-width="13"/>
+    <ellipse cx="0" cy="0" rx="48" ry="108" stroke-width="10"/>
+    <path d="M-100-41C-35-14 35-14 100-41M-100 41C-35 14 35 14 100 41M-108 0H108" stroke-width="9"/>
+    <path d="M88-116L135-82L113-39L160-9" stroke-width="12"/>
+    <circle cx="88" cy="-116" r="9" fill="#FFFFFF" stroke="none"/>
+    <circle cx="160" cy="-9" r="9" fill="#FFFFFF" stroke="none"/>
+  </g>
+  </g>
+
+  <g id="category-label">
+    <rect x="107" y="740" width="536" height="122" rx="34" fill="#061C2B" fill-opacity="0.88" stroke="#FFB568" stroke-width="3"/>
+    <text x="375" y="795" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','Source Han Sans SC',Arial,sans-serif" font-size="42" font-weight="900" letter-spacing="8" fill="#FFFFFF">公共事件</text>
+    <text x="375" y="830" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','Source Han Sans SC',Arial,sans-serif" font-size="14" font-weight="800" letter-spacing="3" fill="#FFB568">PUBLIC EVENT</text>
+  </g>
+  <text x="375" y="924" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','Source Han Sans SC',Arial,sans-serif" font-size="20" font-weight="800" letter-spacing="4" fill="#FFFFFF">所有玩家可见</text>
+  <text x="375" y="967" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','Source Han Sans SC',Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="3" fill="#FFB568">疯狂期货 · 交易桌游</text>
+</svg>

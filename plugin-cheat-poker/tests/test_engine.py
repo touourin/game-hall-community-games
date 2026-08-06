@@ -4,7 +4,10 @@ import random
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from backend.app.arcade.models import ArcadePlayer, ArcadeRoom
+from backend.app.games.base import GameRuleError
 from backend.app.games.plugins import discover_game_plugins
 
 
@@ -21,7 +24,7 @@ def engine():
     return game
 
 
-def started_room(player_count: int = 2):
+def started_room(player_count: int = 4):
     game = engine()
     players = [
         ArcadePlayer(
@@ -53,8 +56,20 @@ def different_rank(rank: str) -> str:
     return "A" if rank != "A" else "K"
 
 
-def test_deals_all_54_cards_and_hides_other_players_hands() -> None:
-    game, room, players = started_room(5)
+@pytest.mark.parametrize(
+    ("player_count", "expected_counts", "winner_target"),
+    (
+        (4, [14, 14, 13, 13], 1),
+        (5, [11, 11, 11, 11, 10], 2),
+        (6, [9, 9, 9, 9, 9, 9], 3),
+    ),
+)
+def test_deals_all_54_cards_and_hides_other_players_cards(
+    player_count: int,
+    expected_counts: list[int],
+    winner_target: int,
+) -> None:
+    game, room, players = started_room(player_count)
     state = room.state
     counts = [len(state.hands[player.id]) for player in players]
     all_card_ids = [
@@ -63,17 +78,25 @@ def test_deals_all_54_cards_and_hides_other_players_hands() -> None:
         for card in state.hands[player.id]
     ]
 
-    assert sum(counts) == 54
-    assert max(counts) - min(counts) <= 1
+    assert counts == expected_counts
+    assert len(all_card_ids) == 54
     assert len(set(all_card_ids)) == 54
+    assert state.pile == []
+    assert state.archived_count == 0
     assert state.dealer_player_id == players[0].id
     assert state.current_player_id == players[0].id
-    assert state.winner_target == 3
+    assert state.winner_target == winner_target
 
     view = game.view(room, players[0])
-    assert len(view["hand"]) == counts[0]
-    assert view["cardCounts"][players[1].id] == counts[1]
+    assert len(view["hand"]) == expected_counts[0]
+    assert view["cardCounts"][players[1].id] == expected_counts[1]
     assert "hands" not in view
+
+
+@pytest.mark.parametrize("player_count", (2, 3, 7))
+def test_rejects_unsupported_player_counts(player_count: int) -> None:
+    with pytest.raises(GameRuleError, match="4–6"):
+        started_room(player_count)
 
 
 def test_a_lie_on_the_last_card_is_challenged_before_ranking() -> None:
@@ -103,7 +126,7 @@ def test_a_lie_on_the_last_card_is_challenged_before_ranking() -> None:
 
 
 def test_joker_is_truthful_for_any_claimed_rank() -> None:
-    game, room, players = started_room(3)
+    game, room, players = started_room(4)
     state = room.state
     claimant_id = next(
         player_id
@@ -164,60 +187,41 @@ def test_pile_at_15_is_sealed_and_previous_player_reopens() -> None:
     assert state.stage == "play"
 
 
-def test_ranked_winners_receive_descending_points_and_others_lose_one() -> None:
-    game, room, players = started_room(4)
+@pytest.mark.parametrize(
+    ("player_count", "expected_scores"),
+    (
+        (4, [3, -1, -1, -1]),
+        (5, [3, 1, -1, -1, -1]),
+        (6, [3, 2, 1, -1, -1, -1]),
+    ),
+)
+def test_winner_count_and_scores_follow_player_count(
+    player_count: int,
+    expected_scores: list[int],
+) -> None:
+    game, room, players = started_room(player_count)
     state = room.state
-    first_card = first_plain_card(state.hands[players[0].id])
-    second_card = first_plain_card(state.hands[players[1].id])
-    state.hands[players[0].id] = [first_card]
-    state.hands[players[1].id] = [second_card]
-
-    game.act(
-        room,
-        players[0],
-        "play",
-        {"cardIds": [first_card.id], "claimedRank": first_card.rank},
-    )
-    game.act(room, players[1], "accept", {})
-    assert state.rankings == [players[0].id]
-
-    game.act(
-        room,
-        players[1],
-        "play",
-        {"cardIds": [second_card.id], "claimedRank": state.required_rank},
-    )
-    game.act(room, players[2], "accept", {})
-
-    assert room.phase == "finished"
-    assert room.winner_player_ids == [players[0].id, players[1].id]
-    assert state.scores == {
-        players[0].id: 2,
-        players[1].id: 1,
-        players[2].id: -1,
-        players[3].id: -1,
-    }
-    assert game.player_result(room, players[0]) == ("第 1 名", "ranking", True)
-    assert "hands" not in game.record_state(room)
-
-
-def test_five_player_game_has_three_ranked_winners() -> None:
-    game, room, players = started_room(5)
-    state = room.state
-    for player in players[:3]:
+    winner_count = len([score for score in expected_scores if score > 0])
+    for player in players[:winner_count]:
         state.hands[player.id] = [first_plain_card(state.hands[player.id])]
 
-    for index, player in enumerate(players[:3]):
+    for index, player in enumerate(players[:winner_count]):
         card = state.hands[player.id][0]
-        claim = state.required_rank or card.rank
         game.act(
             room,
             player,
             "play",
-            {"cardIds": [card.id], "claimedRank": claim},
+            {
+                "cardIds": [card.id],
+                "claimedRank": state.required_rank or card.rank,
+            },
         )
         game.act(room, players[index + 1], "accept", {})
 
     assert room.phase == "finished"
-    assert room.winner_player_ids == [player.id for player in players[:3]]
-    assert [state.scores[player.id] for player in players] == [3, 2, 1, -1, -1]
+    assert room.winner_player_ids == [
+        player.id for player in players[:winner_count]
+    ]
+    assert [state.scores[player.id] for player in players] == expected_scores
+    assert game.player_result(room, players[0]) == ("第 1 名", "ranking", True)
+    assert "hands" not in game.record_state(room)

@@ -10,6 +10,7 @@ const snapshot = {
     { id: 'p1', name: '玩家一' },
     { id: 'p2', name: '玩家二' },
     { id: 'p3', name: '玩家三' },
+    { id: 'p4', name: '玩家四' },
   ],
   game: {
     dealerPlayerId: 'p1',
@@ -23,15 +24,15 @@ const snapshot = {
       { id: 'hearts-K', rank: 'K', suit: 'hearts', suitLabel: '♥', label: 'K', isJoker: false },
       { id: 'joker-small', rank: 'joker', suit: 'joker', suitLabel: '★', label: '小王', isJoker: true },
     ],
-    cardCounts: { p1: 3, p2: 18, p3: 18 },
-    activePlayerIds: ['p1', 'p2', 'p3'],
+    cardCounts: { p1: 3, p2: 14, p3: 13, p4: 13 },
+    activePlayerIds: ['p1', 'p2', 'p3', 'p4'],
     forfeitedPlayerIds: [],
     pileCount: 0,
     pileLimit: 15,
     pileLocked: false,
     archivedCount: 0,
     lastPlay: null,
-    winnerTarget: 2,
+    winnerTarget: 1,
     rankings: [],
     scores: {},
     history: [],
@@ -50,8 +51,20 @@ describe('cheat poker plugin view', () => {
       global: { plugins: [createPinia()] },
     })
 
+    const dealerRow = wrapper.findAll('.players-panel li')[0]
+    expect(dealerRow.findAll('.player-name small').map((item) => item.text())).toEqual([
+      '3 张手牌',
+      '庄家',
+    ])
     expect(wrapper.findAll('.hand-card')).toHaveLength(3)
-    expect(wrapper.findAll('.rank-grid button')).toHaveLength(13)
+    const rankButtons = wrapper.findAll('.rank-grid button')
+    expect(rankButtons).toHaveLength(13)
+    expect(rankButtons.map((button) => button.text())).toEqual([
+      '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A', '2',
+    ])
+    await rankButtons[12].trigger('click')
+    expect(rankButtons[12].attributes('aria-pressed')).toBe('true')
+    expect(rankButtons[12].classes()).toContain('selected')
     await wrapper.findAll('.hand-card')[0].trigger('click')
     await wrapper.findAll('.hand-card')[1].trigger('click')
 

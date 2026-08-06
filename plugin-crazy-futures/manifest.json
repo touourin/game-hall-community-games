@@ -1,0 +1,21 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "enabled": true,
+  "id": "plugin-crazy-futures",
+  "name": "疯狂期货",
+  "description": "交易四类商品、解读信息牌并管理杠杆风险的 4–8 人金融桌游",
+  "category": "金融策略",
+  "tone": "crazy-futures",
+  "players": {
+    "min": 4,
+    "max": 8,
+    "label": "4–8 人"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "firstPlayer": "random"
+  },
+  "ruleLabels": ["固定 8 回合", "四类商品", "2 倍杠杆", "蛇形竞价", "允许做空", "终局现货回归"]
+}

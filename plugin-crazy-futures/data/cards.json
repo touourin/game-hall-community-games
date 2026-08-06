@@ -1,0 +1,2466 @@
+{
+  "version": "0.2-balanced-ladder",
+  "units": "万金币",
+  "commodities": [
+    {
+      "id": "oil",
+      "name": "原油",
+      "color": "#b8663b"
+    },
+    {
+      "id": "gold",
+      "name": "黄金",
+      "color": "#d6a936"
+    },
+    {
+      "id": "cotton",
+      "name": "棉花",
+      "color": "#7cae82"
+    },
+    {
+      "id": "copper",
+      "name": "铜",
+      "color": "#b97243"
+    }
+  ],
+  "priceLadder": [
+    10,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22,
+    24,
+    26,
+    28,
+    30,
+    32,
+    34,
+    36,
+    38,
+    40,
+    42,
+    46,
+    52,
+    56,
+    62,
+    68,
+    76,
+    84,
+    92,
+    100,
+    110,
+    122,
+    134,
+    146,
+    162,
+    178,
+    196,
+    216,
+    238,
+    262,
+    286,
+    312,
+    338,
+    366,
+    394,
+    424,
+    454,
+    486,
+    518,
+    552,
+    586,
+    622,
+    658,
+    696,
+    734
+  ],
+  "zones": {
+    "low": [
+      0,
+      16
+    ],
+    "middle": [
+      17,
+      33
+    ],
+    "high": [
+      34,
+      50
+    ]
+  },
+  "personal": [
+    {
+      "id": "PI-OIL-01",
+      "name": "OPEC 超预期减产",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "原油现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-OIL-02",
+      "name": "海湾航道受阻",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "原油现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-OIL-03",
+      "name": "美国原油库存骤降",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "原油现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-OIL-04",
+      "name": "页岩油钻机数大降",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "强烈",
+      "subtype": "单次上涨",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "原油现货上涨 2 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-OIL-05",
+      "name": "霍尔木兹海峡全面封锁",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "危机",
+      "subtype": "单次上涨",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "原油现货上涨 3 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-OIL-06",
+      "name": "OPEC 增产分歧",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "原油现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-OIL-07",
+      "name": "战略储备释放",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "原油现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-OIL-08",
+      "name": "美国库存意外累积",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "原油现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-OIL-09",
+      "name": "全球原油需求骤降",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "强烈",
+      "subtype": "单次下跌",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "原油现货下跌 2 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": -2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-OIL-10",
+      "name": "主要产油国全面价格战",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "危机",
+      "subtype": "单次下跌",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "原油现货下跌 3 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": -3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-GOLD-01",
+      "name": "美联储释放降息信号",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "黄金现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-GOLD-02",
+      "name": "地缘避险升温",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "黄金现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-GOLD-03",
+      "name": "全球央行增持黄金",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "黄金现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-GOLD-04",
+      "name": "实际利率快速回落",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "强烈",
+      "subtype": "单次上涨",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "黄金现货上涨 2 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-GOLD-05",
+      "name": "全球金融系统性危机",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "危机",
+      "subtype": "单次上涨",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "黄金现货上涨 3 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-GOLD-06",
+      "name": "美联储鹰派加息",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "黄金现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-GOLD-07",
+      "name": "风险偏好全面回归",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "黄金现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-GOLD-08",
+      "name": "全球央行减持黄金",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "黄金现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-GOLD-09",
+      "name": "实际利率急剧上行",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "强烈",
+      "subtype": "单次下跌",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "黄金现货下跌 2 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": -2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-GOLD-10",
+      "name": "主要央行联合抛售黄金",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "危机",
+      "subtype": "单次下跌",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "黄金现货下跌 3 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": -3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COTTON-01",
+      "name": "主产区极端干旱",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "棉花现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COTTON-02",
+      "name": "虫害预警升级",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "棉花现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COTTON-03",
+      "name": "出口订单超预期",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "棉花现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COTTON-04",
+      "name": "主产区减产预警",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "强烈",
+      "subtype": "单次上涨",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "棉花现货上涨 2 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COTTON-05",
+      "name": "全球主产区极端气候灾难",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "危机",
+      "subtype": "单次上涨",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "棉花现货上涨 3 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COTTON-06",
+      "name": "主产区丰收预期",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "棉花现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COTTON-07",
+      "name": "国储棉集中投放",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "棉花现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COTTON-08",
+      "name": "纺织订单下滑",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "棉花现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COTTON-09",
+      "name": "全球纺织需求骤降",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "强烈",
+      "subtype": "单次下跌",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "棉花现货下跌 2 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": -2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COTTON-10",
+      "name": "主产国历史性丰收",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "危机",
+      "subtype": "单次下跌",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "棉花现货下跌 3 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": -3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COPPER-01",
+      "name": "全球电网投资提速",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "铜现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COPPER-02",
+      "name": "主要铜矿罢工",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "铜现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COPPER-03",
+      "name": "新能源补贴加码",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次上涨",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "铜现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COPPER-04",
+      "name": "精炼铜库存降至警戒线",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "强烈",
+      "subtype": "单次上涨",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "铜现货上涨 2 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COPPER-05",
+      "name": "全球主要铜矿同时停产",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "危机",
+      "subtype": "单次上涨",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "铜现货上涨 3 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "上涨",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COPPER-06",
+      "name": "房地产开工骤降",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "铜现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COPPER-07",
+      "name": "主要铜矿复产",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "铜现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COPPER-08",
+      "name": "新能源补贴退坡",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "普通",
+      "subtype": "单次下跌",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "铜现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "普通"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COPPER-09",
+      "name": "全球制造业衰退",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "强烈",
+      "subtype": "单次下跌",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "铜现货下跌 2 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": -2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-COPPER-10",
+      "name": "房地产投资断崖式收缩",
+      "kind": "personal",
+      "category": "单商品即时信息",
+      "strength": "危机",
+      "subtype": "单次下跌",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "铜现货下跌 3 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "下跌",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": -3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-MACRO-01",
+      "name": "联储超预期降息",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "普通",
+      "subtype": "选择上涨",
+      "targetLabel": "黄金或铜",
+      "timing": "出牌阶段",
+      "text": "选择黄金或铜，使其现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "宏观",
+        "普通"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "choose": 1,
+        "targetOptions": [
+          "gold",
+          "copper"
+        ],
+        "delta": 1
+      }
+    },
+    {
+      "id": "PI-MACRO-02",
+      "name": "联储超预期加息",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "普通",
+      "subtype": "选择下跌",
+      "targetLabel": "黄金或铜",
+      "timing": "出牌阶段",
+      "text": "选择黄金或铜，使其现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "宏观",
+        "普通"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "choose": 1,
+        "targetOptions": [
+          "gold",
+          "copper"
+        ],
+        "delta": -1
+      }
+    },
+    {
+      "id": "PI-MACRO-03",
+      "name": "全球制造业 PMI 回升",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "普通",
+      "subtype": "选择上涨",
+      "targetLabel": "铜或棉花",
+      "timing": "出牌阶段",
+      "text": "选择铜或棉花，使其现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "宏观",
+        "普通"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "choose": 1,
+        "targetOptions": [
+          "copper",
+          "cotton"
+        ],
+        "delta": 1
+      }
+    },
+    {
+      "id": "PI-MACRO-04",
+      "name": "全球制造业 PMI 收缩",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "普通",
+      "subtype": "选择下跌",
+      "targetLabel": "铜或棉花",
+      "timing": "出牌阶段",
+      "text": "选择铜或棉花，使其现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "宏观",
+        "普通"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "choose": 1,
+        "targetOptions": [
+          "copper",
+          "cotton"
+        ],
+        "delta": -1
+      }
+    },
+    {
+      "id": "PI-MACRO-05",
+      "name": "低位补库启动",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "普通",
+      "subtype": "低位扶升",
+      "targetLabel": "任一低价区商品",
+      "timing": "出牌阶段",
+      "text": "低位扶升：选择现货位于低价区（第 1—17 格）的一种商品，使其现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "低位扶升",
+        "普通"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "choose": 1,
+        "targetOptions": [
+          "oil",
+          "gold",
+          "cotton",
+          "copper"
+        ],
+        "delta": 1,
+        "zone": "low"
+      }
+    },
+    {
+      "id": "PI-MACRO-06",
+      "name": "高位需求降温",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "普通",
+      "subtype": "高位压降",
+      "targetLabel": "任一高价区商品",
+      "timing": "出牌阶段",
+      "text": "高位压降：选择现货位于高价区（第 35—51 格）的一种商品，使其现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "高位压降",
+        "普通"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "choose": 1,
+        "targetOptions": [
+          "oil",
+          "gold",
+          "cotton",
+          "copper"
+        ],
+        "delta": -1,
+        "zone": "high"
+      }
+    },
+    {
+      "id": "PI-MACRO-07",
+      "name": "价值资金集中入场",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "强烈",
+      "subtype": "低位扶升",
+      "targetLabel": "任一低价区商品",
+      "timing": "出牌阶段",
+      "text": "低位扶升：选择现货位于低价区（第 1—17 格）的一种商品，使其现货上涨 2 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "低位扶升",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "choose": 1,
+        "targetOptions": [
+          "oil",
+          "gold",
+          "cotton",
+          "copper"
+        ],
+        "delta": 2,
+        "zone": "low"
+      }
+    },
+    {
+      "id": "PI-MACRO-08",
+      "name": "泡沫去杠杆踩踏",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "强烈",
+      "subtype": "高位压降",
+      "targetLabel": "任一高价区商品",
+      "timing": "出牌阶段",
+      "text": "高位压降：选择现货位于高价区（第 35—51 格）的一种商品，使其现货下跌 2 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "高位压降",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "choose": 1,
+        "targetOptions": [
+          "oil",
+          "gold",
+          "cotton",
+          "copper"
+        ],
+        "delta": -2,
+        "zone": "high"
+      }
+    },
+    {
+      "id": "PI-MACRO-09",
+      "name": "新兴市场需求复苏",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "普通",
+      "subtype": "选择上涨",
+      "targetLabel": "原油或铜",
+      "timing": "出牌阶段",
+      "text": "选择原油或铜，使其现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "宏观",
+        "普通"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "choose": 1,
+        "targetOptions": [
+          "oil",
+          "copper"
+        ],
+        "delta": 1
+      }
+    },
+    {
+      "id": "PI-MACRO-10",
+      "name": "新兴市场资本外流",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "普通",
+      "subtype": "选择下跌",
+      "targetLabel": "原油或铜",
+      "timing": "出牌阶段",
+      "text": "选择原油或铜，使其现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "宏观",
+        "普通"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "choose": 1,
+        "targetOptions": [
+          "oil",
+          "copper"
+        ],
+        "delta": -1
+      }
+    },
+    {
+      "id": "PI-MACRO-11",
+      "name": "绿色投资法案通过",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "强烈",
+      "subtype": "双商品联动",
+      "targetLabel": "铜、原油",
+      "timing": "出牌阶段",
+      "text": "铜现货上涨 1 格，同时原油现货下跌 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "宏观",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": 1
+          },
+          {
+            "commodity": "oil",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-MACRO-12",
+      "name": "化石能源补贴恢复",
+      "kind": "personal",
+      "category": "宏观与联动信息",
+      "strength": "强烈",
+      "subtype": "双商品联动",
+      "targetLabel": "铜、原油",
+      "timing": "出牌阶段",
+      "text": "铜现货下跌 1 格，同时原油现货上涨 1 格。",
+      "durationText": "本月立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "宏观",
+        "强烈"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": -1
+          },
+          {
+            "commodity": "oil",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PI-DURATION-01",
+      "name": "OPEC 配额执行期",
+      "kind": "personal",
+      "category": "持续信息",
+      "strength": "趋势",
+      "subtype": "持续上涨",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "持续 2 个月：本月与下个月结算时，各使原油现货上涨 1 格。",
+      "durationText": "本月、下个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 2 个月",
+        "上涨",
+        "趋势"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "personal",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": 1
+          }
+        ],
+        "triggers": 2
+      }
+    },
+    {
+      "id": "PI-DURATION-02",
+      "name": "页岩油复产周期",
+      "kind": "personal",
+      "category": "持续信息",
+      "strength": "趋势",
+      "subtype": "持续下跌",
+      "targetLabel": "原油",
+      "timing": "出牌阶段",
+      "text": "持续 2 个月：本月与下个月结算时，各使原油现货下跌 1 格。",
+      "durationText": "本月、下个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 2 个月",
+        "下跌",
+        "趋势"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "personal",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": -1
+          }
+        ],
+        "triggers": 2
+      }
+    },
+    {
+      "id": "PI-DURATION-03",
+      "name": "央行连续购金",
+      "kind": "personal",
+      "category": "持续信息",
+      "strength": "趋势",
+      "subtype": "持续上涨",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "持续 2 个月：本月与下个月结算时，各使黄金现货上涨 1 格。",
+      "durationText": "本月、下个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 2 个月",
+        "上涨",
+        "趋势"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "personal",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": 1
+          }
+        ],
+        "triggers": 2
+      }
+    },
+    {
+      "id": "PI-DURATION-04",
+      "name": "实际利率上行周期",
+      "kind": "personal",
+      "category": "持续信息",
+      "strength": "趋势",
+      "subtype": "持续下跌",
+      "targetLabel": "黄金",
+      "timing": "出牌阶段",
+      "text": "持续 2 个月：本月与下个月结算时，各使黄金现货下跌 1 格。",
+      "durationText": "本月、下个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 2 个月",
+        "下跌",
+        "趋势"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "personal",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": -1
+          }
+        ],
+        "triggers": 2
+      }
+    },
+    {
+      "id": "PI-DURATION-05",
+      "name": "干旱影响延续",
+      "kind": "personal",
+      "category": "持续信息",
+      "strength": "趋势",
+      "subtype": "持续上涨",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "持续 2 个月：本月与下个月结算时，各使棉花现货上涨 1 格。",
+      "durationText": "本月、下个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 2 个月",
+        "上涨",
+        "趋势"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "personal",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": 1
+          }
+        ],
+        "triggers": 2
+      }
+    },
+    {
+      "id": "PI-DURATION-06",
+      "name": "丰产兑现周期",
+      "kind": "personal",
+      "category": "持续信息",
+      "strength": "趋势",
+      "subtype": "持续下跌",
+      "targetLabel": "棉花",
+      "timing": "出牌阶段",
+      "text": "持续 2 个月：本月与下个月结算时，各使棉花现货下跌 1 格。",
+      "durationText": "本月、下个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 2 个月",
+        "下跌",
+        "趋势"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "personal",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": -1
+          }
+        ],
+        "triggers": 2
+      }
+    },
+    {
+      "id": "PI-DURATION-07",
+      "name": "矿山检修周期",
+      "kind": "personal",
+      "category": "持续信息",
+      "strength": "趋势",
+      "subtype": "持续上涨",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "持续 2 个月：本月与下个月结算时，各使铜现货上涨 1 格。",
+      "durationText": "本月、下个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 2 个月",
+        "上涨",
+        "趋势"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "personal",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": 1
+          }
+        ],
+        "triggers": 2
+      }
+    },
+    {
+      "id": "PI-DURATION-08",
+      "name": "冶炼产能释放",
+      "kind": "personal",
+      "category": "持续信息",
+      "strength": "趋势",
+      "subtype": "持续下跌",
+      "targetLabel": "铜",
+      "timing": "出牌阶段",
+      "text": "持续 2 个月：本月与下个月结算时，各使铜现货下跌 1 格。",
+      "durationText": "本月、下个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 2 个月",
+        "下跌",
+        "趋势"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "personal",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": -1
+          }
+        ],
+        "triggers": 2
+      }
+    },
+    {
+      "id": "PF-01",
+      "name": "涨停封板",
+      "kind": "personal",
+      "category": "功能牌",
+      "strength": "功能",
+      "subtype": "封板",
+      "targetLabel": "期货涨停商品",
+      "timing": "出牌阶段",
+      "text": "选择当前期货价已处于涨停价的一种商品，放置涨停封板标记。封板持续到本月结算结束；只限制主动开仓和加仓。",
+      "durationText": "按卡面结算",
+      "keywords": [
+        "封板",
+        "涨停",
+        "只减仓"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "seal",
+        "side": "up"
+      }
+    },
+    {
+      "id": "PF-02",
+      "name": "跌停封板",
+      "kind": "personal",
+      "category": "功能牌",
+      "strength": "功能",
+      "subtype": "封板",
+      "targetLabel": "期货跌停商品",
+      "timing": "出牌阶段",
+      "text": "选择当前期货价已处于跌停价的一种商品，放置跌停封板标记。封板持续到本月结算结束；只限制主动开仓和加仓。",
+      "durationText": "按卡面结算",
+      "keywords": [
+        "封板",
+        "跌停",
+        "只减仓"
+      ],
+      "copies": 3,
+      "effect": {
+        "type": "seal",
+        "side": "down"
+      }
+    },
+    {
+      "id": "PF-03",
+      "name": "预见",
+      "kind": "personal",
+      "category": "功能牌",
+      "strength": "功能",
+      "subtype": "牌堆侦察",
+      "targetLabel": "公共事件牌堆",
+      "timing": "出牌阶段",
+      "text": "查看下个月将翻开的公共事件牌堆顶部 2 张，按原顺序放回。第 8 回合（第 8 个月）不能使用。",
+      "durationText": "按卡面结算",
+      "keywords": [
+        "预见",
+        "下个月"
+      ],
+      "copies": 4,
+      "effect": {
+        "type": "peek_public",
+        "count": 2
+      }
+    },
+    {
+      "id": "PF-04",
+      "name": "优惠授信",
+      "kind": "personal",
+      "category": "功能牌",
+      "strength": "功能",
+      "subtype": "借贷",
+      "targetLabel": "自己",
+      "timing": "出牌阶段",
+      "text": "把自己本月新增的一笔贷款改按每月 5% 单利计息；没有本月新增贷款时不能使用。",
+      "durationText": "按卡面结算",
+      "keywords": [
+        "借贷",
+        "每月利息"
+      ],
+      "copies": 4,
+      "effect": {
+        "type": "loan_discount",
+        "ratePercent": 5
+      }
+    },
+    {
+      "id": "PF-05",
+      "name": "保证金缓冲",
+      "kind": "personal",
+      "category": "功能牌",
+      "strength": "功能",
+      "subtype": "保证金",
+      "targetLabel": "自己",
+      "timing": "出牌阶段",
+      "text": "放在自己面前，使紧接着的本月结算阶段中一次保证金补缴减少 10 万金币，最低减至 0，之后弃置。",
+      "durationText": "按卡面结算",
+      "keywords": [
+        "保证金",
+        "本月"
+      ],
+      "copies": 4,
+      "effect": {
+        "type": "margin_buffer",
+        "amount": 10
+      }
+    },
+    {
+      "id": "PF-06",
+      "name": "信息核验",
+      "kind": "personal",
+      "category": "功能牌",
+      "strength": "功能",
+      "subtype": "持续牌管理",
+      "targetLabel": "场上持续个人牌",
+      "timing": "出牌阶段",
+      "text": "移除场上一张持续个人信息牌；不逆转以前月份已经发生的价格移动。",
+      "durationText": "按卡面结算",
+      "keywords": [
+        "移除",
+        "持续牌"
+      ],
+      "copies": 2,
+      "effect": {
+        "type": "remove_persistent",
+        "scope": "personal",
+        "choose": 1
+      }
+    },
+    {
+      "id": "PF-07",
+      "name": "信息置换",
+      "kind": "personal",
+      "category": "功能牌",
+      "strength": "功能",
+      "subtype": "手牌管理",
+      "targetLabel": "自己",
+      "timing": "出牌阶段",
+      "text": "抽 2 张个人牌，然后从手中选择 2 张牌弃置。",
+      "durationText": "按卡面结算",
+      "keywords": [
+        "抽牌",
+        "弃牌"
+      ],
+      "copies": 4,
+      "effect": {
+        "type": "information_swap",
+        "draw": 2,
+        "discard": 2
+      }
+    }
+  ],
+  "publicEvents": [
+    {
+      "id": "PE-01",
+      "name": "全球通胀共振",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "强烈",
+      "subtype": "全商品一次性上涨",
+      "targetLabel": "四种商品",
+      "timing": "公共事件阶段",
+      "text": "原油、黄金、棉花、铜现货各上涨 1 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "强烈"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": 1
+          },
+          {
+            "commodity": "gold",
+            "delta": 1
+          },
+          {
+            "commodity": "cotton",
+            "delta": 1
+          },
+          {
+            "commodity": "copper",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-02",
+      "name": "全球流动性冻结",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "强烈",
+      "subtype": "全商品一次性下跌",
+      "targetLabel": "四种商品",
+      "timing": "公共事件阶段",
+      "text": "原油、黄金、棉花、铜现货各下跌 1 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "强烈"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": -1
+          },
+          {
+            "commodity": "gold",
+            "delta": -1
+          },
+          {
+            "commodity": "cotton",
+            "delta": -1
+          },
+          {
+            "commodity": "copper",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-03",
+      "name": "海峡封锁升级",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "危机",
+      "subtype": "单商品一次性上涨",
+      "targetLabel": "原油",
+      "timing": "公共事件阶段",
+      "text": "原油现货上涨 3 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-04",
+      "name": "国际能源署紧急释放储备",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "危机",
+      "subtype": "单商品一次性下跌",
+      "targetLabel": "原油",
+      "timing": "公共事件阶段",
+      "text": "原油现货下跌 3 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": -3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-05",
+      "name": "全球央行联合购金",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "危机",
+      "subtype": "单商品一次性上涨",
+      "targetLabel": "黄金",
+      "timing": "公共事件阶段",
+      "text": "黄金现货上涨 3 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": 3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-06",
+      "name": "美联储极端鹰派冲击",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "危机",
+      "subtype": "单商品一次性下跌",
+      "targetLabel": "黄金",
+      "timing": "公共事件阶段",
+      "text": "黄金现货下跌 3 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "危机"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": -3
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-07",
+      "name": "主产区百年干旱",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "强烈",
+      "subtype": "单商品一次性上涨",
+      "targetLabel": "棉花",
+      "timing": "公共事件阶段",
+      "text": "棉花现货上涨 2 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "强烈"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-08",
+      "name": "全球棉花超级丰收",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "强烈",
+      "subtype": "单商品一次性下跌",
+      "targetLabel": "棉花",
+      "timing": "公共事件阶段",
+      "text": "棉花现货下跌 2 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "强烈"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": -2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-09",
+      "name": "全球电网投资浪潮",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "强烈",
+      "subtype": "单商品一次性上涨",
+      "targetLabel": "铜",
+      "timing": "公共事件阶段",
+      "text": "铜现货上涨 2 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "强烈"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": 2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-10",
+      "name": "全球地产去杠杆冲击",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "强烈",
+      "subtype": "单商品一次性下跌",
+      "targetLabel": "铜",
+      "timing": "公共事件阶段",
+      "text": "铜现货下跌 2 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "强烈"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "copper",
+            "delta": -2
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-11",
+      "name": "全球供应链中断",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "强烈",
+      "subtype": "多商品一次性上涨",
+      "targetLabel": "棉花、铜",
+      "timing": "公共事件阶段",
+      "text": "棉花与铜现货各上涨 1 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "强烈"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": 1
+          },
+          {
+            "commodity": "copper",
+            "delta": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-12",
+      "name": "全球供应链全面修复",
+      "kind": "public",
+      "category": "一次性事件",
+      "strength": "强烈",
+      "subtype": "多商品一次性下跌",
+      "targetLabel": "棉花、铜",
+      "timing": "公共事件阶段",
+      "text": "棉花与铜现货各下跌 1 格，然后弃置。",
+      "durationText": "本月翻开时立即结算；不跨月",
+      "keywords": [
+        "单次",
+        "强烈"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "spot_move",
+        "moves": [
+          {
+            "commodity": "cotton",
+            "delta": -1
+          },
+          {
+            "commodity": "copper",
+            "delta": -1
+          }
+        ]
+      }
+    },
+    {
+      "id": "PE-13",
+      "name": "全球流动性宽松周期",
+      "kind": "public",
+      "category": "持续事件",
+      "strength": "趋势",
+      "subtype": "持续上涨",
+      "targetLabel": "黄金、铜",
+      "timing": "公共事件阶段",
+      "text": "持续 3 个月：本月及之后两个月结算时，黄金与铜现货各上涨 1 格。",
+      "durationText": "本月、下两个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 3 个月",
+        "持续上涨"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "public",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": 1
+          },
+          {
+            "commodity": "copper",
+            "delta": 1
+          }
+        ],
+        "triggers": 3
+      }
+    },
+    {
+      "id": "PE-14",
+      "name": "全球流动性紧缩周期",
+      "kind": "public",
+      "category": "持续事件",
+      "strength": "趋势",
+      "subtype": "持续下跌",
+      "targetLabel": "黄金、铜",
+      "timing": "公共事件阶段",
+      "text": "持续 3 个月：本月及之后两个月结算时，黄金与铜现货各下跌 1 格。",
+      "durationText": "本月、下两个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 3 个月",
+        "持续下跌"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "public",
+        "moves": [
+          {
+            "commodity": "gold",
+            "delta": -1
+          },
+          {
+            "commodity": "copper",
+            "delta": -1
+          }
+        ],
+        "triggers": 3
+      }
+    },
+    {
+      "id": "PE-15",
+      "name": "全球补库存周期",
+      "kind": "public",
+      "category": "持续事件",
+      "strength": "趋势",
+      "subtype": "持续上涨",
+      "targetLabel": "原油、棉花",
+      "timing": "公共事件阶段",
+      "text": "持续 3 个月：本月及之后两个月结算时，原油与棉花现货各上涨 1 格。",
+      "durationText": "本月、下两个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 3 个月",
+        "持续上涨"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "public",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": 1
+          },
+          {
+            "commodity": "cotton",
+            "delta": 1
+          }
+        ],
+        "triggers": 3
+      }
+    },
+    {
+      "id": "PE-16",
+      "name": "全球去库存周期",
+      "kind": "public",
+      "category": "持续事件",
+      "strength": "趋势",
+      "subtype": "持续下跌",
+      "targetLabel": "原油、棉花",
+      "timing": "公共事件阶段",
+      "text": "持续 3 个月：本月及之后两个月结算时，原油与棉花现货各下跌 1 格。",
+      "durationText": "本月、下两个月；每月结算触发 1 次",
+      "keywords": [
+        "持续 3 个月",
+        "持续下跌"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "persistent_spot",
+        "scope": "public",
+        "moves": [
+          {
+            "commodity": "oil",
+            "delta": -1
+          },
+          {
+            "commodity": "cotton",
+            "delta": -1
+          }
+        ],
+        "triggers": 3
+      }
+    },
+    {
+      "id": "PE-17",
+      "name": "全球供给政策转向",
+      "kind": "public",
+      "category": "修正事件",
+      "strength": "修正",
+      "subtype": "移除持续上涨",
+      "targetLabel": "持续上涨公共事件",
+      "timing": "公共事件阶段",
+      "text": "移除场上剩余月份最多的一张“持续上涨”公共事件；并列时移除最早翻开的。无合法目标时无效果。",
+      "durationText": "本月翻开时立即结算",
+      "keywords": [
+        "移除",
+        "修正"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "remove_persistent",
+        "scope": "public",
+        "direction": "up",
+        "strategy": "most_remaining_oldest"
+      }
+    },
+    {
+      "id": "PE-18",
+      "name": "逆周期需求托底",
+      "kind": "public",
+      "category": "修正事件",
+      "strength": "修正",
+      "subtype": "移除持续下跌",
+      "targetLabel": "持续下跌公共事件",
+      "timing": "公共事件阶段",
+      "text": "移除场上剩余月份最多的一张“持续下跌”公共事件；并列时移除最早翻开的。无合法目标时无效果。",
+      "durationText": "本月翻开时立即结算",
+      "keywords": [
+        "移除",
+        "修正"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "remove_persistent",
+        "scope": "public",
+        "direction": "down",
+        "strategy": "most_remaining_oldest"
+      }
+    },
+    {
+      "id": "PE-19",
+      "name": "宏观数据全面修订",
+      "kind": "public",
+      "category": "修正事件",
+      "strength": "修正",
+      "subtype": "移除单张持续事件",
+      "targetLabel": "最后翻开的持续公共事件",
+      "timing": "公共事件阶段",
+      "text": "移除场上最后翻开的一张持续公共事件。无合法目标时无效果。",
+      "durationText": "本月翻开时立即结算",
+      "keywords": [
+        "移除",
+        "修正"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "remove_persistent",
+        "scope": "public",
+        "strategy": "latest"
+      }
+    },
+    {
+      "id": "PE-20",
+      "name": "多国政策协调声明",
+      "kind": "public",
+      "category": "修正事件",
+      "strength": "强修正",
+      "subtype": "移除全部持续事件",
+      "targetLabel": "全部持续公共事件",
+      "timing": "公共事件阶段",
+      "text": "移除场上全部持续公共事件；不逆转以前月份已经发生的价格移动。",
+      "durationText": "本月翻开时立即结算",
+      "keywords": [
+        "移除",
+        "强修正"
+      ],
+      "copies": 1,
+      "effect": {
+        "type": "remove_persistent",
+        "scope": "public",
+        "strategy": "all"
+      }
+    }
+  ]
+}

@@ -123,6 +123,60 @@ describe('pyramid solitaire plugin view', () => {
     wrapper.unmount()
   })
 
+  it('offers a fullscreen table and uses the native fullscreen API', async () => {
+    const wrapper = mount(GameView, {
+      props: { snapshot: snapshot() },
+      global: { plugins: [createPinia()] },
+    })
+    const gameRoot = wrapper.get('.pyramid-game').element as HTMLElement
+    const requestFullscreen = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(gameRoot, 'requestFullscreen', {
+      configurable: true,
+      value: requestFullscreen,
+    })
+
+    expect(wrapper.get('.fullscreen-button').text()).toContain('全屏牌桌')
+    await wrapper.get('.fullscreen-button').trigger('click')
+    await flushPromises()
+
+    expect(requestFullscreen).toHaveBeenCalledOnce()
+
+    const fullscreenDescriptor = Object.getOwnPropertyDescriptor(document, 'fullscreenElement')
+    const exitDescriptor = Object.getOwnPropertyDescriptor(document, 'exitFullscreen')
+    let fullscreenElement: Element | null = gameRoot
+    const exitFullscreen = vi.fn(async () => {
+      fullscreenElement = null
+      document.dispatchEvent(new Event('fullscreenchange'))
+    })
+    Object.defineProperty(document, 'fullscreenElement', {
+      configurable: true,
+      get: () => fullscreenElement,
+    })
+    Object.defineProperty(document, 'exitFullscreen', {
+      configurable: true,
+      value: exitFullscreen,
+    })
+    document.dispatchEvent(new Event('fullscreenchange'))
+    await flushPromises()
+
+    expect(wrapper.get('.fullscreen-button').text()).toContain('退出全屏')
+    await wrapper.get('.fullscreen-button').trigger('click')
+    await flushPromises()
+    expect(exitFullscreen).toHaveBeenCalledOnce()
+
+    wrapper.unmount()
+    if (fullscreenDescriptor) {
+      Object.defineProperty(document, 'fullscreenElement', fullscreenDescriptor)
+    } else {
+      Reflect.deleteProperty(document, 'fullscreenElement')
+    }
+    if (exitDescriptor) {
+      Object.defineProperty(document, 'exitFullscreen', exitDescriptor)
+    } else {
+      Reflect.deleteProperty(document, 'exitFullscreen')
+    }
+  })
+
   it('shows the frozen completion time and starts a rematch', async () => {
     const pinia = createPinia()
     const arcade = useArcadeStore(pinia)

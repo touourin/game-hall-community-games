@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { Clock3, Layers3, MousePointerClick, RotateCcw, Sparkles, Trophy } from '@lucide/vue'
+import {
+  Clock3,
+  Layers3,
+  Maximize2,
+  Minimize2,
+  MousePointerClick,
+  RotateCcw,
+  Sparkles,
+  Trophy,
+} from '@lucide/vue'
 import {
   usePluginGameActions,
   type ArcadeSnapshot,
@@ -41,6 +50,8 @@ const actions = usePluginGameActions()
 const game = computed(() => props.snapshot.game as PyramidGameState)
 const selectedIds = ref<string[]>([])
 const sending = ref(false)
+const gameRoot = ref<HTMLElement | null>(null)
+const isFullscreen = ref(false)
 const hint = ref('选择一张露出的牌，再找一张与它合计为 13 的牌')
 const clockBase = ref(0)
 const clockSyncedAt = ref(0)
@@ -195,6 +206,29 @@ function syncClock() {
   clockNow.value = current
 }
 
+function syncFullscreen() {
+  isFullscreen.value = document.fullscreenElement === gameRoot.value
+}
+
+async function toggleFullscreen() {
+  const root = gameRoot.value
+  if (!root) return
+
+  try {
+    if (document.fullscreenElement === root || isFullscreen.value) {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen()
+      } else {
+        isFullscreen.value = false
+      }
+    } else {
+      await root.requestFullscreen()
+    }
+  } catch {
+    hint.value = '浏览器未允许进入全屏，请检查浏览器权限后重试'
+  }
+}
+
 watch(
   () => [props.snapshot.revision, props.snapshot.phase, game.value.elapsedMs] as const,
   syncClock,
@@ -206,36 +240,52 @@ watch(availableIds, (current) => {
 })
 
 onMounted(() => {
+  document.addEventListener('fullscreenchange', syncFullscreen)
   clockTimer = window.setInterval(() => {
     clockNow.value = performance.now()
   }, 100)
 })
 
 onBeforeUnmount(() => {
+  document.removeEventListener('fullscreenchange', syncFullscreen)
   if (clockTimer !== null) window.clearInterval(clockTimer)
 })
 </script>
 
 <template>
-  <section class="pyramid-game">
-    <header class="pyramid-metrics" aria-label="金字塔纸牌挑战状态">
-      <div>
-        <Clock3 :size="18" />
-        <span><b>{{ formatTime(displayedElapsedMs) }}</b><small>本轮用时</small></span>
-      </div>
-      <div>
-        <Layers3 :size="18" />
-        <span><b>{{ game.pyramidCleared ?? 0 }} / 28</b><small>金字塔已清除</small></span>
-      </div>
-      <div>
-        <Sparkles :size="18" />
-        <span><b>{{ game.removalMoves ?? 0 }}</b><small>消除次数</small></span>
-      </div>
-      <div>
-        <MousePointerClick :size="18" />
-        <span><b>{{ game.draws ?? 0 }}</b><small>翻牌次数</small></span>
-      </div>
-    </header>
+  <section ref="gameRoot" class="pyramid-game" :class="{ 'is-fullscreen': isFullscreen }">
+    <div class="pyramid-dashboard">
+      <header class="pyramid-metrics" aria-label="金字塔纸牌挑战状态">
+        <div>
+          <Clock3 :size="18" />
+          <span><b>{{ formatTime(displayedElapsedMs) }}</b><small>本轮用时</small></span>
+        </div>
+        <div>
+          <Layers3 :size="18" />
+          <span><b>{{ game.pyramidCleared ?? 0 }} / 28</b><small>金字塔已清除</small></span>
+        </div>
+        <div>
+          <Sparkles :size="18" />
+          <span><b>{{ game.removalMoves ?? 0 }}</b><small>消除次数</small></span>
+        </div>
+        <div>
+          <MousePointerClick :size="18" />
+          <span><b>{{ game.draws ?? 0 }}</b><small>翻牌次数</small></span>
+        </div>
+      </header>
+
+      <button
+        type="button"
+        class="fullscreen-button"
+        :aria-label="isFullscreen ? '退出全屏牌桌' : '全屏显示牌桌'"
+        :title="isFullscreen ? '退出全屏' : '全屏显示牌桌'"
+        @click="toggleFullscreen"
+      >
+        <Minimize2 v-if="isFullscreen" :size="19" />
+        <Maximize2 v-else :size="19" />
+        <span>{{ isFullscreen ? '退出全屏' : '全屏牌桌' }}</span>
+      </button>
+    </div>
 
     <div class="pyramid-layout">
       <section class="surface pyramid-table">
@@ -374,12 +424,41 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .pyramid-game {
-  width: min(100%, 1080px);
+  width: 100%;
   min-width: 0;
-  max-width: 100%;
   display: grid;
   gap: 15px;
   margin: 0 auto;
+  container-name: pyramid-game;
+  container-type: inline-size;
+}
+
+:global(.arcade-room:has(.pyramid-game)) {
+  width: min(100%, 1680px);
+}
+
+.pyramid-game:fullscreen {
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  max-width: none;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-content: stretch;
+  overflow: auto;
+  padding: clamp(14px, 2vw, 30px);
+  color: var(--text);
+  background: var(--bg);
+}
+
+.pyramid-game::backdrop {
+  background: var(--bg);
+}
+
+.pyramid-dashboard {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 9px;
 }
 
 .pyramid-metrics {
@@ -409,6 +488,30 @@ onBeforeUnmount(() => {
   display: block;
 }
 
+.fullscreen-button {
+  min-width: 110px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid color-mix(in srgb, var(--gold) 34%, var(--line));
+  border-radius: 13px;
+  padding: 9px 13px;
+  color: var(--gold);
+  background: color-mix(in srgb, var(--gold) 7%, var(--surface));
+  font: inherit;
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease, transform .15s ease;
+}
+
+.fullscreen-button:hover {
+  border-color: color-mix(in srgb, var(--gold) 70%, var(--line));
+  background: color-mix(in srgb, var(--gold) 13%, var(--surface));
+  transform: translateY(-1px);
+}
+
 .pyramid-metrics b {
   overflow: hidden;
   color: var(--text);
@@ -427,7 +530,7 @@ onBeforeUnmount(() => {
 .pyramid-layout {
   min-width: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 286px;
+  grid-template-columns: minmax(0, 1fr) clamp(300px, 22cqi, 360px);
   gap: 14px;
   align-items: stretch;
 }
@@ -442,7 +545,9 @@ onBeforeUnmount(() => {
   position: relative;
   display: grid;
   align-content: start;
-  padding: clamp(14px, 2.6vw, 24px);
+  padding: clamp(14px, 2.2cqi, 28px);
+  container-name: pyramid-table;
+  container-type: inline-size;
   background:
     radial-gradient(circle at 50% 78%, color-mix(in srgb, var(--gold) 12%, transparent), transparent 44%),
     linear-gradient(155deg, color-mix(in srgb, #123d37 44%, var(--surface)), var(--surface) 58%);
@@ -509,24 +614,33 @@ onBeforeUnmount(() => {
 }
 
 .pyramid-stage {
-  --card-width: clamp(35px, 7.2vw, 72px);
+  --card-width: clamp(34px, min(12cqi, 8.7dvh), 98px);
   position: relative;
   display: grid;
   align-content: center;
   justify-content: stretch;
-  min-height: clamp(390px, 55vw, 565px);
-  padding: clamp(16px, 3vw, 28px) 0 4px;
+  min-height: clamp(330px, 65dvh, 680px);
+  padding: clamp(16px, 2.5cqi, 30px) 0 4px;
+}
+
+.pyramid-game:fullscreen .pyramid-table {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.pyramid-game:fullscreen .pyramid-stage {
+  --card-width: clamp(34px, min(12cqi, 9.5dvh), 118px);
+  min-height: 0;
 }
 
 .pyramid-row {
   position: relative;
   display: flex;
   justify-content: center;
-  gap: clamp(2px, .7vw, 7px);
+  gap: clamp(2px, .7cqi, 8px);
 }
 
 .pyramid-row + .pyramid-row {
-  margin-top: clamp(-28px, -3vw, -14px);
+  margin-top: clamp(-36px, -3.5cqi, -14px);
 }
 
 .playing-card,
@@ -542,7 +656,7 @@ onBeforeUnmount(() => {
   position: relative;
   z-index: 1;
   border: 1px solid #c9c5b9;
-  border-radius: clamp(5px, .9vw, 10px);
+  border-radius: clamp(5px, .8cqi, 11px);
   padding: 0;
   overflow: hidden;
   color: #172025;
@@ -609,12 +723,12 @@ onBeforeUnmount(() => {
 
 .card-corner b {
   font-family: Georgia, serif;
-  font-size: clamp(9px, 1.8vw, 16px);
+  font-size: clamp(9px, 1.8cqi, 17px);
 }
 
 .card-corner i {
   margin-top: 2px;
-  font-size: clamp(7px, 1.5vw, 13px);
+  font-size: clamp(7px, 1.35cqi, 14px);
   font-style: normal;
 }
 
@@ -624,7 +738,7 @@ onBeforeUnmount(() => {
   left: 50%;
   transform: translate(-50%, -50%);
   font-family: Georgia, serif;
-  font-size: clamp(18px, 4vw, 38px);
+  font-size: clamp(18px, 4cqi, 42px);
   font-weight: 400;
   text-shadow: 0 1px #fff;
 }
@@ -643,7 +757,7 @@ onBeforeUnmount(() => {
   border-radius: 50%;
   color: #fff9;
   background: #071817a6;
-  font-size: clamp(7px, 1vw, 10px);
+  font-size: clamp(7px, 1cqi, 11px);
   font-weight: 900;
 }
 
@@ -651,7 +765,7 @@ onBeforeUnmount(() => {
   position: relative;
   z-index: 0;
   border: 1px dashed color-mix(in srgb, var(--gold) 18%, transparent);
-  border-radius: clamp(5px, .9vw, 10px);
+  border-radius: clamp(5px, .8cqi, 11px);
   background: #00000012;
 }
 
@@ -958,7 +1072,7 @@ onBeforeUnmount(() => {
   white-space: nowrap;
 }
 
-@media (max-width: 840px) {
+@container pyramid-game (max-width: 1050px) {
   .pyramid-layout {
     grid-template-columns: 1fr;
   }
@@ -986,9 +1100,13 @@ onBeforeUnmount(() => {
   }
 }
 
-@media (max-width: 560px) {
-  .pyramid-game {
-    gap: 11px;
+@container pyramid-game (max-width: 620px) {
+  .pyramid-dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .fullscreen-button {
+    min-height: 42px;
   }
 
   .pyramid-metrics {
@@ -1001,7 +1119,7 @@ onBeforeUnmount(() => {
   }
 
   .pyramid-stage {
-    --card-width: clamp(34px, 10.2vw, 50px);
+    --card-width: clamp(32px, 12cqi, 50px);
     min-height: 330px;
     padding-top: 18px;
   }
@@ -1035,7 +1153,7 @@ onBeforeUnmount(() => {
   }
 }
 
-@media (max-width: 360px) {
+@container pyramid-game (max-width: 380px) {
   .pyramid-table {
     padding-inline: 8px;
   }
@@ -1056,7 +1174,8 @@ onBeforeUnmount(() => {
 
 @media (prefers-reduced-motion: reduce) {
   .playing-card,
-  .card-back {
+  .card-back,
+  .fullscreen-button {
     transition: none;
   }
 }

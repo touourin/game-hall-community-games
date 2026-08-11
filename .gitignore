@@ -13,3 +13,8 @@ __pycache__/
 node_modules/
 coverage/
 *.log
+
+# Local scratch work and generated exports
+/tmp/
+/output/
+/outputs/

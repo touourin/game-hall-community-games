@@ -4,6 +4,8 @@
 
 ## 运行资料
 
+- 可编辑规则源稿：[`docs/RULEBOOK.md`](docs/RULEBOOK.md)
+- 可编辑卡牌源稿：[`docs/CARD_SET.md`](docs/CARD_SET.md)
 - 当前规则：`crazy-futures-rulebook-v0.1-balanced-ladder.pdf`
 - 当前卡牌：`crazy-futures-card-set-v0.2-balanced-ladder.xlsx`
 - 历史规则：`crazy-futures-rulebook-v0.1.pdf`

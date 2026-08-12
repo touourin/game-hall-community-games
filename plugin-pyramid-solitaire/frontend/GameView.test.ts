@@ -177,6 +177,32 @@ describe('pyramid solitaire plugin view', () => {
     }
   })
 
+  it('expands the host room without requiring a host application change', async () => {
+    const host = document.createElement('main')
+    host.className = 'arcade-room page-container'
+    host.style.setProperty('width', '640px', 'important')
+    document.body.append(host)
+    const wrapper = mount(GameView, {
+      attachTo: host,
+      props: { snapshot: snapshot() },
+      global: { plugins: [createPinia()] },
+    })
+    await flushPromises()
+
+    expect(host.classList).toContain('plugin-pyramid-solitaire-room')
+    expect(host.style.getPropertyValue('width')).toBe('calc(100vw - 32px)')
+    expect(host.style.getPropertyPriority('width')).toBe('important')
+    expect(host.style.getPropertyValue('max-width')).toBe('1680px')
+    expect(wrapper.get('.pyramid-game').classes()).toContain('has-expanded-host')
+
+    wrapper.unmount()
+    expect(host.classList).not.toContain('plugin-pyramid-solitaire-room')
+    expect(host.style.getPropertyValue('width')).toBe('640px')
+    expect(host.style.getPropertyPriority('width')).toBe('important')
+    expect(host.style.getPropertyValue('max-width')).toBe('')
+    host.remove()
+  })
+
   it('shows the frozen completion time and starts a rematch', async () => {
     const pinia = createPinia()
     const arcade = useArcadeStore(pinia)

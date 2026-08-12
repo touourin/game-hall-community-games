@@ -51,6 +51,12 @@ const game = computed(() => props.snapshot.game as PyramidGameState)
 const selectedIds = ref<string[]>([])
 const sending = ref(false)
 const gameRoot = ref<HTMLElement | null>(null)
+const hostRoom = ref<HTMLElement | null>(null)
+const hostSizing = ref<{
+  maxWidth: { value: string, priority: string }
+  width: { value: string, priority: string }
+} | null>(null)
+const hostExpanded = ref(false)
 const isFullscreen = ref(false)
 const hint = ref('选择一张露出的牌，再找一张与它合计为 13 的牌')
 const clockBase = ref(0)
@@ -210,6 +216,45 @@ function syncFullscreen() {
   isFullscreen.value = document.fullscreenElement === gameRoot.value
 }
 
+function expandHostRoom() {
+  const room = gameRoot.value?.closest<HTMLElement>('.arcade-room') ?? null
+  hostRoom.value = room
+  hostExpanded.value = Boolean(room)
+  if (!room) return
+
+  hostSizing.value = {
+    maxWidth: {
+      value: room.style.getPropertyValue('max-width'),
+      priority: room.style.getPropertyPriority('max-width'),
+    },
+    width: {
+      value: room.style.getPropertyValue('width'),
+      priority: room.style.getPropertyPriority('width'),
+    },
+  }
+  room.classList.add('plugin-pyramid-solitaire-room')
+  room.style.setProperty('width', 'calc(100vw - 32px)', 'important')
+  room.style.setProperty('max-width', '1680px', 'important')
+}
+
+function restoreHostRoom() {
+  const room = hostRoom.value
+  if (!room) return
+
+  room.classList.remove('plugin-pyramid-solitaire-room')
+  const previous = hostSizing.value
+  for (const [property, setting] of [
+    ['max-width', previous?.maxWidth],
+    ['width', previous?.width],
+  ] as const) {
+    if (setting?.value) {
+      room.style.setProperty(property, setting.value, setting.priority)
+    } else {
+      room.style.removeProperty(property)
+    }
+  }
+}
+
 async function toggleFullscreen() {
   const root = gameRoot.value
   if (!root) return
@@ -240,6 +285,7 @@ watch(availableIds, (current) => {
 })
 
 onMounted(() => {
+  expandHostRoom()
   document.addEventListener('fullscreenchange', syncFullscreen)
   clockTimer = window.setInterval(() => {
     clockNow.value = performance.now()
@@ -247,13 +293,21 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  restoreHostRoom()
   document.removeEventListener('fullscreenchange', syncFullscreen)
   if (clockTimer !== null) window.clearInterval(clockTimer)
 })
 </script>
 
 <template>
-  <section ref="gameRoot" class="pyramid-game" :class="{ 'is-fullscreen': isFullscreen }">
+  <section
+    ref="gameRoot"
+    class="pyramid-game"
+    :class="{
+      'has-expanded-host': hostExpanded,
+      'is-fullscreen': isFullscreen,
+    }"
+  >
     <div class="pyramid-dashboard">
       <header class="pyramid-metrics" aria-label="金字塔纸牌挑战状态">
         <div>
@@ -424,20 +478,33 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .pyramid-game {
-  width: 100%;
+  position: relative;
+  left: 50%;
+  width: min(calc(100vw - clamp(24px, 6vw, 80px)), 1680px);
   min-width: 0;
+  max-width: none;
   display: grid;
   gap: 15px;
   margin: 0 auto;
+  transform: translateX(-50%);
   container-name: pyramid-game;
   container-type: inline-size;
 }
 
-:global(.arcade-room:has(.pyramid-game)) {
-  width: min(100%, 1680px);
+:global(.arcade-room.plugin-pyramid-solitaire-room) {
+  width: calc(100vw - 32px) !important;
+  max-width: 1680px !important;
+}
+
+.pyramid-game.has-expanded-host {
+  left: auto;
+  width: 100%;
+  max-width: 100%;
+  transform: none;
 }
 
 .pyramid-game:fullscreen {
+  left: 0;
   width: 100%;
   height: 100dvh;
   min-height: 100dvh;
@@ -448,6 +515,7 @@ onBeforeUnmount(() => {
   padding: clamp(14px, 2vw, 30px);
   color: var(--text);
   background: var(--bg);
+  transform: none;
 }
 
 .pyramid-game::backdrop {

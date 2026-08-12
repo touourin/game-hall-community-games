@@ -426,15 +426,12 @@ onBeforeUnmount(() => {
 .pyramid-game {
   width: 100%;
   min-width: 0;
+  max-width: 100%;
   display: grid;
   gap: 15px;
   margin: 0 auto;
   container-name: pyramid-game;
   container-type: inline-size;
-}
-
-:global(.arcade-room:has(.pyramid-game)) {
-  width: min(100%, 1680px);
 }
 
 .pyramid-game:fullscreen {

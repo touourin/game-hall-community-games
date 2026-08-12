@@ -205,6 +205,7 @@ room.finish(
 - `defaultOptions`：创建房间时合并进公共默认规则。
 - `ruleLabels`：房间规则摘要，最多 6 条。
 - `tone`：当前插件的稳定视觉标识，不允许用它覆盖主项目全局样式。
+- `roomLayout`：可选的房间宽度请求，支持 `standard`、`wide` 和 `immersive`；由大厅外壳统一应用，插件不得自行修改宿主 DOM 或全局宽度。
 
 目录名、`manifest.id`、后端 `engine.key` 三者必须完全一致；`manifest.name` 与 `engine.name` 也必须一致。
 
@@ -258,7 +259,7 @@ const actions = usePluginGameActions()
 
 - 不要为单个插件修改 `frontend/src`、`backend/app`、大厅路由或根依赖文件。
 - 不要把第三方游戏文件放到 `frontend/src/games` 或 `backend/app/games`。
-- 不要使用全局 CSS、覆盖 `document.body`、改变根主题变量或写死页面宽高。
+- 不要使用全局 CSS、修改宿主 DOM、覆盖 `document.body`、改变根主题变量或写死页面宽高；需要更宽房间时使用清单的 `roomLayout`。
 - 不要读取账号令牌、访问令牌、Cookie、localStorage 或 sessionStorage。
 - 不要直接连接 Socket；只使用 `@game-hall/plugin-sdk`。
 - 不要把客户端传来的坐标、牌 ID、分数或胜负结果当成可信数据，必须由后端验证。

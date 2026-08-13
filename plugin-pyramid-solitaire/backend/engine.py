@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 import time
 from dataclasses import dataclass, field
+from functools import lru_cache
 from typing import Any, Callable
 
 from backend.app.arcade.models import ArcadePlayer, ArcadeRoom, utc_now_iso
@@ -13,6 +14,8 @@ PYRAMID_ROWS = 7
 PYRAMID_SIZE = 28
 DECK_SIZE = 52
 TARGET_SUM = 13
+SOLVER_NODE_LIMIT = 250
+MAX_DEAL_ATTEMPTS = 5_000
 SUITS = ("spades", "hearts", "diamonds", "clubs")
 SUIT_SYMBOLS = {
     "spades": "♠",
@@ -40,6 +43,11 @@ def _build_coverers() -> tuple[tuple[int, ...], ...]:
 
 
 PYRAMID_COVERERS = _build_coverers()
+PYRAMID_COVER_MASKS = tuple(
+    sum(1 << coverer for coverer in coverers)
+    for coverers in PYRAMID_COVERERS
+)
+ALL_PYRAMID_CARDS = (1 << PYRAMID_SIZE) - 1
 
 
 @dataclass(frozen=True)
@@ -61,6 +69,10 @@ class PyramidSolitaireState:
     elapsed_ms: int = 0
     started_monotonic: float = 0.0
     last_removed_ids: list[str] = field(default_factory=list)
+
+
+class _SolverLimitReached(Exception):
+    pass
 
 
 class PyramidSolitaireEngine:
@@ -178,12 +190,117 @@ class PyramidSolitaireEngine:
             for suit in SUITS
             for rank in range(1, TARGET_SUM + 1)
         ]
-        self.rng.shuffle(deck)
-        return PyramidSolitaireState(
-            pyramid=list(deck[:PYRAMID_SIZE]),
-            stock=list(reversed(deck[PYRAMID_SIZE:])),
-            started_monotonic=self.clock(),
-        )
+        for _attempt in range(MAX_DEAL_ATTEMPTS):
+            self.rng.shuffle(deck)
+            pyramid = list(deck[:PYRAMID_SIZE])
+            stock = list(reversed(deck[PYRAMID_SIZE:]))
+            if self._is_solvable_deal(pyramid, stock):
+                return PyramidSolitaireState(
+                    pyramid=pyramid,
+                    stock=stock,
+                    started_monotonic=self.clock(),
+                )
+        raise RuntimeError("无法在限定次数内生成可解的金字塔牌局")
+
+    @staticmethod
+    def _is_solvable_deal(
+        pyramid: list[Card | None],
+        stock: list[Card],
+    ) -> bool:
+        if len(pyramid) != PYRAMID_SIZE or len(stock) != DECK_SIZE - PYRAMID_SIZE:
+            return False
+        if any(card is None for card in pyramid):
+            return False
+        pyramid_ranks = tuple(card.rank for card in pyramid if card is not None)
+        # Runtime draws with pop(), so the solver uses the same draw order.
+        stock_ranks = tuple(card.rank for card in reversed(stock))
+        pyramid_rank_masks = [0] * (TARGET_SUM + 1)
+        for index, rank in enumerate(pyramid_ranks):
+            pyramid_rank_masks[rank] |= 1 << index
+
+        exposed_cache: dict[int, int] = {}
+        searched_nodes = 0
+
+        def exposed_mask(removed: int) -> int:
+            if removed in exposed_cache:
+                return exposed_cache[removed]
+            remaining = ALL_PYRAMID_CARDS ^ removed
+            exposed = 0
+            candidates = remaining
+            while candidates:
+                card_bit = candidates & -candidates
+                index = card_bit.bit_length() - 1
+                if not remaining & PYRAMID_COVER_MASKS[index]:
+                    exposed |= card_bit
+                candidates ^= card_bit
+            exposed_cache[removed] = exposed
+            return exposed
+
+        @lru_cache(maxsize=None)
+        def search(removed: int, drawn: int, waste: int) -> bool:
+            nonlocal searched_nodes
+            searched_nodes += 1
+            if searched_nodes > SOLVER_NODE_LIMIT:
+                raise _SolverLimitReached
+            if removed == ALL_PYRAMID_CARDS:
+                return True
+
+            exposed = exposed_mask(removed)
+            exposed_kings = exposed & pyramid_rank_masks[TARGET_SUM]
+            if exposed_kings:
+                return search(removed | exposed_kings, drawn, waste)
+
+            pair_moves: list[int] = []
+            for rank in range(1, 7):
+                lower = exposed & pyramid_rank_masks[rank]
+                higher = exposed & pyramid_rank_masks[TARGET_SUM - rank]
+                lower_bits: list[int] = []
+                while lower:
+                    card_bit = lower & -lower
+                    lower_bits.append(card_bit)
+                    lower ^= card_bit
+                while higher:
+                    card_bit = higher & -higher
+                    pair_moves.extend(card_bit | lower_bit for lower_bit in lower_bits)
+                    higher ^= card_bit
+            pair_moves.sort(
+                key=lambda move: exposed_mask(removed | move).bit_count(),
+                reverse=True,
+            )
+            if any(search(removed | move, drawn, waste) for move in pair_moves):
+                return True
+
+            if waste:
+                waste_top = waste.bit_length() - 1
+                waste_rank = stock_ranks[waste_top]
+                remaining_waste = waste ^ (1 << waste_top)
+                if waste_rank == TARGET_SUM:
+                    return search(removed, drawn, remaining_waste)
+                else:
+                    matches = exposed & pyramid_rank_masks[TARGET_SUM - waste_rank]
+                    match_moves: list[int] = []
+                    while matches:
+                        card_bit = matches & -matches
+                        match_moves.append(card_bit)
+                        matches ^= card_bit
+                    match_moves.sort(
+                        key=lambda move: exposed_mask(removed | move).bit_count(),
+                        reverse=True,
+                    )
+                    if any(
+                        search(removed | move, drawn, remaining_waste)
+                        for move in match_moves
+                    ):
+                        return True
+
+            if drawn < len(stock_ranks):
+                return search(removed, drawn + 1, waste | (1 << drawn))
+            return False
+
+        try:
+            return search(0, 0, 0)
+        except _SolverLimitReached:
+            return False
 
     @staticmethod
     def _draw(state: PyramidSolitaireState) -> None:

@@ -1,18 +1,26 @@
 from __future__ import annotations
 
+import random
+from pathlib import Path
+
 import pytest
 
 from backend.app.arcade.models import ArcadePlayer, ArcadeRoom
 from backend.app.games.base import GameRuleError
-from backend.app.games.plugins import discover_game_plugins, third_party_games_root
+from backend.app.games.plugins import discover_game_plugins
+
+
+PLUGIN_ROOT = Path(__file__).resolve().parents[2]
 
 
 def load_engine():
-    return next(
+    engine = next(
         plugin.engine
-        for plugin in discover_game_plugins(third_party_games_root())
+        for plugin in discover_game_plugins(PLUGIN_ROOT)
         if plugin.engine.key == "plugin-pyramid-solitaire"
     )
+    engine.rng = random.Random(20260813)
+    return engine
 
 
 def make_room(game, now: list[float]):
@@ -56,6 +64,71 @@ def test_deals_a_unique_deck_and_hides_the_stock_order() -> None:
     assert "stock" not in view
     assert all(view["pyramid"][index]["exposed"] for index in range(21, 28))
     assert view["pyramid"][0]["exposed"] is False
+    assert game._is_solvable_deal(state.pyramid, state.stock)
+
+
+def test_every_generated_deal_is_solvable_and_keeps_stock_hidden() -> None:
+    game = load_engine()
+
+    for _ in range(12):
+        state = game.initial_state()
+        assert game._is_solvable_deal(state.pyramid, state.stock)
+
+        room = ArcadeRoom(
+            "SOLO",
+            game.key,
+            "p1",
+            [ArcadePlayer("p1", "a1", "解谜者", "token", 0)],
+            state,
+        )
+        room.phase = "playing"
+        view = game.view(room, room.players[0])
+        assert "stock" not in view
+        assert "solution" not in view
+        assert view["wasteTop"] is None
+        assert view["stockRemaining"] == 24
+
+
+def test_deal_generation_retries_until_solver_accepts(monkeypatch) -> None:
+    game = load_engine()
+    checks = iter([False, False, True])
+    checked_deals: list[tuple[list[object], list[object]]] = []
+
+    def fake_solver(pyramid, stock):
+        checked_deals.append((pyramid, stock))
+        return next(checks)
+
+    monkeypatch.setattr(game, "_is_solvable_deal", fake_solver)
+
+    state = game.initial_state()
+
+    assert len(checked_deals) == 3
+    assert state.pyramid == checked_deals[-1][0]
+    assert state.stock == checked_deals[-1][1]
+
+
+def test_solver_rejects_a_known_unsolvable_deal() -> None:
+    game = load_engine()
+    card_type = type(next(card for card in game.initial_state().pyramid if card is not None))
+    deck = [
+        card_type(id=f"{suit}-{rank}", suit=suit, rank=rank)
+        for suit in ("spades", "hearts", "diamonds", "clubs")
+        for rank in range(1, 14)
+    ]
+    by_rank = {
+        rank: [card for card in deck if card.rank == rank]
+        for rank in range(1, 14)
+    }
+    blocked_bottom = by_rank[1] + by_rank[2][:3]
+    buried_complements = by_rank[11] + by_rank[12]
+    used_ids = {card.id for card in blocked_bottom + buried_complements}
+    remaining = [card for card in deck if card.id not in used_ids]
+    pyramid = buried_complements + remaining[:13] + blocked_bottom
+    stock = list(reversed(remaining[13:]))
+
+    assert len(pyramid) == 28
+    assert len(stock) == 24
+    assert game._is_solvable_deal(pyramid, stock) is False
 
 
 def test_only_exposed_cards_can_pair_and_removing_coverers_exposes_parent() -> None:

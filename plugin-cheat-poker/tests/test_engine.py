@@ -6,8 +6,7 @@ from typing import Any
 
 import pytest
 
-from backend.app.arcade.models import ArcadePlayer, ArcadeRoom
-from backend.app.games.base import GameRuleError
+from backend.app.games.plugin_api import ArcadePlayer, ArcadeRoom, GameRuleError
 from backend.app.games.plugins import discover_game_plugins
 
 

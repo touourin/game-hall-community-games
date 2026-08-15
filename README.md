@@ -1,324 +1,347 @@
 # 第三方游戏接入手册
 
-本仓库作为 Git Submodule 挂载到游戏大厅的 `/Users/ourin/project/game-hall/third_party_games`；服务器上的对应位置是 `/opt/game-hall/third_party_games`。本仓库根目录就是大厅中的 `third_party_games/`，每款游戏拥有一个完全独立的子目录，不要把某款第三方游戏的页面、规则、图片或后端逻辑散落到大厅的 `frontend/src`、`backend/app` 或其他主项目目录。
+本仓库是游戏大厅的第三方游戏源码仓库，通过 Git Submodule 挂载到主项目的 `third_party_games/`。每款游戏独立维护自己的规则、状态、界面、资源和测试；主项目只提供稳定的房间平台、游戏注册表和插件 SDK。
 
-插件通过清单自动注册，不需要修改大厅、路由、房间页、账号系统、Socket 连接或后端游戏注册表。启用后，游戏会出现在大厅的“第三方游戏”入口中，并复用现有的账号、游客、创建/加入房间、邀请、聊天、断线保护、对局战绩、排行榜和响应式房间外壳。
+接入一款普通游戏时，不需要修改主项目的大厅、路由、房间、账号、Socket 或战绩代码。完成插件目录后，由本仓库根部的 `registry.json` 决定是否发布。
 
-> 当前 API v1 是“经代码审核后随主项目一起构建”的源码插件，不是可以安全运行任意陌生代码的沙箱。未经信任的代码应改用独立服务和 iframe 隔离，不能直接启用。
+> 插件会与主服务在同一个 Python 进程运行，前端也会进入主站构建，因此这里只接收经过信任和代码审核的源码插件。陌生或不可信代码必须使用独立服务和 sandbox iframe 隔离。
 
-## 一、目录规则
+## 1. 先理解两份清单
 
-目录名和插件 ID 必须一致，并以 `plugin-` 开头：
+插件 API v1 将“游戏是什么”和“生产是否发布”分开管理：
+
+- `plugin-your-game/manifest.json`：游戏自己的身份、版本、人数、平台能力、战绩类型和默认规则。
+- 根目录 `registry.json`：维护者控制的发布注册表。只有这里登记为 `enabled` 或 `deprecated` 的插件会进入构建和后端加载。
+
+插件不能通过修改自己的 manifest 给自己批准上线，也不需要修改主项目注册表。
+
+当前仓库内容：
+
+| 类型 | 目录 | 是否发布 |
+| --- | --- | --- |
+| 正式游戏 | `plugin-cheat-poker/` | 是 |
+| 正式游戏 | `plugin-crazy-futures/` | 是 |
+| 正式游戏 | `plugin-pyramid-solitaire/` | 是 |
+| 单人示例 | `plugin-number-vault/` | 否 |
+| 双人示例 | `plugin-star-stones/` | 否 |
+| 最小模板 | `plugin-counter-demo/` | 否 |
+
+示例和模板保留完整代码与测试，但不会出现在生产大厅，也不会被生产后端导入。
+
+## 2. 标准目录
+
+目录名通常与插件 ID 一致，并以 `plugin-` 开头：
 
 ```text
-<本仓库根目录>/
+third_party_games/
 ├── README.md
-├── plugin.schema.json
-├── plugin-counter-demo/             # 默认关闭的最小模板
-├── plugin-number-vault/             # 已启用：单人案例
-├── plugin-star-stones/              # 已启用：多人房间案例
-└── plugin-your-game/                 # 你的游戏，目录名 = manifest.id
-    ├── manifest.json                 # 必需：插件信息和启用开关
-    ├── README.md                     # 必需：玩法、动作和维护说明
+├── registry.json                 # 生产发布注册表
+├── registry.schema.json
+├── plugin.schema.json            # manifest API v1 约束
+├── plugin-counter-demo/          # 可复制的最小模板
+└── plugin-your-game/
+    ├── manifest.json             # 必需：游戏声明
+    ├── README.md                 # 必需：玩法、动作、状态和维护说明
     ├── backend/
-    │   ├── plugin.py                 # 必需：固定后端入口
-    │   ├── engine.py                 # 可选：已有规则引擎
-    │   ├── state.py                  # 可选：状态模型
-    │   └── ...                       # 可继续拆分本游戏自己的 Python 文件
+    │   ├── plugin.py             # 必需：固定后端入口
+    │   ├── engine.py             # 推荐：规则引擎
+    │   ├── state.py              # 可选：状态模型
+    │   └── ...
     ├── frontend/
-    │   ├── GameView.vue              # 必需：固定前端入口
-    │   ├── components/               # 可选：本游戏自己的 Vue 组件
-    │   ├── composables/               # 可选：本游戏自己的前端逻辑
-    │   └── assets/                   # 可选：本游戏自己的图片、字体等资源
-    └── tests/                        # 建议：本游戏的规则和界面测试
+    │   ├── GameView.vue          # 必需：固定前端入口
+    │   ├── components/           # 可选：本游戏组件
+    │   ├── composables/          # 可选：本游戏逻辑
+    │   └── assets/               # 可选：图片、字体等资源
+    └── tests/                    # 推荐：规则与界面测试
 ```
 
-自动发现器只把 `manifest.json`、`backend/plugin.py` 和 `frontend/GameView.vue` 当作入口，但入口可以用相对路径导入同一插件目录内的其他文件。例如 `plugin.py` 可以写 `from .engine import ExistingEngine`，Vue 文件也可以写 `import Board from './components/Board.vue'`。
+`plugin.py` 和 `GameView.vue` 是固定入口，其他文件可以自由拆分，但只能使用插件目录内的相对导入或公开 SDK。
 
-## 二、最快接入一款新游戏
+## 3. 最快新增一款游戏
 
-直接克隆本仓库开发时，在本仓库根目录执行：
+在第三方仓库根目录执行：
 
 ```bash
 cp -R plugin-counter-demo plugin-your-game
 ```
 
-如果是从游戏大厅主仓库进入该子模块，也可以执行 `cp -R third_party_games/plugin-counter-demo third_party_games/plugin-your-game`。
+然后按顺序完成：
 
-然后依次完成：
+1. 将目录和 `manifest.id` 改成唯一的 `plugin-*` ID。
+2. 填写版本、作者、许可证、人数、能力和战绩类型。
+3. 在 `backend/` 实现服务端规则，在 `frontend/` 实现界面。
+4. 在本插件的 `README.md` 写清动作名称、payload、隐藏信息和结算方式。
+5. 为关键规则、权限边界和主要界面补测试。
+6. 在尚未加入根 `registry.json` 的状态下完成开发。
+7. 运行插件测试、全量测试和生产构建。
+8. 由维护者审核后把插件加入 `registry.json`，再次完整验证并发布。
 
-1. 把目录改为唯一的 `plugin-*` ID。
-2. 修改 `manifest.json`，确保 `id` 与目录名完全一致，开发期间保持 `enabled: false`。
-3. 在 `backend/` 实现规则、状态、胜负和给不同玩家看的数据。
-4. 在 `frontend/` 实现棋盘或操作界面。
-5. 为关键规则和主要操作补测试。
-6. 本地执行 `npm test && npm run build`。
-7. 最后把 `enabled` 改为 `true`，重新执行测试和构建。
-8. 重启服务。插件会自动出现在“第三方游戏”入口，无需再改大厅代码。
+一款普通新游戏的开发提交应主要修改自己的目录。只有平台能力确实不足时，才单独提交主项目 SDK 或插件 API 升级。
 
-接入框架已经存在后，一款普通新插件的提交原则上只能修改本仓库的 `plugin-your-game/`。如果 `git diff --name-only` 还出现该目录以外的文件，应先确认它确实是所有插件都需要的通用框架升级，并将其与单款游戏代码分开审查。
+## 4. manifest.json API v1
 
-可以先阅读默认示例：
-
-- `plugin-counter-demo/manifest.json`：完整清单。
-- `plugin-counter-demo/backend/plugin.py`：最小规则引擎。
-- `plugin-counter-demo/frontend/GameView.vue`：动作发送和状态展示。
-- `plugin-number-vault/`：单人案例，演示自动建房、隐藏答案和独立战绩。
-- `plugin-star-stones/`：双人案例，演示公开房间、邀请加入、轮流行动与公共结算。
-
-## 三、把已经写好的游戏逻辑迁进来
-
-不要重写已有规则本身，先加一层适配器。推荐按以下顺序迁移。
-
-### 1. 先把原文件完整移入插件目录
-
-- Python 规则、状态、牌库、棋盘算法：放进 `backend/`。
-- Vue 组件、TypeScript 工具、CSS、图片：放进 `frontend/`。
-- 原项目的测试数据和单元测试：放进 `tests/`。
-- 不要保留对原仓库绝对路径的引用；全部改为插件目录内的相对导入。
-
-已有后端逻辑可以保留在 `backend/engine.py`，只让固定入口负责创建引擎：
-
-```python
-# third_party_games/plugin-your-game/backend/plugin.py
-from .engine import ExistingGameEngine
-
-
-def create_engine():
-    return ExistingGameEngine()
-```
-
-已有前端主界面可以保留为单独组件，再由固定入口承接大厅快照：
-
-```vue
-<!-- third_party_games/plugin-your-game/frontend/GameView.vue -->
-<script setup lang="ts">
-import ExistingGame from './components/ExistingGame.vue'
-import type { ArcadeSnapshot } from '@game-hall/plugin-sdk'
-
-defineProps<{ snapshot: ArcadeSnapshot }>()
-</script>
-
-<template>
-  <ExistingGame :snapshot="snapshot" />
-</template>
-```
-
-### 2. 把原来的通信改成统一动作协议
-
-插件页面不能自己连接 Socket，也不要直接请求主项目内部接口。前端通过稳定 SDK 发动作：
-
-```ts
-import { usePluginGameActions } from '@game-hall/plugin-sdk'
-
-const actions = usePluginGameActions()
-
-// action 名称由当前插件自己定义，payload 必须可 JSON 序列化
-await actions.action('move', { from: 12, to: 20 })
-await actions.action('play_card', { cardId: 'heart-7' })
-
-// 高频但允许丢弃中间响应的交互，例如拖动或连续点击
-actions.rapidAction('aim', { x: 0.42, y: 0.68 })
-```
-
-后端在 `act()` 中接收完全相同的 `action` 和 `payload`，验证当前玩家是否允许执行，再修改服务端状态：
-
-```python
-def act(self, room, player, action, payload):
-    if action != "move":
-        raise GameRuleError("不支持这个操作")
-    if player.id != room.state.current_player_id:
-        raise GameRuleError("还没有轮到你")
-    apply_existing_move_logic(room.state, payload["from"], payload["to"])
-```
-
-也就是说，迁移时通常只需要替换原来的 HTTP/WebSocket 控制层，棋盘判定、出牌规则、计分算法可以继续使用。
-
-### 3. 把原状态映射到大厅房间生命周期
-
-已有逻辑需要适配下面六个方法：
-
-| 插件方法 | 接入已有逻辑时负责什么 |
-| --- | --- |
-| `initial_state()` | 返回未开局的初始状态；不要放账号令牌或不可序列化的外部连接 |
-| `start(room)` | 按房间玩家和规则初始化一局，并设置 `room.phase = "playing"` |
-| `act(room, player, action, payload)` | 校验玩家动作并调用已有规则逻辑；非法动作抛 `GameRuleError` |
-| `view(room, viewer)` | 返回给当前观看者的 `snapshot.game`，在这里过滤手牌、身份等隐藏信息 |
-| `player_result(room, player)` | 返回 `(角色, 阵营, 是否获胜)`，用于战绩和排行榜 |
-| `create_engine()` | 返回本游戏引擎实例，是后端唯一固定入口 |
-
-判定结束后调用公共房间能力，不要另建一套结算接口：
-
-```python
-room.finish(
-    "red",                       # 胜方/胜利类型
-    [winner_player.id],           # 获胜玩家 ID 列表
-    "红方率先完成目标",          # 对局结果说明
-)
-```
-
-`view()` 是防止信息泄露的关键边界。服务端真实状态可以保存所有手牌或身份，但返回给每位 `viewer` 的字典只能包含该玩家当前应该看到的信息。
-
-### 4. 处理原技术栈差异
-
-- 原前端是 Vue 3：可直接移入并用 `GameView.vue` 包装。
-- 原前端是原生 HTML/Canvas：把初始化和绘制逻辑放进 Vue 组件的 `onMounted()`，动作仍通过插件 SDK 发送。
-- 原前端是 React/Svelte：API v1 不会额外打包这些运行时，建议迁成 Vue 3；不要擅自修改根依赖。
-- 原后端是 Python：通常只需实现上面的引擎适配器。
-- 原后端是 Node、Java、Go 或独立服务：不能直接作为进程内插件加载；需要迁成 Python 引擎，或另行设计经过审核的“远程插件 API”。
-- 原游戏自带登录、房间、聊天、战绩：删除这些重复模块，使用大厅提供的公共能力。
-
-## 四、manifest.json
-
-完整字段约束见同目录的 `plugin.schema.json`。示例：
+完整约束见 `plugin.schema.json`。可直接复制下面的清单：
 
 ```json
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "enabled": false,
+  "version": "1.0.0",
+  "author": "Your Name",
+  "license": "UNLICENSED",
   "id": "plugin-your-game",
   "name": "游戏名称",
-  "description": "显示在第三方游戏入口中的一句话简介",
-  "category": "棋类竞技",
+  "description": "显示在游戏目录中的一句话简介",
+  "category": "策略游戏",
   "tone": "your-game",
+  "roomLayout": "standard",
   "players": {
     "min": 2,
     "max": 4,
     "label": "2–4 人"
   },
+  "capabilities": {
+    "guests": true,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
   "defaultOptions": {
     "listed": true,
     "allowGuests": true,
+    "allowSpectators": true,
     "firstPlayer": "random"
   },
-  "ruleLabels": ["公开房间", "允许游客"]
+  "ruleLabels": ["一局约 15 分钟", "公开房间"]
 }
 ```
 
-- `apiVersion`：当前必须为 `1`。
-- `enabled`：只有严格等于 `true` 才会注册；开发和迁移阶段应保持 `false`。
-- `id`：以 `plugin-` 开头，最长 32 位，只能包含小写字母、数字和连字符。
-- `name`：1–24 个字符，并且必须与后端引擎的 `name` 一致。
-- `players.min/max`：1–20 人，并且必须与后端引擎人数一致。
-- `players.label`：可选，控制入口展示的人数文案。
-- `defaultOptions`：创建房间时合并进公共默认规则。
-- `ruleLabels`：房间规则摘要，最多 6 条。
-- `tone`：当前插件的稳定视觉标识，不允许用它覆盖主项目全局样式。
-- `roomLayout`：可选的房间宽度请求，支持 `standard`、`wide` 和 `immersive`；由大厅外壳统一应用，插件不得自行修改宿主 DOM 或全局宽度。
+基础字段：
 
-目录名、`manifest.id`、后端 `engine.key` 三者必须完全一致；`manifest.name` 与 `engine.name` 也必须一致。
+- `apiVersion`：宿主插件接口版本，当前必须为 `1`；它不是游戏版本。
+- `version`：当前插件自己的语义化版本，例如 `1.3.0`。
+- `author`、`license`：代码责任人和许可证；私有代码可以使用 `UNLICENSED`。
+- `id`：以 `plugin-` 开头，最长 32 位，只能包含小写字母、数字和连字符。发布后不要修改，否则历史房间和战绩会失联。
+- `name`：必须与后端引擎的 `name` 一致。
+- `players.min/max`：必须与后端引擎人数一致，范围为 1–20。
+- `tone`：稳定的视觉标识，不能用它覆盖主项目全局样式。
+- `roomLayout`：可选，支持 `standard`、`wide`、`immersive`。
+- `defaultOptions`：创建房间时使用的初始规则，必须可 JSON 序列化。
+- `ruleLabels`：房间顶部展示的规则摘要，最多 6 条。
 
-## 五、前后端契约
+平台能力：
 
-### 后端入口
+| 字段 | 作用 |
+| --- | --- |
+| `guests` | 多人房是否允许配置游客准入 |
+| `spectators` | 是否支持固定玩家视角的只读观战 |
+| `spectatorFrames` | 是否允许玩家客户端补充发布视觉帧；依赖 `spectators` |
+| `firstPlayer` | 是否显示随机先手/房主先手设置 |
+| `undoActions` | 可被公共撤销系统记录的 action 名称 |
+| `drawRequests` | 是否启用公共和棋申请 |
+| `replay` | 是否声明回放能力 |
+| `ai` | 是否实现宿主要求的 AI 动作方法 |
 
-`backend/plugin.py` 必须导出无参数函数：
+`records.scoreKind` 决定公共战绩和排行榜如何解释 `player_score()`：
+
+- `outcome`：按胜、负、和统计；普通多人游戏使用它。
+- `time_trial`：数值越小越好，单位由当前平台约定为毫秒；例如金字塔纸牌。
+- `high_score`：数值越大越好；例如积分挑战。
+
+声明 `time_trial` 或 `high_score` 时，引擎必须实现：
 
 ```python
-def create_engine():
-    return YourEngine()
+def player_score(self, room, player) -> int | None:
+    return room.state.elapsed_ms
 ```
 
-引擎需实现 `backend.app.games.base.GameEngine` 约定，并提供：
+## 5. 后端入口与公开 SDK
 
-- `key`、`name`、`min_players`、`max_players`
-- `initial_state()`
-- `start(room)`
-- `act(room, player, action, payload)`
-- `view(room, viewer)`
-- `player_result(room, player)`
+插件只能从稳定模块 `backend.app.games.plugin_api` 导入宿主类型：
 
-插件加载异常时会禁用当前插件，不影响其他游戏和大厅启动。
+```python
+from backend.app.games.plugin_api import (
+    ArcadePlayer,
+    ArcadeRoom,
+    GameRuleError,
+)
+```
 
-### 前端入口
+不要直接依赖 `backend.app.arcade.*`、账号存储、实时服务或主项目某款游戏的内部模块。
 
-`frontend/GameView.vue` 必须接收一个 `snapshot` 属性：
+`backend/plugin.py` 只负责导出无参数工厂：
 
-```ts
+```python
+from .engine import YourGameEngine
+
+
+def create_engine() -> YourGameEngine:
+    return YourGameEngine()
+```
+
+引擎必须提供：
+
+| 方法/字段 | 责任 |
+| --- | --- |
+| `key/name/min_players/max_players` | 与 manifest 保持一致 |
+| `initial_state()` | 返回一局尚未开始的初始状态 |
+| `start(room)` | 根据玩家和规则开局，并设置房间阶段 |
+| `act(room, player, action, payload)` | 校验并执行玩家动作 |
+| `view(room, viewer)` | 只返回当前观看者有权看到的数据 |
+| `player_result(room, player)` | 返回 `(角色, 阵营, 是否获胜)` |
+| `player_score(...)` | 计时/高分游戏提供公共成绩，可选 |
+| `record_state(room)` | 自定义写入战绩的可序列化状态，可选 |
+| `request_voter_ids(...)` | 自定义公共申请的投票人，可选 |
+
+非法动作必须抛 `GameRuleError`。胜负、分数、牌 ID 和坐标都必须在服务端验证，不能信任客户端传入结果。
+
+结束一局时使用公共房间结算：
+
+```python
+room.finish(
+    "red",
+    [winner.id],
+    "红方率先完成目标",
+)
+```
+
+`view()` 是隐藏信息的安全边界。真实状态可以保存全部手牌和身份，但返回给玩家或观众的字典只能包含该视角当时应该看到的内容。
+
+## 6. 前端入口与公开 SDK
+
+`frontend/GameView.vue` 必须接收 `snapshot`：
+
+```vue
+<script setup lang="ts">
 import {
   usePluginGameActions,
   type ArcadeSnapshot,
 } from '@game-hall/plugin-sdk'
 
-const props = defineProps<{ snapshot: ArcadeSnapshot }>()
+defineProps<{ snapshot: ArcadeSnapshot }>()
 const actions = usePluginGameActions()
+
+async function move(from: number, to: number) {
+  await actions.action('move', { from, to })
+}
+</script>
 ```
 
-常用数据：
+公开动作能力：
 
-- `snapshot.self`：当前玩家。
-- `snapshot.players`：房间成员。
-- `snapshot.phase`：当前阶段。
-- `snapshot.actions.canAct`：公共外壳判定当前玩家是否可操作。
-- `snapshot.game`：后端 `view()` 返回的当前玩家可见状态。
+```ts
+await actions.action('play_card', { cardId: 'heart-7' })
+actions.rapidAction('aim', { x: 0.42, y: 0.68 })
+await actions.restart()
+actions.publishSpectatorFrame(sequence, { board, effects })
+```
 
-样式必须使用 `<style scoped>`；根元素应有 `min-width: 0; max-width: 100%`。至少检查 320、375、390、768、1024、1440 像素宽度，不能产生页面级横向滚动，触控按钮最小点击区域建议为 44×44 像素。
+- `action`：普通可靠动作，并等待服务端确认。
+- `rapidAction`：高频交互，可丢弃中间响应。
+- `restart`：使用公共再来一局流程。
+- `publishSpectatorFrame`：只有 manifest 声明 `spectatorFrames: true` 才会被服务端接收；帧只用于补充观战视觉，不能作为权威游戏状态。
 
-## 六、禁止事项和隔离边界
+常用快照数据：
 
-- 不要为单个插件修改 `frontend/src`、`backend/app`、大厅路由或根依赖文件。
-- 不要把第三方游戏文件放到 `frontend/src/games` 或 `backend/app/games`。
-- 不要使用全局 CSS、修改宿主 DOM、覆盖 `document.body`、改变根主题变量或写死页面宽高；需要更宽房间时使用清单的 `roomLayout`。
-- 不要读取账号令牌、访问令牌、Cookie、localStorage 或 sessionStorage。
-- 不要直接连接 Socket；只使用 `@game-hall/plugin-sdk`。
-- 不要把客户端传来的坐标、牌 ID、分数或胜负结果当成可信数据，必须由后端验证。
-- 第三方依赖必须先经项目维护者审核，不能自行修改根 `package.json` 或 `pyproject.toml`。
-- 不要在 `enabled: true` 前跳过完整测试和手机端检查。
+- `snapshot.self`：当前玩家；观战时是固定的目标玩家视角。
+- `snapshot.players`：房间玩家。
+- `snapshot.phase`：当前生命周期阶段。
+- `snapshot.actions.canAct`：公共平台判定当前视角是否能行动。
+- `snapshot.game`：后端 `view()` 返回的视角数据。
+- `snapshot.viewer?.mode === 'spectator'`：当前是否为只读观众。
 
-这些规则能保证经过审核的插件在源码和维护层面不污染其他目录，但 API v1 仍是同进程源码插件，并不是对恶意代码的安全沙箱。插件后端与主服务运行在同一个 Python 进程，插件前端也会进入主站构建；如果接入不可信代码，必须升级为独立容器/进程、独立域名的 sandbox iframe 和受限消息协议。
+插件不能自行连接 Socket、读取令牌/Cookie/localStorage，或修改宿主 DOM。样式使用 `<style scoped>`，根元素应设置 `min-width: 0; max-width: 100%`，并检查 320、375、390、768、1024、1440 像素宽度。
 
-删除插件目录并重启即可卸载。卸载前要先结束该插件仍未完成的房间，否则这些房间会因为引擎缺失而无法恢复。
+## 7. 发布注册表
 
-## 七、测试、启用和发布
+开发完成并通过审核后，由维护者在根 `registry.json` 添加：
 
-在项目根目录执行：
+```json
+{
+  "id": "plugin-your-game",
+  "path": "plugin-your-game",
+  "status": "enabled",
+  "order": 130
+}
+```
+
+根注册表与插件 manifest 当前都使用 `apiVersion: 1`，但它们是两套独立版本号：前者表示“发布清单格式第 1 版”，改变发布清单结构时才升级；后者表示“宿主能力契约第 1 版”，改变宿主提供给游戏的接口时才升级。
+
+- `id` 必须与 manifest 一致。
+- `path` 是相对第三方仓库根目录的安全路径。
+- `order` 在第三方游戏中唯一，控制第三方入口排序。
+- `enabled`：正常发布并显示在目录中。
+- `deprecated`：继续加载引擎和界面以兼容已有房间，但不出现在新游戏目录中。
+- `disabled`：完全不进入构建和后端加载。
+
+不要同时使用 manifest 开关和根注册表；API v1 只有 `registry.json` 是发布状态的唯一事实来源。
+
+下线插件时先改成 `deprecated`，等待未完成房间结束并确认不再需要恢复，再改成 `disabled` 或删除注册项。不要直接删除仍可能被恢复的游戏代码。
+
+## 8. 测试与发布
+
+以下命令在游戏大厅主仓库根目录执行：
 
 ```bash
-# 可选：只运行当前插件自己的后端测试
+# 当前正式插件的发布校验
+.venv/bin/python -m backend.app.games.validate_plugins
+
+# 当前插件后端测试
 .venv/bin/python -m pytest third_party_games/plugin-your-game/tests
 
-# 可选：只运行当前插件自己的前端测试
+# 当前插件前端测试
 npm --prefix frontend run test:run -- ../third_party_games/plugin-your-game/frontend
 
-# 后端插件发现与公共房间测试
-.venv/bin/python -m pytest backend/tests/test_game_plugins.py
-
-# 同步启用的前端插件清单
-npm --prefix frontend run plugins:sync
-
-# 整套测试与生产构建
+# 全部后端、示例、插件和前端测试
 npm test
+
+# 类型检查、插件前端生成与生产构建
 npm run build
 ```
 
-`npm test` 会自动发现所有 `plugin-*/tests/test_*.py`，也会运行插件目录里的 `*.test.ts` / `*.spec.ts`，因此每款游戏的测试文件仍然只需放在自己的插件目录中。
+发布前至少验证：
 
-以下命令需要在已经初始化本子模块的游戏大厅主仓库根目录执行。测试和构建全部通过后：
+- manifest 和 registry 校验通过。
+- 建房、加入、游客限制、开局、主要动作、重连、结束、再来一局正常。
+- 观众可见、视角固定、完全只读，隐藏信息符合产品规则。
+- 战绩 `scoreKind` 与 `player_score()` 一致。
+- 桌面端和手机端没有页面级横向滚动。
+- 插件目录外没有意外业务改动。
 
-1. 将当前插件 `manifest.json` 的 `enabled` 改为 `true`。
-2. 再运行一次 `npm test && npm run build`。
-3. 在桌面端和手机端进入“第三方游戏”，检查入口、建房、加入、操作、重连、结束和战绩。
-4. 在本仓库提交并推送插件目录。
-5. 由游戏大厅主仓库更新 `third_party_games` 子模块指针并完成主项目测试。
-6. 服务器拉取主仓库代码并执行 `python3 scripts/restart.py --pull`；脚本会同步到主仓库固定的子模块提交。
+提交与部署顺序：
 
-## 八、常见问题
+1. 在本第三方仓库提交并推送插件与 `registry.json`。
+2. 服务器在主仓库运行 `python3 scripts/restart.py`，更新第三方仓库 `origin/main` 最新提交。
+3. 脚本先构建镜像，再严格校验全部已发布插件，成功后才替换当前服务。
+4. 生产验证后，主仓库可以更新 Submodule 指针作为新的开发、CI、复现和回滚基线。
 
-### 插件没有出现在入口中
+使用 `python3 scripts/restart.py --no-pull` 只会重建服务器当前已经检出的代码。构建或插件校验失败不会替换正在运行的应用容器。
 
-依次检查：`enabled` 是否为 `true`、目录名是否等于 `id`、ID 是否以 `plugin-` 开头、三个必需入口是否存在、测试/构建日志是否提示清单无效。
+## 9. 常见问题
 
-### 后端插件被自动禁用
+### 插件没有出现在入口
 
-检查服务端日志中的 `game_plugin.disabled`。常见原因是 Python 导入失败、`create_engine()` 缺失、引擎名称/人数与 manifest 不一致，或引擎缺少必需方法。
+检查插件是否已加入根 `registry.json`、状态是否为 `enabled`、三个必需入口是否存在，以及 `npm run build` 是否报告清单错误。只存在 manifest 不会发布。
 
-### 已有游戏文件很多，是否必须合并成一个文件
+### 后端校验失败
 
-不需要。后端文件全部放在当前插件的 `backend/` 并通过相对导入组织；前端组件、资源和工具全部放在当前插件的 `frontend/` 并通过相对导入组织。只有 `plugin.py` 和 `GameView.vue` 的入口位置固定。
+常见原因是 `create_engine()` 缺失、引擎 key/name/人数与 manifest 不一致、能力字段不完整、Python 导入失败，或已发布插件缺少 README/前端入口。
 
-### 能否复用大厅内部某个未公开组件
+### 已有游戏文件很多，必须合成一个文件吗
 
-不能直接导入。插件运行代码只能使用 Vue、`@lucide/vue` 图标、稳定 SDK 和 CSS 主题变量；插件测试还可以使用 Pinia 与 `@vue/test-utils`。如果多款插件确实都需要另一项能力，应先把它设计成经过测试的通用 SDK，再由主项目统一开放，而不是让插件依赖内部路径。
+不需要。规则、状态、牌库、组件和资源都可以继续拆分；只有 `backend/plugin.py` 与 `frontend/GameView.vue` 的位置固定。
 
-关闭的插件不会进入前端构建产物，也不会被后端导入。清单无效、入口缺失或后端加载失败的插件会被跳过，不会阻止大厅启动；但已启用插件自身的 TypeScript、Vue 或 Python 语法错误仍会在测试或构建阶段暴露，必须修复后才能发布。
+### 能直接复用主项目内部组件吗
+
+不能。前端只使用 Vue、允许的公共依赖和 `@game-hall/plugin-sdk`；后端只使用 Python 标准库、已审核依赖和 `backend.app.games.plugin_api`。多款插件都需要的新能力，应先升级公共 SDK，而不是导入内部路径。
+
+### 能保证任意主项目版本兼容任意插件版本吗
+
+不能。兼容边界由 `apiVersion` 定义。宿主只加载自己支持的 API 版本，部署校验会阻止不兼容插件替换当前服务；Submodule 指针用于记录可复现的兼容基线。

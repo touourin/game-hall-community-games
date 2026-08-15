@@ -1,0 +1,24 @@
+{
+  "$schema": "./registry.schema.json",
+  "apiVersion": 1,
+  "plugins": [
+    {
+      "id": "plugin-cheat-poker",
+      "path": "plugin-cheat-poker",
+      "status": "enabled",
+      "order": 100
+    },
+    {
+      "id": "plugin-crazy-futures",
+      "path": "plugin-crazy-futures",
+      "status": "enabled",
+      "order": 110
+    },
+    {
+      "id": "plugin-pyramid-solitaire",
+      "path": "plugin-pyramid-solitaire",
+      "status": "enabled",
+      "order": 120
+    }
+  ]
+}

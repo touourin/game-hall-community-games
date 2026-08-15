@@ -1,15 +1,20 @@
 from __future__ import annotations
 
-from backend.app.arcade.models import ArcadePlayer, ArcadeRoom
-from backend.app.games.plugins import discover_game_plugins, third_party_games_root
+import importlib.util
+import sys
+from pathlib import Path
+
+from backend.app.games.plugin_api import ArcadePlayer, ArcadeRoom
 
 
 def engine():
-    return next(
-        plugin.engine
-        for plugin in discover_game_plugins(third_party_games_root())
-        if plugin.engine.key == "plugin-star-stones"
-    )
+    entry = Path(__file__).resolve().parents[1] / "backend" / "plugin.py"
+    spec = importlib.util.spec_from_file_location("star_stones_example", entry)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module.create_engine()
 
 
 def test_players_take_turns_and_last_stone_wins() -> None:

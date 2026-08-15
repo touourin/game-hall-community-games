@@ -5,8 +5,7 @@ from fractions import Fraction
 from statistics import median
 from typing import Any, Iterable
 
-from backend.app.arcade.models import ArcadePlayer, ArcadeRoom
-from backend.app.games.base import GameRuleError
+from backend.app.games.plugin_api import ArcadePlayer, ArcadeRoom, GameRuleError
 
 from .catalog import (
     CARD_BY_ID,

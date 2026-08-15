@@ -1,7 +1,9 @@
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "enabled": true,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
   "id": "plugin-star-stones",
   "name": "星石争夺",
   "description": "双人轮流取走星石，拿到最后一颗即获胜",
@@ -11,6 +13,19 @@
     "min": 2,
     "max": 2,
     "label": "2 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
   },
   "defaultOptions": {
     "listed": true,

@@ -6,18 +6,27 @@
   "additionalProperties": false,
   "required": [
     "apiVersion",
-    "enabled",
+    "version",
+    "author",
+    "license",
     "id",
     "name",
     "description",
     "category",
     "tone",
-    "players"
+    "players",
+    "capabilities",
+    "records"
   ],
   "properties": {
     "$schema": { "type": "string" },
     "apiVersion": { "const": 1 },
-    "enabled": { "type": "boolean" },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?$"
+    },
+    "author": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "license": { "type": "string", "minLength": 1, "maxLength": 32 },
     "id": {
       "type": "string",
       "maxLength": 32,
@@ -44,6 +53,51 @@
         "min": { "type": "integer", "minimum": 1, "maximum": 20 },
         "max": { "type": "integer", "minimum": 1, "maximum": 20 },
         "label": { "type": "string", "minLength": 1, "maxLength": 16 }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "guests",
+        "spectators",
+        "spectatorFrames",
+        "firstPlayer",
+        "undoActions",
+        "drawRequests",
+        "replay",
+        "ai"
+      ],
+      "properties": {
+        "guests": { "type": "boolean" },
+        "spectators": { "type": "boolean" },
+        "spectatorFrames": { "type": "boolean" },
+        "firstPlayer": { "type": "boolean" },
+        "undoActions": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 12,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "pattern": "^[a-z][a-z0-9_]*$"
+          }
+        },
+        "drawRequests": { "type": "boolean" },
+        "replay": { "type": "boolean" },
+        "ai": { "type": "boolean" }
+      }
+    },
+    "records": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scoreKind"],
+      "properties": {
+        "scoreKind": {
+          "type": "string",
+          "enum": ["outcome", "time_trial", "high_score"]
+        }
       }
     },
     "defaultOptions": { "type": "object" },

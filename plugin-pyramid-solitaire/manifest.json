@@ -1,7 +1,9 @@
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "enabled": true,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
   "id": "plugin-pyramid-solitaire",
   "name": "金字塔纸牌",
   "description": "配对凑成 13，清空七层 28 张牌的单人计时纸牌挑战",
@@ -13,9 +15,21 @@
     "max": 1,
     "label": "1 人"
   },
+  "capabilities": {
+    "guests": false,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": false,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "time_trial"
+  },
   "defaultOptions": {
-    "listed": false,
-    "allowGuests": true
+    "listed": false
   },
   "ruleLabels": ["七层 28 张", "两牌合计 13", "K 单独消除", "牌库只翻一轮", "保证存在解法", "服务端计时"]
 }

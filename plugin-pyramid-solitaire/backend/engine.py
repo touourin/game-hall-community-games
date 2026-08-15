@@ -6,8 +6,12 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Callable
 
-from backend.app.arcade.models import ArcadePlayer, ArcadeRoom, utc_now_iso
-from backend.app.games.base import GameRuleError
+from backend.app.games.plugin_api import (
+    ArcadePlayer,
+    ArcadeRoom,
+    GameRuleError,
+    utc_now_iso,
+)
 
 
 PYRAMID_ROWS = 7

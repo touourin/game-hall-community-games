@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/game-plugin-registry-v1.json",
+  "title": "Game Hall third-party game registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "plugins"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "apiVersion": { "const": 1 },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "path", "status", "order"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 32,
+            "pattern": "^plugin-[a-z0-9][a-z0-9-]{0,24}$"
+          },
+          "path": {
+            "type": "string",
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9/_-]*$"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["enabled", "deprecated", "disabled"]
+          },
+          "order": { "type": "integer", "minimum": 1, "maximum": 9999 }
+        }
+      }
+    }
+  }
+}

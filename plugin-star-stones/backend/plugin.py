@@ -4,8 +4,7 @@ import random
 from dataclasses import dataclass, field
 from typing import Any
 
-from backend.app.arcade.models import ArcadePlayer, ArcadeRoom
-from backend.app.games.base import GameRuleError
+from backend.app.games.plugin_api import ArcadePlayer, ArcadeRoom, GameRuleError
 
 
 STARTING_STONES = 15

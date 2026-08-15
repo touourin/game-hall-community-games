@@ -1,7 +1,9 @@
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "enabled": false,
+  "version": "1.0.0",
+  "author": "Your Name",
+  "license": "UNLICENSED",
   "id": "plugin-counter-demo",
   "name": "计数竞速",
   "description": "第三方插件示例：率先累计到 10 分",
@@ -11,6 +13,19 @@
     "min": 2,
     "max": 2,
     "label": "2 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
   },
   "defaultOptions": {
     "listed": true,

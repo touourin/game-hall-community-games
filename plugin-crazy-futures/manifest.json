@@ -1,7 +1,9 @@
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "enabled": true,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
   "id": "plugin-crazy-futures",
   "name": "疯狂期货",
   "description": "交易四类商品、解读信息牌并管理杠杆风险的 4–8 人金融桌游",
@@ -11,6 +13,19 @@
     "min": 4,
     "max": 8,
     "label": "4–8 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
   },
   "defaultOptions": {
     "listed": true,

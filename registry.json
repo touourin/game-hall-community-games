@@ -19,6 +19,18 @@
       "path": "plugin-pyramid-solitaire",
       "status": "enabled",
       "order": 120
+    },
+    {
+      "id": "plugin-number-vault",
+      "path": "plugin-number-vault",
+      "status": "enabled",
+      "order": 130
+    },
+    {
+      "id": "plugin-star-stones",
+      "path": "plugin-star-stones",
+      "status": "enabled",
+      "order": 140
     }
   ]
 }

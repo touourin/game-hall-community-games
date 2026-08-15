@@ -22,11 +22,11 @@
 | 正式游戏 | `plugin-cheat-poker/` | 是 |
 | 正式游戏 | `plugin-crazy-futures/` | 是 |
 | 正式游戏 | `plugin-pyramid-solitaire/` | 是 |
-| 单人示例 | `plugin-number-vault/` | 否 |
-| 双人示例 | `plugin-star-stones/` | 否 |
+| 示例游戏 | `plugin-number-vault/` | 是 |
+| 示例游戏 | `plugin-star-stones/` | 是 |
 | 最小模板 | `plugin-counter-demo/` | 否 |
 
-示例和模板保留完整代码与测试，但不会出现在生产大厅，也不会被生产后端导入。
+两个示例游戏会按正式插件进入生产大厅，也可以用来参考单人和双人游戏的完整实现；最小模板只用于复制开发，不会被生产构建或后端导入。
 
 ## 2. 标准目录
 

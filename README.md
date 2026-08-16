@@ -250,20 +250,24 @@ actions.publishSpectatorFrame(sequence, { board, effects })
 
 公开界面组件：
 
-| 导出 | 用途 |
-| --- | --- |
-| `PluginButton` | 主题自适应的主要、次要或危险操作按钮 |
-| `PluginIconButton` | 强制提供无障碍标签的圆形图标按钮 |
-| `PluginPlayingCard` | 支持明牌、背面、选中、王牌和多种尺寸的标准扑克牌 |
-| `PluginResultCard` | 单人游戏通用结算、指标和再来一局入口 |
-| `PluginRevealCard` | 按住显示、松开隐藏的私密信息卡 |
+| 分类 | 导出 | 用途 |
+| --- | --- | --- |
+| 操作 | `PluginButton`、`PluginIconButton` | 主题自适应的普通按钮和带无障碍标签的图标按钮 |
+| 游戏展示 | `PluginPlayingCard`、`PluginRevealCard` | 标准扑克牌与按住显示的私密信息卡 |
+| 数据与结算 | `PluginMetricGrid`、`PluginResultCard` | 指标网格与单人游戏通用结算 |
+| 规则 | `PluginRuleGuide` | 快速开始、流程、完整规则和背景说明 |
+| 弹窗 | `PluginModal`、`PluginConfirmDialog` | 通用弹窗与确认/危险确认流程 |
+| 表单 | `PluginTextField`、`PluginNumberField`、`PluginSelect` | 带标签、说明、错误和无障碍关联的输入控件 |
+| 状态 | `PluginStatePanel`、`PluginLoadingState`、`PluginEmptyState`、`PluginErrorState` | 自定义或预设的加载、空内容和失败反馈 |
 
 这些组件是插件 API v1 的稳定公共包装，不暴露主项目内部文件路径。按钮支持原生 `disabled`、`type`、`aria-*` 和点击事件；组件的 Props 类型也从同一个 SDK 导出。
 
 ```vue
 <script setup lang="ts">
+import { ref } from 'vue'
 import {
   PluginButton,
+  PluginNumberField,
   PluginResultCard,
   usePluginGameActions,
   type ArcadeSnapshot,
@@ -271,9 +275,17 @@ import {
 
 defineProps<{ snapshot: ArcadeSnapshot }>()
 const actions = usePluginGameActions()
+const guess = ref<number | null>(null)
 </script>
 
 <template>
+  <PluginNumberField
+    v-model="guess"
+    label="你的猜测"
+    description="只能填写 1 到 20"
+    :min="1"
+    :max="20"
+  />
   <PluginButton block variant="primary" :disabled="!snapshot.actions.canAct">
     确认行动
   </PluginButton>
@@ -286,6 +298,43 @@ const actions = usePluginGameActions()
   />
 </template>
 ```
+
+公共宿主能力：
+
+| 导出 | 用途 |
+| --- | --- |
+| `formatPluginDuration` | 统一显示计时器或可读时长，默认保留一位小数且不会把进行中的时间向前舍入 |
+| `formatPluginScore` | 统一数字精度、千分位和分数单位 |
+| `usePluginFullscreen` | 让插件自己的根元素进入/退出全屏，并自动同步浏览器状态和清理监听器 |
+| `usePluginTheme` | 只读获取当前主题和该主题的材质值 |
+| `pluginThemeMaterials` | 按主题名读取不可变的场景、舞台、金属、文字和语义色材质 |
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import {
+  formatPluginDuration,
+  usePluginFullscreen,
+  usePluginTheme,
+} from '@game-hall/plugin-sdk'
+
+const gameRoot = ref<HTMLElement | null>(null)
+const { isFullscreen, isSupported, toggle } = usePluginFullscreen(gameRoot)
+const { theme, materials } = usePluginTheme()
+</script>
+
+<template>
+  <section ref="gameRoot">
+    <span>{{ formatPluginDuration(65_200) }}</span>
+    <button v-if="isSupported" @click="toggle">
+      {{ isFullscreen ? '退出全屏' : '进入全屏' }}
+    </button>
+    <small>{{ theme }} · {{ materials.stage.edge }}</small>
+  </section>
+</template>
+```
+
+`usePluginTheme()` 不允许插件修改用户主题，`usePluginFullscreen()` 也只操作传入的插件元素。需要大厅导航、账号、聊天、房间管理或其他宿主业务时，不要导入内部模块，应先判断是否能抽象成更小的公共能力。
 
 常用快照数据：
 
@@ -379,7 +428,7 @@ npm run build
 
 ### 能直接复用主项目内部组件吗
 
-不能直接导入主项目内部路径，但可以复用 `@game-hall/plugin-sdk` 正式开放的组件、类型和组合式函数。公共包装层保证插件不依赖宿主目录结构；多款插件都需要的新能力，应先升级公共 SDK。后端同理，只使用 Python 标准库、已审核依赖和 `backend.app.games.plugin_api`，不能导入宿主内部模块。
+不能直接导入主项目内部路径，但可以复用 `@game-hall/plugin-sdk` 正式开放的组件、类型和组合式函数。现在已经开放按钮、卡牌、指标、结算、规则、弹窗、表单、状态、全屏、主题和格式化能力。公共包装层保证插件不依赖宿主目录结构；多款插件都需要的新能力，应先升级公共 SDK。后端同理，只使用 Python 标准库、已审核依赖和 `backend.app.games.plugin_api`，不能导入宿主内部模块。
 
 ### 能保证任意主项目版本兼容任意插件版本吗
 

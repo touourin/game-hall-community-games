@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { KeyRound, RotateCcw, ShieldCheck } from '@lucide/vue'
 import {
+  PluginButton,
   usePluginGameActions,
   type ArcadeSnapshot,
 } from '@game-hall/plugin-sdk'
@@ -78,15 +79,17 @@ function submitGuess() {
           aria-label="猜测数字"
         />
       </label>
-      <button type="submit" class="primary-button" :disabled="!canGuess">尝试破解</button>
+      <PluginButton type="submit" variant="primary" :disabled="!canGuess">
+        尝试破解
+      </PluginButton>
     </form>
 
     <div v-else class="vault-result">
       <strong>{{ game.won ? '破解成功' : '挑战结束' }}</strong>
       <span>{{ game.won ? `你用了 ${game.guesses?.length ?? 0} 次猜中答案` : '换个思路，再试一次。' }}</span>
-      <button type="button" class="primary-button" @click="actions.restart()">
+      <PluginButton variant="primary" @click="actions.restart()">
         <RotateCcw :size="17" /> 再开一个密匣
-      </button>
+      </PluginButton>
     </div>
 
     <footer><ShieldCheck :size="14" />答案只保存在服务端，结束前不会发送到浏览器。</footer>

@@ -248,6 +248,45 @@ actions.publishSpectatorFrame(sequence, { board, effects })
 - `restart`：使用公共再来一局流程。
 - `publishSpectatorFrame`：只有 manifest 声明 `spectatorFrames: true` 才会被服务端接收；帧只用于补充观战视觉，不能作为权威游戏状态。
 
+公开界面组件：
+
+| 导出 | 用途 |
+| --- | --- |
+| `PluginButton` | 主题自适应的主要、次要或危险操作按钮 |
+| `PluginIconButton` | 强制提供无障碍标签的圆形图标按钮 |
+| `PluginPlayingCard` | 支持明牌、背面、选中、王牌和多种尺寸的标准扑克牌 |
+| `PluginResultCard` | 单人游戏通用结算、指标和再来一局入口 |
+| `PluginRevealCard` | 按住显示、松开隐藏的私密信息卡 |
+
+这些组件是插件 API v1 的稳定公共包装，不暴露主项目内部文件路径。按钮支持原生 `disabled`、`type`、`aria-*` 和点击事件；组件的 Props 类型也从同一个 SDK 导出。
+
+```vue
+<script setup lang="ts">
+import {
+  PluginButton,
+  PluginResultCard,
+  usePluginGameActions,
+  type ArcadeSnapshot,
+} from '@game-hall/plugin-sdk'
+
+defineProps<{ snapshot: ArcadeSnapshot }>()
+const actions = usePluginGameActions()
+</script>
+
+<template>
+  <PluginButton block variant="primary" :disabled="!snapshot.actions.canAct">
+    确认行动
+  </PluginButton>
+  <PluginResultCard
+    v-if="snapshot.phase === 'finished'"
+    eyebrow="挑战完成"
+    title="本局已结算"
+    :can-restart="snapshot.actions.canRestart"
+    @restart="actions.restart()"
+  />
+</template>
+```
+
 常用快照数据：
 
 - `snapshot.self`：当前玩家；观战时是固定的目标玩家视角。
@@ -257,7 +296,7 @@ actions.publishSpectatorFrame(sequence, { board, effects })
 - `snapshot.game`：后端 `view()` 返回的视角数据。
 - `snapshot.viewer?.mode === 'spectator'`：当前是否为只读观众。
 
-插件不能自行连接 Socket、读取令牌/Cookie/localStorage，或修改宿主 DOM。样式使用 `<style scoped>`，根元素应设置 `min-width: 0; max-width: 100%`，并检查 320、375、390、768、1024、1440 像素宽度。
+插件不能自行连接 Socket、读取令牌/Cookie/localStorage，或修改宿主 DOM。样式使用 `<style scoped>`，根元素应设置 `min-width: 0; max-width: 100%`，并检查 320、375、390、768、1024、1440 像素宽度。`dev`、`test` 和 `build` 会扫描插件前端导入：生产代码只能使用相对插件内部路径、Vue、`@lucide/vue` 和 `@game-hall/plugin-sdk`；测试可额外使用 Vitest、Vue Test Utils 和 Pinia。越过插件目录导入主项目内部文件会直接失败。
 
 ## 7. 发布注册表
 
@@ -340,7 +379,7 @@ npm run build
 
 ### 能直接复用主项目内部组件吗
 
-不能。前端只使用 Vue、允许的公共依赖和 `@game-hall/plugin-sdk`；后端只使用 Python 标准库、已审核依赖和 `backend.app.games.plugin_api`。多款插件都需要的新能力，应先升级公共 SDK，而不是导入内部路径。
+不能直接导入主项目内部路径，但可以复用 `@game-hall/plugin-sdk` 正式开放的组件、类型和组合式函数。公共包装层保证插件不依赖宿主目录结构；多款插件都需要的新能力，应先升级公共 SDK。后端同理，只使用 Python 标准库、已审核依赖和 `backend.app.games.plugin_api`，不能导入宿主内部模块。
 
 ### 能保证任意主项目版本兼容任意插件版本吗
 

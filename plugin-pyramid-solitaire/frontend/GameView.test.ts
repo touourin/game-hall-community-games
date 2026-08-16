@@ -1,8 +1,17 @@
-import { createPinia } from 'pinia'
 import { flushPromises, mount } from '@vue/test-utils'
-import { useArcadeStore } from '../../../frontend/src/stores/arcade'
 import type { ArcadeSnapshot } from '@game-hall/plugin-sdk'
 import GameView from './GameView.vue'
+
+const pluginActions = vi.hoisted(() => ({
+  action: vi.fn(async () => true),
+  rapidAction: vi.fn(async () => true),
+  restart: vi.fn(async () => true),
+  publishSpectatorFrame: vi.fn(() => true),
+}))
+
+vi.mock('@game-hall/plugin-sdk', () => ({
+  usePluginGameActions: () => pluginActions,
+}))
 
 interface TestCard {
   id: string
@@ -66,10 +75,13 @@ function snapshot(phase: 'playing' | 'finished' = 'playing', won = false): Arcad
 }
 
 describe('pyramid solitaire plugin view', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('renders seven rows and distinguishes covered from exposed cards', () => {
     const wrapper = mount(GameView, {
       props: { snapshot: snapshot() },
-      global: { plugins: [createPinia()] },
     })
 
     expect(wrapper.findAll('.pyramid-row')).toHaveLength(7)
@@ -80,12 +92,8 @@ describe('pyramid solitaire plugin view', () => {
   })
 
   it('selects a valid pair and sends only the card ids to the server', async () => {
-    const pinia = createPinia()
-    const arcade = useArcadeStore(pinia)
-    const action = vi.spyOn(arcade, 'actionWithResult').mockResolvedValue(true)
     const wrapper = mount(GameView, {
       props: { snapshot: snapshot() },
-      global: { plugins: [pinia] },
     })
 
     await wrapper.get('[data-card-id="six"]').trigger('click')
@@ -93,14 +101,14 @@ describe('pyramid solitaire plugin view', () => {
     await wrapper.get('[data-card-id="seven"]').trigger('click')
     await flushPromises()
 
-    expect(action).toHaveBeenCalledWith('remove', { cardIds: ['six', 'seven'] })
+    expect(pluginActions.action).toHaveBeenCalledWith(
+      'remove',
+      { cardIds: ['six', 'seven'] },
+    )
     wrapper.unmount()
   })
 
   it('draws from the stock and removes a waste king by itself', async () => {
-    const pinia = createPinia()
-    const arcade = useArcadeStore(pinia)
-    const action = vi.spyOn(arcade, 'actionWithResult').mockResolvedValue(true)
     const active = snapshot()
     active.game = {
       ...active.game,
@@ -110,23 +118,24 @@ describe('pyramid solitaire plugin view', () => {
     }
     const wrapper = mount(GameView, {
       props: { snapshot: active },
-      global: { plugins: [pinia] },
     })
 
     await wrapper.get('.card-back').trigger('click')
     await flushPromises()
-    expect(action).toHaveBeenCalledWith('draw')
+    expect(pluginActions.action).toHaveBeenCalledWith('draw')
 
     await wrapper.get('[data-card-id="waste-king"]').trigger('click')
     await flushPromises()
-    expect(action).toHaveBeenCalledWith('remove', { cardIds: ['waste-king'] })
+    expect(pluginActions.action).toHaveBeenCalledWith(
+      'remove',
+      { cardIds: ['waste-king'] },
+    )
     wrapper.unmount()
   })
 
   it('offers a fullscreen table and uses the native fullscreen API', async () => {
     const wrapper = mount(GameView, {
       props: { snapshot: snapshot() },
-      global: { plugins: [createPinia()] },
     })
     const gameRoot = wrapper.get('.pyramid-game').element as HTMLElement
     const requestFullscreen = vi.fn().mockResolvedValue(undefined)
@@ -178,12 +187,8 @@ describe('pyramid solitaire plugin view', () => {
   })
 
   it('shows the frozen completion time and starts a rematch', async () => {
-    const pinia = createPinia()
-    const arcade = useArcadeStore(pinia)
-    const restart = vi.spyOn(arcade, 'restartGame').mockResolvedValue(true)
     const wrapper = mount(GameView, {
       props: { snapshot: snapshot('finished', true) },
-      global: { plugins: [pinia] },
     })
 
     expect(wrapper.get('.pyramid-result').text()).toContain('金字塔已清空')
@@ -191,7 +196,7 @@ describe('pyramid solitaire plugin view', () => {
     await wrapper.get('.pyramid-result .primary-button').trigger('click')
     await flushPromises()
 
-    expect(restart).toHaveBeenCalledOnce()
+    expect(pluginActions.restart).toHaveBeenCalledOnce()
     wrapper.unmount()
   })
 })

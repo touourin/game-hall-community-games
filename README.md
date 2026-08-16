@@ -286,6 +286,8 @@ actions.publishSpectatorFrame(sequence, { board, effects })
 
 这些组件是插件 API v1 的稳定公共包装，不暴露主项目内部文件路径。按钮支持原生 `disabled`、`type`、`aria-*` 和点击事件；组件的 Props 类型也从同一个 SDK 导出。
 
+开发新游戏时，应先检查 `@game-hall/plugin-sdk` 已开放的组件、组合式函数、格式化工具和宿主能力，并优先复用它们。只有游戏特有的规则或表现确实无法由公共 SDK 表达时，才在插件目录内自行实现；如果一项能力会被多款游戏使用，应先将其抽象为稳定、通用的 SDK 能力，而不是复制实现或导入主项目内部路径。
+
 ```vue
 <script setup lang="ts">
 import { ref } from 'vue'

@@ -6,4 +6,4 @@
 
 前端入口同时演示了 `@game-hall/plugin-sdk` 的动作接口、`PluginButton` 操作按钮和 `PluginMetricGrid` 指标网格。新增游戏可以继续使用 SDK 已开放的组件，但不能通过相对路径导入主项目内部文件。
 
-复制本目录开发新游戏时，请同时修改目录名、manifest 的 `id`，以及后端引擎的 `key`。
+复制本目录开发新游戏时，请同时修改目录名、manifest 的 `id`、后端引擎的 `key`，并在 `frontend/assets/` 新建符合根 README 规范的 `catalog-dark.webp` 与 `catalog-light.webp`。两张图标必须是同一构图的深浅材质版本，发布前会由主项目自动发现和校验，不需要修改 manifest 或主仓库注册表。

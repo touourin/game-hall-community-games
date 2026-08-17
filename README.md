@@ -1,6 +1,6 @@
 # 社区游戏接入手册
 
-本仓库是游戏大厅的社区游戏源码仓库，可以作为可选 Git Submodule 挂载到主项目的 `community_games/`。每款游戏独立维护自己的规则、状态、界面、资源和测试；主项目只提供稳定的房间平台、游戏注册表和插件 SDK。主项目未初始化本仓库时仍能以仅含官方游戏的形态构建和运行。
+本仓库是游戏大厅的社区游戏源码仓库，可以作为可选 Git Submodule 挂载到主项目的 `game-hall-community-games/`。每款游戏独立维护自己的规则、状态、界面、资源和测试；主项目只提供稳定的房间平台、游戏注册表和插件 SDK。主项目未初始化本仓库时仍能以仅含官方游戏的形态构建和运行。
 
 接入一款普通游戏时，不需要修改主项目的大厅、路由、房间、账号、Socket 或战绩代码。完成插件目录后，由本仓库根部的 `registry.json` 决定是否发布。
 
@@ -33,7 +33,7 @@
 目录名通常与插件 ID 一致，并以 `plugin-` 开头：
 
 ```text
-community_games/
+game-hall-community-games/
 ├── README.md
 ├── registry.json                 # 生产发布注册表
 ├── registry.schema.json
@@ -408,10 +408,10 @@ const { theme, materials } = usePluginTheme()
 .venv/bin/python -m backend.app.games.validate_plugins
 
 # 当前插件后端测试
-.venv/bin/python -m pytest community_games/plugin-your-game/tests
+.venv/bin/python -m pytest game-hall-community-games/plugin-your-game/tests
 
 # 当前插件前端测试
-npm --prefix frontend run test:run -- ../community_games/plugin-your-game/frontend
+npm --prefix frontend run test:run -- ../game-hall-community-games/plugin-your-game/frontend
 
 # 全部后端、示例、插件和前端测试
 npm test

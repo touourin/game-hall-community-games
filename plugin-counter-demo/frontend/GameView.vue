@@ -33,7 +33,7 @@ function score(playerId: string): number {
 <template>
   <section class="counter-demo surface">
     <header>
-      <small>THIRD-PARTY GAME PLUGIN</small>
+      <small>COMMUNITY GAME PLUGIN</small>
       <h2>计数竞速</h2>
       <p>双方轮流计数，率先达到 {{ game.targetScore ?? 10 }} 分者获胜。</p>
     </header>

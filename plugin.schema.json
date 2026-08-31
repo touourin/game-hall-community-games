@@ -96,7 +96,7 @@
       "properties": {
         "scoreKind": {
           "type": "string",
-          "enum": ["outcome", "time_trial", "high_score", "ranking"]
+          "enum": ["outcome", "time_trial", "high_score"]
         }
       }
     },

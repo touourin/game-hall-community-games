@@ -21,7 +21,7 @@
     "replay": false,
     "ai": false
   },
-  "records": { "scoreKind": "ranking" },
+  "records": { "scoreKind": "outcome" },
   "defaultOptions": {
     "listed": true,
     "allowGuests": true,

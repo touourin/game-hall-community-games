@@ -33,6 +33,11 @@ def inside(x: int, y: int) -> bool:
     return 0 <= x < BOARD_SIZE and 0 <= y < BOARD_SIZE
 
 
+def rank_label(rank: int, points: int) -> str:
+    score = f"{points:+d}" if points else "0"
+    return f"第 {rank} 名 · {score} 分"
+
+
 def placement_error(
     board: list[list[int]], color: int, cells: Cells, first_move: bool,
 ) -> str | None:
@@ -203,7 +208,11 @@ class BlokusEngine:
         state.scores = dict(zip(state.rankings, RANK_POINTS, strict=True))
         state.current_player_id = None
         winner = room.player(state.rankings[0])
-        room.finish("player", [winner.id], f"{winner.name} 获得第 1 名；名次积分依次为 +2、+1、0、−1")
+        results = "；".join(
+            f"{room.player(player_id).name}：{rank_label(rank, state.scores[player_id])}"
+            for rank, player_id in enumerate(state.rankings, 1)
+        )
+        room.finish("第一名", [winner.id], f"名次结算：{results}")
 
     def manual_forfeit(self, room: ArcadeRoom, player: ArcadePlayer) -> bool:
         self._member(room, player)
@@ -257,7 +266,8 @@ class BlokusEngine:
     def player_result(self, room: ArcadeRoom, player: ArcadePlayer) -> tuple[str, str, bool]:
         state: BlokusState = room.state
         rank = state.rankings.index(player.id) + 1 if player.id in state.rankings else None
-        return f"第 {rank} 名" if rank else "未结算", "ranking", player.id in room.winner_player_ids
+        label = rank_label(rank, state.scores[player.id]) if rank else "未结算"
+        return label, "player", player.id in room.winner_player_ids
 
     def player_score(self, room: ArcadeRoom, player: ArcadePlayer) -> int | None:
         return room.state.scores.get(player.id) if room.phase == "finished" else None

@@ -31,6 +31,12 @@
       "path": "plugin-star-stones",
       "status": "enabled",
       "order": 140
+    },
+    {
+      "id": "plugin-blokus",
+      "path": "plugin-blokus",
+      "status": "enabled",
+      "order": 150
     }
   ]
 }

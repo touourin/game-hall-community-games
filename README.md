@@ -178,8 +178,9 @@ cp -R plugin-counter-demo plugin-your-game
 - `outcome`：按胜、负、和统计；普通多人游戏使用它。
 - `time_trial`：数值越小越好，单位由当前平台约定为毫秒；例如金字塔纸牌。
 - `high_score`：数值越大越好；例如积分挑战。
+- `ranking`：`player_score()` 返回每局名次积分（允许负数及 0），战绩记录单局分，排行榜累计积分；同分依次比较胜场、胜率、场次和注册时间。`player_result()` 仍决定本局胜负。
 
-声明 `time_trial` 或 `high_score` 时，引擎必须实现：
+声明 `time_trial`、`high_score` 或 `ranking` 时，引擎必须实现：
 
 ```python
 def player_score(self, room, player) -> int | None:

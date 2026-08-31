@@ -1,0 +1,449 @@
+<script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import {
+  BookOpen,
+  Check,
+  Expand,
+  Gamepad2,
+  Map as MapIcon,
+  Minimize,
+  Skull,
+  Timer,
+  Trophy,
+  X,
+  Zap,
+} from '@lucide/vue'
+import {
+  PluginButton,
+  PluginIconButton,
+  PluginModal,
+  usePluginFullscreen,
+  usePluginGameActions,
+  type ArcadeSnapshot,
+} from '@game-hall/plugin-sdk'
+import GameBoard from './GameBoard.vue'
+import { ITEM_ART, MAP_ART, PLAYER_ART } from './catalog'
+import type { BombGame, BombMap, BombPlayer } from './types'
+
+const props = defineProps<{ snapshot: ArcadeSnapshot }>()
+const actions = usePluginGameActions()
+const gameRoot = ref<HTMLElement | null>(null)
+const { isFullscreen, isSupported, toggle } = usePluginFullscreen(gameRoot)
+
+const showRules = ref(false)
+const showMaps = ref(props.snapshot.phase === 'lobby')
+const mapPending = ref<string | null>(null)
+const votePending = ref(false)
+const keyboardMask = ref(0)
+const touchMask = ref(0)
+let inputSequence = 0
+let heartbeatSequence = 0
+let heartbeatTimer: ReturnType<typeof setInterval> | null = null
+
+const game = computed(() => props.snapshot.game as unknown as BombGame)
+const isSpectator = computed(() => props.snapshot.viewer?.mode === 'spectator')
+const selfActor = computed(() => game.value.players.find(player => player.id === props.snapshot.self.id) ?? null)
+const canControl = computed(() => (
+  props.snapshot.phase === 'playing'
+  && !isSpectator.value
+  && Boolean(selfActor.value?.alive)
+  && !game.value.frozen
+))
+const isNegotiationPhase = computed(() => ['lobby', 'finished'].includes(props.snapshot.phase))
+const selectedMap = computed(() => game.value.mapCatalog.find(map => map.key === game.value.selectedMap) ?? game.value.currentMap)
+const proposedMap = computed(() => game.value.mapCatalog.find(map => map.key === game.value.mapProposal?.mapKey) ?? null)
+const winner = computed(() => game.value.players.find(player => player.id === game.value.winnerId) ?? null)
+
+const roster = computed(() => {
+  if (game.value.players.length) return game.value.players
+  return props.snapshot.players.map((player, index): BombPlayer => ({
+    id: player.id,
+    name: player.name,
+    seat: player.seat,
+    color: ['#ff5a55', '#4f8cff', '#ffd44f', '#50c878', '#ff914d', '#45d6dd', '#a970ff', '#d7b25b'][index % 8]!,
+    character: index % 8,
+    x: 0,
+    y: 0,
+    facingX: 0,
+    facingY: 1,
+    alive: true,
+    eliminatedBy: null,
+    eliminationReason: null,
+    kills: 0,
+    stats: { kills: 0, championships: 0, matches: 0, winRate: 0 },
+    equipment: {
+      bombCapacity: 1, blastRange: 2, speedLevel: 0,
+      kick: false, punch: false, throw: false, timer: false, chain: false,
+      magnet: false, ice: false, shieldCharges: 0,
+      ghostTicks: 0, invincibleTicks: 0, cursedTicks: 0,
+    },
+  }))
+})
+
+const inventory = computed(() => {
+  const equipment = selfActor.value?.equipment
+  if (!equipment) return []
+  const result: { key: string; label: string; value?: string; active?: boolean }[] = [
+    { key: 'bomb_up', label: '炸弹', value: `×${equipment.bombCapacity}`, active: true },
+    { key: 'flame_up', label: '火焰', value: `${equipment.blastRange} 格`, active: true },
+  ]
+  if (equipment.speedLevel) result.push({ key: 'speed', label: '速度', value: `Lv.${equipment.speedLevel}`, active: true })
+  for (const [key, enabled] of [
+    ['kick', equipment.kick], ['punch', equipment.punch], ['throw', equipment.throw],
+    ['timer', equipment.timer], ['chain', equipment.chain], ['magnet', equipment.magnet], ['ice', equipment.ice],
+  ] as const) if (enabled) result.push({ key, label: game.value.itemLabels[key] ?? key, active: true })
+  if (equipment.shieldCharges) result.push({ key: 'shield', label: '护盾', value: `×${equipment.shieldCharges}`, active: true })
+  if (equipment.ghostTicks) result.push({ key: 'ghost', label: '幽灵', value: seconds(equipment.ghostTicks), active: true })
+  if (equipment.invincibleTicks) result.push({ key: 'star', label: '无敌', value: seconds(equipment.invincibleTicks), active: true })
+  if (equipment.cursedTicks) result.push({ key: 'skull', label: '禁雷', value: seconds(equipment.cursedTicks), active: true })
+  return result
+})
+
+const stageLabel = computed(() => ({
+  lobby: '等待开局', countdown: '准备', active: '对抗中', collapse: '落石决胜', finished: '本局结束',
+}[game.value.stage] ?? game.value.stage))
+
+const stageTime = computed(() => {
+  if (game.value.stage === 'collapse') return `落石 ${game.value.collapsePlaced}/${game.value.collapseTotal}`
+  if (game.value.stage === 'finished') return '00:00'
+  const ticks = game.value.stage === 'countdown' ? game.value.stageTicksRemaining : game.value.roundTicksRemaining
+  const total = Math.max(0, Math.ceil(ticks / Math.max(1, game.value.tickRate)))
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
+})
+
+function seconds(ticks: number) {
+  return `${Math.ceil(ticks / Math.max(1, game.value.tickRate))}s`
+}
+
+function approvalName(playerId: string) {
+  return props.snapshot.players.find(player => player.id === playerId)?.name ?? '玩家'
+}
+
+function mapArt(map: BombMap) {
+  return MAP_ART[map.key] ?? MAP_ART.magma_crucible
+}
+
+async function proposeMap(mapKey: string) {
+  if (!game.value.canProposeMap || mapPending.value) return
+  mapPending.value = mapKey
+  try {
+    await actions.action('propose_map', { mapKey })
+  } finally {
+    mapPending.value = null
+  }
+}
+
+async function voteMap(accept: boolean) {
+  if (!game.value.canVoteMap || votePending.value) return
+  votePending.value = true
+  try {
+    await actions.action('vote_map', { accept })
+  } finally {
+    votePending.value = false
+  }
+}
+
+const KEY_BITS: Record<string, number> = {
+  KeyW: 1,
+  KeyS: 2,
+  KeyA: 4,
+  KeyD: 8,
+  Space: 16,
+  KeyZ: 32,
+  KeyX: 64,
+}
+
+function isEditableTarget(target: EventTarget | null) {
+  return target instanceof Element
+    && Boolean(target.closest('input, textarea, select, [contenteditable="true"]'))
+}
+
+function combinedMask() {
+  return keyboardMask.value | touchMask.value
+}
+
+function sendInput(nextMask = combinedMask()) {
+  if (!canControl.value) return
+  inputSequence = Math.max(inputSequence, game.value.selfInputSequence) + 1
+  void actions.rapidAction('input', { sequence: inputSequence, inputMask: nextMask })
+}
+
+function updateKeyboard(bit: number, pressed: boolean) {
+  const previous = combinedMask()
+  keyboardMask.value = pressed ? keyboardMask.value | bit : keyboardMask.value & ~bit
+  const next = combinedMask()
+  if (next !== previous) sendInput(next)
+}
+
+function keydown(event: KeyboardEvent) {
+  const bit = KEY_BITS[event.code]
+  if (!bit || isEditableTarget(event.target) || !canControl.value) return
+  event.preventDefault()
+  updateKeyboard(bit, true)
+}
+
+function keyup(event: KeyboardEvent) {
+  const bit = KEY_BITS[event.code]
+  if (!bit) return
+  if (canControl.value) event.preventDefault()
+  updateKeyboard(bit, false)
+}
+
+function touchDown(bit: number, event: PointerEvent) {
+  if (!canControl.value) return
+  event.preventDefault()
+  ;(event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId)
+  const previous = combinedMask()
+  touchMask.value |= bit
+  if (combinedMask() !== previous) sendInput()
+}
+
+function touchUp(bit: number, event: PointerEvent) {
+  event.preventDefault()
+  const previous = combinedMask()
+  touchMask.value &= ~bit
+  if (combinedMask() !== previous) sendInput()
+}
+
+function clearInput(notify = true) {
+  const hadInput = combinedMask() !== 0
+  keyboardMask.value = 0
+  touchMask.value = 0
+  if (notify && hadInput && props.snapshot.phase === 'playing' && !isSpectator.value) {
+    inputSequence = Math.max(inputSequence, game.value.selfInputSequence) + 1
+    void actions.rapidAction('input', { sequence: inputSequence, inputMask: 0 })
+  }
+}
+
+function blur() {
+  clearInput(true)
+}
+
+function heartbeat() {
+  if (
+    props.snapshot.phase !== 'playing'
+    || isSpectator.value
+    || game.value.clockLeaderId !== props.snapshot.self.id
+  ) return
+  heartbeatSequence += 1
+  void actions.rapidAction('heartbeat', { sequence: heartbeatSequence })
+}
+
+watch(canControl, active => { if (!active) clearInput(true) })
+watch(() => props.snapshot.phase, phase => {
+  showMaps.value = phase === 'lobby'
+})
+
+onMounted(() => {
+  inputSequence = Math.max(0, game.value.selfInputSequence)
+  window.addEventListener('keydown', keydown, { passive: false })
+  window.addEventListener('keyup', keyup, { passive: false })
+  window.addEventListener('blur', blur)
+  heartbeatTimer = setInterval(heartbeat, 125)
+})
+
+onBeforeUnmount(() => {
+  clearInput(true)
+  window.removeEventListener('keydown', keydown)
+  window.removeEventListener('keyup', keyup)
+  window.removeEventListener('blur', blur)
+  if (heartbeatTimer) clearInterval(heartbeatTimer)
+})
+</script>
+
+<template>
+  <section ref="gameRoot" class="bomb-people" :class="[`stage-${game.stage}`, { fullscreen: isFullscreen }]">
+    <header class="game-header">
+      <div class="title-lockup">
+        <span class="brand-bomb"><i /></span>
+        <div><p>BOMB PEOPLE · 20 × 20</p><h2>炸弹超人</h2></div>
+      </div>
+      <div class="match-status" :class="game.stage">
+        <span>{{ stageLabel }}</span><strong>{{ stageTime }}</strong><small>{{ selectedMap?.name }}</small>
+      </div>
+      <div class="header-actions">
+        <PluginIconButton label="玩法说明" @click="showRules = true"><BookOpen :size="18" /></PluginIconButton>
+        <PluginIconButton v-if="isNegotiationPhase" label="地图协商" @click="showMaps = !showMaps"><MapIcon :size="18" /></PluginIconButton>
+        <PluginIconButton v-if="isSupported" :label="isFullscreen ? '退出全屏' : '全屏游戏'" @click="toggle">
+          <Minimize v-if="isFullscreen" :size="18" /><Expand v-else :size="18" />
+        </PluginIconButton>
+      </div>
+    </header>
+
+    <section v-if="isNegotiationPhase && showMaps" class="map-negotiation" aria-label="地图协商">
+      <div class="negotiation-heading">
+        <div><p class="eyebrow">MAP CONSENSUS</p><h3>房主提议，全员确认后自动切图</h3></div>
+        <p v-if="game.mapProposal && proposedMap" class="proposal-status">
+          待确认：<strong>{{ proposedMap.name }}</strong>
+          <span>{{ game.mapProposal.approvalCount }}/{{ game.mapProposal.requiredCount }} 已同意</span>
+        </p>
+        <p v-else class="proposal-status">当前地图：<strong>{{ selectedMap?.name }}</strong><span>没有待确认提议</span></p>
+      </div>
+
+      <div v-if="game.mapProposal && proposedMap" class="approval-strip">
+        <div class="approval-names">
+          <Check :size="16" />
+          <span>{{ game.mapProposal.approvedPlayerIds.map(approvalName).join('、') }} 已同意</span>
+        </div>
+        <div v-if="game.canVoteMap" class="vote-actions">
+          <PluginButton variant="secondary" :disabled="votePending" @click="voteMap(false)"><X :size="16" />不同意</PluginButton>
+          <PluginButton :disabled="votePending" @click="voteMap(true)"><Check :size="16" />同意切换</PluginButton>
+        </div>
+        <small v-else-if="game.mapProposal.approvedPlayerIds.includes(snapshot.self.id)">你已同意，等待其他玩家。</small>
+      </div>
+
+      <div class="map-grid">
+        <button
+          v-for="map in game.mapCatalog"
+          :key="map.key"
+          type="button"
+          class="map-card"
+          :class="{ selected: map.key === game.selectedMap, proposed: map.key === game.mapProposal?.mapKey }"
+          :disabled="!game.canProposeMap || Boolean(mapPending)"
+          :aria-label="`${map.name}，${map.pace}，${map.density}${map.key === game.selectedMap ? '，当前地图' : ''}`"
+          @click="proposeMap(map.key)"
+        >
+          <img :src="mapArt(map)" :alt="`${map.name}预览`" draggable="false" />
+          <span class="map-shade" />
+          <span class="map-badges"><i>{{ map.pace }}</i><i>{{ map.density }}</i></span>
+          <span class="map-copy"><strong>{{ map.name }}</strong><small>{{ map.subtitle }}</small></span>
+          <span v-if="map.startingItems.length" class="starter-icons" title="本图带初始装备">
+            <img v-for="item in map.startingItems" :key="item" :src="ITEM_ART[item]" :alt="game.itemLabels[item]" />
+          </span>
+          <span v-if="map.key === game.selectedMap" class="selected-mark"><Check :size="13" />当前</span>
+          <span v-else-if="map.key === game.mapProposal?.mapKey" class="selected-mark proposed-mark"><Timer :size="13" />待确认</span>
+        </button>
+      </div>
+      <p class="map-help">
+        {{ game.canProposeMap ? '点击地图即可发起或更换提议。所有当前玩家同意后才会切换。' : '只有房主能发起提议；你可以同意或否决当前提议。' }}
+      </p>
+    </section>
+
+    <section v-if="snapshot.phase === 'lobby'" class="lobby-overview">
+      <div class="lobby-copy">
+        <p class="eyebrow">READY ROOM</p>
+        <h3>{{ selectedMap?.name }}</h3>
+        <p>{{ selectedMap?.subtitle }}。每局先对抗 90 秒，随后从左上角开始沿边缘顺时针一圈圈落石，最后生还者夺冠。</p>
+        <div class="rule-chips"><span>2–8 人</span><span>炸弹 2 秒</span><span>自动拾取</span><span>随机掉落</span><span>落石可淘汰</span></div>
+        <small>地图确定后，由房主使用房间顶部的“开始游戏”。</small>
+      </div>
+      <div class="lobby-roster" aria-label="本房间玩家">
+        <article v-for="player in roster" :key="player.id" :style="{ '--player-color': player.color }">
+          <img :src="PLAYER_ART[player.character]" :alt="player.name" /><div><strong>{{ player.name }}</strong><small>玩家 {{ player.seat + 1 }}{{ player.id === snapshot.hostId ? ' · 房主' : '' }}</small></div>
+        </article>
+        <div v-for="seat in Math.max(0, 2 - roster.length)" :key="`empty:${seat}`" class="empty-seat">等待玩家加入</div>
+      </div>
+    </section>
+
+    <div v-else class="play-layout">
+      <aside class="scoreboard panel" aria-label="玩家战绩">
+        <div class="panel-heading"><div><p class="eyebrow">LIVE RECORDS</p><h3>玩家战绩</h3></div><Trophy :size="19" /></div>
+        <div class="player-list">
+          <article
+            v-for="player in game.players"
+            :key="player.id"
+            class="player-card"
+            :class="{ self: player.id === snapshot.self.id, eliminated: !player.alive }"
+            :style="{ '--player-color': player.color }"
+          >
+            <div class="player-avatar"><img :src="PLAYER_ART[player.character]" :alt="player.name" /><span>{{ player.seat + 1 }}</span></div>
+            <div class="player-info"><strong>{{ player.name }}</strong><small>{{ player.alive ? (player.id === snapshot.self.id ? '你 · 生还' : '生还') : '已阵亡' }}</small></div>
+            <div class="kill-count"><b>{{ player.kills }}</b><small>本局击杀</small></div>
+            <div class="career-row"><span><Trophy :size="11" />{{ player.stats.championships }} 冠</span><span>{{ player.stats.winRate }}% 胜率</span><span>{{ player.stats.kills }} 总击杀</span></div>
+          </article>
+        </div>
+        <p class="records-note">当前房间连续对局统计；每局结果和击杀明细同时写入大厅战绩。</p>
+      </aside>
+
+      <main class="arena-column">
+        <GameBoard :game="game" :self-id="snapshot.self.id" />
+
+        <div v-if="!isSpectator" class="touch-controls" :class="{ disabled: !canControl }" aria-label="触屏操作">
+          <div class="dpad">
+            <button class="up" type="button" aria-label="向上移动" @pointerdown="touchDown(1, $event)" @pointerup="touchUp(1, $event)" @pointercancel="touchUp(1, $event)">W</button>
+            <button class="left" type="button" aria-label="向左移动" @pointerdown="touchDown(4, $event)" @pointerup="touchUp(4, $event)" @pointercancel="touchUp(4, $event)">A</button>
+            <button class="down" type="button" aria-label="向下移动" @pointerdown="touchDown(2, $event)" @pointerup="touchUp(2, $event)" @pointercancel="touchUp(2, $event)">S</button>
+            <button class="right" type="button" aria-label="向右移动" @pointerdown="touchDown(8, $event)" @pointerup="touchUp(8, $event)" @pointercancel="touchUp(8, $event)">D</button>
+          </div>
+          <div class="action-pad">
+            <button type="button" aria-label="Z 拳击手套打雷" @pointerdown="touchDown(32, $event)" @pointerup="touchUp(32, $event)" @pointercancel="touchUp(32, $event)"><b>Z</b><small>打雷</small></button>
+            <button class="bomb-action" type="button" aria-label="空格放炸弹" @pointerdown="touchDown(16, $event)" @pointerup="touchUp(16, $event)" @pointercancel="touchUp(16, $event)"><b>●</b><small>放雷</small></button>
+            <button type="button" aria-label="X 扔雷" @pointerdown="touchDown(64, $event)" @pointerup="touchUp(64, $event)" @pointercancel="touchUp(64, $event)"><b>X</b><small>扔雷</small></button>
+          </div>
+        </div>
+      </main>
+
+      <aside class="battle-hud">
+        <section v-if="snapshot.phase === 'finished'" class="result-card panel">
+          <Trophy v-if="winner" :size="28" /><Skull v-else :size="28" />
+          <p class="eyebrow">MATCH RESULT</p>
+          <h3>{{ winner ? `${winner.name} 夺冠` : '本局平局' }}</h3>
+          <p>{{ snapshot.winReason }}</p>
+          <PluginButton block :disabled="!snapshot.actions.canRestart" @click="actions.restart()">
+            {{ snapshot.actions.canRestart ? '同意再来一局' : '等待其他玩家确认' }}
+          </PluginButton>
+          <PluginButton variant="secondary" block @click="showMaps = !showMaps"><MapIcon :size="16" />协商下一张地图</PluginButton>
+        </section>
+
+        <section class="inventory panel">
+          <div class="panel-heading"><div><p class="eyebrow">AUTO PICKUP</p><h3>{{ isSpectator ? '观察装备' : '我的装备' }}</h3></div><Zap :size="19" /></div>
+          <div v-if="inventory.length" class="inventory-grid">
+            <div v-for="entry in inventory" :key="entry.key" class="inventory-item" :class="entry.key">
+              <img :src="ITEM_ART[entry.key]" :alt="entry.label" /><span><strong>{{ entry.label }}</strong><small>{{ entry.value ?? '已装备' }}</small></span>
+            </div>
+          </div>
+          <p v-else class="empty-inventory">破坏箱子并走过道具即可自动拾取。</p>
+          <p v-if="selfActor?.equipment.cursedTicks" class="curse-warning"><Skull :size="16" />骷髅诅咒：装备已清空，{{ seconds(selfActor.equipment.cursedTicks) }} 内不能放炸弹。</p>
+        </section>
+
+        <section class="controls panel">
+          <div class="panel-heading"><div><p class="eyebrow">CONTROLS</p><h3>操作</h3></div><Gamepad2 :size="19" /></div>
+          <div class="key-guide"><span><kbd>WASD</kbd>移动</span><span><kbd>Space</kbd>放雷</span><span><kbd>Z</kbd>拳套打雷</span><span><kbd>X</kbd>扔雷</span></div>
+          <p>脚踢雷自动触发；拳套、扔雷与脚踢均可作用于任何玩家的炸弹。定时炸弹在容量已满时再次按空格可提前引爆最早的一枚。</p>
+        </section>
+
+        <section class="event-panel panel" aria-label="对局动态">
+          <div class="panel-heading"><div><p class="eyebrow">BATTLE FEED</p><h3>对局动态</h3></div></div>
+          <div class="event-list"><p v-for="event in [...game.events].reverse().slice(0, 7)" :key="event.id">{{ event.message }}</p><p v-if="!game.events.length">等待对局事件……</p></div>
+        </section>
+      </aside>
+    </div>
+
+    <PluginModal v-if="showRules" title="炸弹超人 · 完整玩法" size="large" mobile-sheet @close="showRules = false">
+      <div class="rulebook">
+        <section><h3>目标与时间</h3><p>支持 2–8 人。每张地图固定为 20×20 格；一个方块只占一格。最后生还者夺冠。开局倒计时后对抗 90 秒，随后从左上角起沿外圈顺时针放置落石，再一圈圈向中心收缩。爆炸和落石都能淘汰玩家。</p></section>
+        <section><h3>炸弹与通用交互</h3><p>所有炸弹放下后最多 2 秒爆炸，火焰按十字方向传播，固定墙和落石会阻挡，可破坏箱被摧毁后有 38% 概率掉落道具。火焰会连锁引爆炸弹。脚踢、拳套和扔雷可以操作自己或其他玩家的炸弹，最后操作者获得后续淘汰归属。</p></section>
+        <section><h3>键盘</h3><ul><li><kbd>W A S D</kbd>：逐格移动。</li><li><kbd>Space</kbd>：放炸弹；拥有定时炸弹且炸弹容量已满时，提前引爆最早的一枚。</li><li><kbd>Z</kbd>：用拳击手套把面前炸弹打出三格。</li><li><kbd>X</kbd>：把面前炸弹越过障碍扔到前方最多四格。</li><li>脚踢雷无需按键，走向炸弹即可让它持续滚动。</li></ul></section>
+        <section><h3>道具</h3><div class="rules-items"><article v-for="(label, key) in game.itemLabels" :key="key"><img :src="ITEM_ART[key]" :alt="label" /><strong>{{ label }}</strong></article></div><p>道具自动拾取。落地道具没有消失倒计时，也不会被爆炸清除，会保留到被拾取、所在格被决胜落石覆盖或本局结束。骷髅诅咒会立即清空其他装备，并使玩家 5 秒不能放炸弹；地图还会每 10 秒进行一次 24% 的随机装备刷新判定。</p></section>
+        <section><h3>地图类型</h3><p>云顶激斗场、风暴船坞等激斗图让玩家近距离出生并自带装备；丛林金字塔、发条铸造厂和水晶裂隙使用高密箱墙或分区固定墙，给予玩家更安全的发展期。其他地图在障碍密度和开阔程度之间变化。</p></section>
+        <section><h3>换图与战绩</h3><p>开局前或本局结束后，房主选择目标地图发起提议；所有当前玩家同意后才自动切换，任何一人否决就取消。每名玩家记录本局击杀、房间累计击杀、夺冠数和胜率；结算后还会把胜负及击杀明细写入大厅战绩。</p></section>
+      </div>
+    </PluginModal>
+  </section>
+</template>
+
+<style scoped>
+.bomb-people { --ink: #f2f5f6; --muted: #98a4aa; --panel: #12181de8; --panel-strong: #0d1216f2; --line: #ffffff18; --accent: #f0a63a; width: 100%; min-width: 0; max-width: none; min-height: min(860px, calc(100vh - 110px)); padding: 10px; color: var(--ink); background: radial-gradient(circle at 50% -20%, #303a42 0, #11171b 46%, #080b0e 100%); border: 1px solid #ffffff12; border-radius: 20px; box-sizing: border-box; overflow: hidden; }
+.bomb-people * { box-sizing: border-box; }
+.bomb-people.fullscreen { width: 100vw; height: 100vh; min-height: 100vh; padding: 12px; border: 0; border-radius: 0; overflow: auto; }
+.game-header { min-width: 0; min-height: 76px; display: grid; grid-template-columns: minmax(190px, 1fr) auto minmax(190px, 1fr); align-items: center; gap: 14px; padding: 8px 12px 12px; }
+.title-lockup, .header-actions, .match-status, .panel-heading, .approval-strip, .negotiation-heading { display: flex; align-items: center; }
+.title-lockup { gap: 12px; min-width: 0; }.title-lockup p, .eyebrow { margin: 0 0 3px; color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .16em; }.title-lockup h2 { margin: 0; font-size: clamp(24px, 2.5vw, 36px); letter-spacing: .07em; }
+.brand-bomb { position: relative; width: 42px; height: 42px; flex: 0 0 auto; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #808b90 0 7%, #282f34 25%, #07090b 73%); border: 1px solid #8d9699; box-shadow: inset -5px -6px 8px #000, 0 4px 10px #0008; }.brand-bomb::before { content: ''; position: absolute; width: 16px; height: 12px; right: 0; top: -7px; border: 4px solid #b98647; border-bottom: 0; border-radius: 50%; transform: rotate(34deg); }.brand-bomb i { position: absolute; right: -6px; top: -8px; width: 8px; height: 8px; border-radius: 50%; background: #fff4a3; box-shadow: 0 0 8px 3px #ff7918; }
+.match-status { justify-self: center; flex-direction: column; min-width: 160px; padding: 7px 26px; border: 1px solid var(--line); border-radius: 14px; background: #080c0f99; box-shadow: inset 0 1px #ffffff12; }.match-status span { color: #ffcd73; font-size: 9px; font-weight: 800; letter-spacing: .18em; }.match-status strong { font: 800 25px/1.15 ui-monospace, monospace; font-variant-numeric: tabular-nums; }.match-status small { max-width: 180px; overflow: hidden; color: var(--muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }.match-status.collapse { border-color: #d64f48; background: #3a0d0dcc; }.match-status.finished { border-color: #d6a84966; }
+.header-actions { justify-self: end; gap: 7px; }.header-actions > * { min-width: 44px; min-height: 44px; }
+.panel, .map-negotiation, .lobby-overview { min-width: 0; border: 1px solid var(--line); border-radius: 15px; background: var(--panel); box-shadow: inset 0 1px #ffffff0d, 0 10px 24px #0002; }
+.map-negotiation { margin: 0 4px 12px; padding: 14px; }.negotiation-heading { justify-content: space-between; gap: 16px; margin-bottom: 12px; }.negotiation-heading h3, .panel-heading h3, .lobby-copy h3, .result-card h3 { margin: 0; }.proposal-status { display: grid; justify-items: end; gap: 2px; margin: 0; color: var(--muted); font-size: 11px; }.proposal-status strong { color: var(--ink); font-size: 14px; }.proposal-status span { color: #f2bb5b; }
+.approval-strip { justify-content: space-between; gap: 12px; margin-bottom: 12px; padding: 9px 11px; border: 1px solid #ddb25a55; border-radius: 10px; background: #d79b2f12; }.approval-names, .vote-actions { display: flex; align-items: center; gap: 8px; }.approval-names { min-width: 0; color: #f0c776; font-size: 11px; }.approval-names span { overflow-wrap: anywhere; }.approval-strip > small { color: var(--muted); }.vote-actions > * { min-height: 38px; }
+.map-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; }.map-card { position: relative; min-width: 0; aspect-ratio: 1.18; overflow: hidden; padding: 0; border: 1px solid #ffffff1f; border-radius: 11px; background: #0c1114; color: white; font: inherit; text-align: left; cursor: pointer; }.map-card > img:first-child { width: 100%; height: 100%; object-fit: cover; transition: transform .2s ease; }.map-card:not(:disabled):hover > img:first-child { transform: scale(1.05); }.map-card:disabled { cursor: default; }.map-card.selected { border-color: #f1b84f; box-shadow: 0 0 0 1px #f1b84f, 0 0 16px #f1a93d33; }.map-card.proposed { border-color: #6de2ef; box-shadow: 0 0 0 1px #6de2ef; }.map-shade { position: absolute; inset: 0; background: linear-gradient(transparent 25%, #080b0eda 70%, #080b0ef7); }.map-badges { position: absolute; left: 7px; top: 7px; display: flex; gap: 4px; }.map-badges i { padding: 2px 5px; border: 1px solid #ffffff33; border-radius: 999px; background: #091015c7; font-size: 8px; font-style: normal; }.map-copy { position: absolute; left: 8px; right: 8px; bottom: 7px; display: grid; gap: 2px; }.map-copy strong { font-size: 12px; }.map-copy small { overflow: hidden; color: #c7d0d4; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }.starter-icons { position: absolute; right: 6px; top: 6px; display: flex; max-width: 60%; }.starter-icons img { width: 22px; height: 22px; margin-left: -5px; object-fit: contain; filter: drop-shadow(0 1px 2px #000); }.selected-mark { position: absolute; right: 6px; bottom: 6px; display: flex; align-items: center; gap: 2px; padding: 2px 5px; border-radius: 999px; color: #241806; background: #f0b74e; font-size: 8px; font-weight: 800; }.proposed-mark { color: #071b20; background: #6de2ef; }.map-help { margin: 10px 1px 0; color: var(--muted); font-size: 10px; text-align: center; }
+.lobby-overview { margin: 0 4px 4px; min-height: 430px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr); gap: 30px; align-items: center; padding: clamp(24px, 5vw, 64px); background: radial-gradient(circle at 18% 18%, #e1912b20, transparent 30%), var(--panel); }.lobby-copy h3 { font-size: clamp(30px, 4vw, 54px); }.lobby-copy > p:not(.eyebrow) { max-width: 700px; color: #bdc7cb; font-size: 14px; line-height: 1.9; }.lobby-copy > small { color: #f0bd68; }.rule-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 18px 0; }.rule-chips span { padding: 6px 10px; border: 1px solid #ffffff1c; border-radius: 999px; color: #d9e0e2; background: #ffffff0a; font-size: 11px; }.lobby-roster { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }.lobby-roster article, .empty-seat { min-height: 82px; display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid color-mix(in srgb, var(--player-color, #fff) 38%, #ffffff18); border-radius: 11px; background: #080c0f99; }.lobby-roster img { width: 62px; height: 62px; object-fit: contain; }.lobby-roster article div { min-width: 0; display: grid; gap: 3px; }.lobby-roster strong { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }.lobby-roster small { color: var(--muted); font-size: 9px; }.empty-seat { justify-content: center; border-style: dashed; color: var(--muted); font-size: 10px; }
+.play-layout { min-height: calc(100vh - 112px); display: grid; grid-template-columns: minmax(184px, 238px) minmax(420px, 1fr) minmax(210px, 284px); align-items: start; gap: 10px; padding: 0 4px 4px; }.scoreboard, .battle-hud { max-height: calc(100vh - 112px); overflow: auto; scrollbar-width: thin; }.scoreboard { padding: 12px; }.panel-heading { justify-content: space-between; gap: 9px; margin-bottom: 10px; }.panel-heading svg { color: #e9b14b; }.panel-heading h3 { font-size: 15px; }.player-list { display: grid; gap: 7px; }.player-card { --player-color: #fff; display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 7px; padding: 7px; border: 1px solid #ffffff12; border-left: 3px solid var(--player-color); border-radius: 10px; background: #080d10b8; }.player-card.self { background: color-mix(in srgb, var(--player-color) 9%, #080d10); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--player-color) 35%, transparent); }.player-card.eliminated { opacity: .48; filter: grayscale(.75); }.player-avatar { position: relative; width: 42px; height: 48px; }.player-avatar img { width: 100%; height: 100%; object-fit: contain; }.player-avatar span { position: absolute; left: -3px; bottom: -1px; width: 16px; height: 16px; display: grid; place-items: center; border-radius: 50%; color: #111; background: var(--player-color); font-size: 8px; font-weight: 900; }.player-info { min-width: 0; display: grid; gap: 2px; }.player-info strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }.player-info small, .kill-count small, .career-row, .records-note { color: var(--muted); font-size: 8px; }.kill-count { display: grid; justify-items: end; }.kill-count b { font: 800 20px/1 ui-monospace, monospace; }.career-row { grid-column: 1 / -1; display: flex; gap: 7px; padding-top: 5px; border-top: 1px solid #ffffff0c; }.career-row span { display: flex; align-items: center; gap: 2px; }.records-note { margin: 10px 2px 0; line-height: 1.6; }
+.arena-column { min-width: 0; display: grid; gap: 8px; }.touch-controls { display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 76px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 14px; background: #0a1014db; }.touch-controls.disabled { opacity: .45; pointer-events: none; }.dpad { width: 128px; display: grid; grid-template-columns: repeat(3, 38px); grid-template-rows: repeat(2, 32px); gap: 3px; }.dpad button, .action-pad button { border: 1px solid #ffffff2b; color: white; background: linear-gradient(#313a40, #171d21); box-shadow: inset 0 1px #ffffff24, 0 2px 4px #0007; font: 800 12px system-ui; touch-action: none; }.dpad .up { grid-column: 2; }.dpad .left { grid-column: 1; grid-row: 2; }.dpad .down { grid-column: 2; grid-row: 2; }.dpad .right { grid-column: 3; grid-row: 2; }.action-pad { display: flex; align-items: center; gap: 8px; }.action-pad button { width: 58px; height: 52px; display: grid; place-items: center; align-content: center; gap: 0; border-radius: 50%; }.action-pad button b { font-size: 14px; }.action-pad button small { font-size: 8px; }.action-pad .bomb-action { width: 66px; height: 66px; border-color: #e5a747; background: radial-gradient(circle at 32% 28%, #727b80, #171d21 45%, #07090b 75%); }.action-pad .bomb-action b { color: #ffbd56; font-size: 22px; }
+.battle-hud { display: grid; gap: 8px; }.battle-hud .panel { padding: 12px; }.result-card { border-color: #e1ad4f66; text-align: center; }.result-card > svg { color: #f1ba54; }.result-card h3 { font-size: 21px; }.result-card > p:not(.eyebrow) { color: #c1c9cc; font-size: 10px; line-height: 1.6; }.result-card > button { margin-top: 7px; }.inventory-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }.inventory-item { min-width: 0; display: flex; align-items: center; gap: 5px; padding: 5px; border: 1px solid #ffffff12; border-radius: 8px; background: #080c0fa8; }.inventory-item img { width: 30px; height: 30px; object-fit: contain; }.inventory-item span { min-width: 0; display: grid; }.inventory-item strong { overflow: hidden; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }.inventory-item small { color: #d8ab5c; font-size: 8px; }.inventory-item.skull { border-color: #79cf4659; background: #1a3213cc; }.empty-inventory, .controls p, .curse-warning { margin: 4px 0 0; color: var(--muted); font-size: 9px; line-height: 1.65; }.curse-warning { display: flex; align-items: flex-start; gap: 6px; padding: 7px; color: #b9f28d; border: 1px solid #85d14f55; border-radius: 8px; background: #193014b8; }.key-guide { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }.key-guide span { display: flex; align-items: center; gap: 5px; color: #cbd3d6; font-size: 9px; }kbd { min-width: 31px; display: inline-grid; place-items: center; padding: 3px 5px; border: 1px solid #ffffff2b; border-bottom-width: 3px; border-radius: 5px; color: #f3c36d; background: #20282d; font: 800 8px ui-monospace, monospace; }.event-list { max-height: 150px; overflow: auto; }.event-list p { margin: 0; padding: 6px 0; border-bottom: 1px solid #ffffff0c; color: #b8c2c6; font-size: 9px; line-height: 1.45; }
+.rulebook { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; color: #dce2e4; font-size: 12px; line-height: 1.8; }.rulebook section { padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #ffffff06; }.rulebook h3 { margin: 0 0 6px; color: white; font-size: 15px; }.rulebook p, .rulebook ul { margin: 0; }.rulebook ul { padding-left: 20px; }.rules-items { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; margin-bottom: 8px; }.rules-items article { min-width: 0; display: grid; justify-items: center; gap: 2px; }.rules-items img { width: 42px; height: 42px; object-fit: contain; }.rules-items strong { max-width: 100%; overflow: hidden; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.bomb-people :focus-visible { outline: 2px solid #f2bc5a; outline-offset: 2px; }
+@media (max-width: 1180px) { .play-layout { grid-template-columns: minmax(170px, 220px) minmax(400px, 1fr); }.battle-hud { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); max-height: none; }.event-panel { display: none; }.map-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 820px) { .bomb-people { min-height: 0; padding: 6px; border-radius: 13px; }.game-header { grid-template-columns: 1fr auto; min-height: 64px; padding: 5px 5px 9px; }.title-lockup p, .brand-bomb { display: none; }.title-lockup h2 { font-size: 23px; }.match-status { min-width: 115px; padding: 5px 10px; grid-column: 1 / -1; grid-row: 2; width: 100%; flex-direction: row; justify-content: space-between; }.match-status strong { font-size: 19px; }.header-actions { grid-column: 2; grid-row: 1; }.play-layout { min-height: 0; grid-template-columns: minmax(0, 1fr); padding: 0; }.arena-column { grid-row: 1; }.scoreboard { grid-row: 2; max-height: none; }.player-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }.battle-hud { grid-row: 3; grid-template-columns: minmax(0, 1fr); }.event-panel { display: block; }.map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.negotiation-heading, .approval-strip { align-items: flex-start; flex-direction: column; }.proposal-status { justify-items: start; }.lobby-overview { grid-template-columns: minmax(0, 1fr); padding: 24px 16px; }.rulebook { grid-template-columns: minmax(0, 1fr); }.touch-controls { position: sticky; bottom: 4px; z-index: 50; }.arena-board { width: 100%; }.scoreboard, .battle-hud { overflow: visible; } }
+@media (max-width: 430px) { .map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }.map-card { aspect-ratio: 1; }.map-copy small, .map-badges { display: none; }.lobby-roster { grid-template-columns: minmax(0, 1fr); }.player-list { grid-template-columns: minmax(0, 1fr); }.touch-controls { min-height: 72px; padding: 5px 7px; }.dpad { width: 110px; grid-template-columns: repeat(3, 32px); grid-template-rows: repeat(2, 29px); }.action-pad { gap: 4px; }.action-pad button { width: 47px; height: 47px; }.action-pad .bomb-action { width: 57px; height: 57px; }.inventory-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }.inventory-item { display: grid; justify-items: center; }.inventory-item span { justify-items: center; }.rules-items { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: reduce) { .bomb-people * { scroll-behavior: auto; transition: none !important; } }
+</style>

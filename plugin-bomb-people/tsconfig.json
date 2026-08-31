@@ -1,0 +1,18 @@
+{
+  "extends": "../../frontend/tsconfig.app.json",
+  "compilerOptions": {
+    "baseUrl": "../../frontend",
+    "tsBuildInfoFile": "./.tmp/tsconfig.tsbuildinfo",
+    "types": []
+  },
+  "files": [
+    "../../frontend/src/env.d.ts"
+  ],
+  "include": [
+    "frontend/**/*.ts",
+    "frontend/**/*.vue"
+  ],
+  "exclude": [
+    "frontend/**/*.test.ts"
+  ]
+}

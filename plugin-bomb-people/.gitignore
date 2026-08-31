@@ -1,0 +1,6 @@
+.local-test/
+.pytest_cache/
+.tmp/
+node_modules/
+**/__pycache__/
+*.pyc

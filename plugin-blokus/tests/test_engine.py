@@ -343,7 +343,7 @@ def test_complete_games_obey_all_rules_and_finish_with_exact_rank_points(
 
 
 @pytest.mark.parametrize("fixture_name", ("duo_match", "match"))
-def test_ranking_uses_squares_then_pieces_then_later_random_order(
+def test_ranking_uses_the_mode_specific_tiebreak(
     request, fixture_name,
 ):
     engine, room, players = request.getfixturevalue(fixture_name)
@@ -352,12 +352,16 @@ def test_ranking_uses_squares_then_pieces_then_later_random_order(
         if len(players) == 2
         else (["I3"], ["M1", "D2"], ["I4"], ["D2"])
     )
-    expected_indices = (1, 0) if len(players) == 2 else (3, 0, 1, 2)
+    # Classic players 0 and 1 both retain 3 squares. Player 1 ranks higher
+    # despite retaining more pieces because their opening position was later.
+    expected_indices = (1, 0) if len(players) == 2 else (3, 1, 0, 2)
     room.state.remaining = {
         players[i].id: hand for i, hand in enumerate(hands)
     }
     engine._finish(room)
     assert room.state.rankings == [players[i].id for i in expected_indices]
+    if len(players) == 4:
+        assert room.state.scores[players[1].id] > room.state.scores[players[0].id]
     assert sorted(room.state.scores.values(), reverse=True) == [2, 1, 0, -1][
         :len(players)
     ]

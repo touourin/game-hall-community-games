@@ -111,6 +111,14 @@ describe('two- and four-player game interface', () => {
     expect(wrapper.text()).not.toContain('+2 / +1 / 0 / -1')
   })
 
+  it('documents the four-player later-opening-position tiebreak', async () => {
+    const wrapper = render()
+    await button(wrapper, '玩法').trigger('click')
+    expect(wrapper.text()).toContain('四人局只要剩余格数相同')
+    expect(wrapper.text()).toContain('初始顺位较后的玩家就直接排在前面')
+    expect(wrapper.text()).toContain('作为后手补偿')
+  })
+
   it('previews without sending a move and submits only on confirmation', async () => {
     const wrapper = render()
     await wrapper.get('button[aria-label="L5，5 格"]').trigger('click')

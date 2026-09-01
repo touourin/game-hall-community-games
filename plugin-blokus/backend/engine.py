@@ -236,11 +236,19 @@ class BlokusEngine:
             return
         state: BlokusState = room.state
         active = [player_id for player_id in state.player_ids if player_id not in state.forfeited_ids]
-        active.sort(key=lambda player_id: (
-            sum(len(PIECES[key]) for key in state.remaining[player_id]),
-            len(state.remaining[player_id]),
-            -state.player_ids.index(player_id),
-        ))
+        if len(state.player_ids) == 4:
+            # In classic mode, a later opening position wins any square-count
+            # tie as direct compensation for moving later in the round.
+            active.sort(key=lambda player_id: (
+                sum(len(PIECES[key]) for key in state.remaining[player_id]),
+                -state.player_ids.index(player_id),
+            ))
+        else:
+            active.sort(key=lambda player_id: (
+                sum(len(PIECES[key]) for key in state.remaining[player_id]),
+                len(state.remaining[player_id]),
+                -state.player_ids.index(player_id),
+            ))
         # Forfeits rank below all players who finish; an earlier forfeit ranks last.
         state.rankings = active + list(reversed(state.forfeited_ids))
         rank_points = RANK_POINTS[:len(state.rankings)]

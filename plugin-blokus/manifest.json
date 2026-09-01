@@ -1,21 +1,21 @@
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "version": "1.0.0",
+  "version": "1.2.0",
   "author": "Game Hall Contributors",
   "license": "UNLICENSED",
   "id": "plugin-blokus",
-  "name": "四人方格",
-  "description": "四角出发、同色角接，在 20×20 棋盘上铺下你的 21 块方格",
+  "name": "方格游戏",
+  "description": "2 人从中心起步或 4 人从四角出发，用 21 块方格争夺棋盘",
   "category": "多人策略",
   "tone": "blokus",
-  "roomLayout": "wide",
-  "players": { "min": 4, "max": 4, "label": "4 人" },
+  "roomLayout": "immersive",
+  "players": { "min": 2, "max": 4, "label": "2 或 4 人" },
   "capabilities": {
     "guests": true,
     "spectators": true,
     "spectatorFrames": false,
-    "firstPlayer": true,
+    "firstPlayer": false,
     "undoActions": [],
     "drawRequests": false,
     "replay": false,
@@ -25,8 +25,7 @@
   "defaultOptions": {
     "listed": true,
     "allowGuests": true,
-    "allowSpectators": true,
-    "firstPlayer": "random"
+    "allowSpectators": true
   },
-  "ruleLabels": ["四角开局", "每人 21 块", "同色角接", "名次分 +2 / +1 / 0 / −1"]
+  "ruleLabels": ["2 人 14×14 / 4 人 20×20", "每人 21 块", "同色角接", "每局随机顺序", "四人同分后手优先", "双人 +2/+1 · 四人 +2/+1/0/−1"]
 }

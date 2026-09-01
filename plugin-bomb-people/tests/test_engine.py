@@ -136,6 +136,46 @@ def test_player_count_is_enforced(loaded, count):
         engine.start(room)
 
 
+@pytest.mark.parametrize(
+    ("speed_level", "expected_steps", "expected_interval"),
+    (
+        (0, 5, 4.0),
+        (1, 6, 3.2),
+        (2, 8, 2.6),
+        (3, 10, 2.0),
+    ),
+)
+def test_movement_starts_faster_and_scales_smoothly_with_speed_items(
+    loaded,
+    speed_level,
+    expected_steps,
+    expected_interval,
+):
+    Engine, _, _, engine_module = loaded
+    engine = Engine(random.Random(100 + speed_level))
+    room, members = start_active(engine, 2)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    opponent = room.state.players[members[1].id]
+    actor.x, actor.y = 1, 10
+    actor.speed_level = speed_level
+    opponent.x, opponent.y = 18, 18
+    engine.apply_input(room, members[0], 1, engine_module.INPUT_RIGHT)
+
+    for _ in range(engine_module.TICK_RATE):
+        engine.tick(room)
+
+    assert actor.x == 1 + expected_steps
+    view = engine.view(room, members[0])
+    own = next(player for player in view["players"] if player["id"] == actor.player_id)
+    assert own["moveIntervalTicks"] == expected_interval
+
+    room.state.ice_tiles[(actor.x, actor.y)] = room.state.tick + 10
+    slowed = engine.view(room, members[0])
+    own = next(player for player in slowed["players"] if player["id"] == actor.player_id)
+    assert own["moveIntervalTicks"] == expected_interval + 2.0
+
+
 def test_bombs_have_an_authoritative_two_second_fuse(loaded):
     Engine, _, _, engine_module = loaded
     engine = Engine(random.Random(2))

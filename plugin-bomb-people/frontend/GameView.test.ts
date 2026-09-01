@@ -48,6 +48,7 @@ function player(id: string, seat: number, name: string): BombPlayer {
   return {
     id, seat, name, color: seat ? '#4f8cff' : '#ff5a55', character: seat,
     x: seat ? 18 : 1, y: seat ? 18 : 1, facingX: 0, facingY: 1, moving: false,
+    moveIntervalTicks: seat ? 4 : 2.6,
     alive: true, eliminatedBy: null, eliminationReason: null, kills: seat ? 1 : 3,
     stats: { kills: seat ? 4 : 12, championships: seat ? 1 : 4, matches: 5, winRate: seat ? 20 : 80 },
     equipment: {
@@ -198,6 +199,33 @@ describe('Bomb People arena', () => {
     expect(wrapper.find('.kick-impact').exists()).toBe(true)
     expect(wrapper.find('.throw-effect').exists()).toBe(true)
     expect(wrapper.get('.bomb').classes()).toEqual(expect.arrayContaining(['just-placed', 'landing']))
+    wrapper.unmount()
+  })
+
+  it('interpolates authoritative grid steps with compositor movement at the real speed', async () => {
+    const data = snapshot()
+    const game = data.game as unknown as BombGame
+    const actor = game.players[0]!
+    actor.x = 4
+    actor.y = 6
+    actor.moving = true
+    actor.moveIntervalTicks = 4
+    const wrapper = render(data)
+
+    const piece = wrapper.get('.player-piece.self')
+    expect(piece.attributes('style')).toContain('transform: translate3d(400%, 600%, 0)')
+    expect(piece.attributes('style')).toContain('--move-duration: 200ms')
+    expect(piece.attributes('style')).toContain('--walk-step-duration: 200ms')
+    expect(piece.find('.player-visual').exists()).toBe(true)
+
+    actor.x = 5
+    await wrapper.setProps({ snapshot: {
+      ...data,
+      revision: 2,
+      game: { ...game, players: [...game.players] },
+    } as unknown as ArcadeSnapshot })
+    await flushPromises()
+    expect(piece.attributes('style')).toContain('transform: translate3d(500%, 600%, 0)')
     wrapper.unmount()
   })
 

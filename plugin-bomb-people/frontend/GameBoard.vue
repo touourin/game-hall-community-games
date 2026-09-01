@@ -44,15 +44,24 @@ function objectStyle(x: number, y: number, z = 10) {
 
 function playerStyle(player: BombPlayer) {
   const size = 100 / props.game.boardSize
+  const fallbackInterval = Math.max(2, 4 - player.equipment.speedLevel * 0.65)
+  const intervalTicks = player.moveIntervalTicks ?? fallbackInterval
+  const moveDurationMs = player.moving
+    ? Math.max(90, Math.round(intervalTicks * 1_000 / Math.max(1, props.game.tickRate)))
+    : 70
   return {
-    left: `${(player.x + 0.5) * size}%`,
-    top: `${(player.y + 0.5) * size}%`,
-    width: `${size * 1.7}%`,
-    height: `${size * 1.95}%`,
+    left: '0',
+    top: '0',
+    width: `${size}%`,
+    height: `${size}%`,
+    transform: `translate3d(${player.x * 100}%, ${player.y * 100}%, 0)`,
     '--player-color': player.color,
     '--face-scale': player.facingX < 0 ? -1 : 1,
     '--travel-lean': `${player.facingX * 4}deg`,
     '--counter-lean': `${player.facingX * -1.6}deg`,
+    '--move-duration': `${moveDurationMs}ms`,
+    '--walk-step-duration': `${Math.max(90, moveDurationMs)}ms`,
+    '--walk-body-duration': `${Math.max(70, Math.round(moveDurationMs * 0.62))}ms`,
   }
 }
 
@@ -219,13 +228,15 @@ function fuseText(ticks: number) {
         :class="[{ self: player.id === selfId, eliminated: !player.alive, cursed: player.equipment.cursedTicks > 0, invincible: player.equipment.invincibleTicks > 0 }, playerAnimationClass(player)]"
         :style="playerStyle(player)"
       >
-        <span class="player-ground-shadow" aria-hidden="true" />
-        <span :key="playerVisualKey(player)" class="player-avatar">
-          <img class="player-layer player-torso" :src="PLAYER_ART[player.character]" :alt="player.name" draggable="false" />
-          <img class="player-layer player-leg player-leg-left" :src="PLAYER_ART[player.character]" alt="" draggable="false" aria-hidden="true" />
-          <img class="player-layer player-leg player-leg-right" :src="PLAYER_ART[player.character]" alt="" draggable="false" aria-hidden="true" />
+        <span class="player-visual">
+          <span class="player-ground-shadow" aria-hidden="true" />
+          <span :key="playerVisualKey(player)" class="player-avatar">
+            <img class="player-layer player-torso" :src="PLAYER_ART[player.character]" :alt="player.name" draggable="false" />
+            <img class="player-layer player-leg player-leg-left" :src="PLAYER_ART[player.character]" alt="" draggable="false" aria-hidden="true" />
+            <img class="player-layer player-leg player-leg-right" :src="PLAYER_ART[player.character]" alt="" draggable="false" aria-hidden="true" />
+          </span>
+          <span class="player-name">{{ player.name }}</span>
         </span>
-        <span class="player-name">{{ player.name }}</span>
       </div>
 
       <div v-if="game.stage === 'countdown'" class="stage-overlay countdown" aria-live="assertive">
@@ -289,7 +300,8 @@ function fuseText(ticks: number) {
 .airborne-bomb::before { content: ''; position: absolute; width: 34%; height: 24%; left: 54%; top: -13%; border: 3px solid #b88643; border-bottom: 0; border-radius: 50% 50% 0 0; transform: rotate(35deg); }
 .airborne-bomb i { position: absolute; width: 15%; height: 15%; right: -5%; top: -16%; border-radius: 50%; background: #fff5aa; box-shadow: 0 0 7px 2px #ff7818; }
 .throw-shadow { position: absolute; width: 72%; height: 22%; border-radius: 50%; background: #0009; filter: blur(2px); animation: throw-shadow .44s ease-in-out both; }
-.player-piece { position: absolute; z-index: 22; transform: translate(-50%, -58%); pointer-events: none; filter: drop-shadow(0 4px 3px #000b); transition: left .11s cubic-bezier(.18, .7, .22, 1), top .11s cubic-bezier(.18, .7, .22, 1); will-change: left, top; }
+.player-piece { position: absolute; z-index: 22; pointer-events: none; filter: drop-shadow(0 4px 3px #000b); transition: transform var(--move-duration, 180ms) linear; will-change: transform; backface-visibility: hidden; }
+.player-visual { position: absolute; left: 50%; top: 50%; width: 170%; height: 195%; transform: translate(-50%, -58%); }
 .player-avatar { position: absolute; inset: 0; display: block; transform: scaleX(var(--face-scale)); transform-origin: 50% 76%; }
 .player-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
 .player-torso { z-index: 3; clip-path: polygon(0 0, 100% 0, 100% 74%, 62% 77%, 50% 75%, 38% 77%, 0 74%); transform-origin: 50% 72%; }
@@ -298,11 +310,11 @@ function fuseText(ticks: number) {
 .player-leg-right { clip-path: polygon(48% 61%, 100% 61%, 100% 100%, 46% 100%); transform-origin: 57% 67%; }
 .player-ground-shadow { position: absolute; z-index: -1; left: 23%; right: 23%; bottom: 7%; height: 14%; border-radius: 50%; background: #0009; filter: blur(2px); transform-origin: center; }
 .player-name { position: absolute; z-index: 6; left: 50%; bottom: -3%; transform: translateX(-50%); max-width: 160%; padding: 1px 4px; overflow: hidden; color: white; background: #0a0d10d9; border: 1px solid var(--player-color); border-radius: 4px; font: 700 clamp(5px, .62vw, 9px)/1.25 system-ui; text-overflow: ellipsis; white-space: nowrap; }
-.player-piece.walking .player-torso { animation: walk-body .16s ease-in-out infinite alternate; }
-.player-piece.walking .player-leg-left { animation: walk-leg-left .28s ease-in-out infinite alternate; }
-.player-piece.walking .player-leg-right { animation: walk-leg-right .28s ease-in-out infinite alternate; }
-.player-piece.walking .player-ground-shadow { animation: walk-shadow .28s ease-in-out infinite alternate; }
-.player-piece.walking::after { content: ''; position: absolute; z-index: 1; left: 36%; bottom: 5%; width: 28%; height: 12%; border-radius: 50%; background: radial-gradient(ellipse, #d5c7a66b, transparent 68%); animation: foot-dust .28s ease-out infinite; }
+.player-piece.walking .player-torso { animation: walk-body var(--walk-body-duration, 110ms) ease-in-out infinite alternate; }
+.player-piece.walking .player-leg-left { animation: walk-leg-left var(--walk-step-duration, 180ms) ease-in-out infinite alternate; }
+.player-piece.walking .player-leg-right { animation: walk-leg-right var(--walk-step-duration, 180ms) ease-in-out infinite alternate; }
+.player-piece.walking .player-ground-shadow { animation: walk-shadow var(--walk-step-duration, 180ms) ease-in-out infinite alternate; }
+.player-piece.walking .player-visual::after { content: ''; position: absolute; z-index: 1; left: 36%; bottom: 5%; width: 28%; height: 12%; border-radius: 50%; background: radial-gradient(ellipse, #d5c7a66b, transparent 68%); animation: foot-dust var(--walk-step-duration, 180ms) ease-out infinite; }
 .player-piece.action-punch .player-avatar { animation: punch-lunge .38s cubic-bezier(.18, .8, .25, 1) both; }
 .player-piece.action-punch .player-torso { animation: punch-body .38s ease-out both; }
 .player-piece.action-kick .player-avatar { animation: kick-balance .4s ease-out both; }

@@ -38,6 +38,7 @@ export interface BombPlayer {
   facingX: number
   facingY: number
   moving: boolean
+  moveIntervalTicks?: number
   alive: boolean
   eliminatedBy: string | null
   eliminationReason: string | null

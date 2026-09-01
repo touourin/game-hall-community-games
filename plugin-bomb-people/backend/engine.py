@@ -42,6 +42,7 @@ ITEM_REFRESH_TICKS = 10 * TICK_RATE
 ITEM_REFRESH_CHANCE = 0.24
 CRATE_DROP_CHANCE = 0.38
 COLLAPSE_INTERVAL_TICKS = 3
+MOVE_INTERVAL_TICKS = (4.0, 3.2, 2.6, 2.0)
 
 INPUT_UP = 1
 INPUT_DOWN = 2
@@ -494,9 +495,11 @@ class BombPeopleEngine:
                 continue
             if actor.move_cooldown > 0:
                 actor.move_cooldown -= 1
-                continue
+                if actor.move_cooldown > 0:
+                    continue
             direction = self._movement_direction(actor)
             if direction == (0, 0):
+                actor.move_cooldown = 0.0
                 continue
             dx, dy = direction
             actor.facing_x, actor.facing_y = dx, dy
@@ -522,11 +525,19 @@ class BombPeopleEngine:
                 continue
             actor.x, actor.y = target_x, target_y
             actor.last_move_tick = state.tick
-            interval = max(2, 5 - actor.speed_level)
-            if (actor.x, actor.y) in state.ice_tiles:
-                interval += 2
-            actor.move_cooldown = interval - 1
+            actor.move_cooldown += self._move_interval_ticks(state, actor)
             self._collect_at(room, state, actor, actor.x, actor.y)
+
+    @staticmethod
+    def _move_interval_ticks(
+        state: BombPeopleState,
+        actor: PlayerState,
+    ) -> float:
+        level = min(max(actor.speed_level, 0), len(MOVE_INTERVAL_TICKS) - 1)
+        interval = MOVE_INTERVAL_TICKS[level]
+        if (actor.x, actor.y) in state.ice_tiles:
+            interval += 2.0
+        return interval
 
     @staticmethod
     def _movement_direction(actor: PlayerState) -> tuple[int, int]:
@@ -1256,8 +1267,8 @@ class BombPeopleEngine:
             "itemLabels": dict(ITEM_LABELS),
         }
 
-    @staticmethod
     def _player_view(
+        self,
         state: BombPeopleState,
         actor: PlayerState,
         name: str,
@@ -1281,8 +1292,10 @@ class BombPeopleEngine:
             "moving": bool(
                 actor.alive
                 and not state.frozen
-                and state.tick - actor.last_move_tick <= max(2, 5 - actor.speed_level)
+                and state.tick - actor.last_move_tick
+                <= self._move_interval_ticks(state, actor)
             ),
+            "moveIntervalTicks": self._move_interval_ticks(state, actor),
             "alive": actor.alive,
             "eliminatedBy": actor.eliminated_by,
             "eliminationReason": actor.elimination_reason,

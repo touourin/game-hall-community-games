@@ -5,8 +5,12 @@ from functools import lru_cache
 from pathlib import Path
 
 
-BOARD_SIZE = 20
-CORNERS = ((0, 0), (19, 0), (19, 19), (0, 19))
+DUO_BOARD_SIZE = 14
+FOUR_BOARD_SIZE = 20
+DUO_START_POINTS = ((4, 4), (9, 9))
+FOUR_START_POINTS = ((0, 0), (19, 0), (19, 19), (0, 19))
+BOARD_SIZES = {2: DUO_BOARD_SIZE, 4: FOUR_BOARD_SIZE}
+START_POINTS = {2: DUO_START_POINTS, 4: FOUR_START_POINTS}
 COLORS = ("blue", "yellow", "red", "green")
 COLOR_NAMES = ("蓝", "黄", "红", "绿")
 RANK_POINTS = (2, 1, 0, -1)

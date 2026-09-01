@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import GameView from '../frontend/GameView.vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import {
   installLocalGameActions,
   type ArcadeSnapshot,
 } from './local-sdk'
+
+const GameView = defineAsyncComponent(() => import('../frontend/GameView.vue'))
 
 
 interface ApiResult {

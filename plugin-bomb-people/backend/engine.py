@@ -15,6 +15,7 @@ from .state import (
     CELL_STONE,
     BombPeopleState,
     BombState,
+    EffectState,
     EventState,
     FlameState,
     ItemState,
@@ -29,6 +30,9 @@ COUNTDOWN_TICKS = 3 * TICK_RATE
 ROUND_TICKS = 90 * TICK_RATE
 BOMB_FUSE_TICKS = 2 * TICK_RATE
 FLAME_TICKS = 7
+ACTION_EFFECT_TICKS = 10
+BOMB_PLACE_EFFECT_TICKS = 7
+EXPLOSION_EFFECT_TICKS = 9
 SHIELD_GRACE_TICKS = TICK_RATE
 CURSE_TICKS = 5 * TICK_RATE
 GHOST_TICKS = 5 * TICK_RATE
@@ -348,6 +352,10 @@ class BombPeopleEngine:
             for cell, expires in state.ice_tiles.items()
             if expires > state.tick
         }
+        state.effects = [
+            effect for effect in state.effects
+            if effect.expires_tick > state.tick
+        ]
 
     def _handle_requested_actions(
         self,
@@ -409,6 +417,15 @@ class BombPeopleEngine:
         )
         state.next_bomb_id += 1
         state.bombs[bomb.bomb_id] = bomb
+        self._add_effect(
+            state,
+            "bomb_placed",
+            BOMB_PLACE_EFFECT_TICKS,
+            actor_id=actor.player_id,
+            bomb_id=bomb.bomb_id,
+            x=bomb.x,
+            y=bomb.y,
+        )
 
     def _punch_bomb(self, state: BombPeopleState, actor: PlayerState) -> None:
         bomb = self._bomb_at(
@@ -418,12 +435,26 @@ class BombPeopleEngine:
         )
         if bomb is None:
             return
+        impact_x, impact_y = bomb.x, bomb.y
         bomb.credit_player_id = actor.player_id
         bomb.motion_dx = actor.facing_x
         bomb.motion_dy = actor.facing_y
         bomb.travel_left = 3
         bomb.motion_delay = 0
-        self._move_bomb_once(state, bomb)
+        if self._move_bomb_once(state, bomb):
+            self._add_effect(
+                state,
+                "bomb_punched",
+                ACTION_EFFECT_TICKS,
+                actor_id=actor.player_id,
+                bomb_id=bomb.bomb_id,
+                x=actor.x,
+                y=actor.y,
+                target_x=impact_x,
+                target_y=impact_y,
+                direction_x=actor.facing_x,
+                direction_y=actor.facing_y,
+            )
 
     def _throw_bomb(self, state: BombPeopleState, actor: PlayerState) -> None:
         bomb = self._bomb_at(
@@ -433,6 +464,7 @@ class BombPeopleEngine:
         )
         if bomb is None:
             return
+        origin_x, origin_y = bomb.x, bomb.y
         for distance in range(4, 0, -1):
             x = actor.x + actor.facing_x * distance
             y = actor.y + actor.facing_y * distance
@@ -441,6 +473,19 @@ class BombPeopleEngine:
                 bomb.y = y
                 bomb.credit_player_id = actor.player_id
                 self._stop_bomb(bomb)
+                self._add_effect(
+                    state,
+                    "bomb_thrown",
+                    ACTION_EFFECT_TICKS,
+                    actor_id=actor.player_id,
+                    bomb_id=bomb.bomb_id,
+                    x=origin_x,
+                    y=origin_y,
+                    target_x=x,
+                    target_y=y,
+                    direction_x=actor.facing_x,
+                    direction_y=actor.facing_y,
+                )
                 return
 
     def _move_players(self, room: ArcadeRoom, state: BombPeopleState) -> None:
@@ -476,6 +521,7 @@ class BombPeopleEngine:
             ):
                 continue
             actor.x, actor.y = target_x, target_y
+            actor.last_move_tick = state.tick
             interval = max(2, 5 - actor.speed_level)
             if (actor.x, actor.y) in state.ice_tiles:
                 interval += 2
@@ -502,12 +548,28 @@ class BombPeopleEngine:
         dx: int,
         dy: int,
     ) -> bool:
+        impact_x, impact_y = bomb.x, bomb.y
         bomb.motion_dx = dx
         bomb.motion_dy = dy
         bomb.motion_delay = 0
         bomb.travel_left = -1
         bomb.credit_player_id = actor.player_id
-        return self._move_bomb_once(state, bomb)
+        moved = self._move_bomb_once(state, bomb)
+        if moved:
+            self._add_effect(
+                state,
+                "bomb_kicked",
+                ACTION_EFFECT_TICKS,
+                actor_id=actor.player_id,
+                bomb_id=bomb.bomb_id,
+                x=actor.x,
+                y=actor.y,
+                target_x=impact_x,
+                target_y=impact_y,
+                direction_x=dx,
+                direction_y=dy,
+            )
+        return moved
 
     def _advance_bombs(self, room: ArcadeRoom, state: BombPeopleState) -> None:
         for bomb in sorted(state.bombs.values(), key=lambda item: item.bomb_id):
@@ -593,6 +655,15 @@ class BombPeopleEngine:
     ) -> None:
         if state.bombs.pop(bomb.bomb_id, None) is None:
             return
+        self._add_effect(
+            state,
+            "bomb_exploded",
+            EXPLOSION_EFFECT_TICKS,
+            actor_id=bomb.credit_player_id,
+            bomb_id=bomb.bomb_id,
+            x=bomb.x,
+            y=bomb.y,
+        )
         blast_cells: list[tuple[int, int]] = [(bomb.x, bomb.y)]
         destroyed_crates: list[tuple[int, int]] = []
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
@@ -1118,6 +1189,8 @@ class BombPeopleEngine:
                     "fuseTicks": max(0, bomb.fuse_ticks),
                     "maxFuseTicks": BOMB_FUSE_TICKS,
                     "moving": bool(bomb.motion_dx or bomb.motion_dy),
+                    "motionX": bomb.motion_dx,
+                    "motionY": bomb.motion_dy,
                 }
                 for bomb in sorted(state.bombs.values(), key=lambda item: item.bomb_id)
             ],
@@ -1148,6 +1221,23 @@ class BombPeopleEngine:
                     "message": event.message,
                 }
                 for event in state.events[-14:]
+            ],
+            "effects": [
+                {
+                    "id": effect.effect_id,
+                    "kind": effect.kind,
+                    "tick": effect.tick,
+                    "remainingTicks": max(0, effect.expires_tick - state.tick),
+                    "actorId": effect.actor_id,
+                    "bombId": effect.bomb_id,
+                    "x": effect.x,
+                    "y": effect.y,
+                    "targetX": effect.target_x,
+                    "targetY": effect.target_y,
+                    "directionX": effect.direction_x,
+                    "directionY": effect.direction_y,
+                }
+                for effect in state.effects
             ],
             "winnerId": state.match_winner_id,
             "clockLeaderId": clock_leader,
@@ -1188,6 +1278,11 @@ class BombPeopleEngine:
             "y": actor.y,
             "facingX": actor.facing_x,
             "facingY": actor.facing_y,
+            "moving": bool(
+                actor.alive
+                and not state.frozen
+                and state.tick - actor.last_move_tick <= max(2, 5 - actor.speed_level)
+            ),
             "alive": actor.alive,
             "eliminatedBy": actor.eliminated_by,
             "eliminationReason": actor.elimination_reason,
@@ -1253,6 +1348,40 @@ class BombPeopleEngine:
             return room.player(player_id).name
         except KeyError:
             return "玩家"
+
+    @staticmethod
+    def _add_effect(
+        state: BombPeopleState,
+        kind: str,
+        duration_ticks: int,
+        *,
+        actor_id: str | None = None,
+        bomb_id: int | None = None,
+        x: int = 0,
+        y: int = 0,
+        target_x: int | None = None,
+        target_y: int | None = None,
+        direction_x: int = 0,
+        direction_y: int = 0,
+    ) -> None:
+        state.effects.append(
+            EffectState(
+                state.next_effect_id,
+                kind,
+                state.tick,
+                state.tick + duration_ticks,
+                actor_id,
+                bomb_id,
+                x,
+                y,
+                target_x,
+                target_y,
+                direction_x,
+                direction_y,
+            )
+        )
+        state.next_effect_id += 1
+        state.effects = state.effects[-64:]
 
     @staticmethod
     def _add_event(

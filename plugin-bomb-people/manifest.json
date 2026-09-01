@@ -1,7 +1,7 @@
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Game Hall Contributors",
   "license": "UNLICENSED",
   "id": "plugin-bomb-people",
@@ -34,10 +34,11 @@
     "allowSpectators": true
   },
   "ruleLabels": [
-    "20×20 地图",
-    "2 秒炸弹",
-    "90 秒后落石",
-    "全员同意换图",
-    "WASD + Z/X/空格"
+    "20×20 地图 · 炸弹 2 秒",
+    "电脑：WASD/方向键移动",
+    "Space：放雷/定时引爆",
+    "Z：拳套打雷 · X：扔雷",
+    "脚踢：走向炸弹自动触发",
+    "手机：滑动摇杆＋动作键"
   ]
 }

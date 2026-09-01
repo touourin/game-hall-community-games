@@ -1,0 +1,35 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "1.1.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-math-runner",
+  "name": "算途疾行",
+  "description": "在四向路口判断唯一正确等式，连续答题冲刺十级赛道与最大路程榜",
+  "category": "益智跑酷",
+  "tone": "math-runner",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 1,
+    "max": 1,
+    "label": "1 人"
+  },
+  "capabilities": {
+    "guests": false,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": false,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "high_score"
+  },
+  "defaultOptions": {
+    "listed": false
+  },
+  "ruleLabels": ["四向等式判断", "每 10 题升级", "共 10 级", "WASD / 触控", "迟到即失败", "最大路程排行榜"]
+}

@@ -154,6 +154,7 @@ def test_bombs_have_an_authoritative_two_second_fuse(loaded):
     engine.tick(room)
     assert not room.state.bombs
     assert room.state.flames
+    assert any(effect.kind == "bomb_exploded" for effect in room.state.effects)
 
 
 def test_forfeit_during_countdown_immediately_awards_the_last_survivor(loaded):
@@ -202,6 +203,25 @@ def test_kick_punch_and_throw_work_on_an_opponents_bomb(loaded):
     assert (enemy.x, enemy.y) == (8, 9)
     assert enemy.owner_id == members[1].id
     assert enemy.credit_player_id == members[0].id
+    effect_kinds = {effect.kind for effect in room.state.effects}
+    assert {"bomb_kicked", "bomb_punched", "bomb_thrown"} <= effect_kinds
+
+    view = engine.view(room, members[0])
+    throw_effect = next(effect for effect in view["effects"] if effect["kind"] == "bomb_thrown")
+    assert throw_effect == {
+        "id": throw_effect["id"],
+        "kind": "bomb_thrown",
+        "tick": room.state.tick,
+        "remainingTicks": engine_module.ACTION_EFFECT_TICKS,
+        "actorId": members[0].id,
+        "bombId": enemy.bomb_id,
+        "x": 5,
+        "y": 9,
+        "targetX": 8,
+        "targetY": 9,
+        "directionX": 1,
+        "directionY": 0,
+    }
 
 
 def test_timer_can_trigger_early_but_never_extends_the_two_second_limit(loaded):
@@ -355,6 +375,140 @@ def test_kills_championships_and_win_rate_are_recorded(loaded):
     assert record["players"][winner.player_id]["killsThisMatch"] == 1
     assert engine.player_result(room, members[0])[-1] is True
     assert engine.player_result(room, members[1])[-1] is False
+
+
+@pytest.mark.parametrize("count", range(2, 9))
+def test_complete_explosion_match_and_rematch_for_every_supported_player_count(loaded, count):
+    Engine, state_module, _, _ = loaded
+    engine = Engine(random.Random(1000 + count))
+    room, members = start_active(engine, count)
+    clear_board(room)
+
+    winner = room.state.players[members[0].id]
+    winner.x, winner.y = 18, 18
+    victims = members[1:]
+    for offset, member in enumerate(victims, start=1):
+        actor = room.state.players[member.id]
+        actor.x, actor.y = 5 + offset, 5
+
+    room.state.bombs[1] = state_module.BombState(
+        1,
+        winner.player_id,
+        winner.player_id,
+        5,
+        5,
+        room.state.tick - 1,
+        0,
+        8,
+    )
+    engine.tick(room)
+
+    assert room.phase == "finished"
+    assert room.state.stage == "finished"
+    assert room.winner == "last_standing"
+    assert room.winner_player_ids == [winner.player_id]
+    assert winner.kills == count - 1
+    assert all(not room.state.players[member.id].alive for member in victims)
+    assert all(
+        room.state.players[member.id].eliminated_by == winner.player_id
+        and room.state.players[member.id].elimination_reason == "blast"
+        for member in victims
+    )
+    assert any(effect.kind == "bomb_exploded" for effect in room.state.effects)
+
+    for member in members:
+        view = engine.view(room, member)
+        own = next(player for player in view["players"] if player["id"] == member.id)
+        assert own["stats"]["matches"] == 1
+        assert own["stats"]["championships"] == (1 if member.id == winner.player_id else 0)
+        assert own["stats"]["kills"] == (count - 1 if member.id == winner.player_id else 0)
+        assert engine.player_result(room, member)[-1] is (member.id == winner.player_id)
+
+    records_after_finish = copy.deepcopy(room.state.session_records)
+    engine.tick(room)
+    assert room.state.session_records == records_after_finish
+
+    engine.start(room)
+    assert room.phase == "playing"
+    assert room.state.stage == "countdown"
+    assert room.state.session_records == records_after_finish
+    winner_view = engine.view(room, members[0])
+    own = next(player for player in winner_view["players"] if player["id"] == winner.player_id)
+    assert own["stats"] == {
+        "kills": count - 1,
+        "championships": 1,
+        "matches": 1,
+        "winRate": 100.0,
+    }
+
+
+def test_simultaneous_blast_is_a_draw_and_settles_exactly_once(loaded):
+    Engine, state_module, _, _ = loaded
+    engine = Engine(random.Random(2002))
+    room, members = start_active(engine, 2)
+    clear_board(room)
+    owner = room.state.players[members[0].id]
+    opponent = room.state.players[members[1].id]
+    owner.x, owner.y = 5, 5
+    opponent.x, opponent.y = 6, 5
+    room.state.bombs[1] = state_module.BombState(
+        1,
+        owner.player_id,
+        owner.player_id,
+        5,
+        5,
+        room.state.tick - 1,
+        0,
+        2,
+    )
+
+    engine.tick(room)
+
+    assert room.phase == "finished"
+    assert room.winner == "draw"
+    assert room.winner_player_ids == []
+    assert room.state.match_winner_id is None
+    assert all(not actor.alive for actor in room.state.players.values())
+    assert all(record.matches == 1 for record in room.state.session_records.values())
+    assert all(record.championships == 0 for record in room.state.session_records.values())
+    assert all(engine.player_result(room, member)[-1] is False for member in members)
+
+    records_after_finish = copy.deepcopy(room.state.session_records)
+    engine.tick(room)
+    engine._check_finish(room, room.state)
+    assert room.state.session_records == records_after_finish
+
+
+@pytest.mark.parametrize("count", range(2, 9))
+def test_spiral_collapse_can_finish_every_supported_player_count(loaded, count):
+    Engine, _, _, engine_module = loaded
+    engine = Engine(random.Random(3000 + count))
+    room, members = start_active(engine, count)
+    clear_board(room)
+    room.state.stage = "collapse"
+    room.state.collapse_index = 0
+    room.state.collapse_cooldown = 0
+
+    for index, member in enumerate(members[:-1]):
+        actor = room.state.players[member.id]
+        actor.x, actor.y = room.state.collapse_order[index]
+    survivor = room.state.players[members[-1].id]
+    survivor.x, survivor.y = room.state.collapse_order[-1]
+
+    max_ticks = (count - 1) * engine_module.COLLAPSE_INTERVAL_TICKS + 1
+    for _ in range(max_ticks):
+        engine.tick(room)
+        if room.phase == "finished":
+            break
+
+    assert room.phase == "finished"
+    assert room.winner_player_ids == [survivor.player_id]
+    assert survivor.alive
+    assert all(
+        not room.state.players[member.id].alive
+        and room.state.players[member.id].elimination_reason == "stone"
+        for member in members[:-1]
+    )
 
 
 def test_view_is_detached_public_and_state_is_pickle_safe(loaded):

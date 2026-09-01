@@ -32,16 +32,16 @@ def session(tmp_path, monkeypatch):
     store.dispose()
 
 
-def start_room(session, *, guest=False):
+def start_room(session, *, player_count=4, guest=False):
     host_account, *other_accounts = session.accounts
     room, host, _ = session.manager.create_room(
         GAME_KEY, host_account.player_name, host_account.id,
-        {"firstPlayer": "host", "allowGuests": guest},
+        {"allowGuests": guest},
     )
-    for index, account in enumerate(other_accounts):
+    for index, account in enumerate(other_accounts[:player_count - 1]):
         session.manager.join_room(
             room.code, GAME_KEY, account.player_name, account.id,
-            is_guest=guest and index == 2,
+            is_guest=guest and index == player_count - 2,
         )
     session.manager.start(room, host.id)
     return room
@@ -55,16 +55,22 @@ def stored_scores(session, match_id):
         return {account_id: score for account_id, score in rows}
 
 
-def test_complete_game_records_signed_points_with_the_existing_outcome_api(session):
+@pytest.mark.parametrize("player_count", (2, 4))
+def test_complete_game_records_signed_points_with_the_existing_outcome_api(
+    session, player_count,
+):
     assert game_registration(GAME_KEY).records.score_kind == "outcome"
-    room = start_room(session)
+    room = start_room(session, player_count=player_count)
     while room.phase == "playing":
         player_id = room.state.current_player_id
         session.manager.act(room, player_id, "place", session.engine.find_move(room, player_id))
     session.runtime._record_room(room)
     assert room.recorded
     expected_scores = {}
-    for rank, (player_id, points) in enumerate(zip(room.state.rankings, (2, 1, 0, -1), strict=True), 1):
+    rank_points = (2, 1, 0, -1)[:player_count]
+    for rank, (player_id, points) in enumerate(
+        zip(room.state.rankings, rank_points, strict=True), 1,
+    ):
         player = room.player(player_id)
         expected_scores[player.account_id] = points
         score_text = ("+2", "+1", "0", "-1")[rank - 1]
@@ -84,7 +90,7 @@ def test_complete_game_records_signed_points_with_the_existing_outcome_api(sessi
         assert "totalPoints" not in summary
     assert stored_scores(session, room.game_id) == expected_scores
     leaderboard = session.store.leaderboard(game_key=GAME_KEY)
-    assert len(leaderboard) == 4
+    assert len(leaderboard) == player_count
     assert leaderboard[0]["accountId"] == room.player(room.state.rankings[0]).account_id
     assert all("totalPoints" not in entry for entry in leaderboard)
 

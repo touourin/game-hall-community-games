@@ -47,6 +47,8 @@
     {
       "id": "plugin-skull",
       "path": "skull-game-model",
+      "id": "plugin-math-runner",
+      "path": "plugin-math-runner",
       "status": "enabled",
       "order": 170
     }

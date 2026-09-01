@@ -1,7 +1,7 @@
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "Game Hall Contributors",
   "license": "UNLICENSED",
   "id": "plugin-blokus",
@@ -9,7 +9,7 @@
   "description": "四角出发、同色角接，在 20×20 棋盘上铺下你的 21 块方格",
   "category": "多人策略",
   "tone": "blokus",
-  "roomLayout": "wide",
+  "roomLayout": "immersive",
   "players": { "min": 4, "max": 4, "label": "4 人" },
   "capabilities": {
     "guests": true,

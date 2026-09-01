@@ -43,6 +43,12 @@
       "path": "plugin-bomb-people",
       "status": "enabled",
       "order": 160
+    },
+    {
+      "id": "plugin-math-runner",
+      "path": "plugin-math-runner",
+      "status": "enabled",
+      "order": 170
     }
   ]
 }

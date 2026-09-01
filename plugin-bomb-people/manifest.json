@@ -1,0 +1,43 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "0.1.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-bomb-people",
+  "name": "炸弹超人",
+  "description": "2–8 人实时炸弹对抗、自动拾取、随机装备与螺旋落石决胜",
+  "category": "实时对战",
+  "tone": "bomb-people",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 2,
+    "max": 8,
+    "label": "2–8 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": false,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "allowSpectators": true
+  },
+  "ruleLabels": [
+    "20×20 地图",
+    "2 秒炸弹",
+    "90 秒后落石",
+    "全员同意换图",
+    "WASD + Z/X/空格"
+  ]
+}

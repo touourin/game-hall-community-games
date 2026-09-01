@@ -16,6 +16,49 @@ from backend.app.games.plugins import _load_engine_factory
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 
+ARTWORK_SPAWNS = {
+    "magma_crucible": (
+        (3, 2), (16, 16), (16, 2), (3, 16),
+        (10, 2), (10, 16), (2, 9), (17, 9),
+    ),
+    "frost_fracture": (
+        (3, 3), (16, 16), (16, 3), (3, 16),
+        (9, 3), (9, 16), (3, 9), (16, 9),
+    ),
+    "neon_reactor": (
+        (3, 2), (17, 17), (16, 2), (2, 17),
+        (10, 2), (9, 17), (1, 9), (18, 9),
+    ),
+    "jungle_ziggurat": (
+        (8, 8), (11, 10), (11, 8), (8, 10),
+        (9, 8), (10, 10), (10, 8), (9, 10),
+    ),
+    "sky_citadel": (
+        (6, 2), (13, 17), (13, 2), (6, 17),
+        (8, 2), (11, 17), (11, 2), (8, 17),
+    ),
+    "clockwork_foundry": (
+        (2, 4), (17, 15), (17, 4), (2, 15),
+        (2, 7), (17, 12), (17, 7), (2, 12),
+    ),
+    "haunted_catacombs": (
+        (2, 2), (17, 16), (17, 2), (2, 16),
+        (2, 4), (17, 15), (17, 4), (2, 15),
+    ),
+    "storm_dockyard": (
+        (4, 4), (15, 15), (15, 4), (4, 15),
+        (6, 5), (13, 13), (13, 5), (6, 13),
+    ),
+    "crystal_rift": (
+        (4, 3), (15, 16), (15, 3), (4, 16),
+        (9, 6), (9, 13), (7, 10), (12, 10),
+    ),
+    "solar_collapse": (
+        (4, 4), (15, 14), (12, 6), (5, 14),
+        (7, 12), (12, 12), (9, 16), (9, 9),
+    ),
+}
+
 
 @pytest.fixture(scope="module")
 def loaded():
@@ -111,23 +154,43 @@ def test_all_ten_maps_are_exactly_twenty_by_twenty_and_vary_density(loaded):
     assert maps_module.spiral_collapse_order()[:5] == [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0)]
 
 
-def test_clash_maps_spawn_close_with_loadouts_while_fortress_maps_spread_out(loaded):
+def test_every_map_uses_its_artwork_spawn_markers_for_two_to_eight_players(loaded):
+    Engine, _, maps_module, _ = loaded
+    engine = Engine(random.Random(17))
+    assert set(ARTWORK_SPAWNS) == {spec.key for spec in maps_module.MAP_SPECS}
+
+    for spec in maps_module.MAP_SPECS:
+        expected = ARTWORK_SPAWNS[spec.key]
+        assert spec.spawn_points == expected
+        assert len(expected) == len(set(expected)) == 8
+        assert all(0 <= x < 20 and 0 <= y < 20 for x, y in expected)
+        for count in range(2, 9):
+            room, _ = new_room(engine, count)
+            force_next_map(engine, spec.key)
+            engine.start(room)
+            actual = tuple((actor.x, actor.y) for actor in room.state.players.values())
+            assert actual == expected[:count]
+            assert all(room.state.board[y][x] == 0 for x, y in actual)
+
+
+def test_map_specific_starting_loadouts_are_preserved(loaded):
     Engine, _, _, _ = loaded
     engine = Engine(random.Random(17))
     room, _ = new_room(engine, 8)
     force_next_map(engine, "sky_citadel")
     engine.start(room)
-    actors = list(room.state.players.values())
-    assert max(actor.x for actor in actors) - min(actor.x for actor in actors) <= 7
-    assert max(actor.y for actor in actors) - min(actor.y for actor in actors) <= 7
-    assert all(actor.speed_level == 2 and actor.bomb_capacity == 2 and actor.can_kick for actor in actors)
+    assert all(
+        actor.speed_level == 2 and actor.bomb_capacity == 2 and actor.can_kick
+        for actor in room.state.players.values()
+    )
 
     room, _ = new_room(engine, 8)
     force_next_map(engine, "clockwork_foundry")
     engine.start(room)
-    actors = list(room.state.players.values())
-    assert max(actor.x for actor in actors) - min(actor.x for actor in actors) >= 17
-    assert all(actor.speed_level == 0 and actor.bomb_capacity == 1 for actor in actors)
+    assert all(
+        actor.speed_level == 0 and actor.bomb_capacity == 1
+        for actor in room.state.players.values()
+    )
 
 
 @pytest.mark.parametrize("count", (0, 1, 9))

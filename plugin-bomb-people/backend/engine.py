@@ -166,7 +166,7 @@ class BombPeopleEngine:
             session_records.setdefault(player.id, SessionRecord())
 
         spec = MAP_BY_KEY[selected_map]
-        positions = spawn_positions(len(active_players), spec.spawn_mode)
+        positions = spawn_positions(len(active_players), spec)
         variant = self.rng.randrange(1_000_000)
         state = BombPeopleState(
             tick=0,

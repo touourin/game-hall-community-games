@@ -1,7 +1,7 @@
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "author": "Game Hall Contributors",
   "license": "UNLICENSED",
   "id": "plugin-bomb-people",

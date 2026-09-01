@@ -23,10 +23,12 @@ import {
 } from '@game-hall/plugin-sdk'
 import GameBoard from './GameBoard.vue'
 import { ITEM_ART, MAP_ART, PLAYER_ART } from './catalog'
+import { createBombPeopleSound } from './sound'
 import type { BombGame, BombMap, BombPlayer } from './types'
 
 const props = defineProps<{ snapshot: ArcadeSnapshot }>()
 const actions = usePluginGameActions()
+const sound = createBombPeopleSound()
 const gameRoot = ref<HTMLElement | null>(null)
 const { isFullscreen, isSupported, toggle } = usePluginFullscreen(gameRoot)
 
@@ -36,9 +38,16 @@ const mapPending = ref<string | null>(null)
 const votePending = ref(false)
 const keyboardMask = ref(0)
 const touchMask = ref(0)
+const joystickX = ref(0)
+const joystickY = ref(0)
+const joystickActive = ref(false)
 let inputSequence = 0
 let heartbeatSequence = 0
 let heartbeatTimer: ReturnType<typeof setInterval> | null = null
+let joystickPointerId: number | null = null
+let soundEffectsInitialized = false
+let soundRound = props.snapshot.roundNumber
+const seenSoundEffectIds = new Set<number>()
 
 const game = computed(() => props.snapshot.game as unknown as BombGame)
 const isSpectator = computed(() => props.snapshot.viewer?.mode === 'spectator')
@@ -66,6 +75,7 @@ const roster = computed(() => {
     y: 0,
     facingX: 0,
     facingY: 1,
+    moving: false,
     alive: true,
     eliminatedBy: null,
     eliminationReason: null,
@@ -145,13 +155,24 @@ async function voteMap(accept: boolean) {
 
 const KEY_BITS: Record<string, number> = {
   KeyW: 1,
+  ArrowUp: 1,
   KeyS: 2,
+  ArrowDown: 2,
   KeyA: 4,
+  ArrowLeft: 4,
   KeyD: 8,
+  ArrowRight: 8,
   Space: 16,
   KeyZ: 32,
   KeyX: 64,
 }
+const DIRECTION_MASK = 1 | 2 | 4 | 8
+const JOYSTICK_RADIUS = 38
+const JOYSTICK_DEAD_ZONE = 10
+
+const joystickStyle = computed(() => ({
+  transform: `translate(-50%, -50%) translate3d(${joystickX.value}px, ${joystickY.value}px, 0)`,
+}))
 
 function isEditableTarget(target: EventTarget | null) {
   return target instanceof Element
@@ -160,6 +181,10 @@ function isEditableTarget(target: EventTarget | null) {
 
 function combinedMask() {
   return keyboardMask.value | touchMask.value
+}
+
+function unlockSound() {
+  sound.unlock()
 }
 
 function sendInput(nextMask = combinedMask()) {
@@ -179,6 +204,7 @@ function keydown(event: KeyboardEvent) {
   const bit = KEY_BITS[event.code]
   if (!bit || isEditableTarget(event.target) || !canControl.value) return
   event.preventDefault()
+  unlockSound()
   updateKeyboard(bit, true)
 }
 
@@ -192,6 +218,7 @@ function keyup(event: KeyboardEvent) {
 function touchDown(bit: number, event: PointerEvent) {
   if (!canControl.value) return
   event.preventDefault()
+  unlockSound()
   ;(event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId)
   const previous = combinedMask()
   touchMask.value |= bit
@@ -205,10 +232,63 @@ function touchUp(bit: number, event: PointerEvent) {
   if (combinedMask() !== previous) sendInput()
 }
 
+function setTouchDirection(bit: number) {
+  const previous = combinedMask()
+  touchMask.value = (touchMask.value & ~DIRECTION_MASK) | bit
+  if (combinedMask() !== previous) sendInput()
+}
+
+function moveJoystick(event: PointerEvent) {
+  if (event.pointerId !== joystickPointerId) return
+  event.preventDefault()
+  const target = event.currentTarget as HTMLElement
+  const bounds = target.getBoundingClientRect()
+  let x = event.clientX - (bounds.left + bounds.width / 2)
+  let y = event.clientY - (bounds.top + bounds.height / 2)
+  const distance = Math.hypot(x, y)
+  if (distance > JOYSTICK_RADIUS) {
+    x = x / distance * JOYSTICK_RADIUS
+    y = y / distance * JOYSTICK_RADIUS
+  }
+  joystickX.value = Math.round(x)
+  joystickY.value = Math.round(y)
+
+  if (distance < JOYSTICK_DEAD_ZONE) {
+    setTouchDirection(0)
+  } else if (Math.abs(x) > Math.abs(y)) {
+    setTouchDirection(x < 0 ? 4 : 8)
+  } else {
+    setTouchDirection(y < 0 ? 1 : 2)
+  }
+}
+
+function startJoystick(event: PointerEvent) {
+  if (!canControl.value || joystickPointerId !== null) return
+  unlockSound()
+  joystickPointerId = event.pointerId
+  joystickActive.value = true
+  ;(event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId)
+  moveJoystick(event)
+}
+
+function stopJoystick(event: PointerEvent) {
+  if (event.pointerId !== joystickPointerId) return
+  event.preventDefault()
+  joystickPointerId = null
+  joystickActive.value = false
+  joystickX.value = 0
+  joystickY.value = 0
+  setTouchDirection(0)
+}
+
 function clearInput(notify = true) {
   const hadInput = combinedMask() !== 0
   keyboardMask.value = 0
   touchMask.value = 0
+  joystickPointerId = null
+  joystickActive.value = false
+  joystickX.value = 0
+  joystickY.value = 0
   if (notify && hadInput && props.snapshot.phase === 'playing' && !isSpectator.value) {
     inputSequence = Math.max(inputSequence, game.value.selfInputSequence) + 1
     void actions.rapidAction('input', { sequence: inputSequence, inputMask: 0 })
@@ -233,11 +313,24 @@ watch(canControl, active => { if (!active) clearInput(true) })
 watch(() => props.snapshot.phase, phase => {
   showMaps.value = phase === 'lobby'
 })
+watch(() => game.value.effects ?? [], nextEffects => {
+  if (soundRound !== props.snapshot.roundNumber) {
+    soundRound = props.snapshot.roundNumber
+    seenSoundEffectIds.clear()
+  }
+  for (const effect of nextEffects) {
+    if (seenSoundEffectIds.has(effect.id)) continue
+    seenSoundEffectIds.add(effect.id)
+    if (soundEffectsInitialized) sound.play(effect.kind)
+  }
+  soundEffectsInitialized = true
+}, { immediate: true })
 
 onMounted(() => {
   inputSequence = Math.max(0, game.value.selfInputSequence)
   window.addEventListener('keydown', keydown, { passive: false })
   window.addEventListener('keyup', keyup, { passive: false })
+  window.addEventListener('pointerdown', unlockSound, { passive: true, once: true })
   window.addEventListener('blur', blur)
   heartbeatTimer = setInterval(heartbeat, 125)
 })
@@ -246,8 +339,10 @@ onBeforeUnmount(() => {
   clearInput(true)
   window.removeEventListener('keydown', keydown)
   window.removeEventListener('keyup', keyup)
+  window.removeEventListener('pointerdown', unlockSound)
   window.removeEventListener('blur', blur)
   if (heartbeatTimer) clearInterval(heartbeatTimer)
+  sound.destroy()
 })
 </script>
 
@@ -358,17 +453,26 @@ onBeforeUnmount(() => {
       <main class="arena-column">
         <GameBoard :game="game" :self-id="snapshot.self.id" />
 
-        <div v-if="!isSpectator" class="touch-controls" :class="{ disabled: !canControl }" aria-label="触屏操作">
-          <div class="dpad">
-            <button class="up" type="button" aria-label="向上移动" @pointerdown="touchDown(1, $event)" @pointerup="touchUp(1, $event)" @pointercancel="touchUp(1, $event)">W</button>
-            <button class="left" type="button" aria-label="向左移动" @pointerdown="touchDown(4, $event)" @pointerup="touchUp(4, $event)" @pointercancel="touchUp(4, $event)">A</button>
-            <button class="down" type="button" aria-label="向下移动" @pointerdown="touchDown(2, $event)" @pointerup="touchUp(2, $event)" @pointercancel="touchUp(2, $event)">S</button>
-            <button class="right" type="button" aria-label="向右移动" @pointerdown="touchDown(8, $event)" @pointerup="touchUp(8, $event)" @pointercancel="touchUp(8, $event)">D</button>
+        <div v-if="!isSpectator && snapshot.phase === 'playing'" class="touch-controls" :class="{ disabled: !canControl }" aria-label="移动端触屏操作">
+          <div
+            class="joystick"
+            :class="{ active: joystickActive }"
+            role="application"
+            aria-label="移动摇杆，按住并向一个方向滑动"
+            @pointerdown="startJoystick"
+            @pointermove="moveJoystick"
+            @pointerup="stopJoystick"
+            @pointercancel="stopJoystick"
+            @lostpointercapture="stopJoystick"
+          >
+            <span class="joystick-compass" aria-hidden="true">▲</span>
+            <span class="joystick-knob" :style="joystickStyle" aria-hidden="true"><i /></span>
+            <small>滑动移动</small>
           </div>
           <div class="action-pad">
-            <button type="button" aria-label="Z 拳击手套打雷" @pointerdown="touchDown(32, $event)" @pointerup="touchUp(32, $event)" @pointercancel="touchUp(32, $event)"><b>Z</b><small>打雷</small></button>
-            <button class="bomb-action" type="button" aria-label="空格放炸弹" @pointerdown="touchDown(16, $event)" @pointerup="touchUp(16, $event)" @pointercancel="touchUp(16, $event)"><b>●</b><small>放雷</small></button>
-            <button type="button" aria-label="X 扔雷" @pointerdown="touchDown(64, $event)" @pointerup="touchUp(64, $event)" @pointercancel="touchUp(64, $event)"><b>X</b><small>扔雷</small></button>
+            <button class="punch-action" type="button" aria-label="拳击手套打雷" @pointerdown="touchDown(32, $event)" @pointerup="touchUp(32, $event)" @pointercancel="touchUp(32, $event)" @lostpointercapture="touchUp(32, $event)"><b>拳</b><small>打雷</small></button>
+            <button class="bomb-action" type="button" aria-label="放置炸弹或定时引爆" @pointerdown="touchDown(16, $event)" @pointerup="touchUp(16, $event)" @pointercancel="touchUp(16, $event)" @lostpointercapture="touchUp(16, $event)"><b>●</b><small>放雷</small></button>
+            <button class="throw-action" type="button" aria-label="扔雷手套投掷炸弹" @pointerdown="touchDown(64, $event)" @pointerup="touchUp(64, $event)" @pointercancel="touchUp(64, $event)" @lostpointercapture="touchUp(64, $event)"><b>扔</b><small>投雷</small></button>
           </div>
         </div>
       </main>
@@ -398,7 +502,7 @@ onBeforeUnmount(() => {
 
         <section class="controls panel">
           <div class="panel-heading"><div><p class="eyebrow">CONTROLS</p><h3>操作</h3></div><Gamepad2 :size="19" /></div>
-          <div class="key-guide"><span><kbd>WASD</kbd>移动</span><span><kbd>Space</kbd>放雷</span><span><kbd>Z</kbd>拳套打雷</span><span><kbd>X</kbd>扔雷</span></div>
+          <div class="key-guide"><span><kbd>WASD / ↑↓←→</kbd>移动</span><span><kbd>Space</kbd>放雷 / 定时引爆</span><span><kbd>Z</kbd>拳套打雷</span><span><kbd>X</kbd>扔雷</span></div>
           <p>脚踢雷自动触发；拳套、扔雷与脚踢均可作用于任何玩家的炸弹。定时炸弹在容量已满时再次按空格可提前引爆最早的一枚。</p>
         </section>
 
@@ -413,7 +517,7 @@ onBeforeUnmount(() => {
       <div class="rulebook">
         <section><h3>目标与时间</h3><p>支持 2–8 人。每张地图固定为 20×20 格；一个方块只占一格。最后生还者夺冠。开局倒计时后对抗 90 秒，随后从左上角起沿外圈顺时针放置落石，再一圈圈向中心收缩。爆炸和落石都能淘汰玩家。</p></section>
         <section><h3>炸弹与通用交互</h3><p>所有炸弹放下后最多 2 秒爆炸，火焰按十字方向传播，固定墙和落石会阻挡，可破坏箱被摧毁后有 38% 概率掉落道具。火焰会连锁引爆炸弹。脚踢、拳套和扔雷可以操作自己或其他玩家的炸弹，最后操作者获得后续淘汰归属。</p></section>
-        <section><h3>键盘</h3><ul><li><kbd>W A S D</kbd>：逐格移动。</li><li><kbd>Space</kbd>：放炸弹；拥有定时炸弹且炸弹容量已满时，提前引爆最早的一枚。</li><li><kbd>Z</kbd>：用拳击手套把面前炸弹打出三格。</li><li><kbd>X</kbd>：把面前炸弹越过障碍扔到前方最多四格。</li><li>脚踢雷无需按键，走向炸弹即可让它持续滚动。</li></ul></section>
+        <section><h3>电脑键盘与手机触屏</h3><ul><li><kbd>W A S D</kbd> 或方向键：逐格移动。</li><li><kbd>Space</kbd>：放炸弹；拥有定时炸弹且炸弹容量已满时，提前引爆最早的一枚。</li><li><kbd>Z</kbd>：用拳击手套把面前炸弹打出三格。</li><li><kbd>X</kbd>：把面前炸弹越过障碍扔到前方最多四格。</li><li>脚踢雷无需单独按键，朝炸弹移动即可让它持续滚动。</li><li>手机端拖动左侧摇杆移动，右手点击拳击、放雷和投雷按钮。</li></ul></section>
         <section><h3>道具</h3><div class="rules-items"><article v-for="(label, key) in game.itemLabels" :key="key"><img :src="ITEM_ART[key]" :alt="label" /><strong>{{ label }}</strong></article></div><p>道具自动拾取。落地道具没有消失倒计时，也不会被爆炸清除，会保留到被拾取、所在格被决胜落石覆盖或本局结束。骷髅诅咒会立即清空其他装备，并使玩家 5 秒不能放炸弹；地图还会每 10 秒进行一次 24% 的随机装备刷新判定。</p></section>
         <section><h3>地图类型</h3><p>云顶激斗场、风暴船坞等激斗图让玩家近距离出生并自带装备；丛林金字塔、发条铸造厂和水晶裂隙使用高密箱墙或分区固定墙，给予玩家更安全的发展期。其他地图在障碍密度和开阔程度之间变化。</p></section>
         <section><h3>换图与战绩</h3><p>开局前或本局结束后，房主选择目标地图发起提议；所有当前玩家同意后才自动切换，任何一人否决就取消。每名玩家记录本局击杀、房间累计击杀、夺冠数和胜率；结算后还会把胜负及击杀明细写入大厅战绩。</p></section>
@@ -438,12 +542,12 @@ onBeforeUnmount(() => {
 .map-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 9px; }.map-card { position: relative; min-width: 0; aspect-ratio: 1.18; overflow: hidden; padding: 0; border: 1px solid #ffffff1f; border-radius: 11px; background: #0c1114; color: white; font: inherit; text-align: left; cursor: pointer; }.map-card > img:first-child { width: 100%; height: 100%; object-fit: cover; transition: transform .2s ease; }.map-card:not(:disabled):hover > img:first-child { transform: scale(1.05); }.map-card:disabled { cursor: default; }.map-card.selected { border-color: #f1b84f; box-shadow: 0 0 0 1px #f1b84f, 0 0 16px #f1a93d33; }.map-card.proposed { border-color: #6de2ef; box-shadow: 0 0 0 1px #6de2ef; }.map-shade { position: absolute; inset: 0; background: linear-gradient(transparent 25%, #080b0eda 70%, #080b0ef7); }.map-badges { position: absolute; left: 7px; top: 7px; display: flex; gap: 4px; }.map-badges i { padding: 2px 5px; border: 1px solid #ffffff33; border-radius: 999px; background: #091015c7; font-size: 8px; font-style: normal; }.map-copy { position: absolute; left: 8px; right: 8px; bottom: 7px; display: grid; gap: 2px; }.map-copy strong { font-size: 12px; }.map-copy small { overflow: hidden; color: #c7d0d4; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }.starter-icons { position: absolute; right: 6px; top: 6px; display: flex; max-width: 60%; }.starter-icons img { width: 22px; height: 22px; margin-left: -5px; object-fit: contain; filter: drop-shadow(0 1px 2px #000); }.selected-mark { position: absolute; right: 6px; bottom: 6px; display: flex; align-items: center; gap: 2px; padding: 2px 5px; border-radius: 999px; color: #241806; background: #f0b74e; font-size: 8px; font-weight: 800; }.proposed-mark { color: #071b20; background: #6de2ef; }.map-help { margin: 10px 1px 0; color: var(--muted); font-size: 10px; text-align: center; }
 .lobby-overview { margin: 0 4px 4px; min-height: 430px; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr); gap: 30px; align-items: center; padding: clamp(24px, 5vw, 64px); background: radial-gradient(circle at 18% 18%, #e1912b20, transparent 30%), var(--panel); }.lobby-copy h3 { font-size: clamp(30px, 4vw, 54px); }.lobby-copy > p:not(.eyebrow) { max-width: 700px; color: #bdc7cb; font-size: 14px; line-height: 1.9; }.lobby-copy > small { color: #f0bd68; }.rule-chips { display: flex; flex-wrap: wrap; gap: 7px; margin: 18px 0; }.rule-chips span { padding: 6px 10px; border: 1px solid #ffffff1c; border-radius: 999px; color: #d9e0e2; background: #ffffff0a; font-size: 11px; }.lobby-roster { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }.lobby-roster article, .empty-seat { min-height: 82px; display: flex; align-items: center; gap: 8px; padding: 8px; border: 1px solid color-mix(in srgb, var(--player-color, #fff) 38%, #ffffff18); border-radius: 11px; background: #080c0f99; }.lobby-roster img { width: 62px; height: 62px; object-fit: contain; }.lobby-roster article div { min-width: 0; display: grid; gap: 3px; }.lobby-roster strong { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }.lobby-roster small { color: var(--muted); font-size: 9px; }.empty-seat { justify-content: center; border-style: dashed; color: var(--muted); font-size: 10px; }
 .play-layout { min-height: calc(100vh - 112px); display: grid; grid-template-columns: minmax(184px, 238px) minmax(420px, 1fr) minmax(210px, 284px); align-items: start; gap: 10px; padding: 0 4px 4px; }.scoreboard, .battle-hud { max-height: calc(100vh - 112px); overflow: auto; scrollbar-width: thin; }.scoreboard { padding: 12px; }.panel-heading { justify-content: space-between; gap: 9px; margin-bottom: 10px; }.panel-heading svg { color: #e9b14b; }.panel-heading h3 { font-size: 15px; }.player-list { display: grid; gap: 7px; }.player-card { --player-color: #fff; display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; align-items: center; gap: 7px; padding: 7px; border: 1px solid #ffffff12; border-left: 3px solid var(--player-color); border-radius: 10px; background: #080d10b8; }.player-card.self { background: color-mix(in srgb, var(--player-color) 9%, #080d10); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--player-color) 35%, transparent); }.player-card.eliminated { opacity: .48; filter: grayscale(.75); }.player-avatar { position: relative; width: 42px; height: 48px; }.player-avatar img { width: 100%; height: 100%; object-fit: contain; }.player-avatar span { position: absolute; left: -3px; bottom: -1px; width: 16px; height: 16px; display: grid; place-items: center; border-radius: 50%; color: #111; background: var(--player-color); font-size: 8px; font-weight: 900; }.player-info { min-width: 0; display: grid; gap: 2px; }.player-info strong { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }.player-info small, .kill-count small, .career-row, .records-note { color: var(--muted); font-size: 8px; }.kill-count { display: grid; justify-items: end; }.kill-count b { font: 800 20px/1 ui-monospace, monospace; }.career-row { grid-column: 1 / -1; display: flex; gap: 7px; padding-top: 5px; border-top: 1px solid #ffffff0c; }.career-row span { display: flex; align-items: center; gap: 2px; }.records-note { margin: 10px 2px 0; line-height: 1.6; }
-.arena-column { min-width: 0; display: grid; gap: 8px; }.touch-controls { display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 76px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 14px; background: #0a1014db; }.touch-controls.disabled { opacity: .45; pointer-events: none; }.dpad { width: 128px; display: grid; grid-template-columns: repeat(3, 38px); grid-template-rows: repeat(2, 32px); gap: 3px; }.dpad button, .action-pad button { border: 1px solid #ffffff2b; color: white; background: linear-gradient(#313a40, #171d21); box-shadow: inset 0 1px #ffffff24, 0 2px 4px #0007; font: 800 12px system-ui; touch-action: none; }.dpad .up { grid-column: 2; }.dpad .left { grid-column: 1; grid-row: 2; }.dpad .down { grid-column: 2; grid-row: 2; }.dpad .right { grid-column: 3; grid-row: 2; }.action-pad { display: flex; align-items: center; gap: 8px; }.action-pad button { width: 58px; height: 52px; display: grid; place-items: center; align-content: center; gap: 0; border-radius: 50%; }.action-pad button b { font-size: 14px; }.action-pad button small { font-size: 8px; }.action-pad .bomb-action { width: 66px; height: 66px; border-color: #e5a747; background: radial-gradient(circle at 32% 28%, #727b80, #171d21 45%, #07090b 75%); }.action-pad .bomb-action b { color: #ffbd56; font-size: 22px; }
+.arena-column { position: relative; min-width: 0; display: grid; gap: 8px; }.touch-controls { display: none; justify-content: space-between; align-items: end; gap: 20px; min-height: 132px; padding: 8px 12px; }.touch-controls.disabled { opacity: .45; pointer-events: none; }.joystick { position: relative; width: 116px; height: 116px; flex: 0 0 auto; border: 1px solid #ffffff2c; border-radius: 50%; background: radial-gradient(circle, #ffffff12 0 18%, #1b252bb8 19% 48%, #071015a6 49% 100%); box-shadow: inset 0 0 0 8px #ffffff08, 0 8px 24px #0008; touch-action: none; user-select: none; }.joystick::before, .joystick::after { content: ''; position: absolute; inset: 13%; border: solid #ffffff18; border-width: 1px 0; border-radius: 50%; }.joystick::after { transform: rotate(90deg); }.joystick-compass { position: absolute; inset: 7px 0 auto; color: #ffffff52; font-size: 10px; text-align: center; }.joystick-knob { position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; display: grid; place-items: center; border: 1px solid #e9f2f477; border-radius: 50%; background: radial-gradient(circle at 32% 28%, #69777e, #263238 55%, #11191d); box-shadow: inset 0 2px #ffffff35, 0 5px 14px #000a; transition: transform .08s ease-out; will-change: transform; }.joystick.active .joystick-knob { border-color: #f5ba52; box-shadow: inset 0 2px #ffffff35, 0 0 18px #e9a83d80; transition: none; }.joystick-knob i { width: 16px; height: 16px; border-radius: 50%; background: #eab14c; box-shadow: 0 0 10px #f0a536; }.joystick > small { position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%); color: #c5d0d4; font-size: 8px; white-space: nowrap; }.action-pad { display: flex; align-items: end; gap: 8px; }.action-pad button { width: 58px; height: 58px; display: grid; place-items: center; align-content: center; gap: 0; border: 1px solid #ffffff37; border-radius: 50%; color: white; background: linear-gradient(#3b474d, #171e22); box-shadow: inset 0 2px #ffffff27, 0 6px 14px #0009; font: 800 12px system-ui; touch-action: none; user-select: none; }.action-pad button:active { transform: scale(.93); filter: brightness(1.18); }.action-pad button b { font-size: 17px; }.action-pad button small { font-size: 8px; }.action-pad .punch-action { margin-bottom: 24px; border-color: #77c8e277; }.action-pad .throw-action { margin-bottom: 24px; border-color: #a78be477; }.action-pad .bomb-action { width: 72px; height: 72px; border-color: #e5a747; background: radial-gradient(circle at 32% 28%, #727b80, #171d21 45%, #07090b 75%); }.action-pad .bomb-action b { color: #ffbd56; font-size: 24px; }
 .battle-hud { display: grid; gap: 8px; }.battle-hud .panel { padding: 12px; }.result-card { border-color: #e1ad4f66; text-align: center; }.result-card > svg { color: #f1ba54; }.result-card h3 { font-size: 21px; }.result-card > p:not(.eyebrow) { color: #c1c9cc; font-size: 10px; line-height: 1.6; }.result-card > button { margin-top: 7px; }.inventory-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }.inventory-item { min-width: 0; display: flex; align-items: center; gap: 5px; padding: 5px; border: 1px solid #ffffff12; border-radius: 8px; background: #080c0fa8; }.inventory-item img { width: 30px; height: 30px; object-fit: contain; }.inventory-item span { min-width: 0; display: grid; }.inventory-item strong { overflow: hidden; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }.inventory-item small { color: #d8ab5c; font-size: 8px; }.inventory-item.skull { border-color: #79cf4659; background: #1a3213cc; }.empty-inventory, .controls p, .curse-warning { margin: 4px 0 0; color: var(--muted); font-size: 9px; line-height: 1.65; }.curse-warning { display: flex; align-items: flex-start; gap: 6px; padding: 7px; color: #b9f28d; border: 1px solid #85d14f55; border-radius: 8px; background: #193014b8; }.key-guide { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }.key-guide span { display: flex; align-items: center; gap: 5px; color: #cbd3d6; font-size: 9px; }kbd { min-width: 31px; display: inline-grid; place-items: center; padding: 3px 5px; border: 1px solid #ffffff2b; border-bottom-width: 3px; border-radius: 5px; color: #f3c36d; background: #20282d; font: 800 8px ui-monospace, monospace; }.event-list { max-height: 150px; overflow: auto; }.event-list p { margin: 0; padding: 6px 0; border-bottom: 1px solid #ffffff0c; color: #b8c2c6; font-size: 9px; line-height: 1.45; }
 .rulebook { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; color: #dce2e4; font-size: 12px; line-height: 1.8; }.rulebook section { padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: #ffffff06; }.rulebook h3 { margin: 0 0 6px; color: white; font-size: 15px; }.rulebook p, .rulebook ul { margin: 0; }.rulebook ul { padding-left: 20px; }.rules-items { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; margin-bottom: 8px; }.rules-items article { min-width: 0; display: grid; justify-items: center; gap: 2px; }.rules-items img { width: 42px; height: 42px; object-fit: contain; }.rules-items strong { max-width: 100%; overflow: hidden; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
 .bomb-people :focus-visible { outline: 2px solid #f2bc5a; outline-offset: 2px; }
 @media (max-width: 1180px) { .play-layout { grid-template-columns: minmax(170px, 220px) minmax(400px, 1fr); }.battle-hud { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); max-height: none; }.event-panel { display: none; }.map-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-@media (max-width: 820px) { .bomb-people { min-height: 0; padding: 6px; border-radius: 13px; }.game-header { grid-template-columns: 1fr auto; min-height: 64px; padding: 5px 5px 9px; }.title-lockup p, .brand-bomb { display: none; }.title-lockup h2 { font-size: 23px; }.match-status { min-width: 115px; padding: 5px 10px; grid-column: 1 / -1; grid-row: 2; width: 100%; flex-direction: row; justify-content: space-between; }.match-status strong { font-size: 19px; }.header-actions { grid-column: 2; grid-row: 1; }.play-layout { min-height: 0; grid-template-columns: minmax(0, 1fr); padding: 0; }.arena-column { grid-row: 1; }.scoreboard { grid-row: 2; max-height: none; }.player-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }.battle-hud { grid-row: 3; grid-template-columns: minmax(0, 1fr); }.event-panel { display: block; }.map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.negotiation-heading, .approval-strip { align-items: flex-start; flex-direction: column; }.proposal-status { justify-items: start; }.lobby-overview { grid-template-columns: minmax(0, 1fr); padding: 24px 16px; }.rulebook { grid-template-columns: minmax(0, 1fr); }.touch-controls { position: sticky; bottom: 4px; z-index: 50; }.arena-board { width: 100%; }.scoreboard, .battle-hud { overflow: visible; } }
-@media (max-width: 430px) { .map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }.map-card { aspect-ratio: 1; }.map-copy small, .map-badges { display: none; }.lobby-roster { grid-template-columns: minmax(0, 1fr); }.player-list { grid-template-columns: minmax(0, 1fr); }.touch-controls { min-height: 72px; padding: 5px 7px; }.dpad { width: 110px; grid-template-columns: repeat(3, 32px); grid-template-rows: repeat(2, 29px); }.action-pad { gap: 4px; }.action-pad button { width: 47px; height: 47px; }.action-pad .bomb-action { width: 57px; height: 57px; }.inventory-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }.inventory-item { display: grid; justify-items: center; }.inventory-item span { justify-items: center; }.rules-items { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (hover: none) and (pointer: coarse) { :global(html:has(.bomb-people:not(.stage-lobby))), :global(body:has(.bomb-people:not(.stage-lobby))) { width: 100%; height: 100%; overflow: hidden; overscroll-behavior: none; }.bomb-people { min-height: 0; padding: 6px; border-radius: 13px; }.bomb-people:not(.stage-lobby) { position: fixed; inset: 0; z-index: 900; width: 100vw; height: 100dvh; max-height: 100dvh; padding: max(4px, env(safe-area-inset-top)) max(4px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left)); overflow: clip; border: 0; border-radius: 0; overscroll-behavior: none; touch-action: none; }.bomb-people.fullscreen { height: 100dvh; min-height: 0; padding: max(4px, env(safe-area-inset-top)) max(4px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left)); overflow: clip; }.bomb-people.stage-lobby.fullscreen { overflow: auto; touch-action: pan-y; }.game-header { min-height: 62px; grid-template-columns: 1fr auto; gap: 5px; padding: 3px 4px 6px; }.title-lockup p, .brand-bomb { display: none; }.title-lockup h2 { font-size: 20px; }.match-status { min-width: 0; padding: 3px 8px; grid-column: 1 / -1; grid-row: 2; width: 100%; flex-direction: row; justify-content: space-between; border-radius: 9px; }.match-status strong { font-size: 17px; }.match-status small { max-width: 115px; }.header-actions { grid-column: 2; grid-row: 1; gap: 4px; }.header-actions > * { min-width: 36px; min-height: 36px; }.play-layout { height: calc(100dvh - 90px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); min-height: 0; grid-template-columns: minmax(0, 1fr); align-items: start; padding: 0; overflow: clip; }.arena-column { grid-row: 1; height: 100%; align-content: start; overflow: clip; }.scoreboard, .battle-hud { display: none; }.stage-finished .battle-hud { position: absolute; inset: 90px 8px 8px; z-index: 70; display: grid; place-items: center; max-height: none; overflow: auto; background: #030608c7; backdrop-filter: blur(6px); }.stage-finished .battle-hud > :not(.result-card) { display: none; }.stage-finished .result-card { width: min(100%, 380px); padding: 20px; }.touch-controls { position: absolute; z-index: 50; left: 0; right: 0; bottom: max(5px, env(safe-area-inset-bottom)); display: flex; align-items: end; min-height: 128px; padding: 5px 10px; border: 0; background: transparent; pointer-events: none; }.touch-controls > * { pointer-events: auto; }.touch-controls.disabled > * { pointer-events: none; }.map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.negotiation-heading, .approval-strip { align-items: flex-start; flex-direction: column; }.proposal-status { justify-items: start; }.lobby-overview { grid-template-columns: minmax(0, 1fr); padding: 24px 16px; }.rulebook { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 430px) { .map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }.map-card { aspect-ratio: 1; }.map-copy small, .map-badges { display: none; }.lobby-roster { grid-template-columns: minmax(0, 1fr); }.touch-controls { min-height: 112px; padding: 4px 7px; }.joystick { width: 102px; height: 102px; }.joystick-knob { width: 48px; height: 48px; }.joystick > small { bottom: 6px; }.action-pad { gap: 3px; }.action-pad button { width: 47px; height: 47px; }.action-pad button b { font-size: 15px; }.action-pad .punch-action, .action-pad .throw-action { margin-bottom: 19px; }.action-pad .bomb-action { width: 59px; height: 59px; }.inventory-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }.inventory-item { display: grid; justify-items: center; }.inventory-item span { justify-items: center; }.rules-items { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (prefers-reduced-motion: reduce) { .bomb-people * { scroll-behavior: auto; transition: none !important; } }
 </style>

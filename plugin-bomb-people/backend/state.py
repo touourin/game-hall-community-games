@@ -25,6 +25,7 @@ class PlayerState:
     input_mask: int = 0
     last_input_sequence: int = -1
     move_cooldown: int = 0
+    last_move_tick: int = -10_000
     bomb_requested: bool = False
     punch_requested: bool = False
     throw_requested: bool = False
@@ -103,6 +104,22 @@ class EventState:
 
 
 @dataclass
+class EffectState:
+    effect_id: int
+    kind: str
+    tick: int
+    expires_tick: int
+    actor_id: str | None = None
+    bomb_id: int | None = None
+    x: int = 0
+    y: int = 0
+    target_x: int | None = None
+    target_y: int | None = None
+    direction_x: int = 0
+    direction_y: int = 0
+
+
+@dataclass
 class BombPeopleState:
     tick: int = 0
     stage: Stage = "lobby"
@@ -130,7 +147,9 @@ class BombPeopleState:
     next_bomb_id: int = 1
     next_item_id: int = 1
     next_event_id: int = 1
+    next_effect_id: int = 1
     events: list[EventState] = field(default_factory=list)
+    effects: list[EffectState] = field(default_factory=list)
     session_records: dict[str, SessionRecord] = field(default_factory=dict)
     match_winner_id: str | None = None
     settled: bool = False

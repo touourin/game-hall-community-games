@@ -154,6 +154,7 @@ def test_bombs_have_an_authoritative_two_second_fuse(loaded):
     engine.tick(room)
     assert not room.state.bombs
     assert room.state.flames
+    assert any(effect.kind == "bomb_exploded" for effect in room.state.effects)
 
 
 def test_forfeit_during_countdown_immediately_awards_the_last_survivor(loaded):
@@ -202,6 +203,25 @@ def test_kick_punch_and_throw_work_on_an_opponents_bomb(loaded):
     assert (enemy.x, enemy.y) == (8, 9)
     assert enemy.owner_id == members[1].id
     assert enemy.credit_player_id == members[0].id
+    effect_kinds = {effect.kind for effect in room.state.effects}
+    assert {"bomb_kicked", "bomb_punched", "bomb_thrown"} <= effect_kinds
+
+    view = engine.view(room, members[0])
+    throw_effect = next(effect for effect in view["effects"] if effect["kind"] == "bomb_thrown")
+    assert throw_effect == {
+        "id": throw_effect["id"],
+        "kind": "bomb_thrown",
+        "tick": room.state.tick,
+        "remainingTicks": engine_module.ACTION_EFFECT_TICKS,
+        "actorId": members[0].id,
+        "bombId": enemy.bomb_id,
+        "x": 5,
+        "y": 9,
+        "targetX": 8,
+        "targetY": 9,
+        "directionX": 1,
+        "directionY": 0,
+    }
 
 
 def test_timer_can_trigger_early_but_never_extends_the_two_second_limit(loaded):

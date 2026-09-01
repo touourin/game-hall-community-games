@@ -37,6 +37,7 @@ export interface BombPlayer {
   y: number
   facingX: number
   facingY: number
+  moving: boolean
   alive: boolean
   eliminatedBy: string | null
   eliminationReason: string | null
@@ -59,6 +60,8 @@ export interface BombObject {
   fuseTicks: number
   maxFuseTicks: number
   moving: boolean
+  motionX: number
+  motionY: number
 }
 
 export interface BombItem {
@@ -88,6 +91,28 @@ export interface BombEvent {
   targetId: string | null
   item: string | null
   message: string
+}
+
+export type BombEffectKind =
+  | 'bomb_placed'
+  | 'bomb_exploded'
+  | 'bomb_kicked'
+  | 'bomb_punched'
+  | 'bomb_thrown'
+
+export interface BombEffect {
+  id: number
+  kind: BombEffectKind
+  tick: number
+  remainingTicks: number
+  actorId: string | null
+  bombId: number | null
+  x: number
+  y: number
+  targetX: number | null
+  targetY: number | null
+  directionX: number
+  directionY: number
 }
 
 export interface MapProposal {
@@ -122,6 +147,7 @@ export interface BombGame {
   flames: BombFlame[]
   iceTiles: BombIceTile[]
   events: BombEvent[]
+  effects: BombEffect[]
   winnerId: string | null
   clockLeaderId: string | null
   frozen: boolean

@@ -18,7 +18,6 @@ interface ApiResult {
 const snapshot = ref<ArcadeSnapshot | null>(null)
 const viewerId = ref('local-p1')
 const playerCount = ref(2)
-const selectedMap = ref('magma_crucible')
 const selectedItem = ref('bomb_up')
 const paused = ref(false)
 const busy = ref(false)
@@ -31,7 +30,6 @@ let pollRunning = false
 const PHASE_LABELS: Record<string, string> = { lobby: '等待开局', playing: '游戏中', finished: '本局结束' }
 const STAGE_LABELS: Record<string, string> = { countdown: '倒计时', active: '对抗', collapse: '落石', finished: '结束', lobby: '大厅' }
 const game = computed(() => snapshot.value?.game as Record<string, any> | undefined)
-const mapCatalog = computed(() => game.value?.mapCatalog ?? [])
 const itemLabels = computed<Record<string, string>>(() => game.value?.itemLabels ?? {})
 const canConfigure = computed(() => Boolean(snapshot.value && snapshot.value.phase !== 'playing'))
 const phaseLabel = computed(() => PHASE_LABELS[snapshot.value?.phase ?? ''] ?? snapshot.value?.phase ?? '未连接')
@@ -86,7 +84,6 @@ async function poll() {
 async function resetRoom() {
   const ok = await run('测试房已重置', () => api('/api/reset', {
     playerCount: playerCount.value,
-    mapKey: selectedMap.value,
   }, true), true)
   if (ok) {
     viewerId.value = 'local-p1'
@@ -149,19 +146,9 @@ watch(viewerId, () => {
   void poll()
 })
 
-watch(mapCatalog, maps => {
-  if (!maps.some((entry: { key: string }) => entry.key === selectedMap.value) && maps[0]) {
-    selectedMap.value = maps[0].key
-  }
-}, { immediate: true })
-
-watch(() => game.value?.selectedMap, mapKey => {
-  if (typeof mapKey === 'string' && mapKey) selectedMap.value = mapKey
-})
-
 onMounted(async () => {
   await poll()
-  notice.value = '本地测试已就绪；先选择人数和地图，再开始游戏。'
+  notice.value = '本地测试已就绪；选择人数后开始游戏，地图会在每局开局时随机切换。'
   pollTimer = setInterval(poll, 100)
 })
 
@@ -182,12 +169,6 @@ onBeforeUnmount(() => {
         玩家数
         <select v-model.number="playerCount" :disabled="busy || !canConfigure">
           <option v-for="count in 7" :key="count + 1" :value="count + 1">{{ count + 1 }} 人</option>
-        </select>
-      </label>
-      <label>
-        地图
-        <select v-model="selectedMap" :disabled="busy || !canConfigure">
-          <option v-for="map in mapCatalog" :key="map.key" :value="map.key">{{ map.name }}</option>
         </select>
       </label>
       <button type="button" :disabled="busy || !canConfigure" @click="resetRoom">按配置重置</button>

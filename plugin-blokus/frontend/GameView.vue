@@ -110,7 +110,7 @@ function selectPiece(piece: Piece): void {
       flipped.value = move.flipped
     }
   } else anchor.value = null
-  if (typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 1100px)').matches) {
+  if (typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 1000px)').matches) {
     boardPanel.value?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
   }
 }
@@ -195,35 +195,37 @@ async function restart(): Promise<void> {
 
 <template>
   <section class="blokus" :class="me?.color ?? 'blue'" aria-label="四人方格对局">
-    <header class="game-heading">
-      <div><p class="eyebrow">FOUR CORNERS · 20 × 20</p><h2>四人方格</h2></div>
-      <PluginButton variant="secondary" @click="showRules = true"><HelpCircle :size="17" /> 玩法</PluginButton>
-    </header>
+    <div class="status-board">
+      <header class="game-heading">
+        <div><p class="eyebrow">FOUR CORNERS · 20 × 20</p><h2>四人方格</h2></div>
+        <PluginButton variant="secondary" @click="showRules = true"><HelpCircle :size="17" /> 玩法</PluginButton>
+      </header>
 
-    <div class="player-grid" aria-label="四位玩家与起始角">
-      <button v-for="(player, index) in players" :key="player.id" type="button"
-        class="player-card" :class="[player.color, { current: current?.id === player.id && !finished, inspected: inspected?.id === player.id }]"
-        :aria-pressed="inspected?.id === player.id" :aria-label="`查看${name(player.id)}的棋块，${cornerNames[index]}`"
-        @click="inspectedId = player.id">
-        <span class="player-title"><i class="color-dot" /><strong>{{ name(player.id) }}</strong><small v-if="player.id === me?.id">你</small></span>
-        <span class="corner-label">{{ player.colorName }}方 · {{ cornerNames[index] }}</span>
-        <span class="player-metric"><b>{{ player.remainingSquares }}</b> <small>格未放 · {{ player.remainingPieces.length }} 块</small></span>
-        <span class="player-status">{{ playerStatus(player) }}</span>
-      </button>
-    </div>
-
-    <div class="turn-strip" :class="{ mine: canAct }" role="status">
-      <i class="turn-light" />
-      <div>
-        <strong v-if="finished">本局已结束</strong>
-        <strong v-else-if="canAct">轮到你了 · {{ me?.colorName }}方落子</strong>
-        <strong v-else-if="me?.status === 'blocked'">你已无合法落点 · 等待其他玩家完成</strong>
-        <strong v-else-if="me?.status === 'finished'">你的 21 块已全部放完</strong>
-        <strong v-else-if="me?.status === 'forfeited'">你已弃权 · 可继续查看棋局</strong>
-        <strong v-else>{{ spectator ? '观战中' : '等待回合' }} · {{ name(current?.id) }}正在落子</strong>
-        <span>{{ finished ? '按剩余方格数从少到多排名' : firstMove && canAct ? '第一块必须覆盖你的起始角' : '同色角接，不可边接；不同颜色可以相邻' }}</span>
+      <div class="player-grid" aria-label="四位玩家与起始角">
+        <button v-for="(player, index) in players" :key="player.id" type="button"
+          class="player-card" :class="[player.color, { current: current?.id === player.id && !finished, inspected: inspected?.id === player.id }]"
+          :aria-pressed="inspected?.id === player.id" :aria-label="`查看${name(player.id)}的棋块，${cornerNames[index]}`"
+          @click="inspectedId = player.id">
+          <span class="player-title"><i class="color-dot" /><strong>{{ name(player.id) }}</strong><small v-if="player.id === me?.id">你</small></span>
+          <span class="corner-label">{{ player.colorName }}方 · {{ cornerNames[index] }}</span>
+          <span class="player-metric"><b>{{ player.remainingSquares }}</b> <small>格未放 · {{ player.remainingPieces.length }} 块</small></span>
+          <span class="player-status">{{ playerStatus(player) }}</span>
+        </button>
       </div>
-      <small>已落 {{ game.moveCount ?? 0 }} 块</small>
+
+      <div class="turn-strip" :class="{ mine: canAct }" role="status">
+        <i class="turn-light" />
+        <div>
+          <strong v-if="finished">本局已结束</strong>
+          <strong v-else-if="canAct">轮到你了 · {{ me?.colorName }}方落子</strong>
+          <strong v-else-if="me?.status === 'blocked'">你已无合法落点 · 等待其他玩家完成</strong>
+          <strong v-else-if="me?.status === 'finished'">你的 21 块已全部放完</strong>
+          <strong v-else-if="me?.status === 'forfeited'">你已弃权 · 可继续查看棋局</strong>
+          <strong v-else>{{ spectator ? '观战中' : '等待回合' }} · {{ name(current?.id) }}正在落子</strong>
+          <span>{{ finished ? '按剩余方格数从少到多排名' : firstMove && canAct ? '第一块必须覆盖你的起始角' : '同色角接，不可边接；不同颜色可以相邻' }}</span>
+        </div>
+        <small>已落 {{ game.moveCount ?? 0 }} 块</small>
+      </div>
     </div>
 
     <section v-if="finished" class="result-panel" aria-label="最终排名积分">
@@ -260,7 +262,9 @@ async function restart(): Promise<void> {
           </svg>
         </div>
         <p class="board-caption">20 × 20 · {{ zoomed ? '可滚动棋盘查看四角' : '角落数字对应蓝、黄、红、绿的出手顺序' }}</p>
+      </div>
 
+      <div class="side-column">
         <div v-if="!finished && me" class="placement-controls" aria-label="落子操作">
           <div class="selection-line"><strong>{{ selected ? `${selected.id} · ${selected.size} 格` : '选择你的棋块' }}</strong><span>{{ anchor ? `左上定位 ${anchor[0] + 1} 列 / ${anchor[1] + 1} 行` : '点棋盘定位，再确认落子' }}</span></div>
           <div class="transform-controls">
@@ -278,27 +282,27 @@ async function restart(): Promise<void> {
           <PluginButton block :disabled="!ready" @click="place"><Check :size="18" />{{ pending ? '正在提交…' : canAct ? '确认落子' : '等待你的回合' }}</PluginButton>
           <small class="keyboard-note">棋盘聚焦后：方向键微调 · R 旋转 · F 翻转 · Enter 确认</small>
         </div>
-      </div>
 
-      <aside class="inventory" :class="inspected?.color ?? 'blue'" aria-label="棋块库">
-        <div class="panel-heading"><div><p class="eyebrow">PIECE LIBRARY</p><h3>{{ ownTray ? '你的棋块' : `${name(inspected?.id)}的棋块` }}</h3></div><span class="piece-count">{{ inspected?.remainingPieces.length ?? 21 }}<small> / 21</small></span></div>
-        <p class="inventory-note">{{ !ownTray ? '公开棋块库 · 仅供查看' : canPreview ? '选择一块，旋转或翻转后放到棋盘上。' : '查看本局剩余棋块。' }}<br />每人共 89 小格，灰色棋块已使用。</p>
-        <PluginButton v-if="me && !ownTray" variant="secondary" block @click="inspectedId = me.id">返回我的棋块</PluginButton>
-        <div v-for="size in sizeGroups" :key="size" class="piece-group">
-          <div class="group-label"><span>{{ size }} 格块</span><span>{{ PIECES.filter(piece => piece.size === size && inspected?.remainingPieces.includes(piece.id)).length }} 块可用</span></div>
-          <div class="piece-grid">
-            <button v-for="piece in PIECES.filter(piece => piece.size === size)" :key="piece.id" type="button" class="piece-button"
-              :class="{ selected: selectedId === piece.id && ownTray, used: !inspected?.remainingPieces.includes(piece.id) }"
-              :disabled="!canPreview || pending || !inspected?.remainingPieces.includes(piece.id)"
-              :aria-label="`${piece.id}，${size} 格${!inspected?.remainingPieces.includes(piece.id) ? '，已使用' : ''}`"
-              :aria-pressed="selectedId === piece.id && ownTray" @click="selectPiece(piece)">
-              <svg :viewBox="pieceViewBox(piece)" aria-hidden="true"><rect v-for="[x, y] in piece.cells" :key="`${x}:${y}`" :x="x * 10 + .5" :y="y * 10 + .5" width="9" height="9" rx="1" /></svg>
-              <span>{{ piece.id }}</span><Check v-if="!inspected?.remainingPieces.includes(piece.id)" class="used-check" :size="12" />
-            </button>
+        <aside class="inventory" :class="inspected?.color ?? 'blue'" aria-label="棋块库">
+          <div class="panel-heading"><div><p class="eyebrow">PIECE LIBRARY</p><h3>{{ ownTray ? '你的棋块' : `${name(inspected?.id)}的棋块` }}</h3></div><span class="piece-count">{{ inspected?.remainingPieces.length ?? 21 }}<small> / 21</small></span></div>
+          <p class="inventory-note">{{ !ownTray ? '公开棋块库 · 仅供查看' : canPreview ? '选择一块，旋转或翻转后放到棋盘上。' : '查看本局剩余棋块。' }}<br />每人共 89 小格，灰色棋块已使用。</p>
+          <PluginButton v-if="me && !ownTray" variant="secondary" block @click="inspectedId = me.id">返回我的棋块</PluginButton>
+          <div v-for="size in sizeGroups" :key="size" class="piece-group">
+            <div class="group-label"><span>{{ size }} 格块</span><span>{{ PIECES.filter(piece => piece.size === size && inspected?.remainingPieces.includes(piece.id)).length }} 块可用</span></div>
+            <div class="piece-grid">
+              <button v-for="piece in PIECES.filter(piece => piece.size === size)" :key="piece.id" type="button" class="piece-button"
+                :class="{ selected: selectedId === piece.id && ownTray, used: !inspected?.remainingPieces.includes(piece.id) }"
+                :disabled="!canPreview || pending || !inspected?.remainingPieces.includes(piece.id)"
+                :aria-label="`${piece.id}，${size} 格${!inspected?.remainingPieces.includes(piece.id) ? '，已使用' : ''}`"
+                :aria-pressed="selectedId === piece.id && ownTray" @click="selectPiece(piece)">
+                <svg :viewBox="pieceViewBox(piece)" aria-hidden="true"><rect v-for="[x, y] in piece.cells" :key="`${x}:${y}`" :x="x * 10 + .5" :y="y * 10 + .5" width="9" height="9" rx="1" /></svg>
+                <span>{{ piece.id }}</span><Check v-if="!inspected?.remainingPieces.includes(piece.id)" class="used-check" :size="12" />
+              </button>
+            </div>
           </div>
-        </div>
-        <div class="scoring-note"><Trophy :size="17" /><p>名次积分<br /><strong>+2 <i>/</i> +1 <i>/</i> 0 <i>/</i> −1</strong></p><small>剩余格数越少<br />名次越靠前</small></div>
-      </aside>
+          <div class="scoring-note"><Trophy :size="17" /><p>名次积分<br /><strong>+2 <i>/</i> +1 <i>/</i> 0 <i>/</i> −1</strong></p><small>剩余格数越少<br />名次越靠前</small></div>
+        </aside>
+      </div>
     </div>
 
     <div v-if="game.events?.length" class="event-log" aria-label="对局动态"><h3>对局动态</h3><p v-for="(event, index) in [...game.events].reverse()" :key="index">{{ event }}</p></div>
@@ -317,13 +321,70 @@ async function restart(): Promise<void> {
 <style scoped>
 .blokus { --piece: var(--piece-blue); --piece-blue: #478bd0; --piece-yellow: #d5a32c; --piece-red: #d86b63; --piece-green: #4c9e87; width: 100%; min-width: 0; max-width: none; margin: 0 auto; color: var(--text); display: grid; gap: clamp(18px, 1.4vw, 26px); }
 .blue { --piece: var(--piece-blue); }.yellow { --piece: var(--piece-yellow); }.red { --piece: var(--piece-red); }.green { --piece: var(--piece-green); }
-.blokus * { box-sizing: border-box; }.game-heading, .panel-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-width: 0; }.game-heading h2 { font-size: clamp(24px, 3vw, 34px); margin: 2px 0 0; letter-spacing: .06em; }.eyebrow { margin: 0 0 5px; font-size: 10px; font-weight: 700; letter-spacing: .14em; color: var(--muted); }.blokus h3 { margin: 0; font-size: 16px; }.panel-heading h3 { overflow-wrap: anywhere; }.player-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }.player-card { position: relative; display: grid; gap: 7px; min-width: 0; padding: 13px; border: 1px solid var(--line); border-top: 3px solid var(--piece); border-radius: 13px; background: var(--surface-elevated); box-shadow: var(--shadow-contact); color: var(--text); text-align: left; font: inherit; cursor: pointer; }.player-card.current { background: color-mix(in srgb, var(--piece) 9%, var(--surface-elevated)); border-color: color-mix(in srgb, var(--piece) 70%, var(--line)); }.player-card.inspected { outline: 1px solid color-mix(in srgb, var(--piece) 45%, transparent); outline-offset: 2px; }.player-title { display: flex; align-items: center; gap: 7px; min-width: 0; }.player-title strong { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }.player-title small { font-size: 10px; padding: 1px 4px; border-radius: 4px; border: 1px solid var(--line); }.color-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; background: var(--piece); }.corner-label, .player-metric small { font-size: 11px; color: var(--text-soft); }.player-metric b { font-size: 24px; font-variant-numeric: tabular-nums; font-weight: 650; }.player-status { font-size: 11px; color: var(--text-soft); }.player-card.current .player-status { font-weight: 700; color: var(--text); }
+.blokus * { box-sizing: border-box; }.status-board { display: grid; gap: clamp(18px, 1.4vw, 26px); min-width: 0; }.game-heading, .panel-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-width: 0; }.game-heading h2 { font-size: clamp(24px, 3vw, 34px); margin: 2px 0 0; letter-spacing: .06em; }.eyebrow { margin: 0 0 5px; font-size: 10px; font-weight: 700; letter-spacing: .14em; color: var(--muted); }.blokus h3 { margin: 0; font-size: 16px; }.panel-heading h3 { overflow-wrap: anywhere; }.player-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }.player-card { position: relative; display: grid; gap: 7px; min-width: 0; padding: 13px; border: 1px solid var(--line); border-top: 3px solid var(--piece); border-radius: 13px; background: var(--surface-elevated); box-shadow: var(--shadow-contact); color: var(--text); text-align: left; font: inherit; cursor: pointer; }.player-card.current { background: color-mix(in srgb, var(--piece) 9%, var(--surface-elevated)); border-color: color-mix(in srgb, var(--piece) 70%, var(--line)); }.player-card.inspected { outline: 1px solid color-mix(in srgb, var(--piece) 45%, transparent); outline-offset: 2px; }.player-title { display: flex; align-items: center; gap: 7px; min-width: 0; }.player-title strong { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }.player-title small { font-size: 10px; padding: 1px 4px; border-radius: 4px; border: 1px solid var(--line); }.color-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; background: var(--piece); }.corner-label, .player-metric small { font-size: 11px; color: var(--text-soft); }.player-metric b { font-size: 24px; font-variant-numeric: tabular-nums; font-weight: 650; }.player-status { font-size: 11px; color: var(--text-soft); }.player-card.current .player-status { font-weight: 700; color: var(--text); }
 .turn-strip { display: flex; align-items: center; gap: 11px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-inset); }.turn-strip.mine { border-color: color-mix(in srgb, var(--piece) 55%, var(--line)); background: color-mix(in srgb, var(--piece) 6%, var(--surface-elevated)); }.turn-light { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }.mine .turn-light { background: var(--piece); box-shadow: 0 0 0 4px color-mix(in srgb, var(--piece) 12%, transparent); }.turn-strip > div { flex: 1; min-width: 0; display: grid; gap: 4px; }.turn-strip strong { font-size: 14px; overflow-wrap: anywhere; }.turn-strip span, .turn-strip > small { font-size: 11px; color: var(--text-soft); }.turn-strip > small { white-space: nowrap; }
-.workbench { display: grid; grid-template-columns: minmax(0, 1fr) clamp(320px, 28vw, 420px); align-items: start; gap: clamp(20px, 1.5vw, 28px); }.board-panel, .inventory { min-width: 0; border: 1px solid var(--line); border-radius: 18px; padding: clamp(16px, 1.35vw, 24px); background: var(--surface-elevated); box-shadow: var(--shadow-raised); }.board-panel { scroll-margin-top: 16px; }.panel-heading > button { min-height: 44px; }.board-scroll { width: 100%; overflow: auto; overscroll-behavior: contain; margin-top: 13px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--surface-inset); }.board-svg { display: block; width: 100%; aspect-ratio: 1; touch-action: pan-x pan-y; user-select: none; cursor: crosshair; }.board-scroll.zoomed .board-svg { width: 170%; min-width: 600px; }.board-base { fill: var(--surface-inset); }.tile { fill: var(--piece); stroke: color-mix(in srgb, var(--piece) 70%, var(--text)); stroke-width: .5; }.grid-lines { stroke: var(--line-strong); stroke-width: .65; fill: none; pointer-events: none; }.corner-marker rect { fill: color-mix(in srgb, var(--piece) 15%, var(--surface-inset)); stroke: var(--piece); stroke-width: 1.8; }.corner-marker text { font: 700 11px sans-serif; fill: var(--text); text-anchor: middle; }.anchor-dot { fill: var(--piece); opacity: .8; pointer-events: none; }.last-tile { fill: none; stroke: #162432; stroke-opacity: .7; stroke-width: 1; pointer-events: none; }.preview-tile { fill: color-mix(in srgb, var(--piece) 65%, transparent); stroke: var(--text); stroke-width: 1.3; stroke-dasharray: 3 2; pointer-events: none; }.preview-tile.invalid { fill: color-mix(in srgb, var(--text) 20%, transparent); stroke: var(--text); stroke-dasharray: 1.5 1.5; }.board-caption { color: var(--muted); font-size: 10px; text-align: center; margin: 8px 0 0; }.placement-controls { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 14px; margin-top: 13px; }.selection-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; }.selection-line strong { font-size: 13px; }.selection-line span { color: var(--text-soft); font-size: 11px; }.transform-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }.nudge-controls { display: flex; justify-content: center; gap: 10px; }.nudge-controls > * { min-width: 44px; min-height: 44px; }.placement-status { margin: 0; min-height: 18px; font-size: 12px; color: var(--text-soft); text-align: center; overflow-wrap: anywhere; }.placement-status.valid { color: var(--text); }.keyboard-note { color: var(--muted); font-size: 10px; text-align: center; }
+.workbench { display: grid; grid-template-columns: minmax(0, 1fr) clamp(320px, 28vw, 420px); align-items: start; gap: clamp(20px, 1.5vw, 28px); }.side-column { min-width: 0; display: grid; gap: 14px; align-content: start; }.board-panel, .inventory, .placement-controls { min-width: 0; border: 1px solid var(--line); border-radius: 18px; padding: clamp(16px, 1.35vw, 24px); background: var(--surface-elevated); box-shadow: var(--shadow-raised); }.board-panel { scroll-margin-top: 16px; }.panel-heading > button { min-height: 44px; }.board-scroll { width: 100%; overflow: auto; overscroll-behavior: contain; margin: 13px auto 0; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--surface-inset); }.board-svg { display: block; width: 100%; aspect-ratio: 1; touch-action: pan-x pan-y; user-select: none; cursor: crosshair; }.board-scroll.zoomed .board-svg { width: 170%; min-width: 600px; }.board-base { fill: var(--surface-inset); }.tile { fill: var(--piece); stroke: color-mix(in srgb, var(--piece) 70%, var(--text)); stroke-width: .5; }.grid-lines { stroke: var(--line-strong); stroke-width: .65; fill: none; pointer-events: none; }.corner-marker rect { fill: color-mix(in srgb, var(--piece) 15%, var(--surface-inset)); stroke: var(--piece); stroke-width: 1.8; }.corner-marker text { font: 700 11px sans-serif; fill: var(--text); text-anchor: middle; }.anchor-dot { fill: var(--piece); opacity: .8; pointer-events: none; }.last-tile { fill: none; stroke: #162432; stroke-opacity: .7; stroke-width: 1; pointer-events: none; }.preview-tile { fill: color-mix(in srgb, var(--piece) 65%, transparent); stroke: var(--text); stroke-width: 1.3; stroke-dasharray: 3 2; pointer-events: none; }.preview-tile.invalid { fill: color-mix(in srgb, var(--text) 20%, transparent); stroke: var(--text); stroke-dasharray: 1.5 1.5; }.board-caption { color: var(--muted); font-size: 10px; text-align: center; margin: 8px 0 0; }.placement-controls { display: grid; gap: 10px; }.selection-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; }.selection-line strong { font-size: 13px; }.selection-line span { color: var(--text-soft); font-size: 11px; }.transform-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }.nudge-controls { display: flex; justify-content: center; gap: 10px; }.nudge-controls > * { min-width: 44px; min-height: 44px; }.placement-status { margin: 0; min-height: 18px; font-size: 12px; color: var(--text-soft); text-align: center; overflow-wrap: anywhere; }.placement-status.valid { color: var(--text); }.keyboard-note { color: var(--muted); font-size: 10px; text-align: center; }
 .inventory { display: grid; gap: 13px; }.piece-count { color: var(--text); font-size: 22px; font-variant-numeric: tabular-nums; white-space: nowrap; }.piece-count small { color: var(--muted); font-size: 12px; }.inventory-note { font-size: 11px; color: var(--text-soft); line-height: 1.8; margin: 0; }.piece-group { display: grid; gap: 7px; }.group-label { display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: var(--muted); }.group-label span:first-child { color: var(--text-soft); font-weight: 650; }.piece-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }.piece-button { position: relative; min-width: 0; min-height: 68px; display: grid; justify-items: center; align-content: center; gap: 1px; border: 1px solid var(--line); border-radius: 8px; background: var(--control-surface); color: var(--text-soft); font: inherit; cursor: pointer; padding: 4px; }.piece-button > svg:not(.used-check) { display: block; width: 100%; max-width: 56px; height: 42px; }.piece-button rect { fill: var(--piece); stroke: color-mix(in srgb, var(--piece) 70%, var(--text)); stroke-width: .4; }.piece-button span { font-size: 9px; letter-spacing: .03em; }.piece-button:disabled { cursor: default; }.piece-button.used { opacity: .34; }.piece-button.used rect { fill: var(--muted); stroke: var(--muted); }.piece-button.selected { border-color: var(--piece); background: color-mix(in srgb, var(--piece) 12%, var(--control-surface)); outline: 1px solid var(--piece); }.used-check { width: 12px; height: 12px; position: absolute; top: 4px; right: 4px; }.piece-button:not(:disabled):hover { border-color: var(--piece); }.scoring-note { display: flex; gap: 10px; align-items: center; border-top: 1px solid var(--line); padding-top: 13px; color: var(--text-soft); }.scoring-note p { margin: 0; font-size: 10px; line-height: 1.8; }.scoring-note strong { font-size: 14px; color: var(--text); font-variant-numeric: tabular-nums; }.scoring-note i { font-style: normal; font-weight: 400; color: var(--muted); padding: 0 4px; }.scoring-note > small { margin-left: auto; font-size: 10px; line-height: 1.7; }
 .result-panel { padding: 22px; display: grid; gap: 15px; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface-elevated); }.result-heading { display: flex; gap: 12px; align-items: center; }.result-heading h3 { overflow-wrap: anywhere; }.ranking-list { display: grid; gap: 1px; }.ranking-row { display: flex; align-items: center; gap: 12px; padding: 12px 4px; border-bottom: 1px solid var(--line); min-width: 0; }.rank-number { font-size: 22px; width: 24px; color: var(--muted); }.ranking-row > div { min-width: 0; display: grid; gap: 3px; }.ranking-row strong { font-size: 13px; overflow-wrap: anywhere; }.ranking-row small { font-size: 11px; color: var(--text-soft); }.rank-points { margin-left: auto; font-size: 24px; white-space: nowrap; }.rank-points small { font-weight: 400; }.muted-note { font-size: 12px; color: var(--text-soft); line-height: 1.7; margin: 0; }.event-log { border-top: 1px solid var(--line); padding-top: 15px; }.event-log h3 { font-size: 12px; margin-bottom: 8px; }.event-log p { margin: 4px 0; color: var(--text-soft); font-size: 11px; }.rule-content { display: grid; gap: 12px; color: var(--text); line-height: 1.85; font-size: 13px; }.rule-content h3 { font-size: 15px; margin: 0; }.rule-content p { margin: 7px 0; }.rule-content ol { padding-left: 22px; margin: 7px 0; }.rule-content li { margin-bottom: 5px; }.rule-source { font-size: 11px; color: var(--text-soft); }.rule-source a { color: var(--text); text-decoration: underline; }.blokus :focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
-@media (min-width: 1280px) { .inventory .piece-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }.piece-button { min-height: 72px; } }
-@media (max-width: 1100px) { .workbench { grid-template-columns: minmax(0, 1fr); gap: 14px; }.inventory .piece-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }.inventory { padding: 16px; }.blokus { gap: 14px; }.keyboard-note { display: none; } }
-@media (max-width: 520px) { .player-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }.player-card { padding: 10px; gap: 4px; }.player-metric b { font-size: 21px; }.player-title strong { font-size: 12px; }.corner-label, .player-metric small, .player-status { font-size: 10px; }.board-panel, .inventory { padding: 10px; border-radius: 12px; }.turn-strip { padding: 11px; }.turn-strip > small { display: none; }.turn-strip strong { font-size: 12px; }.turn-strip span { font-size: 10px; }.inventory .piece-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }.transform-controls { gap: 5px; }.transform-controls > * { padding-inline: 6px; font-size: 12px; min-width: 0; min-height: 44px; }.result-panel { padding: 14px; }.rank-points { font-size: 22px; }.ranking-row { gap: 8px; }.eyebrow { font-size: 9px; }.game-heading h2 { font-size: 25px; }.selection-line { justify-content: center; }.scoring-note > small { font-size: 9px; } }
+@media (min-width: 1001px) {
+  .blokus { gap: 12px; }
+  .status-board { grid-template-columns: 72px minmax(0, 1.45fr) minmax(260px, .85fr); align-items: stretch; gap: 10px; }
+  .game-heading { justify-content: stretch; }
+  .game-heading > div { display: none; }
+  .game-heading > button { width: 100%; min-height: 72px; }
+  .player-grid { gap: 6px; }
+  .player-card { gap: 2px; padding: 7px 9px; border-top-width: 2px; border-radius: 10px; }
+  .player-title strong { font-size: 12px; }
+  .corner-label, .player-metric small, .player-status { font-size: 9px; }
+  .player-metric { line-height: 1; }
+  .player-metric b { font-size: 19px; }
+  .turn-strip { min-height: 72px; padding: 9px 11px; gap: 8px; }
+  .turn-strip strong { font-size: 12px; }
+  .turn-strip span, .turn-strip > small { font-size: 9px; }
+  .turn-strip > small { display: none; }
+  .workbench { grid-template-columns: minmax(0, 1fr) clamp(300px, 27vw, 400px); align-items: start; gap: clamp(14px, 1.2vw, 22px); }
+  .board-panel { padding: 12px; }
+  .board-scroll { width: min(100%, clamp(400px, calc(100dvh - 290px), 900px)); justify-self: center; margin-top: 8px; }
+  .board-caption { margin-top: 5px; }
+  .side-column { gap: 8px; }
+  .placement-controls { padding: 10px; gap: 5px; border-radius: 14px; }
+  .selection-line { gap: 3px; }
+  .selection-line strong { font-size: 12px; }
+  .selection-line span { font-size: 9px; }
+  .transform-controls { gap: 5px; }
+  .transform-controls > *, .nudge-controls > * { min-height: 36px; }
+  .nudge-controls { gap: 7px; }
+  .nudge-controls > * { min-width: 36px; }
+  .placement-status { min-height: 15px; font-size: 10px; }
+  .placement-controls > button { min-height: 38px; }
+  .keyboard-note { font-size: 9px; }
+  .inventory { padding: 10px; gap: 4px; border-radius: 14px; }
+  .inventory .panel-heading h3 { font-size: 14px; }
+  .inventory .eyebrow { display: none; }
+  .piece-count { font-size: 18px; }
+  .piece-count small { font-size: 10px; }
+  .inventory-note { font-size: 9px; line-height: 1.45; }
+  .piece-group { gap: 2px; }
+  .group-label { font-size: 9px; }
+  .inventory .piece-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 3px; }
+  .piece-button { min-height: 36px; padding: 1px; border-radius: 6px; }
+  .piece-button > svg:not(.used-check) { max-width: 42px; height: 23px; }
+  .piece-button span { font-size: 8px; }
+  .used-check { width: 10px; height: 10px; top: 2px; right: 2px; }
+  .scoring-note { padding-top: 5px; gap: 7px; }
+  .scoring-note p, .scoring-note > small { font-size: 9px; line-height: 1.45; }
+  .scoring-note strong { font-size: 12px; }
+}
+@media (min-width: 1001px) and (max-height: 850px) {
+  .inventory-note, .scoring-note, .keyboard-note { display: none; }
+  .side-column { gap: 5px; }
+  .placement-controls { padding: 8px; gap: 4px; }
+  .inventory { padding: 8px; gap: 3px; }
+  .group-label span:last-child { display: none; }
+  .piece-button { min-height: 32px; }
+  .piece-button > svg:not(.used-check) { height: 21px; }
+}
+@media (max-width: 1000px) { .workbench { grid-template-columns: minmax(0, 1fr); gap: 14px; }.inventory .piece-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }.inventory { padding: 16px; }.blokus, .status-board { gap: 14px; }.keyboard-note { display: none; } }
+@media (max-width: 520px) { .player-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }.player-card { padding: 10px; gap: 4px; }.player-metric b { font-size: 21px; }.player-title strong { font-size: 12px; }.corner-label, .player-metric small, .player-status { font-size: 10px; }.board-panel, .inventory, .placement-controls { padding: 10px; border-radius: 12px; }.turn-strip { padding: 11px; }.turn-strip > small { display: none; }.turn-strip strong { font-size: 12px; }.turn-strip span { font-size: 10px; }.inventory .piece-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }.transform-controls { gap: 5px; }.transform-controls > * { padding-inline: 6px; font-size: 12px; min-width: 0; min-height: 44px; }.result-panel { padding: 14px; }.rank-points { font-size: 22px; }.ranking-row { gap: 8px; }.eyebrow { font-size: 9px; }.game-heading h2 { font-size: 25px; }.selection-line { justify-content: center; }.scoring-note > small { font-size: 9px; } }
 @media (prefers-reduced-motion: reduce) { .blokus * { scroll-behavior: auto; } }
 </style>

@@ -11,6 +11,9 @@ const mocks = vi.hoisted(() => ({
   rapidAction: vi.fn(),
   restart: vi.fn(),
   toggle: vi.fn(),
+  soundUnlock: vi.fn(),
+  soundPlay: vi.fn(),
+  soundDestroy: vi.fn(),
 }))
 
 vi.mock('@game-hall/plugin-sdk', async (original) => {
@@ -32,11 +35,19 @@ vi.mock('@game-hall/plugin-sdk', async (original) => {
   }
 })
 
+vi.mock('./sound', () => ({
+  createBombPeopleSound: () => ({
+    unlock: mocks.soundUnlock,
+    play: mocks.soundPlay,
+    destroy: mocks.soundDestroy,
+  }),
+}))
+
 
 function player(id: string, seat: number, name: string): BombPlayer {
   return {
     id, seat, name, color: seat ? '#4f8cff' : '#ff5a55', character: seat,
-    x: seat ? 18 : 1, y: seat ? 18 : 1, facingX: 0, facingY: 1,
+    x: seat ? 18 : 1, y: seat ? 18 : 1, facingX: 0, facingY: 1, moving: false,
     alive: true, eliminatedBy: null, eliminationReason: null, kills: seat ? 1 : 3,
     stats: { kills: seat ? 4 : 12, championships: seat ? 1 : 4, matches: 5, winRate: seat ? 20 : 80 },
     equipment: {
@@ -65,9 +76,9 @@ function snapshot(phase: ArcadeSnapshot['phase'] = 'playing'): ArcadeSnapshot {
     selectedMap: 'magma_crucible', currentMap: maps[0]!, mapCatalog: maps,
     mapProposal: null, canProposeMap: phase === 'lobby', canVoteMap: false,
     board, players: phase === 'lobby' ? [] : [player('p0', 0, '红队'), player('p1', 1, '蓝队')],
-    bombs: [{ id: 1, ownerId: 'p0', creditPlayerId: 'p0', x: 3, y: 3, fuseTicks: 30, maxFuseTicks: 40, moving: false }],
+    bombs: [{ id: 1, ownerId: 'p0', creditPlayerId: 'p0', x: 3, y: 3, fuseTicks: 30, maxFuseTicks: 40, moving: false, motionX: 0, motionY: 0 }],
     items: [{ id: 1, kind: 'speed', x: 4, y: 4 }],
-    flames: [{ x: 5, y: 5, remainingTicks: 4 }], iceTiles: [], events: [],
+    flames: [{ x: 5, y: 5, remainingTicks: 4 }], iceTiles: [], events: [], effects: [],
     winnerId: null, clockLeaderId: 'p1', frozen: false, selfInputSequence: 0,
     controls: { move: 'WASD', bomb: 'Space', punch: 'Z', throw: 'X', kick: 'automatic' },
     itemLabels: {
@@ -105,6 +116,12 @@ function buttonByText(wrapper: ReturnType<typeof render>, text: string) {
   return wrapper.findAll('button').find(button => button.text().includes(text))!
 }
 
+function pointerEvent(type: string, pointerId: number, clientX = 0, clientY = 0) {
+  const event = new MouseEvent(type, { bubbles: true, cancelable: true, clientX, clientY })
+  Object.defineProperty(event, 'pointerId', { value: pointerId })
+  return event
+}
+
 
 beforeEach(() => {
   vi.useFakeTimers()
@@ -112,6 +129,9 @@ beforeEach(() => {
   mocks.rapidAction.mockReset().mockResolvedValue(true)
   mocks.restart.mockReset().mockResolvedValue(true)
   mocks.toggle.mockReset()
+  mocks.soundUnlock.mockReset()
+  mocks.soundPlay.mockReset()
+  mocks.soundDestroy.mockReset()
 })
 
 afterEach(() => {
@@ -148,6 +168,107 @@ describe('Bomb People arena', () => {
     expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 4, inputMask: 33 })
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyW', cancelable: true }))
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyZ', cancelable: true }))
+    wrapper.unmount()
+  })
+
+  it('renders articulated walking and synchronized bomb action effects', () => {
+    const data = snapshot()
+    const game = data.game as unknown as BombGame
+    game.players[0]!.moving = true
+    const third = player('p2', 2, '黄队')
+    third.x = 10
+    third.y = 10
+    game.players.push(third)
+    game.effects = [
+      { id: 1, kind: 'bomb_placed', tick: 100, remainingTicks: 5, actorId: 'p0', bombId: 1, x: 3, y: 3, targetX: null, targetY: null, directionX: 0, directionY: 0 },
+      { id: 2, kind: 'bomb_exploded', tick: 100, remainingTicks: 7, actorId: 'p0', bombId: 2, x: 5, y: 5, targetX: null, targetY: null, directionX: 0, directionY: 0 },
+      { id: 3, kind: 'bomb_punched', tick: 100, remainingTicks: 8, actorId: 'p0', bombId: 1, x: 1, y: 1, targetX: 2, targetY: 1, directionX: 1, directionY: 0 },
+      { id: 4, kind: 'bomb_kicked', tick: 100, remainingTicks: 8, actorId: 'p1', bombId: 1, x: 18, y: 18, targetX: 17, targetY: 18, directionX: -1, directionY: 0 },
+      { id: 5, kind: 'bomb_thrown', tick: 100, remainingTicks: 8, actorId: 'p2', bombId: 1, x: 11, y: 10, targetX: 14, targetY: 10, directionX: 1, directionY: 0 },
+    ]
+
+    const wrapper = render(data)
+    expect(wrapper.findAll('.player-piece.walking .player-leg')).toHaveLength(2)
+    expect(wrapper.find('.player-piece.action-punch').exists()).toBe(true)
+    expect(wrapper.find('.player-piece.action-kick').exists()).toBe(true)
+    expect(wrapper.find('.player-piece.action-throw').exists()).toBe(true)
+    expect(wrapper.find('.place-effect').exists()).toBe(true)
+    expect(wrapper.find('.explosion-effect').exists()).toBe(true)
+    expect(wrapper.find('.punch-impact').exists()).toBe(true)
+    expect(wrapper.find('.kick-impact').exists()).toBe(true)
+    expect(wrapper.find('.throw-effect').exists()).toBe(true)
+    expect(wrapper.get('.bomb').classes()).toEqual(expect.arrayContaining(['just-placed', 'landing']))
+    wrapper.unmount()
+  })
+
+  it('uses one fixed non-verbal sound for each visible action kind', async () => {
+    const data = snapshot()
+    const wrapper = render(data)
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', cancelable: true }))
+    expect(mocks.soundUnlock).toHaveBeenCalledOnce()
+
+    const game = data.game as unknown as BombGame
+    const effects: BombGame['effects'] = [
+      { id: 1, kind: 'bomb_placed', tick: 101, remainingTicks: 5, actorId: 'p0', bombId: 1, x: 1, y: 1, targetX: null, targetY: null, directionX: 0, directionY: 0 },
+      { id: 2, kind: 'bomb_exploded', tick: 101, remainingTicks: 7, actorId: 'p0', bombId: 1, x: 1, y: 1, targetX: null, targetY: null, directionX: 0, directionY: 0 },
+      { id: 3, kind: 'bomb_kicked', tick: 101, remainingTicks: 8, actorId: 'p0', bombId: 1, x: 1, y: 1, targetX: 2, targetY: 1, directionX: 1, directionY: 0 },
+      { id: 4, kind: 'bomb_punched', tick: 101, remainingTicks: 8, actorId: 'p0', bombId: 1, x: 1, y: 1, targetX: 2, targetY: 1, directionX: 1, directionY: 0 },
+      { id: 5, kind: 'bomb_thrown', tick: 101, remainingTicks: 8, actorId: 'p0', bombId: 1, x: 2, y: 1, targetX: 5, targetY: 1, directionX: 1, directionY: 0 },
+    ]
+    await wrapper.setProps({ snapshot: {
+      ...data,
+      revision: 2,
+      game: { ...game, effects },
+    } as unknown as ArcadeSnapshot })
+    await flushPromises()
+
+    expect(mocks.soundPlay.mock.calls.map(([kind]) => kind)).toEqual([
+      'bomb_placed', 'bomb_exploded', 'bomb_kicked', 'bomb_punched', 'bomb_thrown',
+    ])
+    expect(wrapper.get('.event-list').text()).not.toContain('扔出炸弹')
+    wrapper.unmount()
+    expect(mocks.soundDestroy).toHaveBeenCalledOnce()
+  })
+
+  it('supports browser arrow keys without requiring board focus', async () => {
+    const wrapper = render()
+    const right = new KeyboardEvent('keydown', { code: 'ArrowRight', cancelable: true })
+    window.dispatchEvent(right)
+    await flushPromises()
+    expect(right.defaultPrevented).toBe(true)
+    expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 1, inputMask: 8 })
+
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'ArrowRight', cancelable: true }))
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyX', cancelable: true }))
+    await flushPromises()
+    expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 3, inputMask: 64 })
+    wrapper.unmount()
+  })
+
+  it('turns mobile joystick drags and action buttons into the same input mask', async () => {
+    const wrapper = render()
+    const joystick = wrapper.get('.joystick')
+    vi.spyOn(joystick.element, 'getBoundingClientRect').mockReturnValue({
+      left: 0, top: 0, width: 116, height: 116, right: 116, bottom: 116, x: 0, y: 0,
+      toJSON: () => ({}),
+    })
+
+    joystick.element.dispatchEvent(pointerEvent('pointerdown', 7, 110, 58))
+    await flushPromises()
+    expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 1, inputMask: 8 })
+    const bombButton = wrapper.get('button[aria-label="放置炸弹或定时引爆"]')
+    bombButton.element.dispatchEvent(pointerEvent('pointerdown', 8))
+    await flushPromises()
+    expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 2, inputMask: 24 })
+    bombButton.element.dispatchEvent(pointerEvent('pointerup', 8))
+    await flushPromises()
+    expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 3, inputMask: 8 })
+    joystick.element.dispatchEvent(pointerEvent('pointermove', 7, 58, 4))
+    await flushPromises()
+    expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 4, inputMask: 1 })
+    joystick.element.dispatchEvent(pointerEvent('pointerup', 7, 58, 4))
+    await flushPromises()
+    expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 5, inputMask: 0 })
     wrapper.unmount()
   })
 

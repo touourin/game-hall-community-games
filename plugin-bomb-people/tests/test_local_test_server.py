@@ -3,6 +3,8 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
+import pytest
+
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 SERVER_PATH = PLUGIN_ROOT / "tools" / "local_test_server.py"
@@ -80,3 +82,33 @@ def test_local_finish_debug_action_can_award_an_eliminated_viewer():
     assert finished["phase"] == "finished"
     assert finished["winnerPlayerIds"] == ["local-p2"]
     assert finished["game"]["winnerId"] == "local-p2"
+
+
+@pytest.mark.parametrize("player_count", range(2, 9))
+def test_local_arena_finishes_and_restarts_complete_rounds_for_two_to_eight_players(player_count):
+    arena = LocalArena(player_count=player_count, seed=5000 + player_count)
+    started = arena.start("local-p1")
+    assert started["roundNumber"] == 1
+    assert len(started["players"]) == player_count
+
+    finished = arena.finish_for_viewer(f"local-p{player_count}")
+    assert finished["phase"] == "finished"
+    assert finished["winnerPlayerIds"] == [f"local-p{player_count}"]
+    for index in range(1, player_count + 1):
+        snapshot = arena.snapshot(f"local-p{index}")
+        assert snapshot["winnerPlayerIds"] == [f"local-p{player_count}"]
+        assert snapshot["actions"]["canRestart"] is True
+        own = next(
+            player for player in snapshot["game"]["players"]
+            if player["id"] == f"local-p{index}"
+        )
+        assert own["stats"]["matches"] == 1
+        assert own["stats"]["championships"] == (1 if index == player_count else 0)
+
+    restarted = arena.restart("local-p1")
+    assert restarted["phase"] == "playing"
+    assert restarted["roundNumber"] == 2
+    assert restarted["winnerPlayerIds"] == []
+    assert restarted["game"]["winnerId"] is None
+    assert all(player["alive"] for player in restarted["game"]["players"])
+    assert all(player["stats"]["matches"] == 1 for player in restarted["game"]["players"])

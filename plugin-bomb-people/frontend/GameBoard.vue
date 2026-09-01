@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { ITEM_ART, MAP_ART, PLAYER_ART } from './catalog'
-import type { BombGame } from './types'
+import type { BombEffect, BombGame, BombObject, BombPlayer } from './types'
 
 const props = defineProps<{
   game: BombGame
@@ -14,6 +14,22 @@ const flatCells = computed(() => props.game.board.flatMap((row, y) => (
 
 const dangerSet = computed(() => new Set(props.game.dangerCells.map(([x, y]) => `${x}:${y}`)))
 const background = computed(() => MAP_ART[props.game.selectedMap] ?? MAP_ART.magma_crucible)
+const effects = computed(() => props.game.effects ?? [])
+const latestActionByPlayer = computed(() => {
+  const result = new Map<string, BombEffect>()
+  for (const effect of effects.value) {
+    if (effect.actorId && ['bomb_kicked', 'bomb_punched', 'bomb_thrown'].includes(effect.kind)) {
+      result.set(effect.actorId, effect)
+    }
+  }
+  return result
+})
+const placedBombIds = computed(() => new Set(
+  effects.value.filter(effect => effect.kind === 'bomb_placed').map(effect => effect.bombId),
+))
+const thrownBombIds = computed(() => new Set(
+  effects.value.filter(effect => effect.kind === 'bomb_thrown').map(effect => effect.bombId),
+))
 
 function objectStyle(x: number, y: number, z = 10) {
   const size = 100 / props.game.boardSize
@@ -26,14 +42,64 @@ function objectStyle(x: number, y: number, z = 10) {
   }
 }
 
-function playerStyle(x: number, y: number, color: string) {
+function playerStyle(player: BombPlayer) {
   const size = 100 / props.game.boardSize
   return {
-    left: `${(x + 0.5) * size}%`,
-    top: `${(y + 0.5) * size}%`,
+    left: `${(player.x + 0.5) * size}%`,
+    top: `${(player.y + 0.5) * size}%`,
     width: `${size * 1.7}%`,
     height: `${size * 1.95}%`,
-    '--player-color': color,
+    '--player-color': player.color,
+    '--face-scale': player.facingX < 0 ? -1 : 1,
+    '--travel-lean': `${player.facingX * 4}deg`,
+    '--counter-lean': `${player.facingX * -1.6}deg`,
+  }
+}
+
+function bombStyle(bomb: BombObject) {
+  return {
+    ...objectStyle(bomb.x, bomb.y, 14),
+    '--roll-angle': `${(bomb.motionX < 0 || bomb.motionY < 0 ? -1 : 1) * 28}deg`,
+  }
+}
+
+function playerAnimationClass(player: BombPlayer) {
+  const action = latestActionByPlayer.value.get(player.id)
+  return {
+    walking: player.moving && player.alive,
+    'facing-up': player.facingY < 0,
+    'facing-down': player.facingY > 0,
+    'action-kick': action?.kind === 'bomb_kicked',
+    'action-punch': action?.kind === 'bomb_punched',
+    'action-throw': action?.kind === 'bomb_thrown',
+  }
+}
+
+function playerVisualKey(player: BombPlayer) {
+  return `${player.id}:${latestActionByPlayer.value.get(player.id)?.id ?? 'idle'}`
+}
+
+function impactStyle(effect: BombEffect) {
+  return {
+    ...objectStyle(effect.targetX ?? effect.x, effect.targetY ?? effect.y, 31),
+    '--impact-from-x': `${effect.directionX * -65}%`,
+    '--impact-from-y': `${effect.directionY * -65}%`,
+    '--impact-to-x': `${effect.directionX * 38}%`,
+    '--impact-to-y': `${effect.directionY * 38}%`,
+  }
+}
+
+function trajectoryStyle(effect: BombEffect) {
+  const travelX = (effect.targetX ?? effect.x) - effect.x
+  const travelY = (effect.targetY ?? effect.y) - effect.y
+  return {
+    ...objectStyle(effect.x, effect.y, 30),
+    '--travel-x': `${travelX * 100}%`,
+    '--travel-y': `${travelY * 100}%`,
+    '--half-x': `${travelX * 50}%`,
+    '--half-y': `${travelY * 50}%`,
+    '--spin-mid': `${(effect.directionX < 0 || effect.directionY < 0 ? -1 : 1) * 210}deg`,
+    '--spin-end': `${(effect.directionX < 0 || effect.directionY < 0 ? -1 : 1) * 430}deg`,
   }
 }
 
@@ -92,8 +158,8 @@ function fuseText(ticks: number) {
         v-for="bomb in game.bombs"
         :key="`bomb:${bomb.id}`"
         class="board-object bomb"
-        :class="{ moving: bomb.moving }"
-        :style="objectStyle(bomb.x, bomb.y, 14)"
+        :class="{ moving: bomb.moving, 'just-placed': placedBombIds.has(bomb.id), landing: thrownBombIds.has(bomb.id) }"
+        :style="bombStyle(bomb)"
         :title="`炸弹剩余 ${fuseText(bomb.fuseTicks)} 秒`"
       >
         <span class="bomb-body"><i /></span>
@@ -108,15 +174,58 @@ function fuseText(ticks: number) {
         aria-label="爆炸火焰"
       ><span /></div>
 
+      <template v-for="effect in effects" :key="`effect:${effect.id}`">
+        <div
+          v-if="effect.kind === 'bomb_exploded'"
+          class="board-object explosion-effect"
+          :style="objectStyle(effect.x, effect.y, 32)"
+          aria-hidden="true"
+        >
+          <span class="explosion-core" />
+          <span class="explosion-ring" />
+          <span class="explosion-sparks"><i v-for="spark in 8" :key="spark" /></span>
+        </div>
+        <div
+          v-else-if="effect.kind === 'bomb_kicked' || effect.kind === 'bomb_punched'"
+          class="board-object action-impact"
+          :class="effect.kind === 'bomb_kicked' ? 'kick-impact' : 'punch-impact'"
+          :style="impactStyle(effect)"
+          aria-hidden="true"
+        >
+          <span class="impact-burst" />
+          <img :src="ITEM_ART[effect.kind === 'bomb_kicked' ? 'kick' : 'punch']" alt="" draggable="false" />
+        </div>
+        <div
+          v-else-if="effect.kind === 'bomb_thrown'"
+          class="board-object throw-effect"
+          :style="trajectoryStyle(effect)"
+          aria-hidden="true"
+        >
+          <span class="throw-shadow" />
+          <span class="airborne-bomb"><i /></span>
+        </div>
+        <div
+          v-else-if="effect.kind === 'bomb_placed'"
+          class="board-object place-effect"
+          :style="objectStyle(effect.x, effect.y, 13)"
+          aria-hidden="true"
+        ><span /><i /></div>
+      </template>
+
       <div
         v-for="player in game.players"
         :key="player.id"
         class="player-piece"
-        :class="{ self: player.id === selfId, eliminated: !player.alive, cursed: player.equipment.cursedTicks > 0, invincible: player.equipment.invincibleTicks > 0 }"
-        :style="playerStyle(player.x, player.y, player.color)"
+        :class="[{ self: player.id === selfId, eliminated: !player.alive, cursed: player.equipment.cursedTicks > 0, invincible: player.equipment.invincibleTicks > 0 }, playerAnimationClass(player)]"
+        :style="playerStyle(player)"
       >
-        <img :src="PLAYER_ART[player.character]" :alt="player.name" draggable="false" />
-        <span>{{ player.name }}</span>
+        <span class="player-ground-shadow" aria-hidden="true" />
+        <span :key="playerVisualKey(player)" class="player-avatar">
+          <img class="player-layer player-torso" :src="PLAYER_ART[player.character]" :alt="player.name" draggable="false" />
+          <img class="player-layer player-leg player-leg-left" :src="PLAYER_ART[player.character]" alt="" draggable="false" aria-hidden="true" />
+          <img class="player-layer player-leg player-leg-right" :src="PLAYER_ART[player.character]" alt="" draggable="false" aria-hidden="true" />
+        </span>
+        <span class="player-name">{{ player.name }}</span>
       </div>
 
       <div v-if="game.stage === 'countdown'" class="stage-overlay countdown" aria-live="assertive">
@@ -152,17 +261,55 @@ function fuseText(ticks: number) {
 .board-object { position: absolute; pointer-events: none; display: grid; place-items: center; }
 .item { padding: .25%; filter: drop-shadow(0 1px 2px #000) drop-shadow(0 0 4px #fff8); animation: item-bob .85s ease-in-out infinite alternate; }
 .item img { width: 88%; height: 88%; object-fit: contain; }
-.bomb { color: white; font-variant-numeric: tabular-nums; }
+.bomb { color: white; font-variant-numeric: tabular-nums; transition: left .09s cubic-bezier(.2, .72, .2, 1), top .09s cubic-bezier(.2, .72, .2, 1); }
 .bomb-body { position: absolute; width: 72%; height: 72%; border-radius: 50%; background: radial-gradient(circle at 30% 27%, #65717a 0 7%, #222a30 25%, #06080a 72%); border: 1px solid #8b969d; box-shadow: 0 2px 5px #000, inset -3px -4px 5px #000; }
 .bomb-body::before { content: ''; position: absolute; width: 32%; height: 22%; left: 55%; top: -12%; border: 3px solid #b88643; border-bottom: 0; border-radius: 50% 50% 0 0; transform: rotate(35deg); }
 .bomb-body i { position: absolute; width: 14%; height: 14%; right: -5%; top: -15%; border-radius: 50%; background: #fff3a1; box-shadow: 0 0 6px 2px #ff7a18; animation: fuse .18s infinite alternate; }
 .bomb small { z-index: 2; margin-top: 1px; font: 800 clamp(6px, .7vw, 10px)/1 system-ui; text-shadow: 0 1px 2px #000; }
-.bomb.moving { animation: bomb-roll .12s linear infinite; }
-.flame span { width: 92%; height: 92%; border-radius: 45% 48% 40% 52%; background: radial-gradient(circle, #fff 0 13%, #ffe16b 14% 34%, #ff7b24 35% 66%, #ed2d24 67% 80%, transparent 81%); filter: drop-shadow(0 0 4px #ff6b1a); animation: flame .13s infinite alternate; }
+.bomb.moving .bomb-body { animation: bomb-roll .16s linear infinite; }
+.bomb.just-placed { animation: bomb-drop .26s cubic-bezier(.2, 1.4, .5, 1) both; }
+.bomb.landing { animation: bomb-land .44s ease-out both; }
+.flame { animation: flame-bloom .2s cubic-bezier(.12, .88, .25, 1.35) both; }
+.flame span { width: 108%; height: 108%; border-radius: 45% 48% 40% 52%; background: radial-gradient(circle, #fff 0 13%, #ffe16b 14% 34%, #ff7b24 35% 66%, #ed2d24 67% 80%, transparent 81%); filter: drop-shadow(0 0 4px #ff6b1a); animation: flame .13s infinite alternate; }
 .ice-tile { background: radial-gradient(circle, #b9fbff99, #3ebbe555 58%, transparent 72%); box-shadow: inset 0 0 5px #dff; }
-.player-piece { position: absolute; z-index: 22; transform: translate(-50%, -58%); pointer-events: none; filter: drop-shadow(0 4px 3px #000b); transition: left .09s linear, top .09s linear; }
-.player-piece img { width: 100%; height: 100%; object-fit: contain; }
-.player-piece > span { position: absolute; left: 50%; bottom: -3%; transform: translateX(-50%); max-width: 160%; padding: 1px 4px; overflow: hidden; color: white; background: #0a0d10d9; border: 1px solid var(--player-color); border-radius: 4px; font: 700 clamp(5px, .62vw, 9px)/1.25 system-ui; text-overflow: ellipsis; white-space: nowrap; }
+.place-effect span { position: absolute; width: 82%; height: 82%; border: 2px solid #ffd16c; border-radius: 50%; animation: place-ring .3s ease-out both; }
+.place-effect i { position: absolute; width: 20%; height: 20%; border-radius: 50%; background: #fff7bf; box-shadow: 0 0 9px 4px #ffb11b; animation: place-flash .28s ease-out both; }
+.explosion-effect { overflow: visible; }
+.explosion-core { position: absolute; width: 260%; height: 260%; border-radius: 50%; background: radial-gradient(circle, #fff 0 8%, #fff3a3 9% 20%, #ffb21f 21% 39%, #ff4d16 40% 58%, #c5120b99 59% 70%, transparent 71%); filter: drop-shadow(0 0 9px #ff6a00); animation: explosion-core .36s cubic-bezier(.12, .72, .18, 1) both; }
+.explosion-ring { position: absolute; width: 100%; height: 100%; border: 3px solid #fff4af; border-radius: 50%; box-shadow: 0 0 10px #ff841b, inset 0 0 8px #ff5c16; animation: explosion-ring .38s ease-out both; }
+.explosion-sparks { position: absolute; inset: 50%; }
+.explosion-sparks i { position: absolute; left: -6%; top: -6%; width: 12%; height: 12%; border-radius: 50%; background: #fff5a6; box-shadow: 0 0 5px #ff5b0a; animation: explosion-spark .38s ease-out both; }
+.explosion-sparks i:nth-child(1) { --spark-angle: 0deg; }.explosion-sparks i:nth-child(2) { --spark-angle: 45deg; }.explosion-sparks i:nth-child(3) { --spark-angle: 90deg; }.explosion-sparks i:nth-child(4) { --spark-angle: 135deg; }.explosion-sparks i:nth-child(5) { --spark-angle: 180deg; }.explosion-sparks i:nth-child(6) { --spark-angle: 225deg; }.explosion-sparks i:nth-child(7) { --spark-angle: 270deg; }.explosion-sparks i:nth-child(8) { --spark-angle: 315deg; }
+.action-impact { overflow: visible; }
+.action-impact img { position: absolute; width: 145%; height: 145%; object-fit: contain; filter: drop-shadow(0 0 6px #fff); animation: impact-icon .38s cubic-bezier(.18, .86, .25, 1.25) both; }
+.action-impact.kick-impact img { transform-origin: 50% 80%; }
+.impact-burst { position: absolute; width: 190%; height: 190%; background: conic-gradient(from 8deg, transparent 0 8%, #fff8b8 9% 12%, transparent 13% 20%, #ff9d2f 21% 25%, transparent 26% 35%, #fff8b8 36% 40%, transparent 41% 55%, #ff9d2f 56% 61%, transparent 62% 72%, #fff8b8 73% 77%, transparent 78%); clip-path: polygon(50% 0, 58% 37%, 88% 12%, 68% 44%, 100% 50%, 68% 56%, 88% 88%, 58% 63%, 50% 100%, 42% 63%, 12% 88%, 32% 56%, 0 50%, 32% 44%, 12% 12%, 42% 37%); animation: impact-burst .34s ease-out both; }
+.throw-effect { overflow: visible; }
+.airborne-bomb { position: absolute; width: 76%; height: 76%; border: 1px solid #a5b0b6; border-radius: 50%; background: radial-gradient(circle at 30% 26%, #87939b 0 7%, #2a3237 23%, #07090a 72%); box-shadow: inset -3px -4px 5px #000, 0 7px 9px #0009; animation: throw-flight .44s cubic-bezier(.16, .76, .22, 1) both; }
+.airborne-bomb::before { content: ''; position: absolute; width: 34%; height: 24%; left: 54%; top: -13%; border: 3px solid #b88643; border-bottom: 0; border-radius: 50% 50% 0 0; transform: rotate(35deg); }
+.airborne-bomb i { position: absolute; width: 15%; height: 15%; right: -5%; top: -16%; border-radius: 50%; background: #fff5aa; box-shadow: 0 0 7px 2px #ff7818; }
+.throw-shadow { position: absolute; width: 72%; height: 22%; border-radius: 50%; background: #0009; filter: blur(2px); animation: throw-shadow .44s ease-in-out both; }
+.player-piece { position: absolute; z-index: 22; transform: translate(-50%, -58%); pointer-events: none; filter: drop-shadow(0 4px 3px #000b); transition: left .11s cubic-bezier(.18, .7, .22, 1), top .11s cubic-bezier(.18, .7, .22, 1); will-change: left, top; }
+.player-avatar { position: absolute; inset: 0; display: block; transform: scaleX(var(--face-scale)); transform-origin: 50% 76%; }
+.player-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.player-torso { z-index: 3; clip-path: polygon(0 0, 100% 0, 100% 74%, 62% 77%, 50% 75%, 38% 77%, 0 74%); transform-origin: 50% 72%; }
+.player-leg { z-index: 2; transform-origin: 50% 67%; }
+.player-leg-left { clip-path: polygon(0 61%, 52% 61%, 54% 100%, 0 100%); transform-origin: 43% 67%; }
+.player-leg-right { clip-path: polygon(48% 61%, 100% 61%, 100% 100%, 46% 100%); transform-origin: 57% 67%; }
+.player-ground-shadow { position: absolute; z-index: -1; left: 23%; right: 23%; bottom: 7%; height: 14%; border-radius: 50%; background: #0009; filter: blur(2px); transform-origin: center; }
+.player-name { position: absolute; z-index: 6; left: 50%; bottom: -3%; transform: translateX(-50%); max-width: 160%; padding: 1px 4px; overflow: hidden; color: white; background: #0a0d10d9; border: 1px solid var(--player-color); border-radius: 4px; font: 700 clamp(5px, .62vw, 9px)/1.25 system-ui; text-overflow: ellipsis; white-space: nowrap; }
+.player-piece.walking .player-torso { animation: walk-body .16s ease-in-out infinite alternate; }
+.player-piece.walking .player-leg-left { animation: walk-leg-left .28s ease-in-out infinite alternate; }
+.player-piece.walking .player-leg-right { animation: walk-leg-right .28s ease-in-out infinite alternate; }
+.player-piece.walking .player-ground-shadow { animation: walk-shadow .28s ease-in-out infinite alternate; }
+.player-piece.walking::after { content: ''; position: absolute; z-index: 1; left: 36%; bottom: 5%; width: 28%; height: 12%; border-radius: 50%; background: radial-gradient(ellipse, #d5c7a66b, transparent 68%); animation: foot-dust .28s ease-out infinite; }
+.player-piece.action-punch .player-avatar { animation: punch-lunge .38s cubic-bezier(.18, .8, .25, 1) both; }
+.player-piece.action-punch .player-torso { animation: punch-body .38s ease-out both; }
+.player-piece.action-kick .player-avatar { animation: kick-balance .4s ease-out both; }
+.player-piece.action-kick .player-leg-right { z-index: 4; animation: kick-leg .4s cubic-bezier(.2, .72, .24, 1) both; }
+.player-piece.action-throw .player-avatar { animation: throw-player .44s ease-out both; }
+.player-piece.action-throw .player-torso { animation: throw-body .44s cubic-bezier(.22, .72, .2, 1) both; }
+.player-piece.facing-up .player-avatar { filter: brightness(.88) saturate(.92); }
 .player-piece.self { filter: drop-shadow(0 0 5px var(--player-color)) drop-shadow(0 4px 3px #000); }
 .player-piece.eliminated { opacity: .25; filter: grayscale(1); }
 .player-piece.cursed { filter: drop-shadow(0 0 6px #93ff35) hue-rotate(35deg); }
@@ -177,9 +324,32 @@ function fuseText(ticks: number) {
 @keyframes danger-pulse { to { opacity: .25; transform: scale(.82); } }
 @keyframes item-bob { to { transform: translateY(-8%) scale(1.04); } }
 @keyframes fuse { to { transform: scale(1.5); background: white; } }
-@keyframes bomb-roll { to { transform: rotate(18deg); } }
+@keyframes bomb-roll { to { transform: rotate(var(--roll-angle)) translateY(-7%); } }
+@keyframes bomb-drop { 0% { opacity: 0; transform: translateY(-95%) scale(.45); } 68% { opacity: 1; transform: translateY(8%) scale(1.16, .84); } 100% { transform: none; } }
+@keyframes bomb-land { 0%, 62% { opacity: 0; transform: scale(.55); } 72% { opacity: 1; transform: scale(1.28, .76); } 86% { transform: scale(.9, 1.1); } 100% { opacity: 1; transform: none; } }
+@keyframes flame-bloom { from { opacity: 0; transform: scale(.08); } 72% { opacity: 1; transform: scale(1.24); } to { transform: none; } }
 @keyframes flame { to { transform: scale(.84) rotate(8deg); filter: drop-shadow(0 0 7px #ffbe24); } }
+@keyframes place-ring { from { opacity: 1; transform: scale(.25); } to { opacity: 0; transform: scale(1.7); } }
+@keyframes place-flash { from { opacity: 1; transform: scale(1.8); } to { opacity: 0; transform: scale(.2); } }
+@keyframes explosion-core { 0% { opacity: 0; transform: scale(.06); } 18% { opacity: 1; transform: scale(.56); } 58% { opacity: 1; transform: scale(1.18); } 100% { opacity: 0; transform: scale(1.7); } }
+@keyframes explosion-ring { 0% { opacity: 1; transform: scale(.12); } 100% { opacity: 0; transform: scale(3.7); border-width: 1px; } }
+@keyframes explosion-spark { 0% { opacity: 1; transform: rotate(var(--spark-angle)) translateX(28%) scale(1); } 100% { opacity: 0; transform: rotate(var(--spark-angle)) translateX(280%) scale(.2); } }
+@keyframes impact-icon { 0% { opacity: 0; transform: translate(var(--impact-from-x), var(--impact-from-y)) scale(.35) rotate(-24deg); } 45% { opacity: 1; transform: translate(0) scale(1.35) rotate(9deg); } 100% { opacity: 0; transform: translate(var(--impact-to-x), var(--impact-to-y)) scale(.78) rotate(18deg); } }
+@keyframes impact-burst { 0% { opacity: 0; transform: scale(.2) rotate(-12deg); } 42% { opacity: 1; transform: scale(1.08) rotate(4deg); } 100% { opacity: 0; transform: scale(1.65) rotate(18deg); } }
+@keyframes throw-flight { 0% { opacity: 1; transform: translate(0, 0) scale(.86) rotate(0deg); } 50% { opacity: 1; transform: translate(var(--half-x), calc(var(--half-y) - 135%)) scale(1.28) rotate(var(--spin-mid)); } 100% { opacity: 0; transform: translate(var(--travel-x), var(--travel-y)) scale(.84) rotate(var(--spin-end)); } }
+@keyframes throw-shadow { 0% { opacity: .65; transform: translate(0, 35%) scale(.9); } 50% { opacity: .18; transform: translate(var(--half-x), calc(var(--half-y) + 35%)) scale(.45); } 100% { opacity: .5; transform: translate(var(--travel-x), calc(var(--travel-y) + 35%)) scale(.8); } }
+@keyframes walk-body { from { transform: translateY(1%) rotate(var(--counter-lean)); } to { transform: translateY(-5%) rotate(var(--travel-lean)); } }
+@keyframes walk-leg-left { from { transform: translate(-3%, -1%) rotate(-9deg); } to { transform: translate(5%, 3%) rotate(10deg); } }
+@keyframes walk-leg-right { from { transform: translate(5%, 3%) rotate(10deg); } to { transform: translate(-3%, -1%) rotate(-9deg); } }
+@keyframes walk-shadow { from { transform: scaleX(.88); opacity: .58; } to { transform: scaleX(1.12); opacity: .82; } }
+@keyframes foot-dust { 0% { opacity: 0; transform: translateY(0) scale(.45); } 38% { opacity: .75; } 100% { opacity: 0; transform: translateY(-45%) scale(1.5); } }
+@keyframes punch-lunge { 0%, 100% { transform: scaleX(var(--face-scale)) translate(0); } 26% { transform: scaleX(var(--face-scale)) translateX(-7%) rotate(-5deg); } 58% { transform: scaleX(var(--face-scale)) translateX(15%) rotate(7deg) scale(1.08, .94); } }
+@keyframes punch-body { 0%, 100% { transform: none; } 34% { transform: rotate(-5deg) translateY(2%); } 62% { transform: rotate(8deg) translate(8%, -2%); } }
+@keyframes kick-balance { 0%, 100% { transform: scaleX(var(--face-scale)) translate(0); } 35% { transform: scaleX(var(--face-scale)) translateX(-8%) rotate(-7deg); } 64% { transform: scaleX(var(--face-scale)) translateX(7%) rotate(5deg); } }
+@keyframes kick-leg { 0%, 100% { transform: none; } 30% { transform: translate(-5%, -2%) rotate(-16deg); } 62% { transform: translate(19%, -15%) rotate(27deg) scaleY(.94); } }
+@keyframes throw-player { 0%, 100% { transform: scaleX(var(--face-scale)) translate(0); } 28% { transform: scaleX(var(--face-scale)) translate(-8%, 4%) rotate(-8deg); } 62% { transform: scaleX(var(--face-scale)) translate(6%, -4%) rotate(9deg); } }
+@keyframes throw-body { 0%, 100% { transform: none; } 28% { transform: translateY(4%) rotate(-9deg); } 61% { transform: translate(7%, -5%) rotate(12deg); } }
 @keyframes invincible { to { filter: drop-shadow(0 0 9px #fff) drop-shadow(0 0 12px #ffd53d); } }
-@media (max-width: 900px) { .arena-board { width: 100%; border-radius: 10px; border-width: 2px; } }
-@media (prefers-reduced-motion: reduce) { .item, .bomb, .flame span, .player-piece, .tile.danger::after { animation: none !important; transition: none; } }
+@media (hover: none) and (pointer: coarse) { .arena-frame { height: 100%; align-items: start; }.arena-board { width: min(100%, calc(100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); max-height: calc(100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); border-radius: 10px; border-width: 2px; touch-action: none; } }
+@media (prefers-reduced-motion: reduce) { .item, .bomb, .bomb-body, .flame, .flame span, .player-piece, .player-piece *, .place-effect *, .explosion-effect *, .action-impact *, .throw-effect *, .tile.danger::after { animation: none !important; transition: none; } }
 </style>

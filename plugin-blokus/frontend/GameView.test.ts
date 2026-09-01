@@ -3,7 +3,10 @@ import { createPinia } from 'pinia'
 import type { ArcadeSnapshot } from '@game-hall/plugin-sdk'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import GameView from './GameView.vue'
-import { CORNERS, PIECES, findPlacement, placementError, transform, type BlokusGame, type Cell } from './rules'
+import {
+  DUO_SIZE, DUO_STARTS, FOUR_SIZE, FOUR_STARTS, PIECES, findPlacement,
+  placementError, transform, type BlokusGame, type Cell,
+} from './rules'
 
 const mocks = vi.hoisted(() => ({ action: vi.fn(), restart: vi.fn() }))
 vi.mock('@game-hall/plugin-sdk', async (original) => ({
@@ -11,21 +14,24 @@ vi.mock('@game-hall/plugin-sdk', async (original) => ({
   usePluginGameActions: () => ({ action: mocks.action, restart: mocks.restart }),
 }))
 
-function snapshot(): ArcadeSnapshot {
-  const colors = ['blue', 'yellow', 'red', 'green'] as const
+function snapshot(playerCount: 2 | 4 = 4): ArcadeSnapshot {
+  const colors = (['blue', 'yellow', 'red', 'green'] as const).slice(0, playerCount)
+  const size = playerCount === 2 ? DUO_SIZE : FOUR_SIZE
+  const starts = playerCount === 2 ? DUO_STARTS : FOUR_STARTS
   const game: BlokusGame = {
-    boardSize: 20,
-    board: Array.from({ length: 20 }, () => Array<number>(20).fill(-1)),
+    mode: playerCount === 2 ? 'duo' : 'classic',
+    boardSize: size,
+    board: Array.from({ length: size }, () => Array<number>(size).fill(-1)),
     players: colors.map((color, index) => ({
       id: `p${index}`, color, colorName: ['蓝', '黄', '红', '绿'][index]!,
-      corner: CORNERS[index]!, remainingPieces: PIECES.map(piece => piece.id),
+      start: starts[index]!, remainingPieces: PIECES.map(piece => piece.id),
       remainingSquares: 89, placedSquares: 0, status: 'active', rank: null, points: null,
     })),
     currentPlayerId: 'p0', isMyTurn: true, turnNumber: 1, moveCount: 0, lastMove: null,
-    events: [], rankings: [], rankPoints: [2, 1, 0, -1],
+    events: [], rankings: [], rankPoints: [2, 1, 0, -1].slice(0, playerCount),
   }
   return {
-    revision: 1, roomCode: 'BLOK', gameKey: 'plugin-blokus', gameName: '四人方格',
+    revision: 1, roomCode: 'BLOK', gameKey: 'plugin-blokus', gameName: '方格游戏',
     phase: 'playing', roundNumber: 1, statsEligible: true,
     self: { id: 'p0', name: '玩家1', seat: 0 }, viewer: { mode: 'player' },
     players: colors.map((_, index) => ({ id: `p${index}`, name: `玩家${index + 1}`, seat: index, connected: true })),
@@ -60,34 +66,49 @@ describe('Blokus geometry previews', () => {
   it('rejects edge contact but allows diagonal and other-color edge contact', () => {
     const board = Array.from({ length: 20 }, () => Array<number>(20).fill(-1))
     board[0]![0] = 0
-    expect(placementError(board, 0, [[1, 0], [2, 0]], false)).toContain('边接')
-    expect(placementError(board, 0, [[1, 1], [2, 1]], false)).toBeNull()
+    expect(placementError(board, 0, [[1, 0], [2, 0]], false, [0, 0])).toContain('边接')
+    expect(placementError(board, 0, [[1, 1], [2, 1]], false, [0, 0])).toBeNull()
     board[1]![3] = 1
-    expect(placementError(board, 0, [[1, 1], [2, 1]], false)).toBeNull()
-    expect(placementError(board, 0, [[3, 1]], false)).toContain('重叠')
-    expect(placementError(board, 0, [[20, 1]], false)).toContain('超出')
+    expect(placementError(board, 0, [[1, 1], [2, 1]], false, [0, 0])).toBeNull()
+    expect(placementError(board, 0, [[3, 1]], false, [0, 0])).toContain('重叠')
+    expect(placementError(board, 0, [[20, 1]], false, [0, 0])).toContain('超出')
   })
 
-  it('finds a rotated or flipped opening covering each assigned corner', () => {
-    const board = Array.from({ length: 20 }, () => Array<number>(20).fill(-1))
+  it.each([
+    [DUO_SIZE, DUO_STARTS],
+    [FOUR_SIZE, FOUR_STARTS],
+  ] as const)('finds an opening covering every assigned start on the %i board', (size, starts) => {
+    const board = Array.from({ length: size }, () => Array<number>(size).fill(-1))
     const piece = PIECES.find(piece => piece.id === 'L5')!
-    for (let color = 0; color < 4; color += 1) {
-      const move = findPlacement(board, color, piece, true)!
+    for (let color = 0; color < starts.length; color += 1) {
+      const start = starts[color]!
+      const move = findPlacement(board, color, piece, true, start)!
       expect(move).not.toBeNull()
       const cells: Cell[] = transform(piece.cells, move.rotation, move.flipped).map(([x, y]) => [x + move.x, y + move.y])
-      expect(cells).toContainEqual(CORNERS[color])
-      expect(placementError(board, color, cells, true)).toBeNull()
+      expect(cells).toContainEqual(start)
+      expect(placementError(board, color, cells, true, start)).toBeNull()
     }
   })
 })
 
-describe('four-player game interface', () => {
+describe('two- and four-player game interface', () => {
   it('shows the whole inventory, four corners, and scoring instructions', () => {
     const wrapper = render()
     expect(wrapper.findAll('.piece-button')).toHaveLength(21)
     for (const corner of ['左上角', '右上角', '右下角', '左下角']) expect(wrapper.text()).toContain(corner)
     expect(wrapper.text()).toContain('89')
-    expect(wrapper.text()).toContain('+2 / +1 / 0 / −1')
+    expect(wrapper.text()).toContain('+2 / +1 / 0 / -1')
+  })
+
+  it('renders the 14×14 duo board, both center starts, and two rank points', () => {
+    const wrapper = render(snapshot(2))
+    expect(wrapper.find('.board-svg').attributes('viewBox')).toBe('0 0 280 280')
+    expect(wrapper.findAll('.player-card')).toHaveLength(2)
+    expect(wrapper.text()).toContain('中心左上起点')
+    expect(wrapper.text()).toContain('中心右下起点')
+    expect(wrapper.text()).toContain('14 × 14')
+    expect(wrapper.text()).toContain('+2 / +1')
+    expect(wrapper.text()).not.toContain('+2 / +1 / 0 / -1')
   })
 
   it('previews without sending a move and submits only on confirmation', async () => {

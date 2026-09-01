@@ -2,20 +2,28 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import asdict, dataclass, field
+from random import SystemRandom
 from typing import Any
 
 from backend.app.games.plugin_api import ArcadePlayer, ArcadeRoom, GameRuleError
 
 from .pieces import (
-    BOARD_SIZE, COLORS, COLOR_NAMES, CORNERS, DIAGONALS, EDGES,
-    PIECES, RANK_POINTS, Cells, orientations, transform,
+    BOARD_SIZES, COLORS, COLOR_NAMES, DIAGONALS, EDGES, FOUR_BOARD_SIZE,
+    FOUR_START_POINTS, PIECES, RANK_POINTS, START_POINTS, Cells, orientations,
+    transform,
 )
 
 
 @dataclass
 class BlokusState:
     board: list[list[int]] = field(
-        default_factory=lambda: [[-1] * BOARD_SIZE for _ in range(BOARD_SIZE)]
+        default_factory=lambda: [
+            [-1] * FOUR_BOARD_SIZE for _ in range(FOUR_BOARD_SIZE)
+        ]
+    )
+    board_size: int = FOUR_BOARD_SIZE
+    start_points: list[tuple[int, int]] = field(
+        default_factory=lambda: list(FOUR_START_POINTS)
     )
     player_ids: list[str] = field(default_factory=list)
     remaining: dict[str, list[str]] = field(default_factory=dict)
@@ -29,8 +37,8 @@ class BlokusState:
     scores: dict[str, int] = field(default_factory=dict)
 
 
-def inside(x: int, y: int) -> bool:
-    return 0 <= x < BOARD_SIZE and 0 <= y < BOARD_SIZE
+def inside(board: list[list[int]], x: int, y: int) -> bool:
+    return 0 <= y < len(board) and 0 <= x < len(board[y])
 
 
 def rank_label(rank: int, points: int) -> str:
@@ -40,40 +48,59 @@ def rank_label(rank: int, points: int) -> str:
 
 def placement_error(
     board: list[list[int]], color: int, cells: Cells, first_move: bool,
+    start_point: tuple[int, int],
 ) -> str | None:
-    if any(not inside(x, y) for x, y in cells):
+    if any(not inside(board, x, y) for x, y in cells):
         return "棋块不能超出棋盘"
     if any(board[y][x] != -1 for x, y in cells):
         return "棋块不能重叠"
     if first_move:
-        return None if CORNERS[color] in cells else "首块必须覆盖自己的起始角"
+        return None if start_point in cells else "首块必须覆盖自己的起始点"
     corner_contact = False
     for x, y in cells:
         for dx, dy in EDGES:
-            if inside(x + dx, y + dy) and board[y + dy][x + dx] == color:
+            if inside(board, x + dx, y + dy) and board[y + dy][x + dx] == color:
                 return "同色棋块只能角接，不能边接"
         for dx, dy in DIAGONALS:
-            if inside(x + dx, y + dy) and board[y + dy][x + dx] == color:
+            if inside(board, x + dx, y + dy) and board[y + dy][x + dx] == color:
                 corner_contact = True
     return None if corner_contact else "新棋块必须与已有同色棋块角接"
 
 
 class BlokusEngine:
     key = "plugin-blokus"
-    name = "四人方格"
-    min_players = 4
+    name = "方格游戏"
+    min_players = 2
     max_players = 4
+    manages_seating = True
+
+    def __init__(self, rng: Any | None = None) -> None:
+        self.rng = rng or SystemRandom()
 
     def initial_state(self) -> BlokusState:
         return BlokusState()
 
+    @staticmethod
+    def can_start(room: ArcadeRoom, viewer: ArcadePlayer) -> bool:
+        return len(room.players) in (2, 4) and not any(
+            player.left_room for player in room.players
+        )
+
     def start(self, room: ArcadeRoom) -> None:
-        if len(room.players) != 4 or any(player.left_room for player in room.players):
-            raise GameRuleError("四人方格需要 4 位玩家到齐")
+        player_count = len(room.players)
+        if player_count not in (2, 4) or any(
+            player.left_room for player in room.players
+        ):
+            raise GameRuleError("方格游戏仅支持 2 位或 4 位玩家")
         players = sorted(room.players, key=lambda player: player.seat)
-        # The room manager selects the opening seats and rotates them on rematches.
         order = [player.id for player in players]
+        self.rng.shuffle(order)
+        board_size = BOARD_SIZES[player_count]
+        start_points = list(START_POINTS[player_count])
         room.state = BlokusState(
+            board=[[-1] * board_size for _ in range(board_size)],
+            board_size=board_size,
+            start_points=start_points,
             player_ids=order,
             remaining={player_id: list(PIECES) for player_id in order},
             current_player_id=order[0],
@@ -109,7 +136,10 @@ class BlokusEngine:
                 raise GameRuleError("落点、旋转和回合编号必须是整数")
         if payload["turnNumber"] != state.turn_number:
             raise GameRuleError("棋盘已更新，请重新选择落点")
-        if not (inside(payload["x"], payload["y"]) and 0 <= payload["rotation"] < 4):
+        if not (
+            inside(state.board, payload["x"], payload["y"])
+            and 0 <= payload["rotation"] < 4
+        ):
             raise GameRuleError("落点或旋转参数超出范围")
         if type(payload.get("flipped")) is not bool:
             raise GameRuleError("翻转参数必须是布尔值")
@@ -121,7 +151,11 @@ class BlokusEngine:
             for x, y in transform(piece_id, payload["rotation"], payload["flipped"])
         )
         color = state.player_ids.index(player.id)
-        error = placement_error(state.board, color, cells, len(state.remaining[player.id]) == 21)
+        error = placement_error(
+            state.board, color, cells,
+            len(state.remaining[player.id]) == 21,
+            state.start_points[color],
+        )
         if error:
             raise GameRuleError(error)
         for x, y in cells:
@@ -142,7 +176,7 @@ class BlokusEngine:
         color = state.player_ids.index(player_id)
         first_move = len(state.remaining[player_id]) == 21
         if first_move:
-            anchors = {CORNERS[color]}
+            anchors = {state.start_points[color]}
         else:
             anchors = {
                 (x + dx, y + dy)
@@ -150,10 +184,10 @@ class BlokusEngine:
                 for x, value in enumerate(row)
                 if value == color
                 for dx, dy in DIAGONALS
-                if inside(x + dx, y + dy)
+                if inside(state.board, x + dx, y + dy)
                 and state.board[y + dy][x + dx] == -1
                 and not any(
-                    inside(x + dx + ex, y + dy + ey)
+                    inside(state.board, x + dx + ex, y + dy + ey)
                     and state.board[y + dy + ey][x + dx + ex] == color
                     for ex, ey in EDGES
                 )
@@ -168,7 +202,10 @@ class BlokusEngine:
                             continue
                         checked.add(origin)
                         cells = tuple((origin[0] + x, origin[1] + y) for x, y in shape)
-                        if placement_error(state.board, color, cells, first_move) is None:
+                        if placement_error(
+                            state.board, color, cells, first_move,
+                            state.start_points[color],
+                        ) is None:
                             return {
                                 "pieceId": piece_id, "x": origin[0], "y": origin[1],
                                 "rotation": rotation, "flipped": flipped,
@@ -179,8 +216,9 @@ class BlokusEngine:
     def _advance(self, room: ArcadeRoom) -> None:
         state: BlokusState = room.state
         current = state.player_ids.index(state.current_player_id)
-        for step in range(1, 5):
-            player_id = state.player_ids[(current + step) % 4]
+        player_count = len(state.player_ids)
+        for step in range(1, player_count + 1):
+            player_id = state.player_ids[(current + step) % player_count]
             if player_id in state.forfeited_ids or player_id in state.blocked_ids:
                 continue
             if self.find_move(room, player_id) is None:
@@ -205,7 +243,8 @@ class BlokusEngine:
         ))
         # Forfeits rank below all players who finish; an earlier forfeit ranks last.
         state.rankings = active + list(reversed(state.forfeited_ids))
-        state.scores = dict(zip(state.rankings, RANK_POINTS, strict=True))
+        rank_points = RANK_POINTS[:len(state.rankings)]
+        state.scores = dict(zip(state.rankings, rank_points, strict=True))
         state.current_player_id = None
         winner = room.player(state.rankings[0])
         results = "；".join(
@@ -221,7 +260,7 @@ class BlokusEngine:
             return False
         state.forfeited_ids.append(player.id)
         state.events.append(f"{player.name} 弃权，已落棋块保留")
-        if len(state.forfeited_ids) >= 3:
+        if len(state.forfeited_ids) >= len(state.player_ids) - 1:
             self._finish(room)
         elif state.current_player_id == player.id:
             self._advance(room)
@@ -242,7 +281,7 @@ class BlokusEngine:
             )
             players.append({
                 "id": player_id, "color": COLORS[color], "colorName": COLOR_NAMES[color],
-                "corner": list(CORNERS[color]), "remainingPieces": list(remaining),
+                "start": list(state.start_points[color]), "remainingPieces": list(remaining),
                 "remainingSquares": sum(len(PIECES[key]) for key in remaining),
                 "placedSquares": 89 - sum(len(PIECES[key]) for key in remaining),
                 "status": status,
@@ -250,7 +289,8 @@ class BlokusEngine:
                 "points": state.scores.get(player_id),
             })
         return {
-            "boardSize": BOARD_SIZE,
+            "mode": "duo" if len(state.player_ids) == 2 else "classic",
+            "boardSize": state.board_size,
             "board": [list(row) for row in state.board],
             "players": players,
             "currentPlayerId": state.current_player_id,
@@ -260,7 +300,7 @@ class BlokusEngine:
             "lastMove": deepcopy(state.moves[-1]) if state.moves else None,
             "events": state.events[-8:],
             "rankings": list(state.rankings),
-            "rankPoints": list(RANK_POINTS),
+            "rankPoints": list(RANK_POINTS[:len(state.player_ids)]),
         }
 
     def player_result(self, room: ArcadeRoom, player: ArcadePlayer) -> tuple[str, str, bool]:

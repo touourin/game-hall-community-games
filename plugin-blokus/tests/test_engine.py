@@ -22,7 +22,13 @@ SHAPES = {
     item["id"]: {(x, y) for y, row in enumerate(item["rows"]) for x, value in enumerate(row) if value == "#"}
     for item in CATALOG
 }
-CORNERS = ((0, 0), (19, 0), (19, 19), (0, 19))
+DUO_STARTS = ((4, 4), (9, 9))
+FOUR_STARTS = ((0, 0), (19, 0), (19, 19), (0, 19))
+
+
+class IdentityRng:
+    def shuffle(self, values):
+        return None
 
 
 @pytest.fixture(scope="module")
@@ -35,9 +41,18 @@ def factory():
 
 @pytest.fixture
 def match(factory):
-    engine = factory()
+    engine = factory(rng=IdentityRng())
     players = [ArcadePlayer(f"p{i}", f"a{i}", f"玩家{i + 1}", "test-token", i) for i in range(4)]
-    room = ArcadeRoom("BLOK", engine.key, players[0].id, players, engine.initial_state(), options={"firstPlayer": "host"})
+    room = ArcadeRoom("BLOK", engine.key, players[0].id, players, engine.initial_state())
+    engine.start(room)
+    return engine, room, players
+
+
+@pytest.fixture
+def duo_match(factory):
+    engine = factory(rng=IdentityRng())
+    players = [ArcadePlayer(f"d{i}", f"da{i}", f"双人玩家{i + 1}", "test-token", i) for i in range(2)]
+    room = ArcadeRoom("DUO", engine.key, players[0].id, players, engine.initial_state())
     engine.start(room)
     return engine, room, players
 
@@ -48,8 +63,8 @@ def place(engine, room, player, piece="M1", x=0, y=0, rotation=0, flipped=False,
     engine.act(room, player, "place", payload)
 
 
-def open_corners(engine, room, players):
-    for player, (x, y) in zip(players, CORNERS, strict=True):
+def open_starts(engine, room, players):
+    for player, (x, y) in zip(players, room.state.start_points, strict=True):
         place(engine, room, player, x=x, y=y)
 
 
@@ -87,37 +102,59 @@ def test_inventory_is_the_complete_set_of_free_polyominoes():
     assert sum(map(len, SHAPES.values())) == 89
 
 
-def test_four_identical_hands_and_distinct_clockwise_corners(match):
+def test_four_identical_hands_and_distinct_clockwise_starts(match):
     engine, room, players = match
     view = engine.view(room, players[0])
     assert len(view["board"]) == 20 and all(len(row) == 20 for row in view["board"])
-    assert [tuple(player["corner"]) for player in view["players"]] == list(CORNERS)
+    assert view["mode"] == "classic"
+    assert [tuple(player["start"]) for player in view["players"]] == list(FOUR_STARTS)
     assert [player["color"] for player in view["players"]] == ["blue", "yellow", "red", "green"]
     assert all(player["remainingSquares"] == 89 and len(player["remainingPieces"]) == 21 for player in view["players"])
     assert view["rankPoints"] == [2, 1, 0, -1]
-    open_corners(engine, room, players)
-    assert [room.state.board[y][x] for x, y in CORNERS] == [0, 1, 2, 3]
+    open_starts(engine, room, players)
+    assert [room.state.board[y][x] for x, y in FOUR_STARTS] == [0, 1, 2, 3]
     assert room.state.current_player_id == players[0].id
 
 
-@pytest.mark.parametrize("count", (1, 2, 3, 5))
-def test_requires_exactly_four_players(factory, count):
-    engine = factory()
+def test_duo_uses_official_14_by_14_center_starts_and_two_scores(duo_match):
+    engine, room, players = duo_match
+    view = engine.view(room, players[0])
+    assert view["mode"] == "duo"
+    assert len(view["board"]) == 14 and all(len(row) == 14 for row in view["board"])
+    assert [tuple(player["start"]) for player in view["players"]] == list(DUO_STARTS)
+    assert [player["color"] for player in view["players"]] == ["blue", "yellow"]
+    assert view["rankPoints"] == [2, 1]
+    open_starts(engine, room, players)
+    assert [room.state.board[y][x] for x, y in DUO_STARTS] == [0, 1]
+    assert room.state.current_player_id == players[0].id
+
+
+@pytest.mark.parametrize("count", (1, 3, 5))
+def test_requires_exactly_two_or_four_players(factory, count):
+    engine = factory(rng=IdentityRng())
     players = [ArcadePlayer(str(i), str(i), str(i), "t", i) for i in range(count)]
     room = ArcadeRoom("BLOK", engine.key, players[0].id, players, engine.initial_state())
-    with pytest.raises(GameRuleError, match="4 位"):
+    with pytest.raises(GameRuleError, match="2 位或 4 位"):
         engine.start(room)
 
 
-def test_engine_uses_platform_seats_without_reapplying_first_player_preference(match):
-    engine, room, players = match
-    room.host_id = players[2].id
-    room.players = [players[i] for i in (3, 1, 0, 2)]
-    engine.start(room)
-    assert room.state.player_ids == [player.id for player in players]
-    room.options["firstPlayer"] = "random"
-    engine.start(room)
-    assert room.state.player_ids == [player.id for player in players]
+@pytest.mark.parametrize("player_count", (2, 4))
+def test_every_game_uses_a_fresh_random_order(factory, player_count):
+    seed = 20260831 + player_count
+    engine = factory(rng=random.Random(seed))
+    expected_rng = random.Random(seed)
+    players = [ArcadePlayer(f"p{i}", f"a{i}", f"玩家{i + 1}", "t", i) for i in range(player_count)]
+    room = ArcadeRoom("BLOK", engine.key, players[0].id, players, engine.initial_state())
+    seat_order = [player.id for player in players]
+    observed = []
+    for _ in range(5):
+        expected = list(seat_order)
+        expected_rng.shuffle(expected)
+        engine.start(room)
+        observed.append(tuple(room.state.player_ids))
+        assert room.state.player_ids == expected
+        assert room.state.current_player_id == expected[0]
+    assert len(set(observed)) > 1
 
 
 def test_every_rotation_and_reflection_matches_independent_geometry(match):
@@ -129,21 +166,27 @@ def test_every_rotation_and_reflection_matches_independent_geometry(match):
     assert sum(len(pieces_module.orientations(key)) for key in SHAPES) == 91
 
 
-@pytest.mark.parametrize("index", range(4))
-def test_first_piece_must_cover_that_players_corner(match, index):
-    engine, room, players = match
-    room.state.current_player_id = players[index].id
-    with pytest.raises(GameRuleError, match="起始角"):
-        place(engine, room, players[index], x=10, y=10)
-    for other in range(4):
-        if other != index:
-            with pytest.raises(GameRuleError, match="起始角"):
-                place(engine, room, players[index], x=CORNERS[other][0], y=CORNERS[other][1])
-    place(engine, room, players[index], x=CORNERS[index][0], y=CORNERS[index][1])
+@pytest.mark.parametrize("fixture_name", ("duo_match", "match"))
+def test_first_piece_must_cover_that_players_start(request, fixture_name):
+    engine, room, players = request.getfixturevalue(fixture_name)
+    for index, player in enumerate(players):
+        engine.start(room)
+        room.state.current_player_id = player.id
+        with pytest.raises(GameRuleError, match="起始点"):
+            place(engine, room, player, x=room.state.board_size // 2, y=0)
+        for other, (x, y) in enumerate(room.state.start_points):
+            if other != index:
+                with pytest.raises(GameRuleError, match="起始点"):
+                    place(engine, room, player, x=x, y=y)
+        x, y = room.state.start_points[index]
+        place(engine, room, player, x=x, y=y)
 
 
-def test_all_shapes_can_open_from_each_corner_under_some_transform(match):
-    engine, room, players = match
+@pytest.mark.parametrize("fixture_name", ("duo_match", "match"))
+def test_all_shapes_can_open_from_each_start_under_some_transform(request, fixture_name):
+    engine, room, players = request.getfixturevalue(fixture_name)
+    starts = list(room.state.start_points)
+    board_size = room.state.board_size
     for index, player in enumerate(players):
         for key in SHAPES:
             engine.start(room)
@@ -153,21 +196,21 @@ def test_all_shapes_can_open_from_each_corner_under_some_transform(match):
             possibilities = []
             for rotation, flipped, cells in module.orientations(key):
                 for sx, sy in cells:
-                    x, y = CORNERS[index][0] - sx, CORNERS[index][1] - sy
-                    if all(0 <= x + cx < 20 and 0 <= y + cy < 20 for cx, cy in cells):
+                    x, y = starts[index][0] - sx, starts[index][1] - sy
+                    if all(0 <= x + cx < board_size and 0 <= y + cy < board_size for cx, cy in cells):
                         possibilities.append((x, y, rotation, flipped))
-            # The cross cannot cover any corner of its bounding box.
+            # The cross cannot cover a classic corner of its bounding box.
             if not possibilities:
-                assert key == "X5"
+                assert fixture_name == "match" and key == "X5"
                 continue
             x, y, rotation, flipped = possibilities[0]
             place(engine, room, player, key, x, y, rotation, flipped)
-            assert room.state.board[CORNERS[index][1]][CORNERS[index][0]] == index
+            assert room.state.board[starts[index][1]][starts[index][0]] == index
 
 
 def test_same_color_corner_only_and_foreign_color_edges_allowed(match):
     engine, room, players = match
-    open_corners(engine, room, players)
+    open_starts(engine, room, players)
     with pytest.raises(GameRuleError, match="不能边接"):
         place(engine, room, players[0], "D2", 1, 0)
     with pytest.raises(GameRuleError, match="角接"):
@@ -179,7 +222,7 @@ def test_same_color_corner_only_and_foreign_color_edges_allowed(match):
 
 def test_overlap_out_of_bounds_and_reusing_a_piece_are_rejected(match):
     engine, room, players = match
-    open_corners(engine, room, players)
+    open_starts(engine, room, players)
     before = copy.deepcopy(room.state)
     with pytest.raises(GameRuleError, match="重叠"):
         place(engine, room, players[0], "D2", 0, 0)
@@ -214,7 +257,7 @@ def test_rejects_out_of_turn_spectator_stale_turn_and_voluntary_pass(match):
         place(engine, room, outsider)
     with pytest.raises(GameRuleError, match="自动跳过"):
         engine.act(room, players[0], "pass", {})
-    open_corners(engine, room, players)
+    open_starts(engine, room, players)
     with pytest.raises(GameRuleError, match="棋盘已更新"):
         place(engine, room, players[0], "D2", 1, 1, turnNumber=1)
 
@@ -229,26 +272,32 @@ def test_blocked_corner_is_automatically_skipped_and_other_players_continue(matc
     assert "自动跳过" in room.state.events[0]
 
 
-def independent_legal(board, color, cells, first):
-    if any(not (0 <= x < 20 and 0 <= y < 20) or board[y][x] != -1 for x, y in cells):
+def independent_legal(board, color, cells, first, start):
+    size = len(board)
+    if any(not (0 <= x < size and 0 <= y < size) or board[y][x] != -1 for x, y in cells):
         return False
     if first:
-        return CORNERS[color] in cells
+        return start in cells
     old = {(x, y) for y, row in enumerate(board) for x, value in enumerate(row) if value == color}
     edge = any(abs(x - ox) + abs(y - oy) == 1 for x, y in cells for ox, oy in old)
     corner = any(abs(x - ox) == 1 and abs(y - oy) == 1 for x, y in cells for ox, oy in old)
     return corner and not edge
 
 
-@pytest.mark.parametrize("seed", (13, 57, 91))
-def test_complete_games_obey_all_rules_and_finish_with_exact_rank_points(match, seed):
-    engine, room, players = match
+@pytest.mark.parametrize("fixture_name", ("duo_match", "match"))
+@pytest.mark.parametrize("seed", (13, 57))
+def test_complete_games_obey_all_rules_and_finish_with_exact_rank_points(
+    request, fixture_name, seed,
+):
+    engine, room, players = request.getfixturevalue(fixture_name)
+    player_count = len(players)
+    expected_points = [2, 1, 0, -1][:player_count]
     rng = random.Random(seed)
     for hand in room.state.remaining.values():
         rng.shuffle(hand)
     while room.phase == "playing":
         state = room.state
-        assert len(state.moves) < 84
+        assert len(state.moves) < 21 * player_count
         player_id = state.current_player_id
         color = state.player_ids.index(player_id)
         hand = state.remaining[player_id]
@@ -258,36 +307,76 @@ def test_complete_games_obey_all_rules_and_finish_with_exact_rank_points(match, 
         first = len(hand) == 21
         engine.act(room, room.player(player_id), "place", move)
         cells = [tuple(cell) for cell in state.moves[-1]["cells"]]
-        assert independent_legal(before, color, cells, first)
+        assert independent_legal(
+            before, color, cells, first, tuple(state.start_points[color]),
+        )
         assert canonical(cells) == canonical(SHAPES[move["pieceId"]])
         assert sum(value != -1 for row in state.board for value in row) == sum(len(move["cells"]) for move in state.moves)
-    assert len(room.state.rankings) == 4 and len(set(room.state.rankings)) == 4
-    assert [engine.player_score(room, room.player(pid)) for pid in room.state.rankings] == [2, 1, 0, -1]
+    assert len(room.state.rankings) == player_count
+    assert len(set(room.state.rankings)) == player_count
+    assert [
+        engine.player_score(room, room.player(pid))
+        for pid in room.state.rankings
+    ] == expected_points
     assert room.winner_player_ids == room.state.rankings[:1]
-    assert sum(len(move["cells"]) for move in room.state.moves) + sum(len(SHAPES[key]) for hand in room.state.remaining.values() for key in hand) == 356
-    for color, player in enumerate(players):
+    assert (
+        sum(len(move["cells"]) for move in room.state.moves)
+        + sum(
+            len(SHAPES[key])
+            for hand in room.state.remaining.values()
+            for key in hand
+        )
+    ) == 89 * player_count
+    for color, player_id in enumerate(room.state.player_ids):
         # Brute-force oracle deliberately does not use the engine's anchor search.
-        for key in room.state.remaining[player.id]:
+        for key in room.state.remaining[player_id]:
             for shape in variants(SHAPES[key]):
-                for y in range(20):
-                    for x in range(20):
+                for y in range(room.state.board_size):
+                    for x in range(room.state.board_size):
                         cells = [(x + sx, y + sy) for sx, sy in shape]
-                        assert not independent_legal(room.state.board, color, cells, False)
+                        assert not independent_legal(
+                            room.state.board, color, cells, False,
+                            tuple(room.state.start_points[color]),
+                        )
     with pytest.raises(GameRuleError, match="已经结束"):
         place(engine, room, players[0])
 
 
-def test_ranking_uses_squares_then_pieces_then_later_turn_order(match):
-    engine, room, players = match
-    room.state.remaining = {players[i].id: hand for i, hand in enumerate((["I3"], ["M1", "D2"], ["I4"], ["D2"]))}
+@pytest.mark.parametrize("fixture_name", ("duo_match", "match"))
+def test_ranking_uses_squares_then_pieces_then_later_random_order(
+    request, fixture_name,
+):
+    engine, room, players = request.getfixturevalue(fixture_name)
+    hands = (
+        (["I3"], ["D2"])
+        if len(players) == 2
+        else (["I3"], ["M1", "D2"], ["I4"], ["D2"])
+    )
+    expected_indices = (1, 0) if len(players) == 2 else (3, 0, 1, 2)
+    room.state.remaining = {
+        players[i].id: hand for i, hand in enumerate(hands)
+    }
     engine._finish(room)
-    assert room.state.rankings == [players[i].id for i in (3, 0, 1, 2)]
-    assert [room.state.scores[player.id] for player in players] == [1, 0, -1, 2]
+    assert room.state.rankings == [players[i].id for i in expected_indices]
+    assert sorted(room.state.scores.values(), reverse=True) == [2, 1, 0, -1][
+        :len(players)
+    ]
     engine.start(room)
     for player in players:
         room.state.remaining[player.id] = []
     engine._finish(room)
     assert room.state.rankings == [player.id for player in reversed(players)]
+
+
+def test_duo_first_forfeit_finishes_with_two_player_points(duo_match):
+    engine, room, players = duo_match
+    place(engine, room, players[0], x=4, y=4)
+    before = copy.deepcopy(room.state.board)
+    assert engine.manual_forfeit(room, players[0]) is True
+    assert room.phase == "finished"
+    assert room.state.board == before
+    assert room.state.rankings == [players[1].id, players[0].id]
+    assert [engine.player_score(room, player) for player in players] == [1, 2]
 
 
 def test_forfeits_preserve_tiles_and_rank_earlier_departures_last(match):
@@ -329,11 +418,17 @@ def test_view_is_public_detached_and_reconnection_keeps_hand_and_turn(match):
 def test_registered_room_flow_reconnect_spectators_and_full_game(factory):
     engine = factory()
     manager = ArcadeRoomManager({engine.key: engine})
-    room, host, host_token = manager.create_room(engine.key, "甲", "test-account-0", {"firstPlayer": "host"})
-    with pytest.raises(ArcadeRoomError, match="4 名"):
+    room, host, host_token = manager.create_room(
+        engine.key, "甲", "test-account-0", {},
+    )
+    with pytest.raises(ArcadeRoomError, match="2–4 名"):
         manager.start(room, host.id)
-    for index, name in enumerate(("乙", "丙", "丁"), 1):
-        manager.join_room(room.code, engine.key, name, f"test-account-{index}")
+    manager.join_room(room.code, engine.key, "乙", "test-account-1")
+    assert build_room_view(room, host, engine)["actions"]["canStart"] is True
+    manager.join_room(room.code, engine.key, "丙", "test-account-2")
+    assert build_room_view(room, host, engine)["actions"]["canStart"] is False
+    manager.join_room(room.code, engine.key, "丁", "test-account-3")
+    assert build_room_view(room, host, engine)["actions"]["canStart"] is True
     with pytest.raises(ArcadeRoomError, match="满员"):
         manager.join_room(room.code, engine.key, "第五位", "test-account-4")
     manager.start(room, host.id)
@@ -350,7 +445,8 @@ def test_registered_room_flow_reconnect_spectators_and_full_game(factory):
     assert room.state == before
     restored = pickle.loads(pickle.dumps(room))
     assert restored.state == room.state
-    assert engine.view(restored, restored.player(host.id))["isMyTurn"] is True
+    current = restored.player(restored.state.current_player_id)
+    assert engine.view(restored, current)["isMyTurn"] is True
     spectator = ArcadeSpectator("watcher", "test-observer", "观众", host.id)
     view = build_spectator_room_view(room, host, spectator, engine)
     assert not any(view["actions"].values())
@@ -365,52 +461,61 @@ def test_registered_room_flow_reconnect_spectators_and_full_game(factory):
     assert room.ended_at
 
 
-@pytest.mark.parametrize("first_player", ("host", "random"))
+@pytest.mark.parametrize("player_count", (2, 4))
 @pytest.mark.parametrize("seed", (0, 5))
-def test_rematches_preserve_platform_seating_and_rotate_all_four_corners(factory, first_player, seed):
-    engine = factory()
-    manager = ArcadeRoomManager({engine.key: engine}, rng=random.Random(seed))
-    room, host, _ = manager.create_room(engine.key, "甲", "a0", {"firstPlayer": first_player})
-    for index in range(1, 4):
+def test_rematches_preserve_seats_and_randomize_order_each_round(
+    factory, player_count, seed,
+):
+    engine = factory(rng=random.Random(seed))
+    expected_rng = random.Random(seed)
+    manager = ArcadeRoomManager({engine.key: engine})
+    room, host, _ = manager.create_room(engine.key, "甲", "a0", {})
+    for index in range(1, player_count):
         manager.join_room(room.code, engine.key, f"玩家{index}", f"a{index}")
     manager.start(room, host.id)
-    expected_order = [player.id for player in sorted(room.players, key=lambda player: player.seat)]
-    if first_player == "host":
-        assert expected_order[0] == host.id
-    seen_corners = {player.id: set() for player in room.players}
-    for round_number in range(1, 6):
+    seat_order = [
+        player.id for player in sorted(room.players, key=lambda player: player.seat)
+    ]
+    observed_orders = []
+    for round_number in range(1, 7):
+        expected_order = list(seat_order)
+        expected_rng.shuffle(expected_order)
+        observed_orders.append(tuple(room.state.player_ids))
         assert room.round_number == round_number
         assert room.state.player_ids == expected_order
         assert room.state.current_player_id == expected_order[0]
         assert all(len(hand) == 21 for hand in room.state.remaining.values())
         for color, player_id in enumerate(expected_order):
-            x, y = CORNERS[color]
-            seen_corners[player_id].add((x, y))
+            x, y = room.state.start_points[color]
             manager.act(room, player_id, "place", {
                 "pieceId": "M1", "x": x, "y": y, "rotation": 0,
                 "flipped": False, "turnNumber": room.state.turn_number,
             })
             assert room.state.board[y][x] == color
-        for player_id in expected_order[:3]:
+        for player_id in expected_order[:player_count - 1]:
             manager.act(room, player_id, "resign", {})
         assert room.phase == "finished"
-        if round_number < 5:
-            for player in list(room.players)[:3]:
+        assert [player.seat for player in room.players] == list(range(player_count))
+        if round_number < 6:
+            for player in list(room.players)[:-1]:
                 manager.restart(room, player.id)
                 assert room.phase == "finished"
-            manager.restart(room, room.players[3].id)
-            expected_order = expected_order[1:] + expected_order[:1]
-    assert all(corners == set(CORNERS) for corners in seen_corners.values())
+            manager.restart(room, room.players[-1].id)
+    assert len(set(observed_orders)) > 1
 
 
 def test_platform_abandon_transfers_host_and_uses_placement_points(factory):
     engine = factory()
     manager = ArcadeRoomManager({engine.key: engine})
-    room, host, _ = manager.create_room(engine.key, "甲", "a0", {"firstPlayer": "host"})
+    room, host, _ = manager.create_room(engine.key, "甲", "a0", {})
     for index in range(1, 4):
         manager.join_room(room.code, engine.key, f"玩家{index}", f"a{index}")
     manager.start(room, host.id)
-    manager.act(room, host.id, "place", engine.find_move(room, host.id))
+    current_player_id = room.state.current_player_id
+    manager.act(
+        room, current_player_id, "place",
+        engine.find_move(room, current_player_id),
+    )
     before = copy.deepcopy(room.state.board)
     assert manager.abandon(room, host.id) is True
     assert room.host_id == room.players[1].id and host.left_room

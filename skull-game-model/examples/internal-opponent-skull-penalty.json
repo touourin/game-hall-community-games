@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "gameKey": "skull",
+  "sceneId": "penalty.blind-pick",
+  "revision": 28,
+  "phase": "penalty",
+  "rules": {
+    "targetWins": 2,
+    "lastChanceEnabled": true
+  },
+  "players": [
+    {
+      "id": "p1",
+      "seat": 0,
+      "displayName": "阿岚",
+      "status": "active",
+      "challengeWins": 0,
+      "matSide": "blank",
+      "lastChanceUsed": false,
+      "passedBid": false,
+      "hand": [
+        { "id": "p1-f3", "kind": "flower", "origin": "personal", "faceUp": false },
+        { "id": "p1-s1", "kind": "skull", "origin": "personal", "faceUp": false }
+      ],
+      "stack": [
+        { "id": "p1-f1", "kind": "flower", "origin": "personal", "faceUp": true },
+        { "id": "p1-f2", "kind": "flower", "origin": "personal", "faceUp": true }
+      ],
+      "removed": []
+    },
+    {
+      "id": "p2",
+      "seat": 1,
+      "displayName": "白露",
+      "status": "active",
+      "challengeWins": 1,
+      "matSide": "flower",
+      "lastChanceUsed": false,
+      "passedBid": true,
+      "hand": [
+        { "id": "p2-f2", "kind": "flower", "origin": "personal", "faceUp": false },
+        { "id": "p2-f3", "kind": "flower", "origin": "personal", "faceUp": false },
+        { "id": "p2-s1", "kind": "skull", "origin": "personal", "faceUp": false }
+      ],
+      "stack": [
+        { "id": "p2-f1", "kind": "flower", "origin": "personal", "faceUp": false }
+      ],
+      "removed": []
+    },
+    {
+      "id": "p3",
+      "seat": 2,
+      "displayName": "赤岩",
+      "status": "active",
+      "challengeWins": 0,
+      "matSide": "blank",
+      "lastChanceUsed": false,
+      "passedBid": true,
+      "hand": [
+        { "id": "p3-f1", "kind": "flower", "origin": "personal", "faceUp": false },
+        { "id": "p3-f2", "kind": "flower", "origin": "personal", "faceUp": false },
+        { "id": "p3-f3", "kind": "flower", "origin": "personal", "faceUp": false }
+      ],
+      "stack": [
+        { "id": "p3-s1", "kind": "skull", "origin": "personal", "faceUp": true }
+      ],
+      "removed": []
+    }
+  ],
+  "sharedDiscs": [
+    {
+      "id": "last-chance",
+      "kind": "last_chance_flower",
+      "origin": "last_chance",
+      "faceUp": true
+    }
+  ],
+  "roundState": {
+    "number": 1,
+    "firstPlayerId": "p2",
+    "currentPlayerId": "p3",
+    "committedPlayerIds": ["p1", "p2", "p3"],
+    "totalPlaced": 4,
+    "bid": {
+      "currentBid": 3,
+      "highBidderId": "p1",
+      "passedPlayerIds": ["p2", "p3"]
+    },
+    "challenge": {
+      "challengerId": "p1",
+      "targetBid": 3,
+      "revealedDiscIds": ["p1-f2", "p1-f1", "p3-s1"],
+      "failedDiscId": "p3-s1",
+      "skullOwnerId": "p3",
+      "pendingPenalty": {
+        "mode": "blind",
+        "chooserId": "p3",
+        "challengerId": "p1",
+        "candidateDiscIds": ["p1-f1", "p1-f2", "p1-f3", "p1-s1"],
+        "opaqueSlots": ["opaque-1", "opaque-2", "opaque-3", "opaque-4"]
+      }
+    },
+    "lastChanceHolderId": null,
+    "lastChanceExpiresAfterRound": null,
+    "nextFirstPlayerDecisionBy": null
+  },
+  "result": null
+}

@@ -1,0 +1,316 @@
+{
+  "$schema": "./player-card-model.schema.json",
+  "schemaVersion": 1,
+  "gameKey": "skull",
+  "modelVersion": "1.0.0",
+  "renderer": {
+    "generatorVersion": 1,
+    "viewBox": [0, 0, 512, 512],
+    "outputSize": 512,
+    "center": 256,
+    "outerRadius": 232,
+    "innerRadius": 208,
+    "safeRadius": 176,
+    "edgeWidth": 14,
+    "format": "svg",
+    "background": "transparent"
+  },
+  "invariants": {
+    "sameBackWithinPlayerSet": true,
+    "backIndependentOfCardKind": true,
+    "distinctBackAcrossPlayers": true,
+    "frontKeepsOwnerIdentity": true,
+    "semanticTypeUsesShapeAndColor": true,
+    "officialArtworkExcluded": true
+  },
+  "players": [
+    {
+      "id": "player-1",
+      "seatIndex": 0,
+      "label": "余烬",
+      "slug": "ember",
+      "palette": {
+        "surface": "#322A28",
+        "surfaceHighlight": "#51413C",
+        "surfaceShadow": "#1E1A19",
+        "edge": "#B29A88",
+        "accent": "#C96852",
+        "secondary": "#E4B27B",
+        "ink": "#F2E8DA",
+        "safe": "#75A27D",
+        "danger": "#C85D59"
+      },
+      "back": {
+        "motif": "sunburst",
+        "centerMark": "ember-dot",
+        "segmentCount": 12,
+        "ringCount": 2,
+        "rotation": 0,
+        "patternOpacity": 0.82
+      },
+      "flowerFront": {
+        "motif": "sunflower",
+        "petalCount": 8,
+        "petalLength": 112,
+        "petalWidth": 48,
+        "centerRadius": 42,
+        "rotation": 0,
+        "secondaryRing": true
+      },
+      "skullFront": {
+        "silhouette": "rounded",
+        "eyeShape": "oval",
+        "ornament": "crack",
+        "jawTeeth": 5,
+        "rotation": 0
+      },
+      "accessibility": {
+        "patternCode": "A1",
+        "ownerLabel": "玩家一余烬套牌",
+        "backLabel": "余烬放射纹牌背",
+        "flowerLabel": "余烬八瓣花牌正面",
+        "skullLabel": "余烬裂纹骷髅牌正面"
+      }
+    },
+    {
+      "id": "player-2",
+      "seatIndex": 1,
+      "label": "潮汐",
+      "slug": "tide",
+      "palette": {
+        "surface": "#202D35",
+        "surfaceHighlight": "#36505E",
+        "surfaceShadow": "#141D22",
+        "edge": "#A1B8C3",
+        "accent": "#5C98B1",
+        "secondary": "#8BC6D6",
+        "ink": "#EDF5F6",
+        "safe": "#74A996",
+        "danger": "#BD666B"
+      },
+      "back": {
+        "motif": "waves",
+        "centerMark": "tide-moon",
+        "segmentCount": 8,
+        "ringCount": 3,
+        "rotation": 15,
+        "patternOpacity": 0.78
+      },
+      "flowerFront": {
+        "motif": "lotus",
+        "petalCount": 6,
+        "petalLength": 126,
+        "petalWidth": 62,
+        "centerRadius": 36,
+        "rotation": 30,
+        "secondaryRing": true
+      },
+      "skullFront": {
+        "silhouette": "elongated",
+        "eyeShape": "teardrop",
+        "ornament": "waves",
+        "jawTeeth": 4,
+        "rotation": 0
+      },
+      "accessibility": {
+        "patternCode": "B2",
+        "ownerLabel": "玩家二潮汐套牌",
+        "backLabel": "潮汐波纹牌背",
+        "flowerLabel": "潮汐莲花牌正面",
+        "skullLabel": "潮汐长颅骷髅牌正面"
+      }
+    },
+    {
+      "id": "player-3",
+      "seatIndex": 2,
+      "label": "苔原",
+      "slug": "moss",
+      "palette": {
+        "surface": "#29322B",
+        "surfaceHighlight": "#455548",
+        "surfaceShadow": "#19201B",
+        "edge": "#A8B7A2",
+        "accent": "#719275",
+        "secondary": "#A8BE7A",
+        "ink": "#EEF2E8",
+        "safe": "#6FA27C",
+        "danger": "#B86459"
+      },
+      "back": {
+        "motif": "vine",
+        "centerMark": "moss-leaf",
+        "segmentCount": 6,
+        "ringCount": 2,
+        "rotation": 20,
+        "patternOpacity": 0.84
+      },
+      "flowerFront": {
+        "motif": "wildflower",
+        "petalCount": 5,
+        "petalLength": 118,
+        "petalWidth": 58,
+        "centerRadius": 38,
+        "rotation": 18,
+        "secondaryRing": false
+      },
+      "skullFront": {
+        "silhouette": "compact",
+        "eyeShape": "round",
+        "ornament": "sprout",
+        "jawTeeth": 4,
+        "rotation": 0
+      },
+      "accessibility": {
+        "patternCode": "C3",
+        "ownerLabel": "玩家三苔原套牌",
+        "backLabel": "苔原藤叶牌背",
+        "flowerLabel": "苔原野花牌正面",
+        "skullLabel": "苔原萌芽骷髅牌正面"
+      }
+    },
+    {
+      "id": "player-4",
+      "seatIndex": 3,
+      "label": "兰影",
+      "slug": "orchid",
+      "palette": {
+        "surface": "#312936",
+        "surfaceHighlight": "#51435B",
+        "surfaceShadow": "#1E1922",
+        "edge": "#BAA7C0",
+        "accent": "#9275A0",
+        "secondary": "#C6A0CB",
+        "ink": "#F4EDF5",
+        "safe": "#7DA486",
+        "danger": "#C16877"
+      },
+      "back": {
+        "motif": "diamonds",
+        "centerMark": "orchid-gem",
+        "segmentCount": 8,
+        "ringCount": 2,
+        "rotation": 45,
+        "patternOpacity": 0.8
+      },
+      "flowerFront": {
+        "motif": "orchid",
+        "petalCount": 4,
+        "petalLength": 132,
+        "petalWidth": 74,
+        "centerRadius": 34,
+        "rotation": 45,
+        "secondaryRing": true
+      },
+      "skullFront": {
+        "silhouette": "shielded",
+        "eyeShape": "diamond",
+        "ornament": "halo",
+        "jawTeeth": 5,
+        "rotation": 0
+      },
+      "accessibility": {
+        "patternCode": "D4",
+        "ownerLabel": "玩家四兰影套牌",
+        "backLabel": "兰影菱格牌背",
+        "flowerLabel": "兰影兰花牌正面",
+        "skullLabel": "兰影光环骷髅牌正面"
+      }
+    },
+    {
+      "id": "player-5",
+      "seatIndex": 4,
+      "label": "赭石",
+      "slug": "ochre",
+      "palette": {
+        "surface": "#352F24",
+        "surfaceHighlight": "#584B35",
+        "surfaceShadow": "#211D16",
+        "edge": "#C0AE8B",
+        "accent": "#B78B45",
+        "secondary": "#D1B56C",
+        "ink": "#F4EEDF",
+        "safe": "#789D72",
+        "danger": "#BD6651"
+      },
+      "back": {
+        "motif": "compass",
+        "centerMark": "ochre-star",
+        "segmentCount": 8,
+        "ringCount": 3,
+        "rotation": 22,
+        "patternOpacity": 0.86
+      },
+      "flowerFront": {
+        "motif": "rosette",
+        "petalCount": 10,
+        "petalLength": 106,
+        "petalWidth": 40,
+        "centerRadius": 44,
+        "rotation": 18,
+        "secondaryRing": true
+      },
+      "skullFront": {
+        "silhouette": "angular",
+        "eyeShape": "slit",
+        "ornament": "compass",
+        "jawTeeth": 6,
+        "rotation": 0
+      },
+      "accessibility": {
+        "patternCode": "E5",
+        "ownerLabel": "玩家五赭石套牌",
+        "backLabel": "赭石罗盘牌背",
+        "flowerLabel": "赭石轮花牌正面",
+        "skullLabel": "赭石罗盘骷髅牌正面"
+      }
+    },
+    {
+      "id": "player-6",
+      "seatIndex": 5,
+      "label": "岩板",
+      "slug": "slate",
+      "palette": {
+        "surface": "#292E34",
+        "surfaceHighlight": "#454D56",
+        "surfaceShadow": "#181C20",
+        "edge": "#ABB3BC",
+        "accent": "#75828F",
+        "secondary": "#9DAAB5",
+        "ink": "#EEF1F4",
+        "safe": "#719A83",
+        "danger": "#B76065"
+      },
+      "back": {
+        "motif": "hex-grid",
+        "centerMark": "slate-hex",
+        "segmentCount": 6,
+        "ringCount": 2,
+        "rotation": 30,
+        "patternOpacity": 0.76
+      },
+      "flowerFront": {
+        "motif": "geometric-bloom",
+        "petalCount": 6,
+        "petalLength": 116,
+        "petalWidth": 52,
+        "centerRadius": 40,
+        "rotation": 30,
+        "secondaryRing": false
+      },
+      "skullFront": {
+        "silhouette": "faceted",
+        "eyeShape": "hex",
+        "ornament": "facets",
+        "jawTeeth": 4,
+        "rotation": 0
+      },
+      "accessibility": {
+        "patternCode": "F6",
+        "ownerLabel": "玩家六岩板套牌",
+        "backLabel": "岩板六角牌背",
+        "flowerLabel": "岩板几何花牌正面",
+        "skullLabel": "岩板切面骷髅牌正面"
+      }
+    }
+  ]
+}

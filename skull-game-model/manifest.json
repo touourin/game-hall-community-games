@@ -1,0 +1,39 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-skull",
+  "name": "骷髅牌",
+  "description": "暗置花与骷髅、竞价并翻牌的 3–6 人心理博弈",
+  "category": "桌面派对",
+  "tone": "skull",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 3,
+    "max": 6,
+    "label": "3–6 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "allowSpectators": true,
+    "firstPlayer": "random",
+    "lastChanceEnabled": true
+  },
+  "ruleLabels": ["3 花 1 骷髅", "两次挑战胜利", "服务端隐藏信息", "新版最后机会"]
+}

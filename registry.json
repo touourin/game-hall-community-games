@@ -43,6 +43,12 @@
       "path": "plugin-bomb-people",
       "status": "enabled",
       "order": 160
+    },
+    {
+      "id": "plugin-skull",
+      "path": "skull-game-model",
+      "status": "enabled",
+      "order": 170
     }
   ]
 }

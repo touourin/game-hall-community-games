@@ -1,0 +1,207 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/skull/view-state.schema.json",
+  "title": "Skull client-safe view state",
+  "description": "A redacted projection for one player or a public spectator.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "gameKey",
+    "sceneId",
+    "revision",
+    "phase",
+    "viewer",
+    "players",
+    "sharedDiscs",
+    "round",
+    "actions",
+    "result"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "gameKey": { "const": "skull" },
+    "sceneId": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 0 },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "round_setup",
+        "placement",
+        "bidding",
+        "reveal",
+        "penalty",
+        "round_end",
+        "finished"
+      ]
+    },
+    "viewer": { "$ref": "#/$defs/viewer" },
+    "players": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/playerView" }
+    },
+    "sharedDiscs": {
+      "type": "array",
+      "maxItems": 1,
+      "items": { "$ref": "#/$defs/projectedDisc" }
+    },
+    "round": { "$ref": "#/$defs/roundView" },
+    "actions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "commit_initial",
+          "place_disc",
+          "open_bid",
+          "raise_bid",
+          "pass_bid",
+          "reveal_disc",
+          "choose_penalty",
+          "choose_self_penalty",
+          "choose_next_first",
+          "show_unrevealed"
+        ]
+      }
+    },
+    "result": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["winnerIds", "reason", "summary"],
+      "properties": {
+        "winnerIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": { "type": "string" }
+        },
+        "reason": {
+          "type": "string",
+          "enum": ["two_challenges", "last_player_remaining"]
+        },
+        "summary": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "viewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "playerId"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["player", "public"] },
+        "playerId": { "type": ["string", "null"] }
+      }
+    },
+    "projectedDisc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "faceUp", "knowledge"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": ["unknown", "flower", "skull", "last_chance_flower"]
+        },
+        "faceUp": { "type": "boolean" },
+        "knowledge": {
+          "type": "string",
+          "enum": ["hidden", "self", "public"]
+        }
+      }
+    },
+    "playerView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "seat",
+        "displayName",
+        "status",
+        "challengeWins",
+        "matSide",
+        "lastChanceUsed",
+        "passedBid",
+        "handCount",
+        "hand",
+        "stack",
+        "removedCount",
+        "removed"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "seat": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "displayName": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "eliminated"] },
+        "challengeWins": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "matSide": { "type": "string", "enum": ["blank", "flower"] },
+        "lastChanceUsed": { "type": "boolean" },
+        "passedBid": { "type": "boolean" },
+        "handCount": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "hand": {
+          "type": "array",
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/projectedDisc" }
+        },
+        "stack": {
+          "type": "array",
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/projectedDisc" }
+        },
+        "removedCount": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "removed": {
+          "type": "array",
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/projectedDisc" }
+        }
+      }
+    },
+    "roundView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "number",
+        "firstPlayerId",
+        "currentPlayerId",
+        "totalPlaced",
+        "currentBid",
+        "highBidderId",
+        "passedPlayerIds",
+        "challengerId",
+        "targetBid",
+        "revealedCount",
+        "failed",
+        "lastChanceHolderId",
+        "lastChanceExpiresAfterRound",
+        "penaltySlots"
+      ],
+      "properties": {
+        "number": { "type": "integer", "minimum": 1 },
+        "firstPlayerId": { "type": "string" },
+        "currentPlayerId": { "type": ["string", "null"] },
+        "totalPlaced": { "type": "integer", "minimum": 0 },
+        "currentBid": { "type": "integer", "minimum": 0 },
+        "highBidderId": { "type": ["string", "null"] },
+        "passedPlayerIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "challengerId": { "type": ["string", "null"] },
+        "targetBid": { "type": "integer", "minimum": 0 },
+        "revealedCount": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "boolean" },
+        "lastChanceHolderId": { "type": ["string", "null"] },
+        "lastChanceExpiresAfterRound": { "type": ["integer", "null"], "minimum": 1 },
+        "penaltySlots": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^opaque-[a-z0-9-]+$" }
+        }
+      }
+    }
+  }
+}

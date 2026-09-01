@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "gameKey": "skull",
+  "scenes": [
+    {
+      "id": "setup.table",
+      "phase": "round_setup",
+      "title": "牌桌准备",
+      "purpose": "展示座位、规则选项和空白玩家垫，等待宿主完成开局。",
+      "entry": ["房间达到 3-6 名有效玩家", "宿主 phase 为 playing"],
+      "actions": [],
+      "focusZones": ["seat-ring", "rule-summary", "shared-supply"],
+      "exit": "服务端创建第 1 轮并开放初始暗置"
+    },
+    {
+      "id": "round.commit",
+      "phase": "round_setup",
+      "title": "秘密暗置",
+      "purpose": "每名玩家从手中锁定一枚初始牌，全部提交后同时进入牌堆。",
+      "entry": ["新一轮开始", "当前玩家尚未提交"],
+      "actions": ["commit_initial"],
+      "focusZones": ["self-hand", "self-mat", "commit-status"],
+      "exit": "所有有效玩家均已提交"
+    },
+    {
+      "id": "round.place-or-bid",
+      "phase": "placement",
+      "title": "叠牌或开叫",
+      "purpose": "当前行动者选择增加一枚暗牌或开启竞标。",
+      "entry": ["初始暗置完成", "轮到当前玩家"],
+      "actions": ["place_disc", "open_bid"],
+      "focusZones": ["self-hand", "seat-stacks", "bid-dial"],
+      "exit": "玩家叠牌后轮转，或任一玩家开叫"
+    },
+    {
+      "id": "bid.raise-or-pass",
+      "phase": "bidding",
+      "title": "加价或退出",
+      "purpose": "公开当前最高叫价与桌面牌数，推进竞标直至只剩一人。",
+      "entry": ["存在合法开叫", "竞标尚有至少两名未退出玩家"],
+      "actions": ["raise_bid", "pass_bid"],
+      "focusZones": ["bid-dial", "active-bidder", "passed-markers"],
+      "exit": "只剩最高叫价者"
+    },
+    {
+      "id": "challenge.reveal-own",
+      "phase": "reveal",
+      "title": "翻开自己的牌",
+      "purpose": "强制挑战者优先从自己的顶部暗牌逐枚翻开。",
+      "entry": ["挑战开始", "挑战者自己的牌堆仍有暗牌", "尚未达到目标"],
+      "actions": ["reveal_disc"],
+      "focusZones": ["challenger-stack", "challenge-progress"],
+      "exit": "达到叫价、翻到骷髅，或自己的暗牌已经翻完"
+    },
+    {
+      "id": "challenge.reveal-others",
+      "phase": "reveal",
+      "title": "选择其他牌堆",
+      "purpose": "自己的暗牌处理完后，从任一对手的顶部暗牌继续挑战。",
+      "entry": ["挑战者自己的牌堆没有暗牌", "尚未达到目标"],
+      "actions": ["reveal_disc"],
+      "focusZones": ["legal-opponent-stacks", "challenge-progress"],
+      "exit": "达到叫价或翻到骷髅"
+    },
+    {
+      "id": "penalty.blind-pick",
+      "phase": "penalty",
+      "title": "盲选处罚",
+      "purpose": "骷髅所有者从服务端洗混的不透明槽位中选择一枚挑战者个人牌。",
+      "entry": ["挑战者翻到他人的骷髅", "不适用最后机会自动淘汰"],
+      "actions": ["choose_penalty"],
+      "focusZones": ["opaque-penalty-slots", "skull-owner-prompt"],
+      "exit": "一枚个人牌被永久移除"
+    },
+    {
+      "id": "penalty.self-pick",
+      "phase": "penalty",
+      "title": "秘密自选处罚",
+      "purpose": "挑战者翻到自己的骷髅后，秘密选择一枚个人牌永久移除。",
+      "entry": ["挑战者翻到自己的骷髅", "不适用最后机会自动淘汰"],
+      "actions": ["choose_self_penalty"],
+      "focusZones": ["self-private-discs", "private-warning"],
+      "exit": "一枚个人牌被永久移除"
+    },
+    {
+      "id": "round.summary",
+      "phase": "round_end",
+      "title": "本轮结算",
+      "purpose": "展示成功或失败、玩家垫变化、淘汰和下一任首家。",
+      "entry": ["挑战或处罚已经完成", "整局尚未结束"],
+      "actions": ["choose_next_first", "show_unrevealed"],
+      "focusZones": ["round-outcome", "score-track", "next-first"],
+      "exit": "首家确定并创建下一轮"
+    },
+    {
+      "id": "game.finished",
+      "phase": "finished",
+      "title": "游戏结束",
+      "purpose": "展示获胜者、胜因和公共再来一局入口。",
+      "entry": ["一名玩家第二次成功", "或只剩一名有效玩家"],
+      "actions": [],
+      "focusZones": ["winner", "finish-reason", "restart"],
+      "exit": "宿主再来一局流程"
+    }
+  ]
+}

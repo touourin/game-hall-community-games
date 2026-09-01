@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc" data-model-version="1.0.0">
+  <title id="title">苔原野花牌正面</title>
+  <desc id="desc">玩家三苔原套牌。翻开后表示安全的花牌正面。原创中性占位设计，不含官方美术。</desc>
+  <defs>
+    <radialGradient id="moss-flower-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#455548"/>
+      <stop offset="0.68" stop-color="#29322B"/>
+      <stop offset="1" stop-color="#19201B"/>
+    </radialGradient>
+    <linearGradient id="moss-flower-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A8B7A2"/>
+      <stop offset="0.48" stop-color="#719275"/>
+      <stop offset="1" stop-color="#19201B"/>
+    </linearGradient>
+    <filter id="moss-flower-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="moss-flower-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="moss-flower-clip"><circle cx="256" cy="256" r="208"/></clipPath>
+  </defs>
+  <g id="moss-flower-disc" data-player="player-3" data-face="flower">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#moss-flower-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#moss-flower-edge)" filter="url(#moss-flower-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#moss-flower-surface)" stroke="#A8B7A2" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#6FA27C" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#6FA27C" stroke-width="7" stroke-dasharray="5 9"/>
+<ellipse cx="256" cy="212.36" rx="26.1" ry="54.28" transform="rotate(18 256 256)" fill="#EEF2E8" stroke="#719275" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="208.82" rx="29.58" ry="57.82" transform="rotate(90 256 256)" fill="#A8BE7A" stroke="#719275" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="205.28" rx="26.1" ry="61.36" transform="rotate(162 256 256)" fill="#EEF2E8" stroke="#719275" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="212.36" rx="29.58" ry="54.28" transform="rotate(234 256 256)" fill="#A8BE7A" stroke="#719275" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="208.82" rx="26.1" ry="57.82" transform="rotate(306 256 256)" fill="#EEF2E8" stroke="#719275" stroke-width="5" opacity="0.96"/>
+<path d="M256 302 Q230 352 194 370M256 302Q283 348 322 364" fill="none" stroke="#6FA27C" stroke-width="8" stroke-linecap="round"/>
+<ellipse cx="205" cy="357" rx="18" ry="35" transform="rotate(-55 205 357)" fill="#A8BE7A"/>
+<ellipse cx="313" cy="352" rx="18" ry="35" transform="rotate(55 313 352)" fill="#A8BE7A"/>
+<circle cx="256" cy="256" r="48" fill="#719275" stroke="#A8B7A2" stroke-width="6"/>
+<circle cx="256" cy="256" r="19.76" fill="#19201B"/>
+<circle cx="247" cy="247" r="5.32" fill="#EEF2E8" opacity="0.72"/>
+      <path d="M298.74 441.13L302.56 457.69" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+<path d="M256 446L256 463" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+<path d="M213.26 441.13L209.44 457.69" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EEF2E8" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g>
+</svg>

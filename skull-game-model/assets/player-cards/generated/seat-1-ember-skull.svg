@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc" data-model-version="1.0.0">
+  <title id="title">余烬裂纹骷髅牌正面</title>
+  <desc id="desc">玩家一余烬套牌。翻开后令挑战立即失败的骷髅牌正面。原创中性占位设计，不含官方美术。</desc>
+  <defs>
+    <radialGradient id="ember-skull-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#51413C"/>
+      <stop offset="0.68" stop-color="#322A28"/>
+      <stop offset="1" stop-color="#1E1A19"/>
+    </radialGradient>
+    <linearGradient id="ember-skull-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#B29A88"/>
+      <stop offset="0.48" stop-color="#C96852"/>
+      <stop offset="1" stop-color="#1E1A19"/>
+    </linearGradient>
+    <filter id="ember-skull-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="ember-skull-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="ember-skull-clip"><circle cx="256" cy="256" r="208"/></clipPath>
+  </defs>
+  <g id="ember-skull-disc" data-player="player-1" data-face="skull">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#ember-skull-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#ember-skull-edge)" filter="url(#ember-skull-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#ember-skull-surface)" stroke="#B29A88" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#C85D59" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#C85D59" stroke-width="7" stroke-dasharray="5 9"/>
+<path d="M256 112C174 112 137 177 151 258C156 290 173 312 201 326L201 342H311V326C339 312 356 290 361 258C375 177 338 112 256 112Z" fill="#F2E8DA" stroke="#B29A88" stroke-width="7" stroke-linejoin="round"/>
+<path d="M201 316L311 316L326 377Q256 414 186 377Z" fill="#F2E8DA" stroke="#B29A88" stroke-width="7" stroke-linejoin="round"/>
+<ellipse cx="218" cy="245" rx="29" ry="38" fill="#1E1A19"/><ellipse cx="294" cy="245" rx="29" ry="38" fill="#1E1A19"/>
+<path d="M256 270L238 303H274Z" fill="#1E1A19"/>
+<path d="M268 126L239 177L268 192L239 234" fill="none" stroke="#C85D59" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M204 350H308" stroke="#1E1A19" stroke-width="7" stroke-linecap="round"/>
+<path d="M214 344V389" stroke="#1E1A19" stroke-width="6" stroke-linecap="round"/>
+<path d="M235 344V389" stroke="#1E1A19" stroke-width="6" stroke-linecap="round"/>
+<path d="M256 344V389" stroke="#1E1A19" stroke-width="6" stroke-linecap="round"/>
+<path d="M277 344V389" stroke="#1E1A19" stroke-width="6" stroke-linecap="round"/>
+<path d="M298 344V389" stroke="#1E1A19" stroke-width="6" stroke-linecap="round"/>
+      <path d="M256 446L256 463" stroke="#C96852" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#F2E8DA" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g>
+</svg>

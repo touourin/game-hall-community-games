@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc" data-model-version="1.0.0">
+  <title id="title">苔原萌芽骷髅牌正面</title>
+  <desc id="desc">玩家三苔原套牌。翻开后令挑战立即失败的骷髅牌正面。原创中性占位设计，不含官方美术。</desc>
+  <defs>
+    <radialGradient id="moss-skull-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#455548"/>
+      <stop offset="0.68" stop-color="#29322B"/>
+      <stop offset="1" stop-color="#19201B"/>
+    </radialGradient>
+    <linearGradient id="moss-skull-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A8B7A2"/>
+      <stop offset="0.48" stop-color="#719275"/>
+      <stop offset="1" stop-color="#19201B"/>
+    </linearGradient>
+    <filter id="moss-skull-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="moss-skull-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="moss-skull-clip"><circle cx="256" cy="256" r="208"/></clipPath>
+  </defs>
+  <g id="moss-skull-disc" data-player="player-3" data-face="skull">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#moss-skull-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#moss-skull-edge)" filter="url(#moss-skull-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#moss-skull-surface)" stroke="#A8B7A2" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#B86459" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#B86459" stroke-width="7" stroke-dasharray="5 9"/>
+<path d="M256 128C169 128 145 191 158 261C165 299 188 318 211 329L211 344H301V329C324 318 347 299 354 261C367 191 343 128 256 128Z" fill="#EEF2E8" stroke="#A8B7A2" stroke-width="7" stroke-linejoin="round"/>
+<path d="M211 318L301 318L318 373Q256 401 194 373Z" fill="#EEF2E8" stroke="#A8B7A2" stroke-width="7" stroke-linejoin="round"/>
+<circle cx="218" cy="248" r="31" fill="#19201B"/><circle cx="294" cy="248" r="31" fill="#19201B"/>
+<path d="M256 270L238 303H274Z" fill="#19201B"/>
+<path d="M256 139Q250 91 269 67" fill="none" stroke="#719275" stroke-width="10" stroke-linecap="round"/><ellipse cx="238" cy="85" rx="20" ry="38" transform="rotate(-48 238 85)" fill="#A8BE7A"/><ellipse cx="283" cy="73" rx="18" ry="36" transform="rotate(42 283 73)" fill="#A8BE7A"/>
+<path d="M204 350H308" stroke="#19201B" stroke-width="7" stroke-linecap="round"/>
+<path d="M214 344V389" stroke="#19201B" stroke-width="6" stroke-linecap="round"/>
+<path d="M242 344V389" stroke="#19201B" stroke-width="6" stroke-linecap="round"/>
+<path d="M270 344V389" stroke="#19201B" stroke-width="6" stroke-linecap="round"/>
+<path d="M298 344V389" stroke="#19201B" stroke-width="6" stroke-linecap="round"/>
+      <path d="M298.74 441.13L302.56 457.69" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+<path d="M256 446L256 463" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+<path d="M213.26 441.13L209.44 457.69" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EEF2E8" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g>
+</svg>

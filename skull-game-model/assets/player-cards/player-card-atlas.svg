@@ -1,0 +1,795 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1090" viewBox="0 0 1900 1090" role="img" aria-labelledby="title desc" data-model-version="1.0.0">
+  <title id="title">骷髅牌六套玩家卡牌正反面模型总览</title>
+  <desc id="desc">从左到右为六名玩家；从上到下为每套统一牌背、花牌正面和骷髅牌正面。</desc>
+  <defs>
+    <linearGradient id="atlas-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#111419"/><stop offset="1" stop-color="#272C33"/></linearGradient>
+    <radialGradient id="atlas-ember-back-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#51413C"/>
+      <stop offset="0.68" stop-color="#322A28"/>
+      <stop offset="1" stop-color="#1E1A19"/>
+    </radialGradient>
+    <linearGradient id="atlas-ember-back-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#B29A88"/>
+      <stop offset="0.48" stop-color="#C96852"/>
+      <stop offset="1" stop-color="#1E1A19"/>
+    </linearGradient>
+    <filter id="atlas-ember-back-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-ember-back-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-ember-back-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-ember-flower-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#51413C"/>
+      <stop offset="0.68" stop-color="#322A28"/>
+      <stop offset="1" stop-color="#1E1A19"/>
+    </radialGradient>
+    <linearGradient id="atlas-ember-flower-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#B29A88"/>
+      <stop offset="0.48" stop-color="#C96852"/>
+      <stop offset="1" stop-color="#1E1A19"/>
+    </linearGradient>
+    <filter id="atlas-ember-flower-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-ember-flower-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-ember-flower-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-ember-skull-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#51413C"/>
+      <stop offset="0.68" stop-color="#322A28"/>
+      <stop offset="1" stop-color="#1E1A19"/>
+    </radialGradient>
+    <linearGradient id="atlas-ember-skull-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#B29A88"/>
+      <stop offset="0.48" stop-color="#C96852"/>
+      <stop offset="1" stop-color="#1E1A19"/>
+    </linearGradient>
+    <filter id="atlas-ember-skull-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-ember-skull-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-ember-skull-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-tide-back-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#36505E"/>
+      <stop offset="0.68" stop-color="#202D35"/>
+      <stop offset="1" stop-color="#141D22"/>
+    </radialGradient>
+    <linearGradient id="atlas-tide-back-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A1B8C3"/>
+      <stop offset="0.48" stop-color="#5C98B1"/>
+      <stop offset="1" stop-color="#141D22"/>
+    </linearGradient>
+    <filter id="atlas-tide-back-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-tide-back-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-tide-back-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-tide-flower-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#36505E"/>
+      <stop offset="0.68" stop-color="#202D35"/>
+      <stop offset="1" stop-color="#141D22"/>
+    </radialGradient>
+    <linearGradient id="atlas-tide-flower-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A1B8C3"/>
+      <stop offset="0.48" stop-color="#5C98B1"/>
+      <stop offset="1" stop-color="#141D22"/>
+    </linearGradient>
+    <filter id="atlas-tide-flower-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-tide-flower-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-tide-flower-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-tide-skull-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#36505E"/>
+      <stop offset="0.68" stop-color="#202D35"/>
+      <stop offset="1" stop-color="#141D22"/>
+    </radialGradient>
+    <linearGradient id="atlas-tide-skull-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A1B8C3"/>
+      <stop offset="0.48" stop-color="#5C98B1"/>
+      <stop offset="1" stop-color="#141D22"/>
+    </linearGradient>
+    <filter id="atlas-tide-skull-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-tide-skull-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-tide-skull-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-moss-back-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#455548"/>
+      <stop offset="0.68" stop-color="#29322B"/>
+      <stop offset="1" stop-color="#19201B"/>
+    </radialGradient>
+    <linearGradient id="atlas-moss-back-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A8B7A2"/>
+      <stop offset="0.48" stop-color="#719275"/>
+      <stop offset="1" stop-color="#19201B"/>
+    </linearGradient>
+    <filter id="atlas-moss-back-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-moss-back-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-moss-back-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-moss-flower-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#455548"/>
+      <stop offset="0.68" stop-color="#29322B"/>
+      <stop offset="1" stop-color="#19201B"/>
+    </radialGradient>
+    <linearGradient id="atlas-moss-flower-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A8B7A2"/>
+      <stop offset="0.48" stop-color="#719275"/>
+      <stop offset="1" stop-color="#19201B"/>
+    </linearGradient>
+    <filter id="atlas-moss-flower-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-moss-flower-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-moss-flower-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-moss-skull-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#455548"/>
+      <stop offset="0.68" stop-color="#29322B"/>
+      <stop offset="1" stop-color="#19201B"/>
+    </radialGradient>
+    <linearGradient id="atlas-moss-skull-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A8B7A2"/>
+      <stop offset="0.48" stop-color="#719275"/>
+      <stop offset="1" stop-color="#19201B"/>
+    </linearGradient>
+    <filter id="atlas-moss-skull-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-moss-skull-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-moss-skull-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-orchid-back-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#51435B"/>
+      <stop offset="0.68" stop-color="#312936"/>
+      <stop offset="1" stop-color="#1E1922"/>
+    </radialGradient>
+    <linearGradient id="atlas-orchid-back-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#BAA7C0"/>
+      <stop offset="0.48" stop-color="#9275A0"/>
+      <stop offset="1" stop-color="#1E1922"/>
+    </linearGradient>
+    <filter id="atlas-orchid-back-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-orchid-back-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-orchid-back-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-orchid-flower-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#51435B"/>
+      <stop offset="0.68" stop-color="#312936"/>
+      <stop offset="1" stop-color="#1E1922"/>
+    </radialGradient>
+    <linearGradient id="atlas-orchid-flower-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#BAA7C0"/>
+      <stop offset="0.48" stop-color="#9275A0"/>
+      <stop offset="1" stop-color="#1E1922"/>
+    </linearGradient>
+    <filter id="atlas-orchid-flower-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-orchid-flower-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-orchid-flower-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-orchid-skull-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#51435B"/>
+      <stop offset="0.68" stop-color="#312936"/>
+      <stop offset="1" stop-color="#1E1922"/>
+    </radialGradient>
+    <linearGradient id="atlas-orchid-skull-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#BAA7C0"/>
+      <stop offset="0.48" stop-color="#9275A0"/>
+      <stop offset="1" stop-color="#1E1922"/>
+    </linearGradient>
+    <filter id="atlas-orchid-skull-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-orchid-skull-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-orchid-skull-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-ochre-back-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#584B35"/>
+      <stop offset="0.68" stop-color="#352F24"/>
+      <stop offset="1" stop-color="#211D16"/>
+    </radialGradient>
+    <linearGradient id="atlas-ochre-back-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#C0AE8B"/>
+      <stop offset="0.48" stop-color="#B78B45"/>
+      <stop offset="1" stop-color="#211D16"/>
+    </linearGradient>
+    <filter id="atlas-ochre-back-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-ochre-back-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-ochre-back-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-ochre-flower-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#584B35"/>
+      <stop offset="0.68" stop-color="#352F24"/>
+      <stop offset="1" stop-color="#211D16"/>
+    </radialGradient>
+    <linearGradient id="atlas-ochre-flower-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#C0AE8B"/>
+      <stop offset="0.48" stop-color="#B78B45"/>
+      <stop offset="1" stop-color="#211D16"/>
+    </linearGradient>
+    <filter id="atlas-ochre-flower-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-ochre-flower-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-ochre-flower-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-ochre-skull-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#584B35"/>
+      <stop offset="0.68" stop-color="#352F24"/>
+      <stop offset="1" stop-color="#211D16"/>
+    </radialGradient>
+    <linearGradient id="atlas-ochre-skull-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#C0AE8B"/>
+      <stop offset="0.48" stop-color="#B78B45"/>
+      <stop offset="1" stop-color="#211D16"/>
+    </linearGradient>
+    <filter id="atlas-ochre-skull-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-ochre-skull-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-ochre-skull-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-slate-back-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#454D56"/>
+      <stop offset="0.68" stop-color="#292E34"/>
+      <stop offset="1" stop-color="#181C20"/>
+    </radialGradient>
+    <linearGradient id="atlas-slate-back-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ABB3BC"/>
+      <stop offset="0.48" stop-color="#75828F"/>
+      <stop offset="1" stop-color="#181C20"/>
+    </linearGradient>
+    <filter id="atlas-slate-back-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-slate-back-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-slate-back-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-slate-flower-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#454D56"/>
+      <stop offset="0.68" stop-color="#292E34"/>
+      <stop offset="1" stop-color="#181C20"/>
+    </radialGradient>
+    <linearGradient id="atlas-slate-flower-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ABB3BC"/>
+      <stop offset="0.48" stop-color="#75828F"/>
+      <stop offset="1" stop-color="#181C20"/>
+    </linearGradient>
+    <filter id="atlas-slate-flower-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-slate-flower-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-slate-flower-clip"><circle cx="256" cy="256" r="208"/></clipPath><radialGradient id="atlas-slate-skull-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#454D56"/>
+      <stop offset="0.68" stop-color="#292E34"/>
+      <stop offset="1" stop-color="#181C20"/>
+    </radialGradient>
+    <linearGradient id="atlas-slate-skull-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ABB3BC"/>
+      <stop offset="0.48" stop-color="#75828F"/>
+      <stop offset="1" stop-color="#181C20"/>
+    </linearGradient>
+    <filter id="atlas-slate-skull-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="atlas-slate-skull-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="atlas-slate-skull-clip"><circle cx="256" cy="256" r="208"/></clipPath>
+  </defs>
+  <rect width="1900" height="1090" rx="38" fill="url(#atlas-bg)"/>
+  <text x="70" y="58" fill="#F4EFE8" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="34" font-weight="700">玩家卡牌正反面生成模型</text>
+  <text x="70" y="94" fill="#9FA8B0" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="18">JSON 模型 v1.0.0 · 每名玩家的花牌与骷髅牌共用同一牌背 · 512 x 512 SVG</text>
+  <path d="M58 438H1842M58 731H1842" stroke="#FFFFFF" stroke-opacity="0.08"/>
+  <text x="270.08" y="128" text-anchor="middle" fill="#F3EFE8" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700">玩家 1 · 余烬</text><text x="270.08" y="158" text-anchor="middle" fill="#C96852" font-family="Arial, sans-serif" font-size="17" font-weight="700">A1 · ember</text><g transform="translate(160 182) scale(0.43)"><g id="atlas-ember-back-disc" data-player="player-1" data-face="back">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-ember-back-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-ember-back-edge)" filter="url(#atlas-ember-back-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-ember-back-surface)" stroke="#B29A88" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#C96852" stroke-width="3" opacity="0.7"/>
+      <g clip-path="url(#atlas-ember-back-clip)" opacity="0.82">
+<path d="M256 188L256 66" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M290 197.11L351 91.46" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<path d="M314.89 222L420.54 161" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M324 256L446 256" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<path d="M314.89 290L420.54 351" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M290 314.89L351 420.54" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<path d="M256 324L256 446" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M222 314.89L161 420.54" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<path d="M197.11 290L91.46 351" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M188 256L66 256" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<path d="M197.11 222L91.46 161" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M222 197.11L161 91.46" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<circle cx="256" cy="256" r="104" fill="none" stroke="#B29A88" stroke-width="3" stroke-dasharray="4 10"/>
+<circle cx="256" cy="256" r="154" fill="none" stroke="#B29A88" stroke-width="3" stroke-dasharray="4 10"/>
+</g>
+<circle cx="256" cy="256" r="45" fill="#C96852" stroke="#E4B27B" stroke-width="7"/>
+        <circle cx="256" cy="256" r="18" fill="#1E1A19"/>
+        <circle cx="250" cy="248" r="6" fill="#F2E8DA" opacity="0.7"/>
+      <path d="M256 446L256 463" stroke="#C96852" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#F2E8DA" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="270.08" y="431.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">统一牌背</text><g transform="translate(160 475) scale(0.43)"><g id="atlas-ember-flower-disc" data-player="player-1" data-face="flower">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-ember-flower-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-ember-flower-edge)" filter="url(#atlas-ember-flower-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-ember-flower-surface)" stroke="#B29A88" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#75A27D" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#75A27D" stroke-width="7" stroke-dasharray="5 9"/>
+<ellipse cx="256" cy="211.76" rx="24" ry="56" transform="rotate(0 256 256)" fill="#F2E8DA" stroke="#C96852" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="211.76" rx="24" ry="56" transform="rotate(45 256 256)" fill="#E4B27B" stroke="#C96852" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="211.76" rx="24" ry="56" transform="rotate(90 256 256)" fill="#F2E8DA" stroke="#C96852" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="211.76" rx="24" ry="56" transform="rotate(135 256 256)" fill="#E4B27B" stroke="#C96852" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="211.76" rx="24" ry="56" transform="rotate(180 256 256)" fill="#F2E8DA" stroke="#C96852" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="211.76" rx="24" ry="56" transform="rotate(225 256 256)" fill="#E4B27B" stroke="#C96852" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="211.76" rx="24" ry="56" transform="rotate(270 256 256)" fill="#F2E8DA" stroke="#C96852" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="211.76" rx="24" ry="56" transform="rotate(315 256 256)" fill="#E4B27B" stroke="#C96852" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="233.6" rx="11.52" ry="30.8" transform="rotate(22.5 256 256)" fill="#E4B27B" stroke="#B29A88" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="233.6" rx="11.52" ry="30.8" transform="rotate(67.5 256 256)" fill="#E4B27B" stroke="#B29A88" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="233.6" rx="11.52" ry="30.8" transform="rotate(112.5 256 256)" fill="#E4B27B" stroke="#B29A88" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="233.6" rx="11.52" ry="30.8" transform="rotate(157.5 256 256)" fill="#E4B27B" stroke="#B29A88" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="233.6" rx="11.52" ry="30.8" transform="rotate(202.5 256 256)" fill="#E4B27B" stroke="#B29A88" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="233.6" rx="11.52" ry="30.8" transform="rotate(247.5 256 256)" fill="#E4B27B" stroke="#B29A88" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="233.6" rx="11.52" ry="30.8" transform="rotate(292.5 256 256)" fill="#E4B27B" stroke="#B29A88" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="233.6" rx="11.52" ry="30.8" transform="rotate(337.5 256 256)" fill="#E4B27B" stroke="#B29A88" stroke-width="3" opacity="0.82"/>
+<circle cx="256" cy="202" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="283" cy="209.23" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="302.77" cy="229" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="310" cy="256" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="302.77" cy="283" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="283" cy="302.77" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="256" cy="310" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="229" cy="302.77" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="209.23" cy="283" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="202" cy="256" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="209.23" cy="229" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="229" cy="209.23" r="7" fill="#1E1A19" opacity="0.75"/>
+<circle cx="256" cy="256" r="52" fill="#C96852" stroke="#B29A88" stroke-width="6"/>
+<circle cx="256" cy="256" r="21.84" fill="#1E1A19"/>
+<circle cx="247" cy="247" r="5.880000000000001" fill="#F2E8DA" opacity="0.72"/>
+      <path d="M256 446L256 463" stroke="#C96852" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#F2E8DA" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="270.08" y="724.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">花牌正面</text><g transform="translate(160 768) scale(0.43)"><g id="atlas-ember-skull-disc" data-player="player-1" data-face="skull">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-ember-skull-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-ember-skull-edge)" filter="url(#atlas-ember-skull-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-ember-skull-surface)" stroke="#B29A88" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#C85D59" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#C85D59" stroke-width="7" stroke-dasharray="5 9"/>
+<path d="M256 112C174 112 137 177 151 258C156 290 173 312 201 326L201 342H311V326C339 312 356 290 361 258C375 177 338 112 256 112Z" fill="#F2E8DA" stroke="#B29A88" stroke-width="7" stroke-linejoin="round"/>
+<path d="M201 316L311 316L326 377Q256 414 186 377Z" fill="#F2E8DA" stroke="#B29A88" stroke-width="7" stroke-linejoin="round"/>
+<ellipse cx="218" cy="245" rx="29" ry="38" fill="#1E1A19"/><ellipse cx="294" cy="245" rx="29" ry="38" fill="#1E1A19"/>
+<path d="M256 270L238 303H274Z" fill="#1E1A19"/>
+<path d="M268 126L239 177L268 192L239 234" fill="none" stroke="#C85D59" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M204 350H308" stroke="#1E1A19" stroke-width="7" stroke-linecap="round"/>
+<path d="M214 344V389" stroke="#1E1A19" stroke-width="6" stroke-linecap="round"/>
+<path d="M235 344V389" stroke="#1E1A19" stroke-width="6" stroke-linecap="round"/>
+<path d="M256 344V389" stroke="#1E1A19" stroke-width="6" stroke-linecap="round"/>
+<path d="M277 344V389" stroke="#1E1A19" stroke-width="6" stroke-linecap="round"/>
+<path d="M298 344V389" stroke="#1E1A19" stroke-width="6" stroke-linecap="round"/>
+      <path d="M256 446L256 463" stroke="#C96852" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#F2E8DA" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="270.08" y="1017.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">骷髅牌正面</text><text x="556.08" y="128" text-anchor="middle" fill="#F3EFE8" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700">玩家 2 · 潮汐</text><text x="556.08" y="158" text-anchor="middle" fill="#5C98B1" font-family="Arial, sans-serif" font-size="17" font-weight="700">B2 · tide</text><g transform="translate(446 182) scale(0.43)"><g id="atlas-tide-back-disc" data-player="player-2" data-face="back">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-tide-back-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-tide-back-edge)" filter="url(#atlas-tide-back-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-tide-back-surface)" stroke="#A1B8C3" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#5C98B1" stroke-width="3" opacity="0.7"/>
+      <g clip-path="url(#atlas-tide-back-clip)" opacity="0.78">
+<path d="M54 126 C104 91 154 161 204 126 S304 91 354 126 S454 161 508 126" fill="none" stroke="#5C98B1" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 171 C104 156 154 186 204 171 S304 156 354 171 S454 186 508 171" fill="none" stroke="#8BC6D6" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 216 C104 181 154 251 204 216 S304 181 354 216 S454 251 508 216" fill="none" stroke="#5C98B1" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 261 C104 246 154 276 204 261 S304 246 354 261 S454 276 508 261" fill="none" stroke="#8BC6D6" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 306 C104 271 154 341 204 306 S304 271 354 306 S454 341 508 306" fill="none" stroke="#5C98B1" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 351 C104 336 154 366 204 351 S304 336 354 351 S454 366 508 351" fill="none" stroke="#8BC6D6" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 396 C104 361 154 431 204 396 S304 361 354 396 S454 431 508 396" fill="none" stroke="#5C98B1" stroke-width="6" stroke-linecap="round"/>
+<circle cx="256" cy="256" r="112" fill="none" stroke="#A1B8C3" stroke-width="2" opacity="0.65"/>
+<circle cx="256" cy="256" r="172" fill="none" stroke="#A1B8C3" stroke-width="2" opacity="0.65"/>
+</g>
+<circle cx="256" cy="256" r="48" fill="#8BC6D6"/>
+        <circle cx="274" cy="242" r="48" fill="#202D35"/>
+        <circle cx="256" cy="256" r="51" fill="none" stroke="#5C98B1" stroke-width="5"/>
+      <path d="M277.51 444.78L279.43 461.67" stroke="#5C98B1" stroke-width="7" stroke-linecap="round"/>
+<path d="M234.49 444.78L232.57 461.67" stroke="#5C98B1" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EDF5F6" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="556.08" y="431.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">统一牌背</text><g transform="translate(446 475) scale(0.43)"><g id="atlas-tide-flower-disc" data-player="player-2" data-face="flower">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-tide-flower-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-tide-flower-edge)" filter="url(#atlas-tide-flower-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-tide-flower-surface)" stroke="#A1B8C3" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#74A996" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#74A996" stroke-width="7" stroke-dasharray="5 9"/>
+<ellipse cx="256" cy="203.08" rx="31" ry="63" transform="rotate(30 256 256)" fill="#EDF5F6" stroke="#5C98B1" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="203.08" rx="31" ry="63" transform="rotate(90 256 256)" fill="#8BC6D6" stroke="#5C98B1" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="203.08" rx="31" ry="63" transform="rotate(150 256 256)" fill="#EDF5F6" stroke="#5C98B1" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="203.08" rx="31" ry="63" transform="rotate(210 256 256)" fill="#8BC6D6" stroke="#5C98B1" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="203.08" rx="31" ry="63" transform="rotate(270 256 256)" fill="#EDF5F6" stroke="#5C98B1" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="203.08" rx="31" ry="63" transform="rotate(330 256 256)" fill="#8BC6D6" stroke="#5C98B1" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="228.55" rx="14.88" ry="34.65" transform="rotate(60 256 256)" fill="#8BC6D6" stroke="#A1B8C3" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="228.55" rx="14.88" ry="34.65" transform="rotate(120 256 256)" fill="#8BC6D6" stroke="#A1B8C3" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="228.55" rx="14.88" ry="34.65" transform="rotate(180 256 256)" fill="#8BC6D6" stroke="#A1B8C3" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="228.55" rx="14.88" ry="34.65" transform="rotate(240 256 256)" fill="#8BC6D6" stroke="#A1B8C3" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="228.55" rx="14.88" ry="34.65" transform="rotate(300 256 256)" fill="#8BC6D6" stroke="#A1B8C3" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="228.55" rx="14.88" ry="34.65" transform="rotate(360 256 256)" fill="#8BC6D6" stroke="#A1B8C3" stroke-width="3" opacity="0.82"/>
+<path d="M158 318 Q256 382 354 318 Q312 354 256 337 Q200 354 158 318Z" fill="#5C98B1" opacity="0.72"/>
+<circle cx="256" cy="256" r="46" fill="#5C98B1" stroke="#A1B8C3" stroke-width="6"/>
+<circle cx="256" cy="256" r="18.72" fill="#141D22"/>
+<circle cx="247" cy="247" r="5.040000000000001" fill="#EDF5F6" opacity="0.72"/>
+      <path d="M277.51 444.78L279.43 461.67" stroke="#5C98B1" stroke-width="7" stroke-linecap="round"/>
+<path d="M234.49 444.78L232.57 461.67" stroke="#5C98B1" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EDF5F6" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="556.08" y="724.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">花牌正面</text><g transform="translate(446 768) scale(0.43)"><g id="atlas-tide-skull-disc" data-player="player-2" data-face="skull">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-tide-skull-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-tide-skull-edge)" filter="url(#atlas-tide-skull-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-tide-skull-surface)" stroke="#A1B8C3" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#BD666B" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#BD666B" stroke-width="7" stroke-dasharray="5 9"/>
+<path d="M256 94C187 94 151 150 153 239C154 286 174 322 205 337L205 352H307V337C338 322 358 286 359 239C361 150 325 94 256 94Z" fill="#EDF5F6" stroke="#A1B8C3" stroke-width="7" stroke-linejoin="round"/>
+<path d="M205 327L307 327L315 399Q256 424 197 399Z" fill="#EDF5F6" stroke="#A1B8C3" stroke-width="7" stroke-linejoin="round"/>
+<path d="M218 207C250 244 244 281 218 281C192 281 186 244 218 207Z" fill="#141D22"/><path d="M294 207C326 244 320 281 294 281C268 281 262 244 294 207Z" fill="#141D22"/>
+<path d="M256 270L238 303H274Z" fill="#141D22"/>
+<path d="M186 167Q221 142 256 167T326 167M176 192Q216 166 256 192T336 192" fill="none" stroke="#5C98B1" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+<path d="M204 350H308" stroke="#141D22" stroke-width="7" stroke-linecap="round"/>
+<path d="M214 344V389" stroke="#141D22" stroke-width="6" stroke-linecap="round"/>
+<path d="M242 344V389" stroke="#141D22" stroke-width="6" stroke-linecap="round"/>
+<path d="M270 344V389" stroke="#141D22" stroke-width="6" stroke-linecap="round"/>
+<path d="M298 344V389" stroke="#141D22" stroke-width="6" stroke-linecap="round"/>
+      <path d="M277.51 444.78L279.43 461.67" stroke="#5C98B1" stroke-width="7" stroke-linecap="round"/>
+<path d="M234.49 444.78L232.57 461.67" stroke="#5C98B1" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EDF5F6" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="556.08" y="1017.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">骷髅牌正面</text><text x="842.08" y="128" text-anchor="middle" fill="#F3EFE8" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700">玩家 3 · 苔原</text><text x="842.08" y="158" text-anchor="middle" fill="#719275" font-family="Arial, sans-serif" font-size="17" font-weight="700">C3 · moss</text><g transform="translate(732 182) scale(0.43)"><g id="atlas-moss-back-disc" data-player="player-3" data-face="back">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-moss-back-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-moss-back-edge)" filter="url(#atlas-moss-back-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-moss-back-surface)" stroke="#A8B7A2" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#719275" stroke-width="3" opacity="0.7"/>
+      <g clip-path="url(#atlas-moss-back-clip)" opacity="0.84">
+<circle cx="256" cy="256" r="154" fill="none" stroke="#719275" stroke-width="8" stroke-dasharray="7 10"/>
+<ellipse cx="308.33" cy="112.23" rx="12" ry="27" transform="rotate(55 308.33 112.23)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<ellipse cx="373.2" cy="157.65" rx="12" ry="27" transform="rotate(85 373.2 157.65)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<ellipse cx="406.68" cy="229.43" rx="12" ry="27" transform="rotate(115 406.68 229.43)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<ellipse cx="399.77" cy="308.33" rx="12" ry="27" transform="rotate(145 399.77 308.33)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<ellipse cx="354.35" cy="373.2" rx="12" ry="27" transform="rotate(175 354.35 373.2)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<ellipse cx="282.57" cy="406.68" rx="12" ry="27" transform="rotate(205 282.57 406.68)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<ellipse cx="203.67" cy="399.77" rx="12" ry="27" transform="rotate(235 203.67 399.77)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<ellipse cx="138.8" cy="354.35" rx="12" ry="27" transform="rotate(265 138.8 354.35)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<ellipse cx="105.32" cy="282.57" rx="12" ry="27" transform="rotate(295 105.32 282.57)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<ellipse cx="112.23" cy="203.67" rx="12" ry="27" transform="rotate(325 112.23 203.67)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<ellipse cx="157.65" cy="138.8" rx="12" ry="27" transform="rotate(355 157.65 138.8)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<ellipse cx="229.43" cy="105.32" rx="12" ry="27" transform="rotate(385 229.43 105.32)" fill="#A8BE7A" stroke="#A8B7A2" stroke-width="2"/>
+<circle cx="256" cy="256" r="105" fill="none" stroke="#A8B7A2" stroke-width="3" stroke-dasharray="2 9"/>
+</g>
+<ellipse cx="256" cy="254" rx="31" ry="53" transform="rotate(35 256 254)" fill="#A8BE7A" stroke="#719275" stroke-width="5"/>
+        <path d="M228 286 Q256 253 286 220" fill="none" stroke="#19201B" stroke-width="7" stroke-linecap="round"/>
+        <path d="M244 267l-3-23M260 250l22 2" fill="none" stroke="#19201B" stroke-width="4" stroke-linecap="round"/>
+      <path d="M298.74 441.13L302.56 457.69" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+<path d="M256 446L256 463" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+<path d="M213.26 441.13L209.44 457.69" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EEF2E8" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="842.08" y="431.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">统一牌背</text><g transform="translate(732 475) scale(0.43)"><g id="atlas-moss-flower-disc" data-player="player-3" data-face="flower">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-moss-flower-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-moss-flower-edge)" filter="url(#atlas-moss-flower-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-moss-flower-surface)" stroke="#A8B7A2" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#6FA27C" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#6FA27C" stroke-width="7" stroke-dasharray="5 9"/>
+<ellipse cx="256" cy="212.36" rx="26.1" ry="54.28" transform="rotate(18 256 256)" fill="#EEF2E8" stroke="#719275" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="208.82" rx="29.58" ry="57.82" transform="rotate(90 256 256)" fill="#A8BE7A" stroke="#719275" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="205.28" rx="26.1" ry="61.36" transform="rotate(162 256 256)" fill="#EEF2E8" stroke="#719275" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="212.36" rx="29.58" ry="54.28" transform="rotate(234 256 256)" fill="#A8BE7A" stroke="#719275" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="208.82" rx="26.1" ry="57.82" transform="rotate(306 256 256)" fill="#EEF2E8" stroke="#719275" stroke-width="5" opacity="0.96"/>
+<path d="M256 302 Q230 352 194 370M256 302Q283 348 322 364" fill="none" stroke="#6FA27C" stroke-width="8" stroke-linecap="round"/>
+<ellipse cx="205" cy="357" rx="18" ry="35" transform="rotate(-55 205 357)" fill="#A8BE7A"/>
+<ellipse cx="313" cy="352" rx="18" ry="35" transform="rotate(55 313 352)" fill="#A8BE7A"/>
+<circle cx="256" cy="256" r="48" fill="#719275" stroke="#A8B7A2" stroke-width="6"/>
+<circle cx="256" cy="256" r="19.76" fill="#19201B"/>
+<circle cx="247" cy="247" r="5.32" fill="#EEF2E8" opacity="0.72"/>
+      <path d="M298.74 441.13L302.56 457.69" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+<path d="M256 446L256 463" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+<path d="M213.26 441.13L209.44 457.69" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EEF2E8" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="842.08" y="724.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">花牌正面</text><g transform="translate(732 768) scale(0.43)"><g id="atlas-moss-skull-disc" data-player="player-3" data-face="skull">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-moss-skull-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-moss-skull-edge)" filter="url(#atlas-moss-skull-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-moss-skull-surface)" stroke="#A8B7A2" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#B86459" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#B86459" stroke-width="7" stroke-dasharray="5 9"/>
+<path d="M256 128C169 128 145 191 158 261C165 299 188 318 211 329L211 344H301V329C324 318 347 299 354 261C367 191 343 128 256 128Z" fill="#EEF2E8" stroke="#A8B7A2" stroke-width="7" stroke-linejoin="round"/>
+<path d="M211 318L301 318L318 373Q256 401 194 373Z" fill="#EEF2E8" stroke="#A8B7A2" stroke-width="7" stroke-linejoin="round"/>
+<circle cx="218" cy="248" r="31" fill="#19201B"/><circle cx="294" cy="248" r="31" fill="#19201B"/>
+<path d="M256 270L238 303H274Z" fill="#19201B"/>
+<path d="M256 139Q250 91 269 67" fill="none" stroke="#719275" stroke-width="10" stroke-linecap="round"/><ellipse cx="238" cy="85" rx="20" ry="38" transform="rotate(-48 238 85)" fill="#A8BE7A"/><ellipse cx="283" cy="73" rx="18" ry="36" transform="rotate(42 283 73)" fill="#A8BE7A"/>
+<path d="M204 350H308" stroke="#19201B" stroke-width="7" stroke-linecap="round"/>
+<path d="M214 344V389" stroke="#19201B" stroke-width="6" stroke-linecap="round"/>
+<path d="M242 344V389" stroke="#19201B" stroke-width="6" stroke-linecap="round"/>
+<path d="M270 344V389" stroke="#19201B" stroke-width="6" stroke-linecap="round"/>
+<path d="M298 344V389" stroke="#19201B" stroke-width="6" stroke-linecap="round"/>
+      <path d="M298.74 441.13L302.56 457.69" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+<path d="M256 446L256 463" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+<path d="M213.26 441.13L209.44 457.69" stroke="#719275" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EEF2E8" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="842.08" y="1017.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">骷髅牌正面</text><text x="1128.08" y="128" text-anchor="middle" fill="#F3EFE8" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700">玩家 4 · 兰影</text><text x="1128.08" y="158" text-anchor="middle" fill="#9275A0" font-family="Arial, sans-serif" font-size="17" font-weight="700">D4 · orchid</text><g transform="translate(1018 182) scale(0.43)"><g id="atlas-orchid-back-disc" data-player="player-4" data-face="back">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-orchid-back-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-orchid-back-edge)" filter="url(#atlas-orchid-back-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-orchid-back-surface)" stroke="#BAA7C0" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#9275A0" stroke-width="3" opacity="0.7"/>
+      <g clip-path="url(#atlas-orchid-back-clip)" opacity="0.8">
+<polygon points="321.05,162.95 349.05,190.95 321.05,218.95 293.05,190.95" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="348,228 376,256 348,284 320,256" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<polygon points="321.05,293.05 349.05,321.05 321.05,349.05 293.05,321.05" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="256,320 284,348 256,376 228,348" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<polygon points="190.95,293.05 218.95,321.05 190.95,349.05 162.95,321.05" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="164,228 192,256 164,284 136,256" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<polygon points="190.95,162.95 218.95,190.95 190.95,218.95 162.95,190.95" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="256,136 284,164 256,192 228,164" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<polygon points="358.53,119.47 392.53,153.47 358.53,187.47 324.53,153.47" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="401,222 435,256 401,290 367,256" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<polygon points="358.53,324.53 392.53,358.53 358.53,392.53 324.53,358.53" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="256,367 290,401 256,435 222,401" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<polygon points="153.47,324.53 187.47,358.53 153.47,392.53 119.47,358.53" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="111,222 145,256 111,290 77,256" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<polygon points="153.47,119.47 187.47,153.47 153.47,187.47 119.47,153.47" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="256,77 290,111 256,145 222,111" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<polygon points="388.94,85.06 426.94,123.06 388.94,161.06 350.94,123.06" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="444,218 482,256 444,294 406,256" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<polygon points="388.94,350.94 426.94,388.94 388.94,426.94 350.94,388.94" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="256,406 294,444 256,482 218,444" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<polygon points="123.06,350.94 161.06,388.94 123.06,426.94 85.06,388.94" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="68,218 106,256 68,294 30,256" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<polygon points="123.06,85.06 161.06,123.06 123.06,161.06 85.06,123.06" fill="none" stroke="#9275A0" stroke-width="4"/>
+<polygon points="256,30 294,68 256,106 218,68" fill="none" stroke="#C6A0CB" stroke-width="4"/>
+<circle cx="256" cy="256" r="177" fill="none" stroke="#BAA7C0" stroke-width="2"/>
+</g>
+<polygon points="256,201 310,256 256,311 202,256" fill="#9275A0" stroke="#C6A0CB" stroke-width="6"/>
+        <polygon points="256,221 291,256 256,291 221,256" fill="#1E1922" stroke="#F4EDF5" stroke-width="3" opacity="0.9"/>
+      <path d="M319.42 435.1L325.1 451.13" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+<path d="M277.51 444.78L279.43 461.67" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+<path d="M234.49 444.78L232.57 461.67" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+<path d="M192.58 435.1L186.9 451.13" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#F4EDF5" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="1128.08" y="431.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">统一牌背</text><g transform="translate(1018 475) scale(0.43)"><g id="atlas-orchid-flower-disc" data-player="player-4" data-face="flower">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-orchid-flower-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-orchid-flower-edge)" filter="url(#atlas-orchid-flower-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-orchid-flower-surface)" stroke="#BAA7C0" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#7DA486" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#7DA486" stroke-width="7" stroke-dasharray="5 9"/>
+<ellipse cx="256" cy="199.52" rx="37" ry="66" transform="rotate(45 256 256)" fill="#F4EDF5" stroke="#9275A0" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="211.4" rx="28.86" ry="54.12" transform="rotate(135 256 256)" fill="#C6A0CB" stroke="#9275A0" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="199.52" rx="37" ry="66" transform="rotate(225 256 256)" fill="#F4EDF5" stroke="#9275A0" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="211.4" rx="28.86" ry="54.12" transform="rotate(315 256 256)" fill="#C6A0CB" stroke="#9275A0" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="226.5" rx="17.76" ry="36.3" transform="rotate(75 256 256)" fill="#C6A0CB" stroke="#BAA7C0" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="226.5" rx="17.76" ry="36.3" transform="rotate(135 256 256)" fill="#C6A0CB" stroke="#BAA7C0" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="226.5" rx="17.76" ry="36.3" transform="rotate(195 256 256)" fill="#C6A0CB" stroke="#BAA7C0" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="226.5" rx="17.76" ry="36.3" transform="rotate(255 256 256)" fill="#C6A0CB" stroke="#BAA7C0" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="226.5" rx="17.76" ry="36.3" transform="rotate(315 256 256)" fill="#C6A0CB" stroke="#BAA7C0" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="226.5" rx="17.76" ry="36.3" transform="rotate(375 256 256)" fill="#C6A0CB" stroke="#BAA7C0" stroke-width="3" opacity="0.82"/>
+<path d="M226 270 Q256 318 286 270 Q278 330 256 347 Q234 330 226 270Z" fill="#9275A0" stroke="#BAA7C0" stroke-width="4"/>
+<circle cx="256" cy="256" r="44" fill="#9275A0" stroke="#BAA7C0" stroke-width="6"/>
+<circle cx="256" cy="256" r="17.68" fill="#1E1922"/>
+<circle cx="247" cy="247" r="5" fill="#F4EDF5" opacity="0.72"/>
+      <path d="M319.42 435.1L325.1 451.13" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+<path d="M277.51 444.78L279.43 461.67" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+<path d="M234.49 444.78L232.57 461.67" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+<path d="M192.58 435.1L186.9 451.13" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#F4EDF5" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="1128.08" y="724.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">花牌正面</text><g transform="translate(1018 768) scale(0.43)"><g id="atlas-orchid-skull-disc" data-player="player-4" data-face="skull">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-orchid-skull-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-orchid-skull-edge)" filter="url(#atlas-orchid-skull-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-orchid-skull-surface)" stroke="#BAA7C0" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#C16877" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#C16877" stroke-width="7" stroke-dasharray="5 9"/>
+<circle cx="256" cy="210" r="126" fill="none" stroke="#C6A0CB" stroke-width="12" opacity="0.74"/><circle cx="256" cy="210" r="145" fill="none" stroke="#9275A0" stroke-width="4" stroke-dasharray="5 10"/>
+<path d="M256 104L343 137L365 222C372 276 337 319 306 337L306 350H206V337C175 319 140 276 147 222L169 137Z" fill="#F4EDF5" stroke="#BAA7C0" stroke-width="7" stroke-linejoin="round"/>
+<path d="M206 326L306 326L320 386L256 411L192 386Z" fill="#F4EDF5" stroke="#BAA7C0" stroke-width="7" stroke-linejoin="round"/>
+<polygon points="218,211 249,246 218,281 187,246" fill="#1E1922"/><polygon points="294,211 325,246 294,281 263,246" fill="#1E1922"/>
+<path d="M256 270L238 303H274Z" fill="#1E1922"/>
+<path d="M204 350H308" stroke="#1E1922" stroke-width="7" stroke-linecap="round"/>
+<path d="M214 344V389" stroke="#1E1922" stroke-width="6" stroke-linecap="round"/>
+<path d="M235 344V389" stroke="#1E1922" stroke-width="6" stroke-linecap="round"/>
+<path d="M256 344V389" stroke="#1E1922" stroke-width="6" stroke-linecap="round"/>
+<path d="M277 344V389" stroke="#1E1922" stroke-width="6" stroke-linecap="round"/>
+<path d="M298 344V389" stroke="#1E1922" stroke-width="6" stroke-linecap="round"/>
+      <path d="M319.42 435.1L325.1 451.13" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+<path d="M277.51 444.78L279.43 461.67" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+<path d="M234.49 444.78L232.57 461.67" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+<path d="M192.58 435.1L186.9 451.13" stroke="#9275A0" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#F4EDF5" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="1128.08" y="1017.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">骷髅牌正面</text><text x="1414.08" y="128" text-anchor="middle" fill="#F3EFE8" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700">玩家 5 · 赭石</text><text x="1414.08" y="158" text-anchor="middle" fill="#B78B45" font-family="Arial, sans-serif" font-size="17" font-weight="700">E5 · ochre</text><g transform="translate(1304 182) scale(0.43)"><g id="atlas-ochre-back-disc" data-player="player-5" data-face="back">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-ochre-back-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-ochre-back-edge)" filter="url(#atlas-ochre-back-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-ochre-back-surface)" stroke="#C0AE8B" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#B78B45" stroke-width="3" opacity="0.7"/>
+      <g clip-path="url(#atlas-ochre-back-clip)" opacity="0.86">
+<polygon points="267.65,212.53 326.43,81.69 277.82,216.64" fill="#D1B56C" opacity="0.72"/>
+<polygon points="294.97,233.5 394.08,197.39 299.26,243.6" fill="#B78B45" opacity="0.72"/>
+<polygon points="299.47,267.65 430.31,326.43 295.36,277.82" fill="#D1B56C" opacity="0.72"/>
+<polygon points="278.5,294.97 314.61,394.08 268.4,299.26" fill="#B78B45" opacity="0.72"/>
+<polygon points="244.35,299.47 185.57,430.31 234.18,295.36" fill="#D1B56C" opacity="0.72"/>
+<polygon points="217.03,278.5 117.92,314.61 212.74,268.4" fill="#B78B45" opacity="0.72"/>
+<polygon points="212.53,244.35 81.69,185.57 216.64,234.18" fill="#D1B56C" opacity="0.72"/>
+<polygon points="233.5,217.03 197.39,117.92 243.6,212.74" fill="#B78B45" opacity="0.72"/>
+<circle cx="256" cy="256" r="90" fill="none" stroke="#C0AE8B" stroke-width="3"/>
+<circle cx="256" cy="256" r="169" fill="none" stroke="#C0AE8B" stroke-width="3"/>
+</g>
+<polygon points="278.2,202.41 273.68,238.32 309.59,233.8 281,256 309.59,278.2 273.68,273.68 278.2,309.59 256,281 233.8,309.59 238.32,273.68 202.41,278.2 231,256 202.41,233.8 238.32,238.32 233.8,202.41 256,231" fill="#B78B45" stroke="#D1B56C" stroke-width="5"/>
+        <circle cx="256" cy="256" r="13" fill="#211D16"/>
+      <path d="M339.29 426.77L346.74 442.05" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M298.74 441.13L302.56 457.69" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M256 446L256 463" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M213.26 441.13L209.44 457.69" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M172.71 426.77L165.26 442.05" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#F4EEDF" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="1414.08" y="431.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">统一牌背</text><g transform="translate(1304 475) scale(0.43)"><g id="atlas-ochre-flower-disc" data-player="player-5" data-face="flower">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-ochre-flower-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-ochre-flower-edge)" filter="url(#atlas-ochre-flower-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-ochre-flower-surface)" stroke="#C0AE8B" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#789D72" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#789D72" stroke-width="7" stroke-dasharray="5 9"/>
+<ellipse cx="256" cy="215.32" rx="20" ry="53" transform="rotate(18 256 256)" fill="#F4EEDF" stroke="#B78B45" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="215.32" rx="20" ry="53" transform="rotate(54 256 256)" fill="#D1B56C" stroke="#B78B45" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="215.32" rx="20" ry="53" transform="rotate(90 256 256)" fill="#F4EEDF" stroke="#B78B45" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="215.32" rx="20" ry="53" transform="rotate(126 256 256)" fill="#D1B56C" stroke="#B78B45" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="215.32" rx="20" ry="53" transform="rotate(162 256 256)" fill="#F4EEDF" stroke="#B78B45" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="215.32" rx="20" ry="53" transform="rotate(198 256 256)" fill="#D1B56C" stroke="#B78B45" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="215.32" rx="20" ry="53" transform="rotate(234 256 256)" fill="#F4EEDF" stroke="#B78B45" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="215.32" rx="20" ry="53" transform="rotate(270 256 256)" fill="#D1B56C" stroke="#B78B45" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="215.32" rx="20" ry="53" transform="rotate(306 256 256)" fill="#F4EEDF" stroke="#B78B45" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="215.32" rx="20" ry="53" transform="rotate(342 256 256)" fill="#D1B56C" stroke="#B78B45" stroke-width="5" opacity="0.96"/>
+<ellipse cx="256" cy="235.65" rx="9.6" ry="29.15" transform="rotate(36 256 256)" fill="#D1B56C" stroke="#C0AE8B" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="235.65" rx="9.6" ry="29.15" transform="rotate(72 256 256)" fill="#D1B56C" stroke="#C0AE8B" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="235.65" rx="9.6" ry="29.15" transform="rotate(108 256 256)" fill="#D1B56C" stroke="#C0AE8B" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="235.65" rx="9.6" ry="29.15" transform="rotate(144 256 256)" fill="#D1B56C" stroke="#C0AE8B" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="235.65" rx="9.6" ry="29.15" transform="rotate(180 256 256)" fill="#D1B56C" stroke="#C0AE8B" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="235.65" rx="9.6" ry="29.15" transform="rotate(216 256 256)" fill="#D1B56C" stroke="#C0AE8B" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="235.65" rx="9.6" ry="29.15" transform="rotate(252 256 256)" fill="#D1B56C" stroke="#C0AE8B" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="235.65" rx="9.6" ry="29.15" transform="rotate(288 256 256)" fill="#D1B56C" stroke="#C0AE8B" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="235.65" rx="9.6" ry="29.15" transform="rotate(324 256 256)" fill="#D1B56C" stroke="#C0AE8B" stroke-width="3" opacity="0.82"/>
+<ellipse cx="256" cy="235.65" rx="9.6" ry="29.15" transform="rotate(360 256 256)" fill="#D1B56C" stroke="#C0AE8B" stroke-width="3" opacity="0.82"/>
+<circle cx="256" cy="256" r="54" fill="#B78B45" stroke="#C0AE8B" stroke-width="6"/>
+<circle cx="256" cy="256" r="22.880000000000003" fill="#211D16"/>
+<circle cx="247" cy="247" r="6.16" fill="#F4EEDF" opacity="0.72"/>
+      <path d="M339.29 426.77L346.74 442.05" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M298.74 441.13L302.56 457.69" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M256 446L256 463" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M213.26 441.13L209.44 457.69" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M172.71 426.77L165.26 442.05" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#F4EEDF" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="1414.08" y="724.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">花牌正面</text><g transform="translate(1304 768) scale(0.43)"><g id="atlas-ochre-skull-disc" data-player="player-5" data-face="skull">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-ochre-skull-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-ochre-skull-edge)" filter="url(#atlas-ochre-skull-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-ochre-skull-surface)" stroke="#C0AE8B" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#BD6651" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#BD6651" stroke-width="7" stroke-dasharray="5 9"/>
+<path d="M256 103L331 127L371 205L350 291L310 329L310 348H202V329L162 291L141 205L181 127Z" fill="#F4EEDF" stroke="#C0AE8B" stroke-width="7" stroke-linejoin="round"/>
+<path d="M202 320L310 320L324 381L298 406H214L188 381Z" fill="#F4EEDF" stroke="#C0AE8B" stroke-width="7" stroke-linejoin="round"/>
+<path d="M184 246Q218 222 246 246Q218 266 184 246Z" fill="#211D16"/><path d="M266 246Q294 222 328 246Q294 266 266 246Z" fill="#211D16"/>
+<path d="M256 270L238 303H274Z" fill="#211D16"/>
+<polygon points="274.37,132.65 268.73,164.27 300.35,158.63 274,177 300.35,195.37 268.73,189.73 274.37,221.35 256,195 237.63,221.35 243.27,189.73 211.65,195.37 238,177 211.65,158.63 243.27,164.27 237.63,132.65 256,159" fill="#B78B45" stroke="#D1B56C" stroke-width="4"/><circle cx="256" cy="177" r="9" fill="#211D16"/>
+<path d="M204 350H308" stroke="#211D16" stroke-width="7" stroke-linecap="round"/>
+<path d="M214 344V389" stroke="#211D16" stroke-width="6" stroke-linecap="round"/>
+<path d="M230.8 344V389" stroke="#211D16" stroke-width="6" stroke-linecap="round"/>
+<path d="M247.6 344V389" stroke="#211D16" stroke-width="6" stroke-linecap="round"/>
+<path d="M264.4 344V389" stroke="#211D16" stroke-width="6" stroke-linecap="round"/>
+<path d="M281.2 344V389" stroke="#211D16" stroke-width="6" stroke-linecap="round"/>
+<path d="M298 344V389" stroke="#211D16" stroke-width="6" stroke-linecap="round"/>
+      <path d="M339.29 426.77L346.74 442.05" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M298.74 441.13L302.56 457.69" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M256 446L256 463" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M213.26 441.13L209.44 457.69" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+<path d="M172.71 426.77L165.26 442.05" stroke="#B78B45" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#F4EEDF" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="1414.08" y="1017.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">骷髅牌正面</text><text x="1700.08" y="128" text-anchor="middle" fill="#F3EFE8" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="27" font-weight="700">玩家 6 · 岩板</text><text x="1700.08" y="158" text-anchor="middle" fill="#75828F" font-family="Arial, sans-serif" font-size="17" font-weight="700">F6 · slate</text><g transform="translate(1590 182) scale(0.43)"><g id="atlas-slate-back-disc" data-player="player-6" data-face="back">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-slate-back-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-slate-back-edge)" filter="url(#atlas-slate-back-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-slate-back-surface)" stroke="#ABB3BC" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#75828F" stroke-width="3" opacity="0.7"/>
+      <g clip-path="url(#atlas-slate-back-clip)" opacity="0.76">
+<polygon points="171,49.89 188,79.33 171,108.78 137,108.78 120,79.33 137,49.89" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="222,79.33 239,108.78 222,138.22 188,138.22 171,108.78 188,79.33" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="273,49.89 290,79.33 273,108.78 239,108.78 222,79.33 239,49.89" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="324,79.33 341,108.78 324,138.22 290,138.22 273,108.78 290,79.33" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="375,49.89 392,79.33 375,108.78 341,108.78 324,79.33 341,49.89" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="120,138.22 137,167.67 120,197.11 86,197.11 69,167.67 86,138.22" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="171,108.78 188,138.22 171,167.67 137,167.67 120,138.22 137,108.78" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="222,138.22 239,167.67 222,197.11 188,197.11 171,167.67 188,138.22" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="273,108.78 290,138.22 273,167.67 239,167.67 222,138.22 239,108.78" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="324,138.22 341,167.67 324,197.11 290,197.11 273,167.67 290,138.22" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="375,108.78 392,138.22 375,167.67 341,167.67 324,138.22 341,108.78" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="426,138.22 443,167.67 426,197.11 392,197.11 375,167.67 392,138.22" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="120,197.11 137,226.56 120,256 86,256 69,226.56 86,197.11" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="171,167.67 188,197.11 171,226.56 137,226.56 120,197.11 137,167.67" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="222,197.11 239,226.56 222,256 188,256 171,226.56 188,197.11" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="273,167.67 290,197.11 273,226.56 239,226.56 222,197.11 239,167.67" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="324,197.11 341,226.56 324,256 290,256 273,226.56 290,197.11" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="375,167.67 392,197.11 375,226.56 341,226.56 324,197.11 341,167.67" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="426,197.11 443,226.56 426,256 392,256 375,226.56 392,197.11" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="69,226.56 86,256 69,285.44 35,285.44 18,256 35,226.56" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="120,256 137,285.44 120,314.89 86,314.89 69,285.44 86,256" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="171,226.56 188,256 171,285.44 137,285.44 120,256 137,226.56" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="222,256 239,285.44 222,314.89 188,314.89 171,285.44 188,256" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="273,226.56 290,256 273,285.44 239,285.44 222,256 239,226.56" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="324,256 341,285.44 324,314.89 290,314.89 273,285.44 290,256" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="375,226.56 392,256 375,285.44 341,285.44 324,256 341,226.56" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="426,256 443,285.44 426,314.89 392,314.89 375,285.44 392,256" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="477,226.56 494,256 477,285.44 443,285.44 426,256 443,226.56" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="120,314.89 137,344.33 120,373.78 86,373.78 69,344.33 86,314.89" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="171,285.44 188,314.89 171,344.33 137,344.33 120,314.89 137,285.44" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="222,314.89 239,344.33 222,373.78 188,373.78 171,344.33 188,314.89" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="273,285.44 290,314.89 273,344.33 239,344.33 222,314.89 239,285.44" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="324,314.89 341,344.33 324,373.78 290,373.78 273,344.33 290,314.89" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="375,285.44 392,314.89 375,344.33 341,344.33 324,314.89 341,285.44" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="426,314.89 443,344.33 426,373.78 392,373.78 375,344.33 392,314.89" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="171,344.33 188,373.78 171,403.22 137,403.22 120,373.78 137,344.33" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="222,373.78 239,403.22 222,432.67 188,432.67 171,403.22 188,373.78" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="273,344.33 290,373.78 273,403.22 239,403.22 222,373.78 239,344.33" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="324,373.78 341,403.22 324,432.67 290,432.67 273,403.22 290,373.78" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="375,344.33 392,373.78 375,403.22 341,403.22 324,373.78 341,344.33" fill="none" stroke="#75828F" stroke-width="3"/>
+<polygon points="171,403.22 188,432.67 171,462.11 137,462.11 120,432.67 137,403.22" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="273,403.22 290,432.67 273,462.11 239,462.11 222,432.67 239,403.22" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<polygon points="375,403.22 392,432.67 375,462.11 341,462.11 324,432.67 341,403.22" fill="none" stroke="#9DAAB5" stroke-width="3"/>
+<circle cx="256" cy="256" r="178" fill="none" stroke="#ABB3BC" stroke-width="4"/>
+</g>
+<polygon points="283.5,208.37 311,256 283.5,303.63 228.5,303.63 201,256 228.5,208.37" fill="#75828F" stroke="#9DAAB5" stroke-width="6"/>
+    <polygon points="256,226 281.98,241 281.98,271 256,286 230.02,271 230.02,241" fill="#181C20" stroke="#EEF1F4" stroke-width="3"/>
+      <path d="M358.09 416.24L367.22 430.58" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M319.42 435.1L325.1 451.13" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M277.51 444.78L279.43 461.67" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M234.49 444.78L232.57 461.67" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M192.58 435.1L186.9 451.13" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M153.91 416.24L144.78 430.58" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EEF1F4" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="1700.08" y="431.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">统一牌背</text><g transform="translate(1590 475) scale(0.43)"><g id="atlas-slate-flower-disc" data-player="player-6" data-face="flower">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-slate-flower-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-slate-flower-edge)" filter="url(#atlas-slate-flower-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-slate-flower-surface)" stroke="#ABB3BC" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#719A83" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#719A83" stroke-width="7" stroke-dasharray="5 9"/>
+<polygon points="259.9,228.27 269.51,192.46 314,155.54 304.27,212.53 278.06,238.76" fill="#EEF1F4" stroke="#75828F" stroke-width="5" opacity="0.95"/>
+<polygon points="281.96,245.51 317.78,235.93 372,256 317.78,276.07 281.96,266.49" fill="#EEF1F4" stroke="#75828F" stroke-width="5" opacity="0.95"/>
+<polygon points="278.06,273.24 304.27,299.47 314,356.46 269.51,319.54 259.9,283.73" fill="#EEF1F4" stroke="#75828F" stroke-width="5" opacity="0.95"/>
+<polygon points="252.1,283.73 242.49,319.54 198,356.46 207.73,299.47 233.94,273.24" fill="#EEF1F4" stroke="#75828F" stroke-width="5" opacity="0.95"/>
+<polygon points="230.04,266.49 194.22,276.07 140,256 194.22,235.93 230.04,245.51" fill="#EEF1F4" stroke="#75828F" stroke-width="5" opacity="0.95"/>
+<polygon points="233.94,238.76 207.73,212.53 198,155.54 242.49,192.46 252.1,228.27" fill="#EEF1F4" stroke="#75828F" stroke-width="5" opacity="0.95"/>
+<circle cx="256" cy="256" r="50" fill="#75828F" stroke="#ABB3BC" stroke-width="6"/>
+<circle cx="256" cy="256" r="20.8" fill="#181C20"/>
+<circle cx="247" cy="247" r="5.6000000000000005" fill="#EEF1F4" opacity="0.72"/>
+      <path d="M358.09 416.24L367.22 430.58" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M319.42 435.1L325.1 451.13" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M277.51 444.78L279.43 461.67" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M234.49 444.78L232.57 461.67" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M192.58 435.1L186.9 451.13" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M153.91 416.24L144.78 430.58" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EEF1F4" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="1700.08" y="724.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">花牌正面</text><g transform="translate(1590 768) scale(0.43)"><g id="atlas-slate-skull-disc" data-player="player-6" data-face="skull">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#atlas-slate-skull-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#atlas-slate-skull-edge)" filter="url(#atlas-slate-skull-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#atlas-slate-skull-surface)" stroke="#ABB3BC" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#B76065" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#B76065" stroke-width="7" stroke-dasharray="5 9"/>
+<path d="M256 101L328 125L366 189L359 274L315 329L315 348H197V329L153 274L146 189L184 125Z" fill="#EEF1F4" stroke="#ABB3BC" stroke-width="7" stroke-linejoin="round"/>
+<path d="M197 321L315 321L327 378L296 408H216L185 378Z" fill="#EEF1F4" stroke="#ABB3BC" stroke-width="7" stroke-linejoin="round"/>
+<polygon points="235,216.56 252,246 235,275.44 201,275.44 184,246 201,216.56" fill="#181C20"/><polygon points="311,216.56 328,246 311,275.44 277,275.44 260,246 277,216.56" fill="#181C20"/>
+<path d="M256 270L238 303H274Z" fill="#181C20"/>
+<path d="M256 111L226 184L256 214L286 184ZM154 226L218 245L196 310M358 226L294 245L316 310M201 326L256 286L311 326" fill="none" stroke="#75828F" stroke-width="7" stroke-linejoin="round" opacity="0.88"/>
+<path d="M204 350H308" stroke="#181C20" stroke-width="7" stroke-linecap="round"/>
+<path d="M214 344V389" stroke="#181C20" stroke-width="6" stroke-linecap="round"/>
+<path d="M242 344V389" stroke="#181C20" stroke-width="6" stroke-linecap="round"/>
+<path d="M270 344V389" stroke="#181C20" stroke-width="6" stroke-linecap="round"/>
+<path d="M298 344V389" stroke="#181C20" stroke-width="6" stroke-linecap="round"/>
+      <path d="M358.09 416.24L367.22 430.58" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M319.42 435.1L325.1 451.13" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M277.51 444.78L279.43 461.67" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M234.49 444.78L232.57 461.67" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M192.58 435.1L186.9 451.13" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M153.91 416.24L144.78 430.58" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EEF1F4" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g></g><text x="1700.08" y="1017.16" text-anchor="middle" fill="#AEB5BC" font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif" font-size="17">骷髅牌正面</text>
+</svg>

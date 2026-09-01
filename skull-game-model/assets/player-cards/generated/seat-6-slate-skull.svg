@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc" data-model-version="1.0.0">
+  <title id="title">岩板切面骷髅牌正面</title>
+  <desc id="desc">玩家六岩板套牌。翻开后令挑战立即失败的骷髅牌正面。原创中性占位设计，不含官方美术。</desc>
+  <defs>
+    <radialGradient id="slate-skull-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#454D56"/>
+      <stop offset="0.68" stop-color="#292E34"/>
+      <stop offset="1" stop-color="#181C20"/>
+    </radialGradient>
+    <linearGradient id="slate-skull-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ABB3BC"/>
+      <stop offset="0.48" stop-color="#75828F"/>
+      <stop offset="1" stop-color="#181C20"/>
+    </linearGradient>
+    <filter id="slate-skull-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="slate-skull-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="slate-skull-clip"><circle cx="256" cy="256" r="208"/></clipPath>
+  </defs>
+  <g id="slate-skull-disc" data-player="player-6" data-face="skull">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#slate-skull-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#slate-skull-edge)" filter="url(#slate-skull-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#slate-skull-surface)" stroke="#ABB3BC" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#B76065" stroke-width="3" opacity="0.7"/>
+      <circle cx="256" cy="256" r="183" fill="none" stroke="#B76065" stroke-width="7" stroke-dasharray="5 9"/>
+<path d="M256 101L328 125L366 189L359 274L315 329L315 348H197V329L153 274L146 189L184 125Z" fill="#EEF1F4" stroke="#ABB3BC" stroke-width="7" stroke-linejoin="round"/>
+<path d="M197 321L315 321L327 378L296 408H216L185 378Z" fill="#EEF1F4" stroke="#ABB3BC" stroke-width="7" stroke-linejoin="round"/>
+<polygon points="235,216.56 252,246 235,275.44 201,275.44 184,246 201,216.56" fill="#181C20"/><polygon points="311,216.56 328,246 311,275.44 277,275.44 260,246 277,216.56" fill="#181C20"/>
+<path d="M256 270L238 303H274Z" fill="#181C20"/>
+<path d="M256 111L226 184L256 214L286 184ZM154 226L218 245L196 310M358 226L294 245L316 310M201 326L256 286L311 326" fill="none" stroke="#75828F" stroke-width="7" stroke-linejoin="round" opacity="0.88"/>
+<path d="M204 350H308" stroke="#181C20" stroke-width="7" stroke-linecap="round"/>
+<path d="M214 344V389" stroke="#181C20" stroke-width="6" stroke-linecap="round"/>
+<path d="M242 344V389" stroke="#181C20" stroke-width="6" stroke-linecap="round"/>
+<path d="M270 344V389" stroke="#181C20" stroke-width="6" stroke-linecap="round"/>
+<path d="M298 344V389" stroke="#181C20" stroke-width="6" stroke-linecap="round"/>
+      <path d="M358.09 416.24L367.22 430.58" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M319.42 435.1L325.1 451.13" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M277.51 444.78L279.43 461.67" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M234.49 444.78L232.57 461.67" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M192.58 435.1L186.9 451.13" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+<path d="M153.91 416.24L144.78 430.58" stroke="#75828F" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EEF1F4" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g>
+</svg>

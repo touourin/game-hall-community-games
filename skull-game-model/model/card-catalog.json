@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "gameKey": "skull",
+  "terminology": {
+    "disc": "圆牌",
+    "flower": "花牌",
+    "skull": "骷髅牌",
+    "mat": "玩家垫",
+    "challenger": "挑战者"
+  },
+  "geometry": {
+    "shape": "circle",
+    "logicalDiameter": 88,
+    "minimumHitTarget": 96,
+    "stackOffset": 8,
+    "units": "css-px"
+  },
+  "playerCardModelRef": "./player-card-models.json",
+  "generatedAssetManifestRef": "../assets/player-cards/manifest.json",
+  "personalSet": {
+    "copiesPerPlayer": 4,
+    "composition": {
+      "flower": 3,
+      "skull": 1
+    },
+    "identicalBacksWithinSet": true
+  },
+  "discTypes": [
+    {
+      "id": "flower",
+      "label": "花牌",
+      "origin": "personal",
+      "publicWhenFaceDown": false,
+      "endsChallengeOnReveal": false,
+      "semanticRole": "safe"
+    },
+    {
+      "id": "skull",
+      "label": "骷髅牌",
+      "origin": "personal",
+      "publicWhenFaceDown": false,
+      "endsChallengeOnReveal": true,
+      "semanticRole": "danger"
+    },
+    {
+      "id": "last_chance_flower",
+      "label": "最后机会牌",
+      "origin": "last_chance",
+      "publicWhenFaceDown": true,
+      "endsChallengeOnReveal": false,
+      "semanticRole": "public-safe"
+    }
+  ],
+  "sharedSupply": {
+    "lastChanceDiscCount": 1,
+    "enabledByRule": "lastChanceEnabled"
+  },
+  "matSides": [
+    {
+      "id": "blank",
+      "label": "空白面",
+      "challengeWins": 0
+    },
+    {
+      "id": "flower",
+      "label": "花面",
+      "challengeWins": 1
+    }
+  ],
+  "placeholderThemes": [
+    {
+      "id": "ember",
+      "playerModelId": "player-1",
+      "label": "余烬",
+      "surface": "#302B2A",
+      "edge": "#A89482",
+      "accent": "#C86B56"
+    },
+    {
+      "id": "tide",
+      "playerModelId": "player-2",
+      "label": "潮汐",
+      "surface": "#202B33",
+      "edge": "#94A8B5",
+      "accent": "#5F91AA"
+    },
+    {
+      "id": "moss",
+      "playerModelId": "player-3",
+      "label": "苔原",
+      "surface": "#29302B",
+      "edge": "#9FAE9E",
+      "accent": "#6F9275"
+    },
+    {
+      "id": "orchid",
+      "playerModelId": "player-4",
+      "label": "兰影",
+      "surface": "#302A34",
+      "edge": "#ADA0B4",
+      "accent": "#8E719B"
+    },
+    {
+      "id": "ochre",
+      "playerModelId": "player-5",
+      "label": "赭石",
+      "surface": "#342F25",
+      "edge": "#B4A68C",
+      "accent": "#B28A4E"
+    },
+    {
+      "id": "slate",
+      "playerModelId": "player-6",
+      "label": "岩板",
+      "surface": "#292D31",
+      "edge": "#A4ABB2",
+      "accent": "#727E8A"
+    }
+  ],
+  "semanticColors": {
+    "safe": "#6E9E7B",
+    "danger": "#B45F5F",
+    "focus": "#D0A85C",
+    "unknown": "#777A7F"
+  },
+  "copyrightBoundary": "Original neutral placeholders only; do not reproduce official Skull artwork, logos, or tribe illustrations."
+}

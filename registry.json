@@ -37,6 +37,12 @@
       "path": "plugin-blokus",
       "status": "enabled",
       "order": 150
+    },
+    {
+      "id": "plugin-bomb-people",
+      "path": "plugin-bomb-people",
+      "status": "enabled",
+      "order": 160
     }
   ]
 }

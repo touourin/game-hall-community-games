@@ -513,6 +513,7 @@ class SkullEngine:
         state.phase = "bidding"
         round_state.current_bid = count
         round_state.high_bidder_id = player.id
+        self._reset_bid_passes(state)
         round_state.current_player_id = self._next_bid_actor(state, player.id)
         state.public_history.append({
             "type": "open_bid",
@@ -539,6 +540,9 @@ class SkullEngine:
         )
         round_state.current_bid = count
         round_state.high_bidder_id = player.id
+        # 暂不跟价只针对上一口最高叫价。出现新叫价后，所有仍在场的
+        # 玩家（包括此前暂不跟价者）都必须重新获得回应机会。
+        self._reset_bid_passes(state)
         round_state.current_player_id = self._next_bid_actor(state, player.id)
         state.public_history.append({
             "type": "raise_bid",
@@ -556,24 +560,21 @@ class SkullEngine:
         player: ArcadePlayer,
         _payload: dict[str, Any],
     ) -> None:
-        self._require_turn(state, player.id, "bidding", "还没有轮到你退出竞标")
+        self._require_turn(state, player.id, "bidding", "还没有轮到你回应当前叫价")
         round_state = self._round(state)
         if player.id == round_state.high_bidder_id:
-            raise GameRuleError("当前最高叫价者不能退出自己的叫价")
+            raise GameRuleError("当前最高叫价者无需回应自己的叫价")
         if player.id in round_state.passed_player_ids:
-            raise GameRuleError("你已经退出本轮竞标")
+            raise GameRuleError("你已经暂不跟进当前叫价")
         round_state.passed_player_ids.append(player.id)
         state.players[player.id].passed_bid = True
         state.public_history.append({
             "type": "pass_bid",
             "playerId": player.id,
-            "message": f"{player.name} 退出本轮竞标",
+            "count": round_state.current_bid,
+            "message": f"{player.name} 暂不跟进 {round_state.current_bid} 枚的叫价",
         })
-        eligible = [
-            player_id for player_id in self._active_ids(state)
-            if player_id not in round_state.passed_player_ids
-        ]
-        if eligible == [round_state.high_bidder_id]:
+        if not self._waiting_bid_actor_ids(state):
             self._begin_challenge(room, state)
         else:
             round_state.current_player_id = self._next_bid_actor(state, player.id)
@@ -1027,13 +1028,12 @@ class SkullEngine:
             return
 
         if phase == "bidding":
-            if player.id not in round_state.passed_player_ids:
-                round_state.passed_player_ids.append(player.id)
-            eligible = [
-                player_id for player_id in active_ids
-                if player_id not in round_state.passed_player_ids
+            round_state.passed_player_ids = [
+                player_id for player_id in round_state.passed_player_ids
+                if player_id in active_ids
             ]
-            if eligible == [round_state.high_bidder_id]:
+            state.players[player.id].passed_bid = False
+            if not self._waiting_bid_actor_ids(state):
                 self._begin_challenge(room, state)
             elif was_current:
                 round_state.current_player_id = self._next_bid_actor(state, player.id)
@@ -1317,3 +1317,20 @@ class SkullEngine:
             ):
                 return candidate
         return None
+
+    @classmethod
+    def _waiting_bid_actor_ids(cls, state: SkullState) -> list[str]:
+        """Players who have not answered the latest highest bid yet."""
+        round_state = cls._round(state)
+        return [
+            player_id for player_id in cls._active_ids(state)
+            if player_id != round_state.high_bidder_id
+            and player_id not in round_state.passed_player_ids
+        ]
+
+    @classmethod
+    def _reset_bid_passes(cls, state: SkullState) -> None:
+        """Reactivate every player whenever a new highest bid is made."""
+        cls._round(state).passed_player_ids.clear()
+        for player_state in state.players.values():
+            player_state.passed_bid = False

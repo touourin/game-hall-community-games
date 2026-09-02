@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" data-model-version="1" role="img" aria-labelledby="title desc">
+  <title id="title">谁是牛头王牌桌场景蓝图</title>
+  <desc id="desc">包括玩家计分轨、同时揭示轨、四条五卡行和底部私有手牌区。</desc>
+  <style>
+    .label { font: 700 18px 'Microsoft YaHei', sans-serif; fill: #f6e8c8; letter-spacing: .08em; }
+    .row-label { font: 700 17px 'Microsoft YaHei', sans-serif; fill: #c8ded8; }
+    .hint { font: 500 14px 'Microsoft YaHei', sans-serif; fill: #89aaa4; }
+    .zone { fill: #0c3437; stroke: #ba8b3f; stroke-width: 2; }
+    .slot { fill: #f8f0dd; fill-opacity: .08; stroke: #7fa099; stroke-width: 2; stroke-dasharray: 7 6; }
+  </style>
+  <rect width="1440" height="900" rx="30" fill="#061a1d"/>
+  <rect x="54" y="48" width="1332" height="86" rx="18" class="zone"/>
+  <text x="82" y="83" class="label">PLAYER SCORE RAIL</text>
+  <text x="82" y="112" class="hint">2–10 个席位：提交状态 / 本轮牛头 / 累计牛头</text>
+  <rect x="242" y="156" width="956" height="560" rx="34" fill="#0a3032" stroke="#315d59" stroke-width="3"/>
+  <rect x="326" y="169" width="628" height="36" rx="18" class="zone"/>
+  <text x="640" y="193" text-anchor="middle" class="hint">同时揭示轨 · 由小到大</text>
+  <text x="212" y="273" class="row-label">第 1 行</text><rect x="326" y="218" width="102" height="92" rx="10" class="slot"/><rect x="452" y="218" width="102" height="92" rx="10" class="slot"/><rect x="578" y="218" width="102" height="92" rx="10" class="slot"/><rect x="704" y="218" width="102" height="92" rx="10" class="slot"/><rect x="830" y="218" width="102" height="92" rx="10" class="slot"/><text x="212" y="391" class="row-label">第 2 行</text><rect x="326" y="336" width="102" height="92" rx="10" class="slot"/><rect x="452" y="336" width="102" height="92" rx="10" class="slot"/><rect x="578" y="336" width="102" height="92" rx="10" class="slot"/><rect x="704" y="336" width="102" height="92" rx="10" class="slot"/><rect x="830" y="336" width="102" height="92" rx="10" class="slot"/><text x="212" y="509" class="row-label">第 3 行</text><rect x="326" y="454" width="102" height="92" rx="10" class="slot"/><rect x="452" y="454" width="102" height="92" rx="10" class="slot"/><rect x="578" y="454" width="102" height="92" rx="10" class="slot"/><rect x="704" y="454" width="102" height="92" rx="10" class="slot"/><rect x="830" y="454" width="102" height="92" rx="10" class="slot"/><text x="212" y="627" class="row-label">第 4 行</text><rect x="326" y="572" width="102" height="92" rx="10" class="slot"/><rect x="452" y="572" width="102" height="92" rx="10" class="slot"/><rect x="578" y="572" width="102" height="92" rx="10" class="slot"/><rect x="704" y="572" width="102" height="92" rx="10" class="slot"/><rect x="830" y="572" width="102" height="92" rx="10" class="slot"/>
+  <rect x="142" y="744" width="1156" height="112" rx="24" class="zone"/>
+  <text x="178" y="783" class="label">PRIVATE HAND · VIEWER ONLY</text>
+  <text x="178" y="817" class="hint">横向滚动容器，不产生页面级溢出；锁定后只向本人显示牌面</text>
+  <path d="M1110 184c94 38 120 93 82 166" fill="none" stroke="#d6a447" stroke-width="4" stroke-dasharray="11 9"/>
+  <path d="m1184 344 6 18 14-12" fill="none" stroke="#d6a447" stroke-width="4"/>
+  <text x="1110" y="161" class="hint">出牌弧线</text>
+  <path d="M1046 594c124 44 145 96 102 144" fill="none" stroke="#df7354" stroke-width="4" stroke-dasharray="11 9"/>
+  <path d="m1141 732 5 18 15-11" fill="none" stroke="#df7354" stroke-width="4"/>
+  <text x="1070" y="584" class="hint">收牌飞向计分区</text>
+</svg>

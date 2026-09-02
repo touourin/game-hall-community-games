@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/plugin-ponzi-scheme/game-state.schema.json",
+  "title": "Ponzi Scheme authoritative game state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["roundNumber", "stage", "turnOrder", "starterIndex", "market", "fundDeck", "ledgers"],
+  "properties": {
+    "roundNumber": { "type": "integer", "minimum": 1 },
+    "stage": { "enum": ["funding", "trade", "trade_response", "market_prune", "crash_discard", "settlement", "finished"] },
+    "turnOrder": { "type": "array", "minItems": 3, "maxItems": 5, "uniqueItems": true, "items": { "type": "string" } },
+    "starterIndex": { "type": "integer", "minimum": 0, "maximum": 4 },
+    "currentPlayerId": { "type": ["string", "null"] },
+    "market": { "type": "array", "maxItems": 9, "uniqueItems": true, "items": { "type": "string", "pattern": "^F[0-9]{3}$" } },
+    "fundDeck": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^F[0-9]{3}$" } },
+    "fundDiscard": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^F[0-9]{3}$" } },
+    "removedStartingCards": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^F0(?:09|1[0-7])$" } },
+    "industrySupply": { "$ref": "#/$defs/industryCounts" },
+    "luxuryMarket": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "ledgers": { "type": "object", "additionalProperties": { "$ref": "#/$defs/ledger" } },
+    "pendingTrade": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["proposerId", "targetId", "industryId", "offer"],
+          "properties": {
+            "proposerId": { "type": "string" },
+            "targetId": { "type": "string" },
+            "industryId": { "$ref": "#/$defs/industryId" },
+            "offer": { "type": "integer", "minimum": 0 }
+          }
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "industryId": { "enum": ["transportation", "grain", "media", "real_estate"] },
+    "industryCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transportation", "grain", "media", "real_estate"],
+      "properties": {
+        "transportation": { "type": "integer", "minimum": 0 },
+        "grain": { "type": "integer", "minimum": 0 },
+        "media": { "type": "integer", "minimum": 0 },
+        "real_estate": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "ledger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cash", "industries", "funds", "luxuries", "bankrupt", "forfeited"],
+      "properties": {
+        "cash": { "type": "integer", "minimum": 0 },
+        "industries": { "$ref": "#/$defs/industryCounts" },
+        "funds": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["cardId", "dueIn"],
+            "properties": {
+              "cardId": { "type": "string", "pattern": "^F[0-9]{3}$" },
+              "dueIn": { "type": "integer", "minimum": 1, "maximum": 5 }
+            }
+          }
+        },
+        "luxuries": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "bankrupt": { "type": "boolean" },
+        "forfeited": { "type": "boolean" },
+        "finalScore": { "type": ["integer", "null"] }
+      }
+    }
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/plugin-ponzi-scheme/component-catalog.schema.json",
+  "title": "Ponzi Scheme component catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "modelBasis", "fundCards", "industries", "money", "luxuries", "tableComponents"],
+  "properties": {
+    "version": { "type": "string" },
+    "modelBasis": { "type": "string" },
+    "fundCards": {
+      "type": "array",
+      "minItems": 72,
+      "maxItems": 72,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "amount", "period", "interest", "averageBurden", "yieldPercent", "kind"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^F0(?:0[9]|[1-7][0-9]|80)$" },
+          "amount": { "type": "integer", "minimum": 9, "maximum": 80 },
+          "period": { "type": "integer", "minimum": 3, "maximum": 5 },
+          "interest": { "type": "integer", "minimum": 1 },
+          "averageBurden": { "type": "integer", "minimum": 1 },
+          "yieldPercent": { "type": "integer", "minimum": 1, "maximum": 100 },
+          "kind": { "enum": ["starting", "regular", "bear"] }
+        }
+      }
+    },
+    "industries": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "shortName", "supply", "color", "icon"],
+        "properties": {
+          "id": { "enum": ["transportation", "grain", "media", "real_estate"] },
+          "name": { "type": "string" },
+          "shortName": { "type": "string" },
+          "supply": { "const": 15 },
+          "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+          "icon": { "type": "string" }
+        }
+      }
+    },
+    "money": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bankMode", "denominations"],
+      "properties": {
+        "bankMode": { "const": "unbounded-digital-bank" },
+        "denominations": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["value", "color", "label"],
+            "properties": {
+              "value": { "enum": [1, 5, 10, 20] },
+              "color": { "type": "string" },
+              "label": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "luxuries": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "cost", "points", "icon"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "cost": { "type": "integer", "minimum": 1 },
+          "points": { "type": "integer", "minimum": 1, "maximum": 4 },
+          "icon": { "type": "string" }
+        }
+      }
+    },
+    "tableComponents": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fundingBoard", "timeWheels", "timeMarkers", "playerScreens", "tradingEnvelopes", "startPlayerMarkers"],
+      "properties": {
+        "fundingBoard": { "const": 1 },
+        "timeWheels": { "const": 5 },
+        "timeMarkers": { "const": 5 },
+        "playerScreens": { "const": 5 },
+        "tradingEnvelopes": { "const": 1 },
+        "startPlayerMarkers": { "const": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "eventSource": "backend/engine.py::UnoEngine._emit",
+  "overlay": "frontend/components/EffectOverlay.vue",
+  "stylesheet": "frontend/animations/effects.css",
+  "defaultReducedMotionMs": 700,
+  "cues": {
+    "play": {
+      "durationMs": 420,
+      "ruleMessage": "card-played",
+      "layers": ["card-translate", "single-foil-sheen"],
+      "blocking": false
+    },
+    "skip": {
+      "durationMs": 980,
+      "ruleMessage": "next-player-skipped",
+      "overlayClass": "uno-fx--skip",
+      "layers": ["red-time-slice", "skip-glyph", "target-dim"],
+      "soundCue": "skip.slice",
+      "haptic": "light"
+    },
+    "reverse": {
+      "durationMs": 1150,
+      "ruleMessage": "direction-reversed",
+      "overlayClass": "uno-fx--reverse",
+      "layers": ["counter-rotating-rings", "reverse-glyph", "persistent-orbit-flip"],
+      "soundCue": "reverse.orbit",
+      "haptic": "light-double"
+    },
+    "draw_two": {
+      "durationMs": 1100,
+      "ruleMessage": "draw-stack-increases-by-two",
+      "overlayClass": "uno-fx--draw-two",
+      "layers": ["amber-rays", "+2-glyph", "optional-stack-total-badge", "persistent-penalty-reactor"],
+      "soundCue": "draw.penalty.2",
+      "haptic": "medium"
+    },
+    "wild": {
+      "durationMs": 1250,
+      "ruleMessage": "active-color-changed",
+      "overlayClass": "uno-fx--wild",
+      "layers": ["four-color-ring", "prism-glyph", "table-edge-color-resolve"],
+      "soundCue": "wild.spectrum",
+      "haptic": "light"
+    },
+    "wild_draw_four": {
+      "durationMs": 1550,
+      "ruleMessage": "active-color-changed-draw-stack-increases-by-four",
+      "overlayClass": "uno-fx--wild-draw-four",
+      "asset": "frontend/assets/effects/wild-draw-four-burst.png",
+      "layers": ["prismatic-singularity", "+4-glyph", "optional-stack-total-badge", "persistent-penalty-reactor", "table-edge-color-resolve"],
+      "soundCue": "wild.penalty.4",
+      "haptic": "heavy-then-four-light"
+    },
+    "take_penalty": {
+      "durationMs": 1350,
+      "ruleMessage": "target-takes-accumulated-draw-stack-and-skips",
+      "overlayClass": "uno-fx--take-penalty",
+      "layers": ["amber-impact-ring", "final-stack-glyph", "target-lock", "penalty-reactor-discharge"],
+      "soundCue": "draw.penalty.take",
+      "haptic": "medium"
+    },
+    "catch_uno": {
+      "durationMs": 1200,
+      "ruleMessage": "uncalled-uno-target-draws-two",
+      "overlayClass": "uno-fx--catch-uno",
+      "layers": ["red-lock-ring", "caught-label", "+2-glyph"],
+      "soundCue": "uno.caught",
+      "haptic": "medium-double"
+    },
+    "uno_call": {
+      "durationMs": 1250,
+      "ruleMessage": "player-declared-uno",
+      "trigger": "latestEvent.calledUno === true",
+      "layers": ["uno-word-burst", "white-shock-ring"],
+      "soundCue": "uno.call",
+      "haptic": "heavy"
+    }
+  },
+  "reducedMotion": {
+    "hide": ["speed-lines", "rotating-rings", "particle-assets", "camera-shake"],
+    "keep": ["rule-glyph", "event-title", "event-message"],
+    "transition": "opacity-only"
+  }
+}

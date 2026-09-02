@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "aspectRatio": "2:3",
+  "cornerRadiusPercent": 13.5,
+  "visualLanguage": "prism-arena",
+  "colors": {
+    "red": {
+      "label": "赤红",
+      "primary": "#FF4D62",
+      "deep": "#8F152B"
+    },
+    "yellow": {
+      "label": "琥珀",
+      "primary": "#FFC83D",
+      "deep": "#A45E05"
+    },
+    "green": {
+      "label": "翠绿",
+      "primary": "#35D78B",
+      "deep": "#087449"
+    },
+    "blue": {
+      "label": "湛蓝",
+      "primary": "#438FFF",
+      "deep": "#1644A0"
+    }
+  },
+  "deck": {
+    "total": 108,
+    "perColor": {
+      "zero": 1,
+      "eachNumberOneToNine": 2,
+      "skip": 2,
+      "reverse": 2,
+      "drawTwo": 2,
+      "subtotal": 25
+    },
+    "wild": 4,
+    "wildDrawFour": 4
+  },
+  "rules": {
+    "drawStacking": {
+      "enabled": true,
+      "mixedDrawTwoAndWildDrawFour": true,
+      "persistentIndicator": "penalty-reactor"
+    },
+    "winningCardKind": "number",
+    "strictWildDrawFour": true
+  },
+  "faces": [
+    {
+      "kind": "number",
+      "centerGlyph": "numeric",
+      "cornerGlyph": "numeric",
+      "copiesPerColor": "0×1, 1–9×2"
+    },
+    {
+      "kind": "skip",
+      "centerGlyph": "ring-with-diagonal-cut",
+      "copiesPerColor": 2
+    },
+    {
+      "kind": "reverse",
+      "centerGlyph": "dual-orbit-arrows",
+      "copiesPerColor": 2
+    },
+    {
+      "kind": "draw_two",
+      "centerGlyph": "+2",
+      "copiesPerColor": 2
+    },
+    {
+      "kind": "wild",
+      "centerGlyph": "four-prism-shards",
+      "copies": 4
+    },
+    {
+      "kind": "wild_draw_four",
+      "centerGlyph": "four-prism-shards-with-+4",
+      "copies": 4
+    }
+  ],
+  "layers": [
+    "obsidian-shell",
+    "white-metal-keyline",
+    "color-material",
+    "tilted-glass-orbit",
+    "rule-glyph",
+    "controlled-foil-sheen"
+  ],
+  "runtimeComponent": "../frontend/components/PrismCard.vue",
+  "cardBackAsset": "../frontend/assets/cards/prism-card-back.png"
+}

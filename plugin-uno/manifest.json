@@ -1,0 +1,47 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "0.2.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-uno",
+  "name": "UNO · 光域对决",
+  "description": "2–8 人棱镜卡牌对决，支持 +2/+4 连续叠加、数字牌收尾与沉浸式功能牌演出",
+  "category": "休闲卡牌",
+  "tone": "prism-uno",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 2,
+    "max": 8,
+    "label": "2–8 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "allowSpectators": true,
+    "firstPlayer": "random",
+    "drawStacking": true,
+    "strictWildDrawFour": true
+  },
+  "ruleLabels": [
+    "2–8 人 · 每人 7 张",
+    "同色 / 同数字 / 同功能",
+    "摸 1 张后可立即打出",
+    "+2 / +4 可连续混合叠加",
+    "+4 仅在无同色牌时可出",
+    "剩 1 张喊 UNO · 数字牌收尾"
+  ]
+}

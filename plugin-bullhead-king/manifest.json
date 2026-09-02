@@ -1,0 +1,44 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-bullhead-king",
+  "name": "谁是牛头王",
+  "description": "2–10 人同时选牌、按数字落行，避开第六张与高牛头分",
+  "category": "数字卡牌",
+  "tone": "bullhead-king",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 2,
+    "max": 10,
+    "label": "2–10 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": false,
+    "spectatorFrames": false,
+    "firstPlayer": false,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "allowSpectators": false
+  },
+  "ruleLabels": [
+    "104 张数字牌",
+    "同时暗选",
+    "由小到大落位",
+    "第六张收整行",
+    "66 牛头分终局",
+    "最低分获胜"
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "modelId": "bullhead-number-card-v1",
+  "range": {
+    "minimum": 1,
+    "maximum": 104,
+    "unique": true
+  },
+  "geometry": {
+    "logicalWidth": 68,
+    "logicalHeight": 96,
+    "cornerRadius": 9,
+    "safeInset": 6,
+    "numberZone": { "x": 8, "y": 12, "width": 52, "height": 50 },
+    "penaltyZone": { "x": 8, "y": 69, "width": 52, "height": 17 },
+    "minimumTouchTarget": 44
+  },
+  "penaltyRules": [
+    {
+      "priority": 1,
+      "id": "royal-55",
+      "match": { "equals": 55 },
+      "bullheads": 7,
+      "tier": "royal"
+    },
+    {
+      "priority": 2,
+      "id": "double-number",
+      "match": { "divisibleBy": 11 },
+      "bullheads": 5,
+      "tier": "quintuple"
+    },
+    {
+      "priority": 3,
+      "id": "round-ten",
+      "match": { "divisibleBy": 10 },
+      "bullheads": 3,
+      "tier": "triple"
+    },
+    {
+      "priority": 4,
+      "id": "ending-five",
+      "match": { "endsWith": 5 },
+      "bullheads": 2,
+      "tier": "double"
+    },
+    {
+      "priority": 5,
+      "id": "ordinary",
+      "match": { "fallback": true },
+      "bullheads": 1,
+      "tier": "single"
+    }
+  ],
+  "materials": {
+    "face": "warm-ivory-paper",
+    "edge": "charcoal-double-rule",
+    "back": "midnight-teal-horn-lattice",
+    "tiers": {
+      "single": { "ink": "#214d4d", "accent": "#5f8f82" },
+      "double": { "ink": "#78541f", "accent": "#d6a447" },
+      "triple": { "ink": "#994835", "accent": "#df7354" },
+      "quintuple": { "ink": "#6f365f", "accent": "#b9679b" },
+      "royal": { "ink": "#7f281f", "accent": "#e24d35" }
+    }
+  },
+  "semantics": {
+    "numberIsPrimary": true,
+    "bullheadsUseIconAndText": true,
+    "colorAloneNeverCarriesPenalty": true,
+    "ariaLabel": "{number}，{bullheads} 牛头分"
+  }
+}

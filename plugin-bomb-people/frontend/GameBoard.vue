@@ -15,10 +15,15 @@ const flatCells = computed(() => props.game.board.flatMap((row, y) => (
 const dangerSet = computed(() => new Set(props.game.dangerCells.map(([x, y]) => `${x}:${y}`)))
 const background = computed(() => MAP_ART[props.game.selectedMap] ?? MAP_ART.magma_crucible)
 const effects = computed(() => props.game.effects ?? [])
+const carriedBombsByPlayer = computed(() => new Map(
+  props.game.bombs
+    .filter(bomb => bomb.carriedBy)
+    .map(bomb => [bomb.carriedBy as string, bomb]),
+))
 const latestActionByPlayer = computed(() => {
   const result = new Map<string, BombEffect>()
   for (const effect of effects.value) {
-    if (effect.actorId && ['bomb_kicked', 'bomb_punched', 'bomb_thrown'].includes(effect.kind)) {
+    if (effect.actorId && ['bomb_kicked', 'bomb_punched', 'bomb_picked_up', 'bomb_thrown'].includes(effect.kind)) {
       result.set(effect.actorId, effect)
     }
   }
@@ -49,6 +54,7 @@ function playerStyle(player: BombPlayer) {
   const moveDurationMs = player.moving
     ? Math.max(90, Math.round(intervalTicks * 1_000 / Math.max(1, props.game.tickRate)))
     : 70
+  const action = latestActionByPlayer.value.get(player.id)
   return {
     left: '0',
     top: '0',
@@ -62,6 +68,9 @@ function playerStyle(player: BombPlayer) {
     '--move-duration': `${moveDurationMs}ms`,
     '--walk-step-duration': `${Math.max(90, moveDurationMs)}ms`,
     '--walk-body-duration': `${Math.max(70, Math.round(moveDurationMs * 0.62))}ms`,
+    '--pickup-x': `${(action?.directionX ?? player.facingX) * 88}%`,
+    '--pickup-near-x': `${(action?.directionX ?? player.facingX) * 23}%`,
+    '--pickup-y': `${112 + (action?.directionY ?? player.facingY) * 30}%`,
   }
 }
 
@@ -76,12 +85,23 @@ function playerAnimationClass(player: BombPlayer) {
   const action = latestActionByPlayer.value.get(player.id)
   return {
     walking: player.moving && player.alive,
+    carrying: carriedBombsByPlayer.value.has(player.id),
     'facing-up': player.facingY < 0,
     'facing-down': player.facingY > 0,
     'action-kick': action?.kind === 'bomb_kicked',
     'action-punch': action?.kind === 'bomb_punched',
+    'action-pickup': action?.kind === 'bomb_picked_up',
     'action-throw': action?.kind === 'bomb_thrown',
   }
+}
+
+function carriedBombFor(playerId: string) {
+  return carriedBombsByPlayer.value.get(playerId)
+}
+
+function carriedFuseText(playerId: string) {
+  const bomb = carriedBombFor(playerId)
+  return bomb ? fuseText(bomb.fuseTicks) : ''
 }
 
 function playerVisualKey(player: BombPlayer) {
@@ -107,6 +127,9 @@ function trajectoryStyle(effect: BombEffect) {
     '--travel-y': `${travelY * 100}%`,
     '--half-x': `${travelX * 50}%`,
     '--half-y': `${travelY * 50}%`,
+    '--release-x': `${travelX * 17}%`,
+    '--release-y': `${travelY * 17 - 145}%`,
+    '--spin-release': `${(effect.directionX < 0 || effect.directionY < 0 ? -1 : 1) * 80}deg`,
     '--spin-mid': `${(effect.directionX < 0 || effect.directionY < 0 ? -1 : 1) * 210}deg`,
     '--spin-end': `${(effect.directionX < 0 || effect.directionY < 0 ? -1 : 1) * 430}deg`,
   }
@@ -131,7 +154,7 @@ function fuseText(ticks: number) {
       class="arena-board"
       role="application"
       tabindex="0"
-      aria-label="炸弹超人 20×20 实时地图。使用 WASD 移动，空格放炸弹，Z 打雷，X 扔雷。"
+      aria-label="炸弹超人 20×20 实时地图。使用 WASD 移动，空格放炸弹，Z 打雷，第一次按 X 拿雷、第二次按 X 扔雷。"
     >
       <img class="map-art" :src="background" :alt="`${game.currentMap.name}地图背景`" draggable="false" />
       <div class="floor-grid" aria-hidden="true" />
@@ -165,6 +188,7 @@ function fuseText(ticks: number) {
 
       <div
         v-for="bomb in game.bombs"
+        v-show="!bomb.carriedBy"
         :key="`bomb:${bomb.id}`"
         class="board-object bomb"
         :class="{ moving: bomb.moving, 'just-placed': placedBombIds.has(bomb.id), landing: thrownBombIds.has(bomb.id) }"
@@ -235,6 +259,17 @@ function fuseText(ticks: number) {
             <img class="player-layer player-leg player-leg-left" :src="PLAYER_ART[player.character]" alt="" draggable="false" aria-hidden="true" />
             <img class="player-layer player-leg player-leg-right" :src="PLAYER_ART[player.character]" alt="" draggable="false" aria-hidden="true" />
           </span>
+          <span
+            v-if="carriedBombFor(player.id)"
+            :key="`carried:${carriedBombFor(player.id)?.id}`"
+            class="carried-bomb-rig"
+            :title="`手中炸弹剩余 ${carriedFuseText(player.id)} 秒`"
+          >
+            <span class="carry-arm carry-arm-left" aria-hidden="true" />
+            <span class="carry-arm carry-arm-right" aria-hidden="true" />
+            <span class="carried-bomb-body" aria-hidden="true"><i /></span>
+            <small>{{ carriedFuseText(player.id) }}</small>
+          </span>
           <span class="player-name">{{ player.name }}</span>
         </span>
       </div>
@@ -296,10 +331,10 @@ function fuseText(ticks: number) {
 .action-impact.kick-impact img { transform-origin: 50% 80%; }
 .impact-burst { position: absolute; width: 190%; height: 190%; background: conic-gradient(from 8deg, transparent 0 8%, #fff8b8 9% 12%, transparent 13% 20%, #ff9d2f 21% 25%, transparent 26% 35%, #fff8b8 36% 40%, transparent 41% 55%, #ff9d2f 56% 61%, transparent 62% 72%, #fff8b8 73% 77%, transparent 78%); clip-path: polygon(50% 0, 58% 37%, 88% 12%, 68% 44%, 100% 50%, 68% 56%, 88% 88%, 58% 63%, 50% 100%, 42% 63%, 12% 88%, 32% 56%, 0 50%, 32% 44%, 12% 12%, 42% 37%); animation: impact-burst .34s ease-out both; }
 .throw-effect { overflow: visible; }
-.airborne-bomb { position: absolute; width: 76%; height: 76%; border: 1px solid #a5b0b6; border-radius: 50%; background: radial-gradient(circle at 30% 26%, #87939b 0 7%, #2a3237 23%, #07090a 72%); box-shadow: inset -3px -4px 5px #000, 0 7px 9px #0009; animation: throw-flight .44s cubic-bezier(.16, .76, .22, 1) both; }
+.airborne-bomb { position: absolute; width: 76%; height: 76%; border: 1px solid #a5b0b6; border-radius: 50%; background: radial-gradient(circle at 30% 26%, #87939b 0 7%, #2a3237 23%, #07090a 72%); box-shadow: inset -3px -4px 5px #000, 0 7px 9px #0009; animation: throw-flight .5s cubic-bezier(.18, .72, .18, 1) both; }
 .airborne-bomb::before { content: ''; position: absolute; width: 34%; height: 24%; left: 54%; top: -13%; border: 3px solid #b88643; border-bottom: 0; border-radius: 50% 50% 0 0; transform: rotate(35deg); }
 .airborne-bomb i { position: absolute; width: 15%; height: 15%; right: -5%; top: -16%; border-radius: 50%; background: #fff5aa; box-shadow: 0 0 7px 2px #ff7818; }
-.throw-shadow { position: absolute; width: 72%; height: 22%; border-radius: 50%; background: #0009; filter: blur(2px); animation: throw-shadow .44s ease-in-out both; }
+.throw-shadow { position: absolute; width: 72%; height: 22%; border-radius: 50%; background: #0009; filter: blur(2px); animation: throw-shadow .5s ease-in-out both; }
 .player-piece { position: absolute; z-index: 22; pointer-events: none; filter: drop-shadow(0 4px 3px #000b); transition: transform var(--move-duration, 180ms) linear; will-change: transform; backface-visibility: hidden; }
 .player-visual { position: absolute; left: 50%; top: 50%; width: 170%; height: 195%; transform: translate(-50%, -58%); }
 .player-avatar { position: absolute; inset: 0; display: block; transform: scaleX(var(--face-scale)); transform-origin: 50% 76%; }
@@ -309,18 +344,35 @@ function fuseText(ticks: number) {
 .player-leg-left { clip-path: polygon(0 61%, 52% 61%, 54% 100%, 0 100%); transform-origin: 43% 67%; }
 .player-leg-right { clip-path: polygon(48% 61%, 100% 61%, 100% 100%, 46% 100%); transform-origin: 57% 67%; }
 .player-ground-shadow { position: absolute; z-index: -1; left: 23%; right: 23%; bottom: 7%; height: 14%; border-radius: 50%; background: #0009; filter: blur(2px); transform-origin: center; }
+.carried-bomb-rig { position: absolute; z-index: 5; left: 50%; top: -2%; width: 43%; height: 43%; transform: translate(-50%, 0); transform-origin: 50% 115%; filter: drop-shadow(0 5px 4px #000b); animation: carry-idle 1s ease-in-out infinite alternate; }
+.carried-bomb-body { position: absolute; z-index: 3; inset: 7%; border: 1px solid #a5b0b6; border-radius: 50%; background: radial-gradient(circle at 30% 26%, #87939b 0 7%, #2a3237 23%, #07090a 72%); box-shadow: inset -3px -4px 5px #000, 0 3px 5px #0009; }
+.carried-bomb-body::before { content: ''; position: absolute; width: 34%; height: 24%; left: 54%; top: -13%; border: 3px solid #b88643; border-bottom: 0; border-radius: 50% 50% 0 0; transform: rotate(35deg); }
+.carried-bomb-body i { position: absolute; width: 15%; height: 15%; right: -5%; top: -16%; border-radius: 50%; background: #fff5aa; box-shadow: 0 0 7px 2px #ff7818; animation: fuse .18s infinite alternate; }
+.carried-bomb-rig > small { position: absolute; z-index: 5; left: 50%; top: 49%; transform: translate(-50%, -50%); color: #fff; font: 900 clamp(5px, .58vw, 8px)/1 ui-monospace, monospace; text-shadow: 0 1px 2px #000, 0 0 3px #000; }
+.carry-arm { position: absolute; z-index: 4; top: 62%; width: 42%; height: 16%; border: 1px solid #d6dde0; border-radius: 999px; background: linear-gradient(90deg, var(--player-color), #edf2f4 68%); box-shadow: 0 2px 3px #0008; transform-origin: 12% 50%; }
+.carry-arm::after { content: ''; position: absolute; right: -8%; top: -28%; width: 34%; aspect-ratio: 1; border: 1px solid #fff8; border-radius: 50%; background: #f3c7a2; box-shadow: inset -1px -2px #9b654a66; }
+.carry-arm-left { left: -16%; transform: rotate(-37deg); }
+.carry-arm-right { right: -16%; transform: scaleX(-1) rotate(-37deg); }
 .player-name { position: absolute; z-index: 6; left: 50%; bottom: -3%; transform: translateX(-50%); max-width: 160%; padding: 1px 4px; overflow: hidden; color: white; background: #0a0d10d9; border: 1px solid var(--player-color); border-radius: 4px; font: 700 clamp(5px, .62vw, 9px)/1.25 system-ui; text-overflow: ellipsis; white-space: nowrap; }
 .player-piece.walking .player-torso { animation: walk-body var(--walk-body-duration, 110ms) ease-in-out infinite alternate; }
 .player-piece.walking .player-leg-left { animation: walk-leg-left var(--walk-step-duration, 180ms) ease-in-out infinite alternate; }
 .player-piece.walking .player-leg-right { animation: walk-leg-right var(--walk-step-duration, 180ms) ease-in-out infinite alternate; }
 .player-piece.walking .player-ground-shadow { animation: walk-shadow var(--walk-step-duration, 180ms) ease-in-out infinite alternate; }
 .player-piece.walking .player-visual::after { content: ''; position: absolute; z-index: 1; left: 36%; bottom: 5%; width: 28%; height: 12%; border-radius: 50%; background: radial-gradient(ellipse, #d5c7a66b, transparent 68%); animation: foot-dust var(--walk-step-duration, 180ms) ease-out infinite; }
+.player-piece.carrying .player-avatar { transform: scaleX(var(--face-scale)) translateY(3%) scale(.98); }
+.player-piece.walking.carrying:not(.action-pickup) .carried-bomb-rig { animation: carry-walk var(--walk-step-duration, 180ms) ease-in-out infinite alternate; }
+.player-piece.walking.carrying:not(.action-pickup) .carry-arm-left { animation: carry-arm-left var(--walk-step-duration, 180ms) ease-in-out infinite alternate; }
+.player-piece.walking.carrying:not(.action-pickup) .carry-arm-right { animation: carry-arm-right var(--walk-step-duration, 180ms) ease-in-out infinite alternate; }
 .player-piece.action-punch .player-avatar { animation: punch-lunge .38s cubic-bezier(.18, .8, .25, 1) both; }
 .player-piece.action-punch .player-torso { animation: punch-body .38s ease-out both; }
 .player-piece.action-kick .player-avatar { animation: kick-balance .4s ease-out both; }
 .player-piece.action-kick .player-leg-right { z-index: 4; animation: kick-leg .4s cubic-bezier(.2, .72, .24, 1) both; }
-.player-piece.action-throw .player-avatar { animation: throw-player .44s ease-out both; }
-.player-piece.action-throw .player-torso { animation: throw-body .44s cubic-bezier(.22, .72, .2, 1) both; }
+.player-piece.action-pickup .player-avatar { animation: pickup-player .5s cubic-bezier(.2, .76, .24, 1) both; }
+.player-piece.action-pickup .player-torso { animation: pickup-body .5s cubic-bezier(.2, .76, .24, 1) both; }
+.player-piece.action-pickup .carried-bomb-rig { animation: pickup-bomb .5s cubic-bezier(.16, .8, .2, 1) both; }
+.player-piece.action-throw .player-visual::before { --arm-face: var(--face-scale); content: ''; position: absolute; z-index: 4; left: 47%; top: 35%; width: 42%; height: 10%; border: 1px solid #d6dde0; border-radius: 999px; background: linear-gradient(90deg, var(--player-color), #edf2f4 68%); box-shadow: 0 2px 3px #0008; transform-origin: 8% 50%; animation: throw-arm .5s cubic-bezier(.18, .78, .2, 1) both; }
+.player-piece.action-throw .player-avatar { animation: throw-player .5s cubic-bezier(.2, .7, .2, 1) both; }
+.player-piece.action-throw .player-torso { animation: throw-body .5s cubic-bezier(.2, .72, .2, 1) both; }
 .player-piece.facing-up .player-avatar { filter: brightness(.88) saturate(.92); }
 .player-piece.self { filter: drop-shadow(0 0 5px var(--player-color)) drop-shadow(0 4px 3px #000); }
 .player-piece.eliminated { opacity: .25; filter: grayscale(1); }
@@ -348,20 +400,28 @@ function fuseText(ticks: number) {
 @keyframes explosion-spark { 0% { opacity: 1; transform: rotate(var(--spark-angle)) translateX(28%) scale(1); } 100% { opacity: 0; transform: rotate(var(--spark-angle)) translateX(280%) scale(.2); } }
 @keyframes impact-icon { 0% { opacity: 0; transform: translate(var(--impact-from-x), var(--impact-from-y)) scale(.35) rotate(-24deg); } 45% { opacity: 1; transform: translate(0) scale(1.35) rotate(9deg); } 100% { opacity: 0; transform: translate(var(--impact-to-x), var(--impact-to-y)) scale(.78) rotate(18deg); } }
 @keyframes impact-burst { 0% { opacity: 0; transform: scale(.2) rotate(-12deg); } 42% { opacity: 1; transform: scale(1.08) rotate(4deg); } 100% { opacity: 0; transform: scale(1.65) rotate(18deg); } }
-@keyframes throw-flight { 0% { opacity: 1; transform: translate(0, 0) scale(.86) rotate(0deg); } 50% { opacity: 1; transform: translate(var(--half-x), calc(var(--half-y) - 135%)) scale(1.28) rotate(var(--spin-mid)); } 100% { opacity: 0; transform: translate(var(--travel-x), var(--travel-y)) scale(.84) rotate(var(--spin-end)); } }
-@keyframes throw-shadow { 0% { opacity: .65; transform: translate(0, 35%) scale(.9); } 50% { opacity: .18; transform: translate(var(--half-x), calc(var(--half-y) + 35%)) scale(.45); } 100% { opacity: .5; transform: translate(var(--travel-x), calc(var(--travel-y) + 35%)) scale(.8); } }
+@keyframes throw-flight { 0% { opacity: 1; transform: translate(0, -105%) scale(.92) rotate(0deg); } 18% { transform: translate(var(--release-x), var(--release-y)) scale(1.08) rotate(var(--spin-release)); } 56% { opacity: 1; transform: translate(var(--half-x), calc(var(--half-y) - 175%)) scale(1.3) rotate(var(--spin-mid)); } 88% { opacity: 1; transform: translate(var(--travel-x), calc(var(--travel-y) - 16%)) scale(.92) rotate(var(--spin-end)); } 100% { opacity: 0; transform: translate(var(--travel-x), var(--travel-y)) scale(.84, .72) rotate(var(--spin-end)); } }
+@keyframes throw-shadow { 0% { opacity: .32; transform: translate(0, 35%) scale(.48); } 52% { opacity: .14; transform: translate(var(--half-x), calc(var(--half-y) + 35%)) scale(.38); } 88%, 100% { opacity: .55; transform: translate(var(--travel-x), calc(var(--travel-y) + 35%)) scale(.82); } }
 @keyframes walk-body { from { transform: translateY(1%) rotate(var(--counter-lean)); } to { transform: translateY(-5%) rotate(var(--travel-lean)); } }
 @keyframes walk-leg-left { from { transform: translate(-3%, -1%) rotate(-9deg); } to { transform: translate(5%, 3%) rotate(10deg); } }
 @keyframes walk-leg-right { from { transform: translate(5%, 3%) rotate(10deg); } to { transform: translate(-3%, -1%) rotate(-9deg); } }
 @keyframes walk-shadow { from { transform: scaleX(.88); opacity: .58; } to { transform: scaleX(1.12); opacity: .82; } }
 @keyframes foot-dust { 0% { opacity: 0; transform: translateY(0) scale(.45); } 38% { opacity: .75; } 100% { opacity: 0; transform: translateY(-45%) scale(1.5); } }
+@keyframes carry-idle { from { transform: translate(-50%, 1%) rotate(-1.5deg); } to { transform: translate(-50%, -5%) rotate(1.5deg); } }
+@keyframes carry-walk { from { transform: translate(-50%, 2%) rotate(-3deg); } to { transform: translate(-50%, -8%) rotate(3deg); } }
+@keyframes carry-arm-left { from { transform: rotate(-34deg); } to { transform: rotate(-41deg); } }
+@keyframes carry-arm-right { from { transform: scaleX(-1) rotate(-34deg); } to { transform: scaleX(-1) rotate(-41deg); } }
+@keyframes pickup-bomb { 0% { opacity: .45; transform: translate(calc(-50% + var(--pickup-x)), var(--pickup-y)) scale(.52) rotate(-24deg); } 42% { opacity: 1; transform: translate(calc(-50% + var(--pickup-near-x)), 34%) scale(.82) rotate(8deg); } 72% { transform: translate(-50%, -12%) scale(1.13, .9) rotate(-3deg); } 100% { opacity: 1; transform: translate(-50%, 0) scale(1) rotate(0); } }
+@keyframes pickup-player { 0%, 100% { transform: scaleX(var(--face-scale)) translate(0); } 28% { transform: scaleX(var(--face-scale)) translate(5%, 8%) rotate(5deg) scale(1.02, .94); } 64% { transform: scaleX(var(--face-scale)) translate(-2%, -3%) rotate(-3deg); } }
+@keyframes pickup-body { 0%, 100% { transform: none; } 30% { transform: translate(4%, 7%) rotate(7deg); } 68% { transform: translate(-2%, -4%) rotate(-4deg); } }
 @keyframes punch-lunge { 0%, 100% { transform: scaleX(var(--face-scale)) translate(0); } 26% { transform: scaleX(var(--face-scale)) translateX(-7%) rotate(-5deg); } 58% { transform: scaleX(var(--face-scale)) translateX(15%) rotate(7deg) scale(1.08, .94); } }
 @keyframes punch-body { 0%, 100% { transform: none; } 34% { transform: rotate(-5deg) translateY(2%); } 62% { transform: rotate(8deg) translate(8%, -2%); } }
 @keyframes kick-balance { 0%, 100% { transform: scaleX(var(--face-scale)) translate(0); } 35% { transform: scaleX(var(--face-scale)) translateX(-8%) rotate(-7deg); } 64% { transform: scaleX(var(--face-scale)) translateX(7%) rotate(5deg); } }
 @keyframes kick-leg { 0%, 100% { transform: none; } 30% { transform: translate(-5%, -2%) rotate(-16deg); } 62% { transform: translate(19%, -15%) rotate(27deg) scaleY(.94); } }
-@keyframes throw-player { 0%, 100% { transform: scaleX(var(--face-scale)) translate(0); } 28% { transform: scaleX(var(--face-scale)) translate(-8%, 4%) rotate(-8deg); } 62% { transform: scaleX(var(--face-scale)) translate(6%, -4%) rotate(9deg); } }
-@keyframes throw-body { 0%, 100% { transform: none; } 28% { transform: translateY(4%) rotate(-9deg); } 61% { transform: translate(7%, -5%) rotate(12deg); } }
+@keyframes throw-player { 0%, 100% { transform: scaleX(var(--face-scale)) translate(0); } 18% { transform: scaleX(var(--face-scale)) translate(-7%, 5%) rotate(-7deg) scale(1.02, .96); } 44% { transform: scaleX(var(--face-scale)) translate(9%, -7%) rotate(11deg) scale(.97, 1.04); } 72% { transform: scaleX(var(--face-scale)) translate(4%, -2%) rotate(5deg); } }
+@keyframes throw-body { 0%, 100% { transform: none; } 20% { transform: translate(-4%, 5%) rotate(-9deg); } 45% { transform: translate(9%, -8%) rotate(13deg); } 74% { transform: translate(3%, -2%) rotate(4deg); } }
+@keyframes throw-arm { 0% { opacity: 0; transform: scaleX(var(--arm-face)) rotate(-76deg) translateX(-8%); } 16% { opacity: 1; transform: scaleX(var(--arm-face)) rotate(-64deg) translateX(-4%); } 46% { opacity: 1; transform: scaleX(var(--arm-face)) rotate(20deg) translateX(12%); } 78% { opacity: .72; transform: scaleX(var(--arm-face)) rotate(48deg) translateX(6%); } 100% { opacity: 0; transform: scaleX(var(--arm-face)) rotate(36deg); } }
 @keyframes invincible { to { filter: drop-shadow(0 0 9px #fff) drop-shadow(0 0 12px #ffd53d); } }
 @media (hover: none) and (pointer: coarse) { .arena-frame { height: 100%; align-items: start; }.arena-board { width: min(100%, calc(100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); max-height: calc(100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); border-radius: 10px; border-width: 2px; touch-action: none; } }
-@media (prefers-reduced-motion: reduce) { .item, .bomb, .bomb-body, .flame, .flame span, .player-piece, .player-piece *, .place-effect *, .explosion-effect *, .action-impact *, .throw-effect *, .tile.danger::after { animation: none !important; transition: none; } }
+@media (prefers-reduced-motion: reduce) { .item, .bomb, .bomb-body, .flame, .flame span, .player-piece, .player-piece *, .player-visual::before, .place-effect *, .explosion-effect *, .action-impact *, .throw-effect *, .tile.danger::after { animation: none !important; transition: none; } }
 </style>

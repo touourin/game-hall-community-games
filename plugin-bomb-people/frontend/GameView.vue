@@ -48,6 +48,7 @@ const seenSoundEffectIds = new Set<number>()
 const game = computed(() => props.snapshot.game as unknown as BombGame)
 const isSpectator = computed(() => props.snapshot.viewer?.mode === 'spectator')
 const selfActor = computed(() => game.value.players.find(player => player.id === props.snapshot.self.id) ?? null)
+const isCarryingBomb = computed(() => selfActor.value?.carriedBombId != null)
 const canControl = computed(() => (
   props.snapshot.phase === 'playing'
   && !isSpectator.value
@@ -71,6 +72,7 @@ const roster = computed(() => {
     facingX: 0,
     facingY: 1,
     moving: false,
+    carriedBombId: null,
     alive: true,
     eliminatedBy: null,
     eliminationReason: null,
@@ -423,7 +425,7 @@ onBeforeUnmount(() => {
           <div class="action-pad">
             <button class="punch-action" type="button" aria-label="拳击手套打雷" @pointerdown="touchDown(32, $event)" @pointerup="touchUp(32, $event)" @pointercancel="touchUp(32, $event)" @lostpointercapture="touchUp(32, $event)"><b>拳</b><small>打雷</small></button>
             <button class="bomb-action" type="button" aria-label="放置炸弹或定时引爆" @pointerdown="touchDown(16, $event)" @pointerup="touchUp(16, $event)" @pointercancel="touchUp(16, $event)" @lostpointercapture="touchUp(16, $event)"><b>●</b><small>放雷</small></button>
-            <button class="throw-action" type="button" aria-label="扔雷手套投掷炸弹" @pointerdown="touchDown(64, $event)" @pointerup="touchUp(64, $event)" @pointercancel="touchUp(64, $event)" @lostpointercapture="touchUp(64, $event)"><b>扔</b><small>投雷</small></button>
+            <button class="throw-action" type="button" :aria-label="isCarryingBomb ? '扔出手中炸弹' : '拿起面前炸弹'" @pointerdown="touchDown(64, $event)" @pointerup="touchUp(64, $event)" @pointercancel="touchUp(64, $event)" @lostpointercapture="touchUp(64, $event)"><b>{{ isCarryingBomb ? '投' : '拿' }}</b><small>{{ isCarryingBomb ? '扔出' : '抱雷' }}</small></button>
           </div>
         </div>
       </main>
@@ -453,8 +455,8 @@ onBeforeUnmount(() => {
 
         <section class="controls panel">
           <div class="panel-heading"><div><p class="eyebrow">CONTROLS</p><h3>操作</h3></div><Gamepad2 :size="19" /></div>
-          <div class="key-guide"><span><kbd>WASD / ↑↓←→</kbd>移动</span><span><kbd>Space</kbd>放雷 / 定时引爆</span><span><kbd>Z</kbd>拳套打雷</span><span><kbd>X</kbd>扔雷</span></div>
-          <p>脚踢雷自动触发；拳套、扔雷与脚踢均可作用于任何玩家的炸弹。幽灵相位持续 5 秒，可穿过箱墙并在箱墙格内放雷，但不能穿固定石块或决胜落石。</p>
+          <div class="key-guide"><span><kbd>WASD / ↑↓←→</kbd>移动</span><span><kbd>Space</kbd>放雷 / 定时引爆</span><span><kbd>Z</kbd>拳套即时打雷</span><span><kbd>X</kbd>先拿雷，再按投出</span></div>
+          <p>扔雷分两步：第一次拿起面前炸弹，可抱着继续移动；第二次按当前朝向投出最多四格。抱雷期间引信不会暂停。脚踢雷自动触发；三种操作均可作用于任何玩家的炸弹。幽灵相位持续 5 秒，可穿过箱墙并在箱墙格内放雷，但不能穿固定石块或决胜落石。</p>
         </section>
 
         <section class="event-panel panel" aria-label="对局动态">
@@ -468,7 +470,7 @@ onBeforeUnmount(() => {
       <div class="rulebook">
         <section><h3>目标与时间</h3><p>支持 2–8 人。每张地图固定为 20×20 格；一个方块只占一格。最后生还者夺冠。开局倒计时后对抗 90 秒，随后从左上角起沿外圈顺时针放置落石，再一圈圈向中心收缩。爆炸和落石都能淘汰玩家。</p></section>
         <section><h3>炸弹与通用交互</h3><p>所有炸弹放下后最多 2 秒爆炸，火焰按十字方向传播，固定石块和落石会阻挡，可破坏箱墙被摧毁后有 38% 概率掉落道具。幽灵相位持续 5 秒，可穿箱墙并在墙内放雷；墙内炸弹爆炸时会同时摧毁所在箱墙，但幽灵不能穿固定石块或决胜落石。火焰会连锁引爆炸弹。</p></section>
-        <section><h3>电脑键盘与手机触屏</h3><ul><li><kbd>W A S D</kbd> 或方向键：逐格移动。</li><li><kbd>Space</kbd>：放炸弹；拥有定时炸弹且炸弹容量已满时，提前引爆最早的一枚。</li><li><kbd>Z</kbd>：用拳击手套把面前炸弹打出三格。</li><li><kbd>X</kbd>：把面前炸弹越过障碍扔到前方最多四格。</li><li>脚踢雷无需单独按键，朝炸弹移动即可让它持续滚动。</li><li>手机端拖动左侧摇杆移动，右手点击拳击、放雷和投雷按钮。</li></ul></section>
+        <section><h3>电脑键盘与手机触屏</h3><ul><li><kbd>W A S D</kbd> 或方向键：逐格移动。</li><li><kbd>Space</kbd>：放炸弹；拥有定时炸弹且炸弹容量已满时，提前引爆最早的一枚。抱雷时双手被占用，不能放雷、提前引爆或使用拳套。</li><li><kbd>Z</kbd>：用拳击手套即时把面前炸弹打出三格。</li><li><kbd>X</kbd>：第一次拿起面前炸弹，之后可继续移动；第二次按当前朝向把手中炸弹越过障碍投到前方最多四格。若没有可用落点则继续抱着。</li><li>被拿起的炸弹仍按原引信计时，抱太久会在玩家当前位置爆炸。</li><li>脚踢雷无需单独按键，朝炸弹移动即可让它持续滚动。</li><li>手机端拖动左侧摇杆移动，右手点击拳击、放雷和拿雷/投雷按钮。</li></ul></section>
         <section><h3>道具</h3><div class="rules-items"><article v-for="(label, key) in game.itemLabels" :key="key"><img :src="ITEM_ART[key]" :alt="label" /><strong>{{ label }}</strong></article></div><p>道具自动拾取。落地道具没有消失倒计时，也不会被爆炸清除，会保留到被拾取、所在格被决胜落石覆盖或本局结束。骷髅诅咒会立即清空其他装备，并使玩家 5 秒不能放炸弹；地图还会每 10 秒进行一次 24% 的随机装备刷新判定。</p></section>
         <section><h3>地图类型</h3><p>云顶激斗场、风暴船坞等激斗图让玩家近距离出生并自带装备；丛林金字塔、发条铸造厂和水晶裂隙使用高密箱墙或分区固定墙，给予玩家更安全的发展期。其他地图在障碍密度和开阔程度之间变化。</p></section>
         <section><h3>随机地图与战绩</h3><p>每次新一局开始时，服务端从全部地图中随机抽取，并排除上一局地图以避免连续重复。每名玩家记录本局击杀、房间累计击杀、夺冠数和胜率；结算后还会把胜负及击杀明细写入大厅战绩。</p></section>

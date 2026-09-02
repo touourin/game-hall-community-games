@@ -306,13 +306,27 @@ def test_kick_punch_and_throw_work_on_an_opponents_bomb(loaded):
     actor.facing_x, actor.facing_y = 1, 0
     enemy.x, enemy.y = 5, 9
     enemy.motion_dx = enemy.motion_dy = 0
-    engine.apply_input(room, members[0], 4, engine_module.INPUT_THROW)
+    press(engine, room, members[0], 4, engine_module.INPUT_THROW)
+    assert (enemy.x, enemy.y) == (4, 9)
+    assert actor.carried_bomb_id == enemy.bomb_id
+    assert enemy.carrier_id == actor.player_id
+    assert not any(effect.kind == "bomb_thrown" for effect in room.state.effects)
+
+    actor.move_cooldown = 0
+    engine.apply_input(room, members[0], 6, engine_module.INPUT_RIGHT)
     engine.tick(room)
-    assert (enemy.x, enemy.y) == (8, 9)
+    engine.apply_input(room, members[0], 7, 0)
+    assert (actor.x, actor.y) == (5, 9)
+    assert (enemy.x, enemy.y) == (5, 9)
+
+    press(engine, room, members[0], 8, engine_module.INPUT_THROW)
+    assert (enemy.x, enemy.y) == (9, 9)
+    assert actor.carried_bomb_id is None
+    assert enemy.carrier_id is None
     assert enemy.owner_id == members[1].id
     assert enemy.credit_player_id == members[0].id
     effect_kinds = {effect.kind for effect in room.state.effects}
-    assert {"bomb_kicked", "bomb_punched", "bomb_thrown"} <= effect_kinds
+    assert {"bomb_kicked", "bomb_punched", "bomb_picked_up", "bomb_thrown"} <= effect_kinds
 
     view = engine.view(room, members[0])
     throw_effect = next(effect for effect in view["effects"] if effect["kind"] == "bomb_thrown")
@@ -325,11 +339,144 @@ def test_kick_punch_and_throw_work_on_an_opponents_bomb(loaded):
         "bombId": enemy.bomb_id,
         "x": 5,
         "y": 9,
-        "targetX": 8,
+        "targetX": 9,
         "targetY": 9,
         "directionX": 1,
         "directionY": 0,
     }
+
+    own_view = next(player for player in view["players"] if player["id"] == actor.player_id)
+    bomb_view = next(bomb for bomb in view["bombs"] if bomb["id"] == enemy.bomb_id)
+    assert own_view["carriedBombId"] is None
+    assert bomb_view["carriedBy"] is None
+
+
+def test_blocked_second_throw_keeps_the_bomb_carried_until_forfeit(loaded):
+    Engine, state_module, _, engine_module = loaded
+    engine = Engine(random.Random(31))
+    room, members = start_active(engine, 3)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    actor.x, actor.y = 5, 5
+    actor.facing_x, actor.facing_y = 1, 0
+    actor.can_throw = True
+    bomb = state_module.BombState(
+        1, members[1].id, members[1].id, 6, 5, room.state.tick, 30, 2,
+    )
+    room.state.bombs = {bomb.bomb_id: bomb}
+
+    press(engine, room, members[0], 1, engine_module.INPUT_THROW)
+    assert actor.carried_bomb_id == bomb.bomb_id
+    assert bomb.carrier_id == actor.player_id
+    assert (bomb.x, bomb.y) == (actor.x, actor.y)
+    pickup = next(effect for effect in room.state.effects if effect.kind == "bomb_picked_up")
+    assert (pickup.x, pickup.y, pickup.target_x, pickup.target_y) == (6, 5, 5, 5)
+    assert all(event.kind != "bomb_picked_up" for event in room.state.events)
+
+    for x in range(6, 10):
+        room.state.board[5][x] = state_module.CELL_HARD
+    press(engine, room, members[0], 3, engine_module.INPUT_THROW)
+    assert actor.carried_bomb_id == bomb.bomb_id
+    assert bomb.carrier_id == actor.player_id
+    assert not any(effect.kind == "bomb_thrown" for effect in room.state.effects)
+
+    press(engine, room, members[0], 5, engine_module.INPUT_BOMB)
+    assert list(room.state.bombs) == [bomb.bomb_id]
+    assert engine.manual_forfeit(room, members[0]) is True
+    assert actor.carried_bomb_id is None
+    assert bomb.carrier_id is None
+    assert (bomb.x, bomb.y) == (5, 5)
+
+
+def test_pickup_wins_over_simultaneous_place_input_without_copying_a_bomb(loaded):
+    Engine, state_module, _, engine_module = loaded
+    engine = Engine(random.Random(311))
+    room, members = start_active(engine, 3)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    actor.x, actor.y = 5, 5
+    actor.facing_x, actor.facing_y = 1, 0
+    actor.can_throw = True
+    bomb = state_module.BombState(
+        90, members[1].id, members[1].id, 6, 5, room.state.tick, 30, 2,
+    )
+    room.state.bombs = {bomb.bomb_id: bomb}
+
+    press(
+        engine,
+        room,
+        members[0],
+        1,
+        engine_module.INPUT_THROW | engine_module.INPUT_BOMB,
+    )
+
+    assert list(room.state.bombs) == [bomb.bomb_id]
+    assert actor.carried_bomb_id == bomb.bomb_id
+    assert bomb.carrier_id == actor.player_id
+
+
+def test_carried_bomb_keeps_its_fuse_and_explodes_at_the_moving_carrier(loaded):
+    Engine, state_module, _, engine_module = loaded
+    engine = Engine(random.Random(32))
+    room, members = start_active(engine, 3)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    actor.x, actor.y = 5, 5
+    actor.facing_x, actor.facing_y = 1, 0
+    actor.can_throw = True
+    bomb = state_module.BombState(
+        1, members[1].id, members[1].id, 6, 5, room.state.tick, 2, 2,
+    )
+    room.state.bombs = {bomb.bomb_id: bomb}
+
+    press(engine, room, members[0], 1, engine_module.INPUT_THROW)
+    assert bomb.fuse_ticks == 1
+    actor.move_cooldown = 0
+    engine.apply_input(room, members[0], 3, engine_module.INPUT_UP)
+    engine.tick(room)
+
+    assert (actor.x, actor.y) == (5, 4)
+    assert not actor.alive
+    assert actor.carried_bomb_id is None
+    assert not room.state.bombs
+    explosion = next(effect for effect in room.state.effects if effect.kind == "bomb_exploded")
+    assert (explosion.x, explosion.y, explosion.bomb_id) == (5, 4, bomb.bomb_id)
+
+
+@pytest.mark.parametrize("count", range(2, 9))
+def test_two_stage_throw_stays_authoritative_for_two_to_eight_players(loaded, count):
+    Engine, state_module, _, engine_module = loaded
+    engine = Engine(random.Random(320 + count))
+    room, members = start_active(engine, count)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    actor.x, actor.y = 5, 5
+    actor.facing_x, actor.facing_y = 1, 0
+    actor.can_throw = True
+    bomb = state_module.BombState(
+        99, members[1].id, members[1].id, 6, 5, room.state.tick, 35, 2,
+    )
+    room.state.bombs = {bomb.bomb_id: bomb}
+
+    press(engine, room, members[0], 1, engine_module.INPUT_THROW)
+    actor.move_cooldown = 0
+    engine.apply_input(room, members[0], 3, engine_module.INPUT_DOWN)
+    engine.tick(room)
+    engine.apply_input(room, members[0], 4, 0)
+
+    assert (actor.x, actor.y) == (5, 6)
+    assert (bomb.x, bomb.y, bomb.carrier_id) == (5, 6, actor.player_id)
+    for viewer in members:
+        view = engine.view(room, viewer)
+        viewed_actor = next(item for item in view["players"] if item["id"] == actor.player_id)
+        viewed_bomb = next(item for item in view["bombs"] if item["id"] == bomb.bomb_id)
+        assert viewed_actor["carriedBombId"] == bomb.bomb_id
+        assert viewed_bomb["carriedBy"] == actor.player_id
+
+    press(engine, room, members[0], 5, engine_module.INPUT_THROW)
+    assert (bomb.x, bomb.y) == (5, 10)
+    assert actor.carried_bomb_id is None
+    assert bomb.carrier_id is None
 
 
 def test_timer_can_trigger_early_but_never_extends_the_two_second_limit(loaded):

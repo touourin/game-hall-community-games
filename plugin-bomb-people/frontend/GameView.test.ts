@@ -49,6 +49,7 @@ function player(id: string, seat: number, name: string): BombPlayer {
     id, seat, name, color: seat ? '#4f8cff' : '#ff5a55', character: seat,
     x: seat ? 18 : 1, y: seat ? 18 : 1, facingX: 0, facingY: 1, moving: false,
     moveIntervalTicks: seat ? 4 : 2.6,
+    carriedBombId: null,
     alive: true, eliminatedBy: null, eliminationReason: null, kills: seat ? 1 : 3,
     stats: { kills: seat ? 4 : 12, championships: seat ? 1 : 4, matches: 5, winRate: seat ? 20 : 80 },
     equipment: {
@@ -77,7 +78,7 @@ function snapshot(phase: ArcadeSnapshot['phase'] = 'playing'): ArcadeSnapshot {
     selectedMap: 'magma_crucible', currentMap: maps[0]!, mapCatalog: maps,
     mapRotation: 'random_no_repeat', mapProposal: null, canProposeMap: false, canVoteMap: false,
     board, players: phase === 'lobby' ? [] : [player('p0', 0, '红队'), player('p1', 1, '蓝队')],
-    bombs: [{ id: 1, ownerId: 'p0', creditPlayerId: 'p0', x: 3, y: 3, fuseTicks: 30, maxFuseTicks: 40, moving: false, motionX: 0, motionY: 0 }],
+    bombs: [{ id: 1, ownerId: 'p0', creditPlayerId: 'p0', x: 3, y: 3, fuseTicks: 30, maxFuseTicks: 40, moving: false, motionX: 0, motionY: 0, carriedBy: null }],
     items: [{ id: 1, kind: 'speed', x: 4, y: 4 }],
     flames: [{ x: 5, y: 5, remainingTicks: 4 }], iceTiles: [], events: [], effects: [],
     winnerId: null, clockLeaderId: 'p1', frozen: false, selfInputSequence: 0,
@@ -224,6 +225,56 @@ describe('Bomb People arena', () => {
     wrapper.unmount()
   })
 
+  it('models pickup, carried walking and the second-press throw as separate states', async () => {
+    const data = snapshot()
+    const game = data.game as unknown as BombGame
+    const actor = game.players[0]!
+    const bomb = game.bombs[0]!
+    actor.x = 5
+    actor.y = 6
+    actor.moving = true
+    actor.carriedBombId = bomb.id
+    bomb.x = actor.x
+    bomb.y = actor.y
+    bomb.carriedBy = actor.id
+    game.effects = [
+      { id: 6, kind: 'bomb_picked_up', tick: 100, remainingTicks: 10, actorId: actor.id, bombId: bomb.id, x: 6, y: 6, targetX: 5, targetY: 6, directionX: 1, directionY: 0 },
+    ]
+
+    const wrapper = render(data)
+    expect(wrapper.get('.player-piece.self').classes()).toEqual(expect.arrayContaining([
+      'walking', 'carrying', 'action-pickup',
+    ]))
+    expect(wrapper.findAll('.carried-bomb-rig .carry-arm')).toHaveLength(2)
+    expect(wrapper.get('.carried-bomb-rig').text()).toContain('1.5')
+    expect(wrapper.get('.bomb').isVisible()).toBe(false)
+    expect(wrapper.get('button[aria-label="扔出手中炸弹"]').text()).toContain('投扔出')
+
+    const thrownPlayers = game.players.map(current => (
+      current.id === actor.id ? { ...current, carriedBombId: null } : current
+    ))
+    const thrownBombs = game.bombs.map(current => (
+      current.id === bomb.id ? { ...current, x: 9, carriedBy: null } : current
+    ))
+    const thrownEffects: BombGame['effects'] = [
+      ...game.effects,
+      { id: 7, kind: 'bomb_thrown', tick: 101, remainingTicks: 10, actorId: actor.id, bombId: bomb.id, x: 5, y: 6, targetX: 9, targetY: 6, directionX: 1, directionY: 0 },
+    ]
+    await wrapper.setProps({ snapshot: {
+      ...data,
+      revision: 2,
+      game: { ...game, players: thrownPlayers, bombs: thrownBombs, effects: thrownEffects },
+    } as unknown as ArcadeSnapshot })
+    await flushPromises()
+
+    expect(wrapper.find('.carried-bomb-rig').exists()).toBe(false)
+    expect(wrapper.get('.bomb').isVisible()).toBe(true)
+    expect(wrapper.find('.player-piece.self.action-throw').exists()).toBe(true)
+    expect(wrapper.find('.throw-effect').exists()).toBe(true)
+    expect(wrapper.get('button[aria-label="拿起面前炸弹"]').text()).toContain('拿抱雷')
+    wrapper.unmount()
+  })
+
   it('uses one fixed non-verbal sound for each visible action kind', async () => {
     const data = snapshot()
     const wrapper = render(data)
@@ -236,7 +287,8 @@ describe('Bomb People arena', () => {
       { id: 2, kind: 'bomb_exploded', tick: 101, remainingTicks: 7, actorId: 'p0', bombId: 1, x: 1, y: 1, targetX: null, targetY: null, directionX: 0, directionY: 0 },
       { id: 3, kind: 'bomb_kicked', tick: 101, remainingTicks: 8, actorId: 'p0', bombId: 1, x: 1, y: 1, targetX: 2, targetY: 1, directionX: 1, directionY: 0 },
       { id: 4, kind: 'bomb_punched', tick: 101, remainingTicks: 8, actorId: 'p0', bombId: 1, x: 1, y: 1, targetX: 2, targetY: 1, directionX: 1, directionY: 0 },
-      { id: 5, kind: 'bomb_thrown', tick: 101, remainingTicks: 8, actorId: 'p0', bombId: 1, x: 2, y: 1, targetX: 5, targetY: 1, directionX: 1, directionY: 0 },
+      { id: 5, kind: 'bomb_picked_up', tick: 101, remainingTicks: 8, actorId: 'p0', bombId: 1, x: 2, y: 1, targetX: 1, targetY: 1, directionX: 1, directionY: 0 },
+      { id: 6, kind: 'bomb_thrown', tick: 101, remainingTicks: 8, actorId: 'p0', bombId: 1, x: 1, y: 1, targetX: 5, targetY: 1, directionX: 1, directionY: 0 },
     ]
     await wrapper.setProps({ snapshot: {
       ...data,
@@ -246,7 +298,7 @@ describe('Bomb People arena', () => {
     await flushPromises()
 
     expect(mocks.soundPlay.mock.calls.map(([kind]) => kind)).toEqual([
-      'bomb_placed', 'bomb_exploded', 'bomb_kicked', 'bomb_punched', 'bomb_thrown',
+      'bomb_placed', 'bomb_exploded', 'bomb_kicked', 'bomb_punched', 'bomb_picked_up', 'bomb_thrown',
     ])
     expect(wrapper.get('.event-list').text()).not.toContain('扔出炸弹')
     wrapper.unmount()

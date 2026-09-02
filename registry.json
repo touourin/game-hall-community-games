@@ -55,6 +55,24 @@
       "path": "skull-game-model",
       "status": "enabled",
       "order": 180
+    },
+    {
+      "id": "plugin-ponzi-scheme",
+      "path": "plugin-ponzi-scheme",
+      "status": "enabled",
+      "order": 190
+    },
+    {
+      "id": "plugin-uno",
+      "path": "plugin-uno",
+      "status": "enabled",
+      "order": 200
+    },
+    {
+      "id": "plugin-bullhead-king",
+      "path": "plugin-bullhead-king",
+      "status": "enabled",
+      "order": 210
     }
   ]
 }

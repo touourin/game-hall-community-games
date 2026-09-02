@@ -1,0 +1,745 @@
+{
+  "schemaVersion": 1,
+  "generatedFrom": "card-model.json",
+  "cards": [
+    {
+      "id": "card-001",
+      "number": 1,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "1，1 牛头分"
+    },
+    {
+      "id": "card-002",
+      "number": 2,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "2，1 牛头分"
+    },
+    {
+      "id": "card-003",
+      "number": 3,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "3，1 牛头分"
+    },
+    {
+      "id": "card-004",
+      "number": 4,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "4，1 牛头分"
+    },
+    {
+      "id": "card-005",
+      "number": 5,
+      "bullheads": 2,
+      "tier": "double",
+      "ariaLabel": "5，2 牛头分"
+    },
+    {
+      "id": "card-006",
+      "number": 6,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "6，1 牛头分"
+    },
+    {
+      "id": "card-007",
+      "number": 7,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "7，1 牛头分"
+    },
+    {
+      "id": "card-008",
+      "number": 8,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "8，1 牛头分"
+    },
+    {
+      "id": "card-009",
+      "number": 9,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "9，1 牛头分"
+    },
+    {
+      "id": "card-010",
+      "number": 10,
+      "bullheads": 3,
+      "tier": "triple",
+      "ariaLabel": "10，3 牛头分"
+    },
+    {
+      "id": "card-011",
+      "number": 11,
+      "bullheads": 5,
+      "tier": "quintuple",
+      "ariaLabel": "11，5 牛头分"
+    },
+    {
+      "id": "card-012",
+      "number": 12,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "12，1 牛头分"
+    },
+    {
+      "id": "card-013",
+      "number": 13,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "13，1 牛头分"
+    },
+    {
+      "id": "card-014",
+      "number": 14,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "14，1 牛头分"
+    },
+    {
+      "id": "card-015",
+      "number": 15,
+      "bullheads": 2,
+      "tier": "double",
+      "ariaLabel": "15，2 牛头分"
+    },
+    {
+      "id": "card-016",
+      "number": 16,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "16，1 牛头分"
+    },
+    {
+      "id": "card-017",
+      "number": 17,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "17，1 牛头分"
+    },
+    {
+      "id": "card-018",
+      "number": 18,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "18，1 牛头分"
+    },
+    {
+      "id": "card-019",
+      "number": 19,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "19，1 牛头分"
+    },
+    {
+      "id": "card-020",
+      "number": 20,
+      "bullheads": 3,
+      "tier": "triple",
+      "ariaLabel": "20，3 牛头分"
+    },
+    {
+      "id": "card-021",
+      "number": 21,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "21，1 牛头分"
+    },
+    {
+      "id": "card-022",
+      "number": 22,
+      "bullheads": 5,
+      "tier": "quintuple",
+      "ariaLabel": "22，5 牛头分"
+    },
+    {
+      "id": "card-023",
+      "number": 23,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "23，1 牛头分"
+    },
+    {
+      "id": "card-024",
+      "number": 24,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "24，1 牛头分"
+    },
+    {
+      "id": "card-025",
+      "number": 25,
+      "bullheads": 2,
+      "tier": "double",
+      "ariaLabel": "25，2 牛头分"
+    },
+    {
+      "id": "card-026",
+      "number": 26,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "26，1 牛头分"
+    },
+    {
+      "id": "card-027",
+      "number": 27,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "27，1 牛头分"
+    },
+    {
+      "id": "card-028",
+      "number": 28,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "28，1 牛头分"
+    },
+    {
+      "id": "card-029",
+      "number": 29,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "29，1 牛头分"
+    },
+    {
+      "id": "card-030",
+      "number": 30,
+      "bullheads": 3,
+      "tier": "triple",
+      "ariaLabel": "30，3 牛头分"
+    },
+    {
+      "id": "card-031",
+      "number": 31,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "31，1 牛头分"
+    },
+    {
+      "id": "card-032",
+      "number": 32,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "32，1 牛头分"
+    },
+    {
+      "id": "card-033",
+      "number": 33,
+      "bullheads": 5,
+      "tier": "quintuple",
+      "ariaLabel": "33，5 牛头分"
+    },
+    {
+      "id": "card-034",
+      "number": 34,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "34，1 牛头分"
+    },
+    {
+      "id": "card-035",
+      "number": 35,
+      "bullheads": 2,
+      "tier": "double",
+      "ariaLabel": "35，2 牛头分"
+    },
+    {
+      "id": "card-036",
+      "number": 36,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "36，1 牛头分"
+    },
+    {
+      "id": "card-037",
+      "number": 37,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "37，1 牛头分"
+    },
+    {
+      "id": "card-038",
+      "number": 38,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "38，1 牛头分"
+    },
+    {
+      "id": "card-039",
+      "number": 39,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "39，1 牛头分"
+    },
+    {
+      "id": "card-040",
+      "number": 40,
+      "bullheads": 3,
+      "tier": "triple",
+      "ariaLabel": "40，3 牛头分"
+    },
+    {
+      "id": "card-041",
+      "number": 41,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "41，1 牛头分"
+    },
+    {
+      "id": "card-042",
+      "number": 42,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "42，1 牛头分"
+    },
+    {
+      "id": "card-043",
+      "number": 43,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "43，1 牛头分"
+    },
+    {
+      "id": "card-044",
+      "number": 44,
+      "bullheads": 5,
+      "tier": "quintuple",
+      "ariaLabel": "44，5 牛头分"
+    },
+    {
+      "id": "card-045",
+      "number": 45,
+      "bullheads": 2,
+      "tier": "double",
+      "ariaLabel": "45，2 牛头分"
+    },
+    {
+      "id": "card-046",
+      "number": 46,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "46，1 牛头分"
+    },
+    {
+      "id": "card-047",
+      "number": 47,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "47，1 牛头分"
+    },
+    {
+      "id": "card-048",
+      "number": 48,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "48，1 牛头分"
+    },
+    {
+      "id": "card-049",
+      "number": 49,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "49，1 牛头分"
+    },
+    {
+      "id": "card-050",
+      "number": 50,
+      "bullheads": 3,
+      "tier": "triple",
+      "ariaLabel": "50，3 牛头分"
+    },
+    {
+      "id": "card-051",
+      "number": 51,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "51，1 牛头分"
+    },
+    {
+      "id": "card-052",
+      "number": 52,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "52，1 牛头分"
+    },
+    {
+      "id": "card-053",
+      "number": 53,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "53，1 牛头分"
+    },
+    {
+      "id": "card-054",
+      "number": 54,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "54，1 牛头分"
+    },
+    {
+      "id": "card-055",
+      "number": 55,
+      "bullheads": 7,
+      "tier": "royal",
+      "ariaLabel": "55，7 牛头分"
+    },
+    {
+      "id": "card-056",
+      "number": 56,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "56，1 牛头分"
+    },
+    {
+      "id": "card-057",
+      "number": 57,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "57，1 牛头分"
+    },
+    {
+      "id": "card-058",
+      "number": 58,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "58，1 牛头分"
+    },
+    {
+      "id": "card-059",
+      "number": 59,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "59，1 牛头分"
+    },
+    {
+      "id": "card-060",
+      "number": 60,
+      "bullheads": 3,
+      "tier": "triple",
+      "ariaLabel": "60，3 牛头分"
+    },
+    {
+      "id": "card-061",
+      "number": 61,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "61，1 牛头分"
+    },
+    {
+      "id": "card-062",
+      "number": 62,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "62，1 牛头分"
+    },
+    {
+      "id": "card-063",
+      "number": 63,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "63，1 牛头分"
+    },
+    {
+      "id": "card-064",
+      "number": 64,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "64，1 牛头分"
+    },
+    {
+      "id": "card-065",
+      "number": 65,
+      "bullheads": 2,
+      "tier": "double",
+      "ariaLabel": "65，2 牛头分"
+    },
+    {
+      "id": "card-066",
+      "number": 66,
+      "bullheads": 5,
+      "tier": "quintuple",
+      "ariaLabel": "66，5 牛头分"
+    },
+    {
+      "id": "card-067",
+      "number": 67,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "67，1 牛头分"
+    },
+    {
+      "id": "card-068",
+      "number": 68,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "68，1 牛头分"
+    },
+    {
+      "id": "card-069",
+      "number": 69,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "69，1 牛头分"
+    },
+    {
+      "id": "card-070",
+      "number": 70,
+      "bullheads": 3,
+      "tier": "triple",
+      "ariaLabel": "70，3 牛头分"
+    },
+    {
+      "id": "card-071",
+      "number": 71,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "71，1 牛头分"
+    },
+    {
+      "id": "card-072",
+      "number": 72,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "72，1 牛头分"
+    },
+    {
+      "id": "card-073",
+      "number": 73,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "73，1 牛头分"
+    },
+    {
+      "id": "card-074",
+      "number": 74,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "74，1 牛头分"
+    },
+    {
+      "id": "card-075",
+      "number": 75,
+      "bullheads": 2,
+      "tier": "double",
+      "ariaLabel": "75，2 牛头分"
+    },
+    {
+      "id": "card-076",
+      "number": 76,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "76，1 牛头分"
+    },
+    {
+      "id": "card-077",
+      "number": 77,
+      "bullheads": 5,
+      "tier": "quintuple",
+      "ariaLabel": "77，5 牛头分"
+    },
+    {
+      "id": "card-078",
+      "number": 78,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "78，1 牛头分"
+    },
+    {
+      "id": "card-079",
+      "number": 79,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "79，1 牛头分"
+    },
+    {
+      "id": "card-080",
+      "number": 80,
+      "bullheads": 3,
+      "tier": "triple",
+      "ariaLabel": "80，3 牛头分"
+    },
+    {
+      "id": "card-081",
+      "number": 81,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "81，1 牛头分"
+    },
+    {
+      "id": "card-082",
+      "number": 82,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "82，1 牛头分"
+    },
+    {
+      "id": "card-083",
+      "number": 83,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "83，1 牛头分"
+    },
+    {
+      "id": "card-084",
+      "number": 84,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "84，1 牛头分"
+    },
+    {
+      "id": "card-085",
+      "number": 85,
+      "bullheads": 2,
+      "tier": "double",
+      "ariaLabel": "85，2 牛头分"
+    },
+    {
+      "id": "card-086",
+      "number": 86,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "86，1 牛头分"
+    },
+    {
+      "id": "card-087",
+      "number": 87,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "87，1 牛头分"
+    },
+    {
+      "id": "card-088",
+      "number": 88,
+      "bullheads": 5,
+      "tier": "quintuple",
+      "ariaLabel": "88，5 牛头分"
+    },
+    {
+      "id": "card-089",
+      "number": 89,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "89，1 牛头分"
+    },
+    {
+      "id": "card-090",
+      "number": 90,
+      "bullheads": 3,
+      "tier": "triple",
+      "ariaLabel": "90，3 牛头分"
+    },
+    {
+      "id": "card-091",
+      "number": 91,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "91，1 牛头分"
+    },
+    {
+      "id": "card-092",
+      "number": 92,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "92，1 牛头分"
+    },
+    {
+      "id": "card-093",
+      "number": 93,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "93，1 牛头分"
+    },
+    {
+      "id": "card-094",
+      "number": 94,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "94，1 牛头分"
+    },
+    {
+      "id": "card-095",
+      "number": 95,
+      "bullheads": 2,
+      "tier": "double",
+      "ariaLabel": "95，2 牛头分"
+    },
+    {
+      "id": "card-096",
+      "number": 96,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "96，1 牛头分"
+    },
+    {
+      "id": "card-097",
+      "number": 97,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "97，1 牛头分"
+    },
+    {
+      "id": "card-098",
+      "number": 98,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "98，1 牛头分"
+    },
+    {
+      "id": "card-099",
+      "number": 99,
+      "bullheads": 5,
+      "tier": "quintuple",
+      "ariaLabel": "99，5 牛头分"
+    },
+    {
+      "id": "card-100",
+      "number": 100,
+      "bullheads": 3,
+      "tier": "triple",
+      "ariaLabel": "100，3 牛头分"
+    },
+    {
+      "id": "card-101",
+      "number": 101,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "101，1 牛头分"
+    },
+    {
+      "id": "card-102",
+      "number": 102,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "102，1 牛头分"
+    },
+    {
+      "id": "card-103",
+      "number": 103,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "103，1 牛头分"
+    },
+    {
+      "id": "card-104",
+      "number": 104,
+      "bullheads": 1,
+      "tier": "single",
+      "ariaLabel": "104，1 牛头分"
+    }
+  ],
+  "statistics": {
+    "cardCount": 104,
+    "totalBullheads": 171,
+    "distribution": {
+      "1": 76,
+      "2": 9,
+      "3": 10,
+      "5": 8,
+      "7": 1
+    }
+  }
+}

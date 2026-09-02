@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UNO · 光域对决 — 视觉与动画展厅</title>
+  <link rel="stylesheet" href="showcase.css">
+</head>
+<body>
+  <main class="showcase">
+    <header class="hero">
+      <div class="hero-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div>
+        <p>PLUGIN-UNO / VISUAL DIRECTION 01</p>
+        <h1>UNO <span>光域对决</span></h1>
+        <small>原创棱镜卡面 · 黑曜石竞技场 · 规则驱动的功能牌演出</small>
+      </div>
+      <div class="hero-tags"><span>108 张</span><span>2–8 人</span><span>6 类卡面</span></div>
+    </header>
+
+    <section id="arenaStage" class="arena-stage" aria-label="棱镜竞技场预览">
+      <div class="arena-hud">
+        <span><small>ACTIVE SPECTRUM</small><b>湛蓝</b></span>
+        <span><small>DIRECTION</small><b>顺时针 ↻</b></span>
+        <span><small>SCENE ASSET</small><b>1672 × 941</b></span>
+      </div>
+      <div class="arena-table">
+        <div class="deck-preview" aria-label="牌背预览"><i></i></div>
+        <div class="orbit-mark">↻</div>
+        <div id="topCard" class="demo-card blue" aria-label="湛蓝反转牌">
+          <div class="card-inner"><span class="corner">↻</span><strong>↻</strong><span class="corner bottom">↻</span></div>
+        </div>
+        <div id="penaltyReactor" class="penalty-reactor"><small>DRAW CHAIN</small><strong>+6</strong><span>锁定 玩家三</span></div>
+      </div>
+
+      <div id="effectOverlay" class="effect-overlay" aria-live="polite">
+        <div class="effect-veil"></div>
+        <div class="effect-rays" aria-hidden="true"></div>
+        <div class="effect-ring" aria-hidden="true"><i></i><i></i><i></i></div>
+        <img src="../frontend/assets/effects/wild-draw-four-burst.png" alt="" class="effect-burst">
+        <div class="effect-symbol">↻</div>
+        <div class="effect-stack"></div>
+        <div class="effect-copy"><small>PRISM EFFECT</small><b>轨道反转</b><span>行动方向已经反转</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <header class="panel-heading">
+        <div><small>CARD SYSTEM</small><h2>卡面语言</h2></div>
+        <p>卡牌由代码原生绘制，数字与符号在任意缩放下保持清晰。</p>
+      </header>
+      <div id="cardGallery" class="card-gallery"></div>
+    </section>
+
+    <section class="panel effect-panel">
+      <header class="panel-heading">
+        <div><small>EFFECT CHOREOGRAPHY</small><h2>功能牌演出</h2></div>
+        <p>点击任意事件，在上方竞技场直接预览。动画不会阻塞游戏状态。</p>
+      </header>
+      <div class="effect-buttons">
+        <button type="button" data-effect="skip"><i>⊘</i><span><b>跳过</b><small>红色时间切片</small></span></button>
+        <button type="button" data-effect="reverse"><i>↻</i><span><b>反转</b><small>双轨逆向旋转</small></span></button>
+        <button type="button" data-effect="draw-two"><i>+2</i><span><b>叠加 +2</b><small>惩罚反应堆充能</small></span></button>
+        <button type="button" data-effect="wild"><i>✦</i><span><b>变色</b><small>四色光谱重构</small></span></button>
+        <button type="button" data-effect="wild-draw-four"><i>+4</i><span><b>终极 +4</b><small>透明棱镜奇点</small></span></button>
+        <button type="button" data-effect="take-penalty"><i>+N</i><span><b>接下惩罚</b><small>累计能量坠落</small></span></button>
+        <button type="button" data-effect="catch-uno"><i>!</i><span><b>抓漏喊</b><small>目标锁定并罚二</small></span></button>
+        <button type="button" data-effect="uno"><i>U</i><span><b>UNO!</b><small>最后一张宣告</small></span></button>
+      </div>
+    </section>
+
+    <footer>
+      <span>实现：<code>frontend/GameView.vue</code></span>
+      <span>动画：<code>frontend/animations/effects.css</code></span>
+      <span>规则：<code>docs/RULEBOOK.md</code></span>
+    </footer>
+  </main>
+  <script src="showcase.js"></script>
+</body>
+</html>

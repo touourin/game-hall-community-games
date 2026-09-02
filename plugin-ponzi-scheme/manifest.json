@@ -1,0 +1,40 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "1.1.0",
+  "author": "Game Hall Community",
+  "license": "UNLICENSED",
+  "id": "plugin-ponzi-scheme",
+  "name": "庞氏骗局",
+  "description": "隐藏现金、循环付息与强制双向收购的高压金融谈判游戏",
+  "category": "策略游戏",
+  "tone": "ponzi-scheme",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 3,
+    "max": 5,
+    "label": "3–5 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "allowSpectators": true,
+    "firstPlayer": "random",
+    "luxuries": true,
+    "skipFirstTrade": true
+  },
+  "ruleLabels": ["3–5 人", "约 60–90 分钟", "现金与报价保密", "默认启用奢侈品"]
+}

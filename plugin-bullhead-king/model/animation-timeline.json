@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "clock": "client-presentation-only",
+  "authoritativeInput": "game.animation",
+  "coordinateSystem": {
+    "tableOrigin": "four-row-board",
+    "playerOrigin": "viewer-relative-seat",
+    "collectionTarget": "player-score-chip",
+    "measurement": "live DOM rectangles after authoritative snapshot render"
+  },
+  "motionSafety": {
+    "layer": "component-overlay-above-table",
+    "stableLayoutNeverMoves": true,
+    "cardFlightClippedBy": "component boundary only",
+    "offscreenRevealOrigin": "clamp presentation copy to the visible edge of the reveal rail",
+    "offscreenScoreTarget": "scroll player rail until target chip is visible before measuring",
+    "takeStackMaximumCards": 5,
+    "interactiveElementsReceivePointerEvents": false,
+    "rulesOverlayAlwaysAboveMotion": true
+  },
+  "clips": [
+    {
+      "id": "card.commit",
+      "durationMs": 180,
+      "trigger": "local select_card submit",
+      "keyframes": ["hand 0%", "lift -10px 45%", "face-down tray 100%"],
+      "inputLock": "request"
+    },
+    {
+      "id": "cards.reveal",
+      "durationMs": 420,
+      "staggerMs": 90,
+      "trigger": "animation.kind = turn_resolution",
+      "keyframes": ["back 0%", "edge 48%", "face 100%"],
+      "inputLock": "presentation"
+    },
+    {
+      "id": "card.place",
+      "durationMs": 360,
+      "staggerMs": 120,
+      "trigger": "step.type = place",
+      "keyframes": ["reveal rail 0%", "arc toward row 70%", "row slot 100%"],
+      "inputLock": "none"
+    },
+    {
+      "id": "row.take-full",
+      "durationMs": 760,
+      "trigger": "step.type = take_full",
+      "keyframes": ["row warning 0%", "five cards compress 28%", "stack flies to player 78%", "new row card settles 100%"],
+      "inputLock": "presentation"
+    },
+    {
+      "id": "row.take-low",
+      "durationMs": 760,
+      "trigger": "step.type = take_low",
+      "keyframes": ["chosen row outline 0%", "cards compress 24%", "stack flies to player 76%", "low card becomes row head 100%"],
+      "inputLock": "request-and-presentation"
+    },
+    {
+      "id": "round.deal",
+      "durationMs": 520,
+      "staggerMs": 55,
+      "trigger": "animation.kind = round_deal",
+      "keyframes": ["deck 0%", "four row heads 55%", "private hand fan 100%"],
+      "inputLock": "presentation"
+    }
+  ],
+  "eventShape": {
+    "required": ["id", "kind", "roundNumber", "turnNumber", "revealed", "steps"],
+    "stepTypes": ["place", "take_full", "take_low"],
+    "stepFields": ["id", "type", "playerId", "card", "rowIndex", "takenCards", "penalty"]
+  },
+  "reconnect": {
+    "policy": "snap-to-authoritative-state",
+    "replayMissedAnimations": false,
+    "deduplicateBy": "animation.id"
+  },
+  "reducedMotion": {
+    "query": "prefers-reduced-motion: reduce",
+    "replacement": "120ms opacity transition without translation, rotation, shake or stagger"
+  }
+}

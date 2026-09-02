@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "layout": "immersive",
+  "viewerAnchor": "bottom-center",
+  "viewportPolicy": {
+    "mode": "browser-fill",
+    "reservedHostControls": ["leave-room", "room-controls"],
+    "desktopMinimumHeight": "max(760px, 100dvh - 112px)",
+    "mobileMinimumHeight": "max(760px, 100dvh - 64px)",
+    "pageLevelHorizontalOverflow": false,
+    "localHorizontalScrollZones": ["player-rail", "private-hand"]
+  },
+  "scenes": [
+    {
+      "id": "setup.table",
+      "stage": "setup",
+      "title": "牌桌准备",
+      "purpose": "展示四行槽位、玩家席位与 66 分目标。",
+      "entry": ["房间尚未开局"],
+      "focusZones": ["rule-summary", "four-row-table", "player-rail"],
+      "actions": [],
+      "exit": "宿主开始游戏"
+    },
+    {
+      "id": "turn.select",
+      "stage": "select",
+      "title": "暗选手牌",
+      "purpose": "仅向本人展示手牌并锁定一张，其他玩家只见提交状态。",
+      "entry": ["新一手开始", "本人尚未提交"],
+      "focusZones": ["table-rows", "private-hand", "commit-control"],
+      "actions": ["select_card"],
+      "exit": "本人锁定手牌"
+    },
+    {
+      "id": "turn.waiting",
+      "stage": "select",
+      "title": "等待其他玩家",
+      "purpose": "保留本人已锁定牌的私有确认，不提前公开牌号。",
+      "entry": ["本人已提交", "仍有玩家未提交"],
+      "focusZones": ["commit-status", "table-rows", "private-commit"],
+      "actions": [],
+      "exit": "所有有效玩家完成提交"
+    },
+    {
+      "id": "turn.resolve",
+      "stage": "resolving",
+      "title": "升序结算",
+      "purpose": "先同时翻开，再按数字从小到大逐张落位并播放收牌。",
+      "entry": ["最后一名玩家锁定手牌"],
+      "focusZones": ["reveal-rail", "active-row", "take-flight"],
+      "actions": [],
+      "exit": "全部牌落位或遇到低牌选择"
+    },
+    {
+      "id": "turn.choose-row",
+      "stage": "choose_row",
+      "title": "低牌收行",
+      "purpose": "打出的牌低于所有行尾时，由该玩家比较四行牛头分并选择。",
+      "entry": ["结算牌无法接在任何行尾"],
+      "focusZones": ["pending-card", "row-penalties", "row-choice-buttons"],
+      "actions": ["take_row"],
+      "exit": "所选行被收走，继续升序结算"
+    },
+    {
+      "id": "round.summary",
+      "stage": "round_summary",
+      "title": "本轮结算",
+      "purpose": "展示本轮新增牛头分与累计分，留出阅读停顿。",
+      "entry": ["所有有效玩家打完第十张牌", "无人达到 66 分"],
+      "focusZones": ["round-score", "total-score", "next-round"],
+      "actions": ["next_round"],
+      "exit": "任一有效玩家开始下一轮"
+    },
+    {
+      "id": "game.finished",
+      "stage": "finished",
+      "title": "终局排名",
+      "purpose": "展示最低牛头分获胜者；最低分相同则共同获胜。",
+      "entry": ["一轮结束且至少一人达到 66 分", "仅剩一名有效玩家"],
+      "focusZones": ["winner", "rankings", "restart"],
+      "actions": [],
+      "exit": "宿主再来一局"
+    }
+  ]
+}

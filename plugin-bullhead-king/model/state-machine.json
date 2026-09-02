@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "authority": "server",
+  "initial": "setup",
+  "states": {
+    "setup": {
+      "on": { "start": "select" },
+      "invariants": ["104 张牌洗混", "每名玩家 10 张", "四行各 1 张"]
+    },
+    "select": {
+      "on": { "select_card": "select", "all_committed": "resolving" },
+      "invariants": ["每名有效玩家至多锁定一张", "未全员提交前不公开牌号"]
+    },
+    "resolving": {
+      "on": {
+        "place": "resolving",
+        "full_row": "resolving",
+        "low_card": "choose_row",
+        "turn_complete": "select",
+        "hand_complete": "round_summary",
+        "threshold_reached": "finished"
+      },
+      "invariants": ["按牌号严格升序", "落到小于该牌且差值最小的行尾"]
+    },
+    "choose_row": {
+      "on": { "take_row": "resolving" },
+      "invariants": ["仅低牌所有者选择", "收走整行后该牌成为新行首"]
+    },
+    "round_summary": {
+      "on": { "next_round": "select" },
+      "invariants": ["收牌不回手", "本轮牛头分已累计"]
+    },
+    "finished": {
+      "on": {},
+      "invariants": ["除宿主再来一局外拒绝规则动作"]
+    }
+  },
+  "actions": {
+    "select_card": { "payload": ["cardId", "turnNumber"], "private": true },
+    "take_row": { "payload": ["rowIndex", "turnNumber"], "private": false },
+    "next_round": { "payload": ["roundNumber"], "private": false },
+    "resign": { "payload": [], "private": false }
+  }
+}

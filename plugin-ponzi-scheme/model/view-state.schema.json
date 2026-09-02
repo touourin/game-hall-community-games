@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/plugin-ponzi-scheme/view-state.schema.json",
+  "title": "Ponzi Scheme privacy-safe player view",
+  "type": "object",
+  "required": ["version", "ruleset", "round", "stage", "marketRows", "ledgers", "pendingTrade", "legalActions", "settlement", "privacy"],
+  "properties": {
+    "version": { "const": "1.1.0" },
+    "ruleset": { "const": "bright-eye-standard" },
+    "round": { "type": "integer", "minimum": 1 },
+    "stage": { "type": "string" },
+    "marketRows": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "array", "maxItems": 3 }
+    },
+    "ledgers": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["playerId", "cash", "cashHidden", "industries", "funds"],
+        "properties": {
+          "playerId": { "type": "string" },
+          "cash": { "type": ["integer", "null"], "minimum": 0 },
+          "cashHidden": { "type": "boolean" },
+          "industries": { "type": "object" },
+          "funds": { "type": "array" }
+        }
+      }
+    },
+    "pendingTrade": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["proposerId", "targetId", "industryId", "offer", "offerKnown"],
+          "properties": {
+            "offer": { "type": ["integer", "null"], "minimum": 0 },
+            "offerKnown": { "type": "boolean" }
+          }
+        }
+      ]
+    },
+    "legalActions": { "type": "object" },
+    "settlement": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "required": ["mode", "winnerPlayerIds", "bankruptPlayerIds", "reason", "rows"],
+          "properties": {
+            "mode": { "enum": ["industry_and_luxury", "industry_and_wealth"] },
+            "winnerPlayerIds": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+            "bankruptPlayerIds": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+            "reason": { "type": ["string", "null"] },
+            "rows": {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 5,
+              "items": {
+                "type": "object",
+                "required": ["playerId", "rank", "winner", "bankrupt", "industryScore", "luxuryScore", "wealthScore", "highestFund", "total"]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "privacy": {
+      "type": "object",
+      "required": ["cash", "tradeOffer", "fundsAndIndustries"],
+      "properties": {
+        "cash": { "type": "string" },
+        "tradeOffer": { "const": "participants-only" },
+        "fundsAndIndustries": { "const": "public" }
+      }
+    }
+  }
+}

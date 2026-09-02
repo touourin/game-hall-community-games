@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 300" data-model-version="1" role="img" aria-labelledby="title desc">
+  <title id="title">谁是牛头王卡牌模型板</title>
+  <desc id="desc">普通、尾数五、整十、对子、五十五和一百零四号牌的原创视觉模型。</desc>
+  <defs>
+    <path id="horn" d="M1 4c2.5 0 3.5-2 4-4 .5 2 1.5 4 4 4-1 4-2.4 6-4 7-1.6-1-3-3-4-7Z"/>
+    <style>
+      .number { font: 800 43px Georgia, serif; }
+      .points { font: 700 10px 'Microsoft YaHei', sans-serif; letter-spacing: .08em; }
+      .label { font: 700 13px 'Microsoft YaHei', sans-serif; letter-spacing: .12em; }
+    </style>
+  </defs>
+  <rect width="860" height="300" rx="24" fill="#071f23"/>
+  <path d="M22 62h816" stroke="#c49444" stroke-width="1" opacity=".45"/>
+  <text x="30" y="39" fill="#f6e8c8" class="label">NUMBER CARD SYSTEM · 68 × 96 LOGICAL UNITS</text>
+
+    <g transform="translate(42 108)" aria-label="1，1 牛头分">
+      <rect width="104" height="148" rx="13" fill="#fff8e9" stroke="#142f32" stroke-width="4"/>
+      <rect x="7" y="7" width="90" height="134" rx="9" fill="none" stroke="#5f8f82" stroke-width="2"/>
+      <text x="52" y="78" text-anchor="middle" fill="#214d4d" class="number">1</text>
+      <g fill="#5f8f82"><use href="#horn" x="52.0" y="116"/></g>
+      <text x="52" y="137" text-anchor="middle" fill="#214d4d" class="points">1 分</text>
+    </g>
+    <g transform="translate(174 108)" aria-label="5，2 牛头分">
+      <rect width="104" height="148" rx="13" fill="#fff8e9" stroke="#142f32" stroke-width="4"/>
+      <rect x="7" y="7" width="90" height="134" rx="9" fill="none" stroke="#d6a447" stroke-width="2"/>
+      <text x="52" y="78" text-anchor="middle" fill="#78541f" class="number">5</text>
+      <g fill="#d6a447"><use href="#horn" x="46.0" y="116"/><use href="#horn" x="58.0" y="116"/></g>
+      <text x="52" y="137" text-anchor="middle" fill="#78541f" class="points">2 分</text>
+    </g>
+    <g transform="translate(306 108)" aria-label="10，3 牛头分">
+      <rect width="104" height="148" rx="13" fill="#fff8e9" stroke="#142f32" stroke-width="4"/>
+      <rect x="7" y="7" width="90" height="134" rx="9" fill="none" stroke="#df7354" stroke-width="2"/>
+      <text x="52" y="78" text-anchor="middle" fill="#994835" class="number">10</text>
+      <g fill="#df7354"><use href="#horn" x="40.0" y="116"/><use href="#horn" x="52.0" y="116"/><use href="#horn" x="64.0" y="116"/></g>
+      <text x="52" y="137" text-anchor="middle" fill="#994835" class="points">3 分</text>
+    </g>
+    <g transform="translate(438 108)" aria-label="11，5 牛头分">
+      <rect width="104" height="148" rx="13" fill="#fff8e9" stroke="#142f32" stroke-width="4"/>
+      <rect x="7" y="7" width="90" height="134" rx="9" fill="none" stroke="#b9679b" stroke-width="2"/>
+      <text x="52" y="78" text-anchor="middle" fill="#6f365f" class="number">11</text>
+      <g fill="#b9679b"><use href="#horn" x="28.0" y="116"/><use href="#horn" x="40.0" y="116"/><use href="#horn" x="52.0" y="116"/><use href="#horn" x="64.0" y="116"/><use href="#horn" x="76.0" y="116"/></g>
+      <text x="52" y="137" text-anchor="middle" fill="#6f365f" class="points">5 分</text>
+    </g>
+    <g transform="translate(570 108)" aria-label="55，7 牛头分">
+      <rect width="104" height="148" rx="13" fill="#fff8e9" stroke="#142f32" stroke-width="4"/>
+      <rect x="7" y="7" width="90" height="134" rx="9" fill="none" stroke="#e24d35" stroke-width="2"/>
+      <text x="52" y="78" text-anchor="middle" fill="#7f281f" class="number">55</text>
+      <g fill="#e24d35"><use href="#horn" x="16.0" y="116"/><use href="#horn" x="28.0" y="116"/><use href="#horn" x="40.0" y="116"/><use href="#horn" x="52.0" y="116"/><use href="#horn" x="64.0" y="116"/><use href="#horn" x="76.0" y="116"/><use href="#horn" x="88.0" y="116"/></g>
+      <text x="52" y="137" text-anchor="middle" fill="#7f281f" class="points">7 分</text>
+    </g>
+    <g transform="translate(702 108)" aria-label="104，1 牛头分">
+      <rect width="104" height="148" rx="13" fill="#fff8e9" stroke="#142f32" stroke-width="4"/>
+      <rect x="7" y="7" width="90" height="134" rx="9" fill="none" stroke="#5f8f82" stroke-width="2"/>
+      <text x="52" y="78" text-anchor="middle" fill="#214d4d" class="number">104</text>
+      <g fill="#5f8f82"><use href="#horn" x="52.0" y="116"/></g>
+      <text x="52" y="137" text-anchor="middle" fill="#214d4d" class="points">1 分</text>
+    </g>
+</svg>

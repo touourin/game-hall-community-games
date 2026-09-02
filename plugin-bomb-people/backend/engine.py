@@ -35,7 +35,6 @@ BOMB_PLACE_EFFECT_TICKS = 7
 EXPLOSION_EFFECT_TICKS = 9
 SHIELD_GRACE_TICKS = TICK_RATE
 CURSE_TICKS = 5 * TICK_RATE
-GHOST_TICKS = 5 * TICK_RATE
 STAR_TICKS = 5 * TICK_RATE
 ICE_TICKS = 3 * TICK_RATE
 ITEM_REFRESH_TICKS = 10 * TICK_RATE
@@ -341,7 +340,6 @@ class BombPeopleEngine:
             if not actor.alive:
                 continue
             actor.cursed_ticks = max(0, actor.cursed_ticks - 1)
-            actor.ghost_ticks = max(0, actor.ghost_ticks - 1)
             actor.invincible_ticks = max(0, actor.invincible_ticks - 1)
 
     @staticmethod
@@ -412,7 +410,7 @@ class BombPeopleEngine:
         cell = state.board[actor.y][actor.x]
         if cell in {CELL_HARD, CELL_STONE}:
             return
-        if cell == CELL_SOFT and actor.ghost_ticks <= 0:
+        if cell == CELL_SOFT and not actor.has_ghost:
             return
         bomb = BombState(
             bomb_id=state.next_bomb_id,
@@ -586,7 +584,7 @@ class BombPeopleEngine:
             cell = state.board[target_y][target_x]
             if cell in {CELL_HARD, CELL_STONE}:
                 continue
-            if cell == CELL_SOFT and actor.ghost_ticks <= 0:
+            if cell == CELL_SOFT and not actor.has_ghost:
                 continue
 
             bomb = self._bomb_at(state, target_x, target_y)
@@ -677,7 +675,9 @@ class BombPeopleEngine:
                     bomb.motion_delay -= 1
                 else:
                     self._move_bomb_once(state, bomb)
-            if state.tick > bomb.placed_tick:
+            # Picking a bomb up preserves its exact remaining fuse. The same
+            # countdown resumes as soon as the bomb is thrown or dropped.
+            if state.tick > bomb.placed_tick and bomb.carrier_id is None:
                 bomb.fuse_ticks -= 1
             if (bomb.x, bomb.y) in state.flames:
                 bomb.fuse_ticks = 0
@@ -959,7 +959,7 @@ class BombPeopleEngine:
         elif kind == "shield":
             actor.shield_charges = min(2, actor.shield_charges + 1)
         elif kind == "ghost":
-            actor.ghost_ticks = max(actor.ghost_ticks, GHOST_TICKS)
+            actor.has_ghost = True
         elif kind == "magnet":
             actor.has_magnet = True
         elif kind == "ice":
@@ -998,7 +998,7 @@ class BombPeopleEngine:
         actor.has_magnet = False
         actor.has_ice = False
         actor.shield_charges = 0
-        actor.ghost_ticks = 0
+        actor.has_ghost = False
         actor.invincible_ticks = 0
         actor.cursed_ticks = CURSE_TICKS
 
@@ -1329,7 +1329,7 @@ class BombPeopleEngine:
                 "magnet": actor.has_magnet,
                 "ice": actor.has_ice,
                 "shieldCharges": actor.shield_charges,
-                "ghostTicks": actor.ghost_ticks,
+                "ghost": actor.has_ghost,
                 "invincibleTicks": actor.invincible_ticks,
                 "cursedTicks": actor.cursed_ticks,
             },

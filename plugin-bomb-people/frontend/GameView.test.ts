@@ -56,7 +56,7 @@ function player(id: string, seat: number, name: string): BombPlayer {
       bombCapacity: seat ? 1 : 3, blastRange: seat ? 2 : 4, speedLevel: seat ? 0 : 2,
       kick: !seat, punch: !seat, throw: !seat, timer: !seat, chain: false,
       magnet: false, ice: false, shieldCharges: seat ? 0 : 1,
-      ghostTicks: 0, invincibleTicks: 0, cursedTicks: 0,
+      ghost: false, invincibleTicks: 0, cursedTicks: 0,
     },
   }
 }
@@ -391,9 +391,9 @@ describe('Bomb People arena', () => {
     wrapper.unmount()
   })
 
-  it('explains the five-second ghost wall and stone restrictions', () => {
+  it('explains permanent ghost wall access and stone restrictions', () => {
     const wrapper = render()
-    expect(wrapper.text()).toContain('幽灵相位持续 5 秒')
+    expect(wrapper.text()).toContain('幽灵相位获得后本局永久生效')
     expect(wrapper.text()).toContain('可穿过箱墙并在箱墙格内放雷')
     expect(wrapper.text()).toContain('不能穿固定石块或决胜落石')
     wrapper.unmount()

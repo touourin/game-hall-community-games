@@ -22,7 +22,7 @@ export interface BombEquipment {
   magnet: boolean
   ice: boolean
   shieldCharges: number
-  ghostTicks: number
+  ghost: boolean
   invincibleTicks: number
   cursedTicks: number
 }

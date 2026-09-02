@@ -368,6 +368,7 @@ def test_blocked_second_throw_keeps_the_bomb_carried_until_forfeit(loaded):
     press(engine, room, members[0], 1, engine_module.INPUT_THROW)
     assert actor.carried_bomb_id == bomb.bomb_id
     assert bomb.carrier_id == actor.player_id
+    assert bomb.fuse_ticks == 30
     assert (bomb.x, bomb.y) == (actor.x, actor.y)
     pickup = next(effect for effect in room.state.effects if effect.kind == "bomb_picked_up")
     assert (pickup.x, pickup.y, pickup.target_x, pickup.target_y) == (6, 5, 5, 5)
@@ -378,14 +379,18 @@ def test_blocked_second_throw_keeps_the_bomb_carried_until_forfeit(loaded):
     press(engine, room, members[0], 3, engine_module.INPUT_THROW)
     assert actor.carried_bomb_id == bomb.bomb_id
     assert bomb.carrier_id == actor.player_id
+    assert bomb.fuse_ticks == 30
     assert not any(effect.kind == "bomb_thrown" for effect in room.state.effects)
 
     press(engine, room, members[0], 5, engine_module.INPUT_BOMB)
     assert list(room.state.bombs) == [bomb.bomb_id]
+    assert bomb.fuse_ticks == 30
     assert engine.manual_forfeit(room, members[0]) is True
     assert actor.carried_bomb_id is None
     assert bomb.carrier_id is None
     assert (bomb.x, bomb.y) == (5, 5)
+    engine.tick(room)
+    assert bomb.fuse_ticks == 29
 
 
 def test_pickup_wins_over_simultaneous_place_input_without_copying_a_bomb(loaded):
@@ -415,7 +420,7 @@ def test_pickup_wins_over_simultaneous_place_input_without_copying_a_bomb(loaded
     assert bomb.carrier_id == actor.player_id
 
 
-def test_carried_bomb_keeps_its_fuse_and_explodes_at_the_moving_carrier(loaded):
+def test_carried_bomb_freezes_its_fuse_until_thrown_then_resumes(loaded):
     Engine, state_module, _, engine_module = loaded
     engine = Engine(random.Random(32))
     room, members = start_active(engine, 3)
@@ -425,22 +430,36 @@ def test_carried_bomb_keeps_its_fuse_and_explodes_at_the_moving_carrier(loaded):
     actor.facing_x, actor.facing_y = 1, 0
     actor.can_throw = True
     bomb = state_module.BombState(
-        1, members[1].id, members[1].id, 6, 5, room.state.tick, 2, 2,
+        1, members[1].id, members[1].id, 6, 5, room.state.tick, 3, 2,
     )
     room.state.bombs = {bomb.bomb_id: bomb}
 
     press(engine, room, members[0], 1, engine_module.INPUT_THROW)
-    assert bomb.fuse_ticks == 1
+    assert bomb.fuse_ticks == 3
     actor.move_cooldown = 0
     engine.apply_input(room, members[0], 3, engine_module.INPUT_UP)
     engine.tick(room)
+    engine.apply_input(room, members[0], 4, 0)
 
     assert (actor.x, actor.y) == (5, 4)
-    assert not actor.alive
+    assert (bomb.x, bomb.y) == (5, 4)
+    for _ in range(engine_module.BOMB_FUSE_TICKS + 5):
+        engine.tick(room)
+    assert actor.alive
+    assert actor.carried_bomb_id == bomb.bomb_id
+    assert bomb.fuse_ticks == 3
+
+    press(engine, room, members[0], 5, engine_module.INPUT_THROW)
     assert actor.carried_bomb_id is None
-    assert not room.state.bombs
+    assert bomb.carrier_id is None
+    assert bomb.fuse_ticks == 2
+    thrown_position = (bomb.x, bomb.y)
+
+    engine.tick(room)
+    assert bomb.fuse_ticks == 1
+    engine.tick(room)
     explosion = next(effect for effect in room.state.effects if effect.kind == "bomb_exploded")
-    assert (explosion.x, explosion.y, explosion.bomb_id) == (5, 4, bomb.bomb_id)
+    assert (explosion.x, explosion.y, explosion.bomb_id) == (*thrown_position, bomb.bomb_id)
 
 
 @pytest.mark.parametrize("count", range(2, 9))
@@ -517,7 +536,7 @@ def test_skull_removes_equipment_and_blocks_bombs_for_five_seconds(loaded):
     assert room.state.bombs
 
 
-def test_ghost_lasts_five_seconds_crosses_only_soft_walls_and_can_bomb_them(loaded):
+def test_ghost_is_permanent_crosses_only_soft_walls_and_can_bomb_them(loaded):
     Engine, state_module, _, engine_module = loaded
     engine = Engine(random.Random(51))
     room, members = start_active(engine, 2)
@@ -528,7 +547,7 @@ def test_ghost_lasts_five_seconds_crosses_only_soft_walls_and_can_bomb_them(load
     opponent.x, opponent.y = 18, 18
     room.state.items[1] = state_module.ItemState(1, "ghost", actor.x, actor.y)
     engine.tick(room)
-    assert actor.ghost_ticks == engine_module.GHOST_TICKS
+    assert actor.has_ghost
 
     room.state.board[5][6] = state_module.CELL_SOFT
     room.state.board[5][7] = state_module.CELL_HARD
@@ -546,12 +565,13 @@ def test_ghost_lasts_five_seconds_crosses_only_soft_walls_and_can_bomb_them(load
     assert (actor.x, actor.y) == (5, 6)
 
     actor.x, actor.y = 6, 5
-    actor.ghost_ticks = 0
+    actor.has_ghost = False
     press(engine, room, members[0], 7, engine_module.INPUT_BOMB)
     assert not room.state.bombs
 
     engine._grant_item(room.state, actor, "ghost", room=None, announce=False)
-    assert actor.ghost_ticks == engine_module.GHOST_TICKS
+    assert actor.has_ghost
+    assert engine.view(room, members[0])["players"][0]["equipment"]["ghost"] is True
     press(engine, room, members[0], 9, engine_module.INPUT_BOMB)
     assert len(room.state.bombs) == 1
     assert room.state.board[5][6] == state_module.CELL_SOFT
@@ -563,12 +583,13 @@ def test_ghost_lasts_five_seconds_crosses_only_soft_walls_and_can_bomb_them(load
     assert room.state.board[5][6] == state_module.CELL_FLOOR
     assert any(effect.kind == "bomb_exploded" for effect in room.state.effects)
 
-    engine._grant_item(room.state, actor, "ghost", room=None, announce=False)
-    for _ in range(engine_module.GHOST_TICKS - 1):
+    for _ in range(5 * engine_module.TICK_RATE + 1):
         engine.tick(room)
-    assert actor.ghost_ticks == 1
-    engine.tick(room)
-    assert actor.ghost_ticks == 0
+    assert actor.has_ghost
+    room.state.board[15][16] = state_module.CELL_SOFT
+    actor.move_cooldown = 0
+    press(engine, room, members[0], 11, engine_module.INPUT_RIGHT)
+    assert (actor.x, actor.y) == (16, 15)
 
 
 def test_items_are_automatically_collected_and_stacks_are_capped(loaded):

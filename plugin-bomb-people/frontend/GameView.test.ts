@@ -48,6 +48,7 @@ function player(id: string, seat: number, name: string): BombPlayer {
   return {
     id, seat, name, color: seat ? '#4f8cff' : '#ff5a55', character: seat,
     x: seat ? 18 : 1, y: seat ? 18 : 1, facingX: 0, facingY: 1, moving: false,
+    moveIntervalTicks: seat ? 4 : 2.6,
     alive: true, eliminatedBy: null, eliminationReason: null, kills: seat ? 1 : 3,
     stats: { kills: seat ? 4 : 12, championships: seat ? 1 : 4, matches: 5, winRate: seat ? 20 : 80 },
     equipment: {
@@ -74,7 +75,7 @@ function snapshot(phase: ArcadeSnapshot['phase'] = 'playing'): ArcadeSnapshot {
     stageTicksRemaining: 0, roundTicksRemaining: 1_200,
     collapsePlaced: 0, collapseTotal: 400, dangerCells: [],
     selectedMap: 'magma_crucible', currentMap: maps[0]!, mapCatalog: maps,
-    mapProposal: null, canProposeMap: phase === 'lobby', canVoteMap: false,
+    mapRotation: 'random_no_repeat', mapProposal: null, canProposeMap: false, canVoteMap: false,
     board, players: phase === 'lobby' ? [] : [player('p0', 0, '红队'), player('p1', 1, '蓝队')],
     bombs: [{ id: 1, ownerId: 'p0', creditPlayerId: 'p0', x: 3, y: 3, fuseTicks: 30, maxFuseTicks: 40, moving: false, motionX: 0, motionY: 0 }],
     items: [{ id: 1, kind: 'speed', x: 4, y: 4 }],
@@ -109,11 +110,6 @@ function render(data = snapshot()) {
     attachTo: document.body,
     global: { plugins: [createPinia()], stubs: { Teleport: true } },
   })
-}
-
-
-function buttonByText(wrapper: ReturnType<typeof render>, text: string) {
-  return wrapper.findAll('button').find(button => button.text().includes(text))!
 }
 
 function pointerEvent(type: string, pointerId: number, clientX = 0, clientY = 0) {
@@ -198,6 +194,33 @@ describe('Bomb People arena', () => {
     expect(wrapper.find('.kick-impact').exists()).toBe(true)
     expect(wrapper.find('.throw-effect').exists()).toBe(true)
     expect(wrapper.get('.bomb').classes()).toEqual(expect.arrayContaining(['just-placed', 'landing']))
+    wrapper.unmount()
+  })
+
+  it('interpolates authoritative grid steps with compositor movement at the real speed', async () => {
+    const data = snapshot()
+    const game = data.game as unknown as BombGame
+    const actor = game.players[0]!
+    actor.x = 4
+    actor.y = 6
+    actor.moving = true
+    actor.moveIntervalTicks = 4
+    const wrapper = render(data)
+
+    const piece = wrapper.get('.player-piece.self')
+    expect(piece.attributes('style')).toContain('transform: translate3d(400%, 600%, 0)')
+    expect(piece.attributes('style')).toContain('--move-duration: 200ms')
+    expect(piece.attributes('style')).toContain('--walk-step-duration: 200ms')
+    expect(piece.find('.player-visual').exists()).toBe(true)
+
+    actor.x = 5
+    await wrapper.setProps({ snapshot: {
+      ...data,
+      revision: 2,
+      game: { ...game, players: [...game.players] },
+    } as unknown as ArcadeSnapshot })
+    await flushPromises()
+    expect(piece.attributes('style')).toContain('transform: translate3d(500%, 600%, 0)')
     wrapper.unmount()
   })
 
@@ -304,30 +327,23 @@ describe('Bomb People arena', () => {
     wrapper.unmount()
   })
 
-  it('lets only the host propose a map from the lobby', async () => {
+  it('shows a read-only random map pool with no consecutive repeats', async () => {
     const data = snapshot('lobby')
     const wrapper = render(data)
-    await wrapper.get('button[aria-label^="云顶激斗场"]').trigger('click')
-    await flushPromises()
-    expect(mocks.action).toHaveBeenCalledWith('propose_map', { mapKey: 'sky_citadel' })
-    expect(wrapper.text()).toContain('房主提议，全员确认后自动切图')
+    const cards = wrapper.findAll('.map-card')
+    expect(cards).toHaveLength((data.game as unknown as BombGame).mapCatalog.length)
+    expect(cards.every(card => card.attributes('disabled') !== undefined)).toBe(true)
+    expect(wrapper.text()).toContain('每局随机抽取，连续两局不会重复')
+    expect(wrapper.text()).toContain('上一局地图会暂时排除')
+    expect(mocks.action).not.toHaveBeenCalled()
     wrapper.unmount()
   })
 
-  it('shows agreement controls to a player who has not voted', async () => {
-    const data = snapshot('lobby')
-    data.hostId = 'p1'
-    const game = data.game as unknown as BombGame
-    game.canProposeMap = false
-    game.canVoteMap = true
-    game.mapProposal = {
-      mapKey: 'sky_citadel', proposedBy: 'p1', approvedPlayerIds: ['p1'],
-      requiredPlayerIds: ['p0', 'p1'], approvalCount: 1, requiredCount: 2,
-    }
-    const wrapper = render(data)
-    await buttonByText(wrapper, '同意切换').trigger('click')
-    await flushPromises()
-    expect(mocks.action).toHaveBeenCalledWith('vote_map', { accept: true })
+  it('explains the five-second ghost wall and stone restrictions', () => {
+    const wrapper = render()
+    expect(wrapper.text()).toContain('幽灵相位持续 5 秒')
+    expect(wrapper.text()).toContain('可穿过箱墙并在箱墙格内放雷')
+    expect(wrapper.text()).toContain('不能穿固定石块或决胜落石')
     wrapper.unmount()
   })
 

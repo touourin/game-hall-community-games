@@ -42,6 +42,7 @@ ITEM_REFRESH_TICKS = 10 * TICK_RATE
 ITEM_REFRESH_CHANCE = 0.24
 CRATE_DROP_CHANCE = 0.38
 COLLAPSE_INTERVAL_TICKS = 3
+MOVE_INTERVAL_TICKS = (4.0, 3.2, 2.6, 2.0)
 
 INPUT_UP = 1
 INPUT_DOWN = 2
@@ -135,6 +136,17 @@ class BombPeopleEngine:
     def initial_state(self) -> BombPeopleState:
         return BombPeopleState(selected_map=MAP_SPECS[0].key)
 
+    def _choose_round_map(self, previous: BombPeopleState | None) -> str:
+        candidates = [spec.key for spec in MAP_SPECS]
+        if (
+            previous is not None
+            and previous.stage == "finished"
+            and previous.selected_map in MAP_BY_KEY
+            and len(candidates) > 1
+        ):
+            candidates.remove(previous.selected_map)
+        return self.rng.choice(candidates)
+
     def start(self, room: ArcadeRoom) -> None:
         active_players = sorted(
             (player for player in room.players if not player.left_room),
@@ -144,11 +156,7 @@ class BombPeopleEngine:
             raise GameRuleError("炸弹超人需要 2–8 名玩家")
 
         previous = room.state if isinstance(room.state, BombPeopleState) else None
-        selected_map = (
-            previous.selected_map
-            if previous is not None and previous.selected_map in MAP_BY_KEY
-            else MAP_SPECS[0].key
-        )
+        selected_map = self._choose_round_map(previous)
         session_records = (
             copy.deepcopy(previous.session_records)
             if previous is not None
@@ -158,7 +166,7 @@ class BombPeopleEngine:
             session_records.setdefault(player.id, SessionRecord())
 
         spec = MAP_BY_KEY[selected_map]
-        positions = spawn_positions(len(active_players), spec.spawn_mode)
+        positions = spawn_positions(len(active_players), spec)
         variant = self.rng.randrange(1_000_000)
         state = BombPeopleState(
             tick=0,
@@ -200,12 +208,8 @@ class BombPeopleEngine:
         action: str,
         payload: dict[str, Any],
     ) -> None:
-        if action == "propose_map":
-            self._propose_map(room, player, payload)
-            return
-        if action == "vote_map":
-            self._vote_map(room, player, payload)
-            return
+        if action in {"propose_map", "vote_map"}:
+            raise GameRuleError("地图会在每局开始时随机切换，无需协商")
         if action == "resign":
             self.manual_forfeit(room, player)
             return
@@ -403,6 +407,11 @@ class BombPeopleEngine:
             return
         if self._bomb_at(state, actor.x, actor.y) is not None:
             return
+        cell = state.board[actor.y][actor.x]
+        if cell in {CELL_HARD, CELL_STONE}:
+            return
+        if cell == CELL_SOFT and actor.ghost_ticks <= 0:
+            return
         bomb = BombState(
             bomb_id=state.next_bomb_id,
             owner_id=actor.player_id,
@@ -494,9 +503,11 @@ class BombPeopleEngine:
                 continue
             if actor.move_cooldown > 0:
                 actor.move_cooldown -= 1
-                continue
+                if actor.move_cooldown > 0:
+                    continue
             direction = self._movement_direction(actor)
             if direction == (0, 0):
+                actor.move_cooldown = 0.0
                 continue
             dx, dy = direction
             actor.facing_x, actor.facing_y = dx, dy
@@ -522,11 +533,19 @@ class BombPeopleEngine:
                 continue
             actor.x, actor.y = target_x, target_y
             actor.last_move_tick = state.tick
-            interval = max(2, 5 - actor.speed_level)
-            if (actor.x, actor.y) in state.ice_tiles:
-                interval += 2
-            actor.move_cooldown = interval - 1
+            actor.move_cooldown += self._move_interval_ticks(state, actor)
             self._collect_at(room, state, actor, actor.x, actor.y)
+
+    @staticmethod
+    def _move_interval_ticks(
+        state: BombPeopleState,
+        actor: PlayerState,
+    ) -> float:
+        level = min(max(actor.speed_level, 0), len(MOVE_INTERVAL_TICKS) - 1)
+        interval = MOVE_INTERVAL_TICKS[level]
+        if (actor.x, actor.y) in state.ice_tiles:
+            interval += 2.0
+        return interval
 
     @staticmethod
     def _movement_direction(actor: PlayerState) -> tuple[int, int]:
@@ -664,8 +683,11 @@ class BombPeopleEngine:
             x=bomb.x,
             y=bomb.y,
         )
-        blast_cells: list[tuple[int, int]] = [(bomb.x, bomb.y)]
         destroyed_crates: list[tuple[int, int]] = []
+        if state.board[bomb.y][bomb.x] == CELL_SOFT:
+            state.board[bomb.y][bomb.x] = CELL_FLOOR
+            destroyed_crates.append((bomb.x, bomb.y))
+        blast_cells: list[tuple[int, int]] = [(bomb.x, bomb.y)]
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             for distance in range(1, bomb.blast_range + 1):
                 x, y = bomb.x + dx * distance, bomb.y + dy * distance
@@ -1038,81 +1060,6 @@ class BombPeopleEngine:
     def disconnect_timeout(self, room: ArcadeRoom, player: ArcadePlayer) -> bool:
         return self.manual_forfeit(room, player)
 
-    def _propose_map(
-        self,
-        room: ArcadeRoom,
-        player: ArcadePlayer,
-        payload: dict[str, Any],
-    ) -> None:
-        if room.phase not in {"lobby", "finished"}:
-            raise GameRuleError("只能在开局前或本局结束后协商地图")
-        if player.id != room.host_id:
-            raise GameRuleError("只有房主可以发起地图切换")
-        map_key = payload.get("mapKey")
-        if not isinstance(map_key, str) or map_key not in MAP_BY_KEY:
-            raise GameRuleError("请选择有效地图")
-        state: BombPeopleState = room.state
-        state.proposed_map = map_key
-        state.proposed_by = player.id
-        state.map_approvals = {player.id}
-        self._add_event(
-            state,
-            "map_proposed",
-            actor_id=player.id,
-            message=f"房主提议切换到{MAP_BY_KEY[map_key].name}",
-        )
-        self._commit_map_if_approved(room, state)
-
-    def _vote_map(
-        self,
-        room: ArcadeRoom,
-        player: ArcadePlayer,
-        payload: dict[str, Any],
-    ) -> None:
-        if room.phase not in {"lobby", "finished"}:
-            raise GameRuleError("当前不能参与地图协商")
-        state: BombPeopleState = room.state
-        if state.proposed_map is None:
-            raise GameRuleError("当前没有待确认的地图")
-        accept = payload.get("accept")
-        if not isinstance(accept, bool):
-            raise GameRuleError("地图投票格式不正确")
-        if not accept:
-            self._add_event(
-                state,
-                "map_rejected",
-                actor_id=player.id,
-                message=f"{player.name}不同意本次地图切换",
-            )
-            state.proposed_map = None
-            state.proposed_by = None
-            state.map_approvals.clear()
-            return
-        state.map_approvals.add(player.id)
-        self._commit_map_if_approved(room, state)
-
-    def _commit_map_if_approved(
-        self,
-        room: ArcadeRoom,
-        state: BombPeopleState,
-    ) -> bool:
-        required = {
-            player.id for player in room.players if not player.left_room
-        }
-        if state.proposed_map is None or not required <= state.map_approvals:
-            return False
-        selected = state.proposed_map
-        state.selected_map = selected
-        state.proposed_map = None
-        state.proposed_by = None
-        state.map_approvals.clear()
-        self._add_event(
-            state,
-            "map_changed",
-            message=f"全员同意，地图已切换为{MAP_BY_KEY[selected].name}",
-        )
-        return True
-
     def view(self, room: ArcadeRoom, viewer: ArcadePlayer) -> dict[str, Any]:
         state: BombPeopleState = room.state
         names = {player.id: player.name for player in room.players}
@@ -1125,9 +1072,6 @@ class BombPeopleEngine:
             ),
             None,
         )
-        required_ids = [
-            player.id for player in room.players if not player.left_room
-        ]
         return {
             "boardSize": BOARD_SIZE,
             "tick": state.tick,
@@ -1144,6 +1088,7 @@ class BombPeopleEngine:
                 ]
             ] if state.stage == "collapse" else [],
             "selectedMap": state.selected_map,
+            "mapRotation": "random_no_repeat",
             "currentMap": {
                 "key": map_spec.key,
                 "name": map_spec.name,
@@ -1154,26 +1099,9 @@ class BombPeopleEngine:
                 "startingItems": list(map_spec.starting_items),
             },
             "mapCatalog": map_catalog(),
-            "mapProposal": (
-                {
-                    "mapKey": state.proposed_map,
-                    "proposedBy": state.proposed_by,
-                    "approvedPlayerIds": sorted(state.map_approvals),
-                    "requiredPlayerIds": required_ids,
-                    "approvalCount": len(state.map_approvals),
-                    "requiredCount": len(required_ids),
-                }
-                if state.proposed_map is not None
-                else None
-            ),
-            "canProposeMap": (
-                viewer.id == room.host_id and room.phase in {"lobby", "finished"}
-            ),
-            "canVoteMap": (
-                room.phase in {"lobby", "finished"}
-                and state.proposed_map is not None
-                and viewer.id not in state.map_approvals
-            ),
+            "mapProposal": None,
+            "canProposeMap": False,
+            "canVoteMap": False,
             "board": [row[:] for row in state.board],
             "players": [
                 self._player_view(state, actor, names.get(actor.player_id, "玩家"))
@@ -1256,8 +1184,8 @@ class BombPeopleEngine:
             "itemLabels": dict(ITEM_LABELS),
         }
 
-    @staticmethod
     def _player_view(
+        self,
         state: BombPeopleState,
         actor: PlayerState,
         name: str,
@@ -1281,8 +1209,10 @@ class BombPeopleEngine:
             "moving": bool(
                 actor.alive
                 and not state.frozen
-                and state.tick - actor.last_move_tick <= max(2, 5 - actor.speed_level)
+                and state.tick - actor.last_move_tick
+                <= self._move_interval_ticks(state, actor)
             ),
+            "moveIntervalTicks": self._move_interval_ticks(state, actor),
             "alive": actor.alive,
             "eliminatedBy": actor.eliminated_by,
             "eliminationReason": actor.elimination_reason,

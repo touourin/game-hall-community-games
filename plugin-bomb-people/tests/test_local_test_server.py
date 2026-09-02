@@ -15,18 +15,14 @@ SPEC.loader.exec_module(SERVER_MODULE)
 LocalArena = SERVER_MODULE.LocalArena
 
 
-def test_local_arena_runs_real_lobby_voting_and_match_flow():
+def test_local_arena_runs_random_map_and_complete_match_flow():
     arena = LocalArena(player_count=3, seed=101)
     lobby = arena.snapshot("local-p1")
     assert lobby["phase"] == "lobby"
     assert len(lobby["players"]) == 3
     assert lobby["game"]["boardSize"] == 20
-
-    arena.action("local-p1", "propose_map", {"mapKey": "sky_citadel"})
-    arena.action("local-p2", "vote_map", {"accept": True})
-    approved = arena.action("local-p3", "vote_map", {"accept": True})
-    assert approved["game"]["selectedMap"] == "sky_citadel"
-    assert approved["game"]["mapProposal"] is None
+    assert lobby["game"]["mapRotation"] == "random_no_repeat"
+    assert lobby["game"]["canProposeMap"] is False
 
     started = arena.start("local-p1")
     assert started["phase"] == "playing"
@@ -42,6 +38,7 @@ def test_local_arena_runs_real_lobby_voting_and_match_flow():
     restarted = arena.restart("local-p1")
     assert restarted["phase"] == "playing"
     assert restarted["roundNumber"] == 2
+    assert restarted["game"]["selectedMap"] != started["game"]["selectedMap"]
 
 
 def test_local_arena_can_spawn_and_grant_every_debug_item():
@@ -110,5 +107,6 @@ def test_local_arena_finishes_and_restarts_complete_rounds_for_two_to_eight_play
     assert restarted["roundNumber"] == 2
     assert restarted["winnerPlayerIds"] == []
     assert restarted["game"]["winnerId"] is None
+    assert restarted["game"]["selectedMap"] != started["game"]["selectedMap"]
     assert all(player["alive"] for player in restarted["game"]["players"])
     assert all(player["stats"]["matches"] == 1 for player in restarted["game"]["players"])

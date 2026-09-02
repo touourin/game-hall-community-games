@@ -1,16 +1,14 @@
 # 《算途疾行》动画与时序模型
 
-> 跑步、接近路口、转弯、反馈与重连规则 v1.0
+> 跑步、桥面接近、变道、跳跃、下蹲、反馈与重连规则 v2.0
 
 ## 1. 权威边界
 
-动画是服务端状态的表现层，不是计时或判题来源。
-
-- 服务端生成题目、唯一正确方向和单调时钟截止点。
-- 客户端显示本地平滑倒计时，并在归零时发送带题目 ID 的 `timeout` 动作。
-- 任意 `choose` 到达服务端时若已越过截止点，服务端直接按超时结算。
-- 客户端只有收到答对快照后才播放转弯；错答不能先播放成功路线。
-- 重连直接显示当前快照，不补播错过的跑步或转弯动画。
+- 服务端生成 2/3 跑道、唯一正确动作和单调时钟截止点。
+- 客户端显示本地平滑倒计时，并在归零时发送当前 `questionId` 的 `timeout`。
+- `choose` 到达服务端时若已越过截止点，直接按超时结算。
+- 客户端只有收到下一题与 `lastAction` 后才播放成功动作。
+- 重连直接显示当前快照，不补播已错过的动作。
 
 ## 2. 单题时间轴
 
@@ -18,31 +16,22 @@
 sequenceDiagram
     participant S as 服务端
     participant C as 客户端
-    S->>C: questionId / options / remainingMs
-    C->>C: 跑步循环 + 跑道滚动 + 倒计时
-    alt 玩家在截止前选择
-        C->>S: choose(direction, questionId)
-        S->>S: 校验截止时间与正确方向
-        alt 正确
-            S->>C: 下一题 + lastDirection + levelUp
-            C->>C: 转弯 540–620ms，再进入跑步
-        else 错误
-            S->>C: finished(wrong) + correctDirection
-            C->>C: 失衡刹停
-        end
-    else 本地倒计时归零
-        C->>S: timeout(questionId)
-        S->>S: 校验单调时钟
-        S->>C: finished(timeout) + correctDirection
-        C->>C: 急停与障碍闭合
+    S->>C: questionId / 2-3 options / remainingMs
+    C->>C: 腿部跑步 + 桥面滚动 + 倒计时
+    C->>S: choose(runnerAction, questionId)
+    S->>S: 校验截止时间、开放动作与唯一真值
+    alt 正确
+        S->>C: 下一题 + lastAction + levelUp
+        C->>C: 变道/跳跃/下蹲 620ms -> 跑步
+    else 错误
+        S->>C: finished(wrong) + correctAction
+        C->>C: 失衡刹停
     end
 ```
 
-## 3. 速度模型
+## 3. 速度参数
 
-每一级的速度由同一组参数驱动：服务端答题时限、跑道纹理周期、角色步频和速度线数量。视觉速度不改变服务端截止时间。
-
-| 等级 | 时限 | 跑道周期 | 跑步周期 | 速度线 |
+| 等级 | 时限 | 桥面周期 | 跑步周期 | 速度线 |
 | ---: | ---: | ---: | ---: | ---: |
 | 1 | 6500 ms | 1500 ms | 720 ms | 4 |
 | 2 | 6100 ms | 1390 ms | 685 ms | 5 |
@@ -55,68 +44,51 @@ sequenceDiagram
 | 9 | 3500 ms | 710 ms | 455 ms | 11 |
 | 10 | 3200 ms | 650 ms | 430 ms | 12 |
 
+视觉速度不改变服务端截止时间。
+
 ## 4. 动画片段
 
-| 名称 | 时长 | 触发 | 可中断 | 结束状态 |
-| --- | ---: | --- | --- | --- |
-| `track-scroll` | 循环 | `playing` | 是 | 当前相位 |
-| `runner-cycle` | 循环 | `playing` | 是 | 当前相位 |
-| `choice-commit` | 120 ms | 本地提交 | 否 | 等待快照 |
-| `turn-left/right` | 620 ms | 服务端答对 | 是，重连 | `running` |
-| `turn-up/down` | 540 ms | 服务端答对 | 是，重连 | `running` |
-| `correct-ripple` | 460 ms | 服务端答对 | 是 | 透明 |
-| `level-pulse` | 900 ms | 每连续答对 10 题 | 是 | 透明 |
-| `wrong-stumble` | 540 ms | 错答结算 | 否 | 静止 |
-| `timeout-brake` | 480 ms | 超时结算 | 否 | 静止 |
-| `finish-run` | 1100 ms | 第 100 题答对 | 否 | 终点姿态 |
+| 名称 | 时长 | 触发 | 表现 |
+| --- | ---: | --- | --- |
+| `bridge-scroll` | 循环 | `playing` | 桥面接缝向后移动 |
+| `runner-cycle` | 循环 | `playing` | 双臂双腿交替摆动 |
+| `left/right` | 620 ms | 服务端答对 | 横移与倾斜 |
+| `jump` | 620 ms | 服务端答对 | 腾空、收腿、落地 |
+| `slide` | 620 ms | 服务端答对 | 压低、前倾、滑行 |
+| `level-pulse` | 900 ms | 每 10 题 | 等级提示 |
+| `wrong-stumble` | 540 ms | 错答 | 失衡刹停 |
+| `timeout-brake` | 480 ms | 超时 | 障碍前急停 |
+| `finish-run` | 1100 ms | 第 100 题 | 冲向终点 |
 
-## 5. 输入锁
+## 5. 输入锁与键盘
 
-- 第一次有效方向输入后立刻进入 `submitting`，在请求完成前忽略其他键和点击。
-- 键盘自动重复 (`event.repeat`) 不产生多次动作。
-- 输入目标是表单控件时不拦截 WASD。
-- 服务端返回 `false` 或请求失败时解除本地锁；若题目 ID 已变化，则以新快照为准。
-- `timeout` 与 `choose` 竞争时由题目 ID 和服务端时钟裁决；过期的 `timeout` 可安全忽略。
+- W/↑/空格映射 `jump`。
+- A/← 映射 `left`。
+- S/↓ 映射 `slide`。
+- D/→ 映射 `right`。
+- 第一次有效输入后进入 `submitting`，请求完成前忽略重复输入。
+- `event.repeat`、Ctrl/Alt/Meta 组合键和表单输入不触发跑酷。
+- 当前题段未开放的动作不提交。
+- 旧 `timeout` 不能结束新题。
 
-## 6. 倒计时动画
-
-客户端收到快照时记录：
+## 6. 倒计时
 
 ```text
 localDeadline = performance.now() + remainingMs
 displayRemaining = max(0, localDeadline - performance.now())
 ```
 
-进度环使用 `displayRemaining / timeLimitMs`。网络往返期间不人为回拨倒计时；收到新题后重新锚定。
+最后 25% 时只改变进度环和警示材质，不移动题牌或改变算式字号。
 
-最后 25% 时：
+## 7. 返回与卸载
 
-- 数值切换为警示材质；
-- 进度环边缘进行低频呼吸；
-- 不改变题牌位置或算式字号；
-- 不播放声音，避免插件擅自控制宿主音频。
+插件不锁定 `html` / `body`，不使用普通态全屏固定定位。宿主返回按钮保持可见。组件卸载时必须：
 
-## 7. 失败与通关
+- 停止倒计时；
+- 清除动作反馈定时器；
+- 移除键盘监听；
+- 不留下全局 class 或滚动状态。
 
-- 错答：所选题牌显示叉形图案，正确题牌显示勾形图案，角色失衡但不坠落。
-- 超时：障碍在安全距离闭合，正确题牌显示勾形图案，角色急停。
-- 通关：跑道延伸至终点平台，角色冲线；结果卡在动画 400 ms 后淡入，但重连时立即显示。
+## 8. 减弱动态
 
-## 8. 减弱动态效果
-
-当 `prefers-reduced-motion: reduce`：
-
-- 关闭 `track-scroll`、`runner-cycle`、速度线、云层漂移和循环呼吸。
-- 转弯、答对、升级、失败使用 `120–180 ms` 透明度切换。
-- 倒计时仍按数字与静态进度条更新。
-- 输入锁、服务端截止点和结算逻辑完全不变。
-
-## 9. 测试点
-
-1. 同一题连续按键只发出一次 `choose`。
-2. 按下不可用方向不提交动作。
-3. 本地倒计时归零只发送一次 `timeout`。
-4. 新题到达后旧 `timeout` 不会结束新题。
-5. 服务端确认前不出现正确转弯反馈。
-6. 等级变化同时更新时限、步频、跑道周期和速度线数量。
-7. 组件卸载后无残留计时器、动画帧或键盘监听。
+`prefers-reduced-motion: reduce` 时关闭桥面滚动、速度线和无限跑步循环；四个动作改为静态位移/姿态。输入锁、倒计时和服务端结算保持不变。

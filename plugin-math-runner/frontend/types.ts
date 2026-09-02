@@ -1,8 +1,12 @@
-export type Direction = 'up' | 'left' | 'down' | 'right'
+export type RunnerAction = 'jump' | 'left' | 'slide' | 'right'
+export type TrackLane = 'left' | 'center' | 'right'
+export type ObstacleKind = 'ground' | 'overhead' | null
 export type EndReason = 'wrong' | 'timeout' | 'completed' | null
 
-export interface DirectionOption {
-  direction: Direction
+export interface RunnerOption {
+  action: RunnerAction
+  lane: TrackLane
+  obstacle: ObstacleKind
   equation: string
 }
 
@@ -25,13 +29,14 @@ export interface MathRunnerGameView {
   questionId?: number | null
   timeLimitMs?: number
   remainingMs?: number
-  options?: DirectionOption[]
-  blockedDirections?: Direction[]
-  lastDirection?: Direction | null
+  options?: RunnerOption[]
+  branchCount?: number
+  blockedActions?: RunnerAction[]
+  lastAction?: RunnerAction | null
   lastPoints?: number
   levelUp?: boolean
   endReason?: EndReason
-  correctDirection?: Direction | null
+  correctAction?: RunnerAction | null
   elapsedMs?: number
   averageResponseMs?: number | null
   speed?: MathRunnerSpeed
@@ -39,27 +44,41 @@ export interface MathRunnerGameView {
   result?: string | null
 }
 
-export interface DirectionMeta {
-  id: Direction
+export interface RunnerActionMeta {
+  id: RunnerAction
   label: string
   key: 'W' | 'A' | 'S' | 'D'
   symbol: '↑' | '←' | '↓' | '→'
+  help: string
 }
 
-export const DIRECTION_META: readonly DirectionMeta[] = [
-  { id: 'up', label: '上', key: 'W', symbol: '↑' },
-  { id: 'left', label: '左', key: 'A', symbol: '←' },
-  { id: 'down', label: '下', key: 'S', symbol: '↓' },
-  { id: 'right', label: '右', key: 'D', symbol: '→' },
+export const RUNNER_ACTION_META: readonly RunnerActionMeta[] = [
+  { id: 'jump', label: '跳跃', key: 'W', symbol: '↑', help: '越过地面障碍' },
+  { id: 'left', label: '左变道', key: 'A', symbol: '←', help: '进入左侧分叉' },
+  { id: 'slide', label: '下蹲', key: 'S', symbol: '↓', help: '穿过高空障碍' },
+  { id: 'right', label: '右变道', key: 'D', symbol: '→', help: '进入右侧分叉' },
 ]
 
-export const KEY_TO_DIRECTION: Readonly<Record<string, Direction>> = {
-  w: 'up',
+export const KEY_TO_ACTION: Readonly<Record<string, RunnerAction>> = {
+  w: 'jump',
+  arrowup: 'jump',
+  ' ': 'jump',
   a: 'left',
-  s: 'down',
+  arrowleft: 'left',
+  s: 'slide',
+  arrowdown: 'slide',
   d: 'right',
+  arrowright: 'right',
 }
 
-export function directionLabel(direction: Direction | null | undefined): string {
-  return DIRECTION_META.find((entry) => entry.id === direction)?.label ?? '未知'
+export function actionLabel(action: RunnerAction | null | undefined): string {
+  return RUNNER_ACTION_META.find((entry) => entry.id === action)?.label ?? '未知动作'
+}
+
+export function laneLabel(lane: TrackLane): string {
+  return {
+    left: '左侧跑道',
+    center: '中间跑道',
+    right: '右侧跑道',
+  }[lane]
 }

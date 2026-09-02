@@ -2,37 +2,41 @@
 import { ref } from 'vue'
 import type { ArcadeSnapshot } from '@game-hall/plugin-sdk'
 import GameView from '../frontend/GameView.vue'
+import type { RunnerAction, RunnerOption } from '../frontend/types'
 import { setDevPluginActions } from './local-sdk'
 
-type Direction = 'up' | 'left' | 'down' | 'right'
-
 const questionSets: Array<{
-  correct: Direction
-  options: Array<{ direction: Direction; equation: string }>
+  correct: RunnerAction
+  options: RunnerOption[]
 }> = [
   {
-    correct: 'up',
+    correct: 'jump',
     options: [
-      { direction: 'up', equation: '3 + 5 = 10 - 2' },
-      { direction: 'left', equation: '4 + 4 = 11 - 2' },
-      { direction: 'right', equation: '2 × 6 = 7 + 4' },
+      { action: 'left', lane: 'left', obstacle: null, equation: '4 + 4 = 11 - 2' },
+      { action: 'jump', lane: 'center', obstacle: 'ground', equation: '3 + 5 = 10 - 2' },
     ],
   },
   {
     correct: 'right',
     options: [
-      { direction: 'up', equation: '5 × 4 = 13 + 8' },
-      { direction: 'down', equation: '18 ÷ 3 = 2 + 5' },
-      { direction: 'right', equation: '4 × 5 = 13 + 7' },
+      { action: 'slide', lane: 'center', obstacle: 'overhead', equation: '18 ÷ 3 = 2 + 5' },
+      { action: 'right', lane: 'right', obstacle: null, equation: '4 × 5 = 13 + 7' },
     ],
   },
   {
     correct: 'left',
     options: [
-      { direction: 'up', equation: '7 × 6 - 5 = 39 - 1' },
-      { direction: 'left', equation: '(4 + 3) × 5 = 40 - 5' },
-      { direction: 'down', equation: '32 ÷ 4 + 9 = 20 - 2' },
-      { direction: 'right', equation: '8 × 4 + 3 = 42 - 6' },
+      { action: 'left', lane: 'left', obstacle: null, equation: '(4 + 3) × 5 = 40 - 5' },
+      { action: 'slide', lane: 'center', obstacle: 'overhead', equation: '32 ÷ 4 + 9 = 20 - 2' },
+      { action: 'right', lane: 'right', obstacle: null, equation: '8 × 4 + 3 = 42 - 6' },
+    ],
+  },
+  {
+    correct: 'slide',
+    options: [
+      { action: 'left', lane: 'left', obstacle: null, equation: '24 ÷ 4 = 9 - 2' },
+      { action: 'slide', lane: 'center', obstacle: 'overhead', equation: '6 × 3 = 25 - 7' },
+      { action: 'right', lane: 'right', obstacle: null, equation: '7 + 8 = 18 - 2' },
     ],
   },
 ]
@@ -41,6 +45,7 @@ function makeSnapshot(questionIndex = 0): ArcadeSnapshot {
   const set = questionSets[questionIndex % questionSets.length]
   const correctAnswers = questionIndex
   const level = Math.min(10, Math.floor(correctAnswers / 10) + 1)
+  const availableActions = new Set(set.options.map((option) => option.action))
   return {
     revision: questionIndex + 1,
     roomCode: 'DEMO',
@@ -84,14 +89,17 @@ function makeSnapshot(questionIndex = 0): ArcadeSnapshot {
       timeLimitMs: 6500 - (level - 1) * 360,
       remainingMs: 6200,
       options: set.options,
-      blockedDirections: ['up', 'left', 'down', 'right'].filter(
-        (direction) => !set.options.some((option) => option.direction === direction),
+      branchCount: set.options.length,
+      blockedActions: ['jump', 'left', 'slide', 'right'].filter(
+        (action) => !availableActions.has(action as RunnerAction),
       ),
-      lastDirection: questionIndex ? questionSets[(questionIndex - 1) % questionSets.length].correct : null,
+      lastAction: questionIndex
+        ? questionSets[(questionIndex - 1) % questionSets.length].correct
+        : null,
       lastPoints: questionIndex ? 340 : 0,
       levelUp: questionIndex > 0 && questionIndex % 10 === 0,
       endReason: null,
-      correctDirection: null,
+      correctAction: null,
       elapsedMs: questionIndex * 2100,
       averageResponseMs: questionIndex ? 1850 : null,
       speed: {
@@ -107,6 +115,7 @@ function makeSnapshot(questionIndex = 0): ArcadeSnapshot {
 
 const activeQuestion = ref(0)
 const snapshot = ref(makeSnapshot())
+const showGame = ref(true)
 
 setDevPluginActions({
   async action(action, payload = {}) {
@@ -123,13 +132,13 @@ setDevPluginActions({
           ...snapshot.value.game,
           remainingMs: 0,
           endReason: 'timeout',
-          correctDirection: current.correct,
+          correctAction: current.correct,
           result: 'failed',
         },
       }
       return true
     }
-    if (action !== 'choose' || payload.direction !== current.correct) {
+    if (action !== 'choose' || payload.runnerAction !== current.correct) {
       snapshot.value = {
         ...snapshot.value,
         phase: 'finished',
@@ -139,9 +148,9 @@ setDevPluginActions({
         game: {
           ...snapshot.value.game,
           remainingMs: 0,
-          lastDirection: payload.direction,
+          lastAction: payload.runnerAction,
           endReason: 'wrong',
-          correctDirection: current.correct,
+          correctAction: current.correct,
           result: 'failed',
         },
       }
@@ -163,10 +172,47 @@ setDevPluginActions({
 
 <template>
   <main class="demo-shell">
-    <GameView :snapshot="snapshot" />
+    <header class="demo-host-header">
+      <button v-if="showGame" type="button" @click="showGame = false">← 返回主界面</button>
+      <strong>第三方插件独立验收壳</strong>
+    </header>
+    <GameView v-if="showGame" :snapshot="snapshot" />
+    <section v-else class="demo-menu" aria-label="游戏大厅主界面">
+      <p>已安全离开本局</p>
+      <h1>游戏大厅主界面</h1>
+      <button type="button" @click="showGame = true">重新进入算途疾行</button>
+    </section>
   </main>
 </template>
 
 <style scoped>
-.demo-shell { width: 100%; height: 100%; overflow: hidden; }
+.demo-shell { width: 100%; min-height: 100%; padding: 10px; background: #0c1725; }
+.demo-host-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 54px;
+  padding: 0 12px;
+  color: #dcecf2;
+}
+.demo-menu {
+  min-height: 560px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  color: #f7ead8;
+}
+.demo-menu p { margin: 0; color: #7fe3ef; letter-spacing: .12em; }
+.demo-menu h1 { margin: 0; }
+.demo-menu button { padding: 10px 18px; border-radius: 12px; cursor: pointer; }
+.demo-host-header button {
+  min-height: 38px;
+  border: 1px solid #486476;
+  border-radius: 10px;
+  padding: 0 13px;
+  color: #e8f7fb;
+  background: #172b3c;
+}
 </style>

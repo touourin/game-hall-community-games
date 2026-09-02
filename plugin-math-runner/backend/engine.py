@@ -11,12 +11,18 @@ from typing import Any, Callable
 from backend.app.games.plugin_api import ArcadePlayer, ArcadeRoom, GameRuleError
 
 
-DIRECTIONS = ("up", "left", "down", "right")
-DIRECTION_LABELS = {
-    "up": "上",
-    "left": "左",
-    "down": "下",
-    "right": "右",
+RUNNER_ACTIONS = ("jump", "left", "slide", "right")
+TRACK_LANES = ("left", "center", "right")
+ACTION_LABELS = {
+    "jump": "跳跃",
+    "left": "左变道",
+    "slide": "下蹲",
+    "right": "右变道",
+}
+LANE_LABELS = {
+    "left": "左侧跑道",
+    "center": "中间跑道",
+    "right": "右侧跑道",
 }
 MAX_EQUATION_LENGTH = 32
 PROGRESSION_PATH = Path(__file__).resolve().parents[1] / "model" / "progression.json"
@@ -46,7 +52,9 @@ class Expression:
 
 @dataclass(frozen=True)
 class EquationOption:
-    direction: str
+    action: str
+    lane: str
+    obstacle: str | None
     equation: str
     left_value: int
     right_value: int
@@ -62,7 +70,7 @@ class MathQuestion:
     time_limit_ms: int
     created_monotonic: float
     deadline_monotonic: float
-    correct_direction: str
+    correct_action: str
     options: tuple[EquationOption, ...]
 
 
@@ -75,11 +83,11 @@ class MathRunnerState:
     elapsed_ms: int = 0
     question: MathQuestion | None = None
     response_times_ms: list[int] = field(default_factory=list)
-    last_direction: str | None = None
+    last_action: str | None = None
     last_points: int = 0
     level_up: bool = False
     end_reason: str | None = None
-    final_correct_direction: str | None = None
+    final_correct_action: str | None = None
 
 
 def _load_progression() -> tuple[int, int, tuple[LevelProfile, ...]]:
@@ -113,8 +121,8 @@ def _load_progression() -> tuple[int, int, tuple[LevelProfile, ...]]:
             run_cycle_ms=int(item["runCycleMs"]),
             speed_lines=int(item["speedLines"]),
         )
-        if not 2 <= profile.choice_min <= profile.choice_max <= 4:
-            raise RuntimeError("算途疾行每级必须开放 2–4 个方向")
+        if not 2 <= profile.choice_min <= profile.choice_max <= 3:
+            raise RuntimeError("算途疾行每级必须开放 2–3 条桥面跑道")
         if previous_time_limit is not None and profile.time_limit_ms >= previous_time_limit:
             raise RuntimeError("算途疾行答题时限必须逐级缩短")
         if profile.max_target < previous_target:
@@ -193,10 +201,15 @@ class MathRunnerEngine:
             else 0
         )
         options = [] if question is None else [
-            {"direction": option.direction, "equation": option.equation}
+            {
+                "action": option.action,
+                "lane": option.lane,
+                "obstacle": option.obstacle,
+                "equation": option.equation,
+            }
             for option in question.options
         ]
-        open_directions = {option["direction"] for option in options}
+        open_actions = {option["action"] for option in options}
         profile = LEVEL_PROFILES[state.level - 1]
         finished = room.phase == "finished"
         streak_in_level = state.correct_answers % QUESTIONS_PER_LEVEL
@@ -223,15 +236,16 @@ class MathRunnerEngine:
             "timeLimitMs": question.time_limit_ms if question is not None else profile.time_limit_ms,
             "remainingMs": remaining_ms,
             "options": options,
-            "blockedDirections": [
-                direction for direction in DIRECTIONS if direction not in open_directions
+            "branchCount": len(options),
+            "blockedActions": [
+                action for action in RUNNER_ACTIONS if action not in open_actions
             ],
-            "lastDirection": state.last_direction,
+            "lastAction": state.last_action,
             "lastPoints": state.last_points,
             "levelUp": state.level_up,
             "endReason": state.end_reason,
-            "correctDirection": (
-                state.final_correct_direction if finished else None
+            "correctAction": (
+                state.final_correct_action if finished else None
             ),
             "elapsedMs": elapsed_ms,
             "averageResponseMs": average_response_ms,
@@ -279,7 +293,8 @@ class MathRunnerEngine:
             "average_response_ms": average_response_ms,
             "end_reason": state.end_reason,
             "last_question_id": question.id if question is not None else None,
-            "correct_direction": state.final_correct_direction,
+            "last_action": state.last_action,
+            "correct_action": state.final_correct_action,
         }
 
     def _choose(
@@ -292,11 +307,11 @@ class MathRunnerEngine:
     ) -> None:
         question_id = self._require_question_id(payload)
         if question_id != question.id:
-            raise GameRuleError("这个路口已经过去，请按当前题目选择方向")
+            raise GameRuleError("这个桥面题段已经过去，请按当前题目选择动作")
 
-        direction = payload.get("direction")
-        if not isinstance(direction, str) or direction not in DIRECTIONS:
-            raise GameRuleError("请选择上、下、左、右中的一个方向")
+        runner_action = payload.get("runnerAction")
+        if not isinstance(runner_action, str) or runner_action not in RUNNER_ACTIONS:
+            raise GameRuleError("请选择跳跃、左变道、下蹲、右变道中的一个动作")
 
         now = self.clock()
         if now >= question.deadline_monotonic:
@@ -304,30 +319,30 @@ class MathRunnerEngine:
             return
 
         option = next(
-            (entry for entry in question.options if entry.direction == direction),
+            (entry for entry in question.options if entry.action == runner_action),
             None,
         )
         if option is None:
-            raise GameRuleError(f"{DIRECTION_LABELS[direction]}方向已被障碍封闭")
+            raise GameRuleError(f"当前题段不能执行{ACTION_LABELS[runner_action]}")
 
         response_ms = min(
             question.time_limit_ms,
             max(0, round((now - question.created_monotonic) * 1_000)),
         )
-        state.last_direction = direction
+        state.last_action = runner_action
         state.level_up = False
 
         if not option.is_correct:
             state.last_points = 0
             state.end_reason = "wrong"
-            state.final_correct_direction = question.correct_direction
+            state.final_correct_action = question.correct_action
             state.elapsed_ms = self._elapsed_ms(state, now)
             room.finish(
                 "failed",
                 [],
                 (
-                    f"第 {question.id} 个路口选择错误，"
-                    f"正确方向是{DIRECTION_LABELS[question.correct_direction]}"
+                    f"第 {question.id} 个桥面题段选择错误，"
+                    f"正确动作是{ACTION_LABELS[question.correct_action]}"
                 ),
             )
             return
@@ -339,7 +354,7 @@ class MathRunnerEngine:
         state.last_points = points
         state.response_times_ms.append(response_ms)
         state.elapsed_ms = self._elapsed_ms(state, now)
-        state.final_correct_direction = question.correct_direction
+        state.final_correct_action = question.correct_action
 
         if state.correct_answers >= TOTAL_QUESTIONS:
             state.end_reason = "completed"
@@ -356,7 +371,7 @@ class MathRunnerEngine:
         )
         state.level_up = next_level > state.level
         state.level = next_level
-        state.final_correct_direction = None
+        state.final_correct_action = None
         state.question = self._new_question(
             level=state.level,
             question_id=question.id + 1,
@@ -392,14 +407,14 @@ class MathRunnerEngine:
         state.last_points = 0
         state.level_up = False
         state.end_reason = "timeout"
-        state.final_correct_direction = question.correct_direction
+        state.final_correct_action = question.correct_action
         state.elapsed_ms = self._elapsed_ms(state, now)
         room.finish(
             "failed",
             [],
             (
-                f"第 {question.id} 个路口未及时选择，"
-                f"正确方向是{DIRECTION_LABELS[question.correct_direction]}"
+                f"第 {question.id} 个桥面题段未及时操作，"
+                f"正确动作是{ACTION_LABELS[question.correct_action]}"
             ),
         )
 
@@ -412,23 +427,34 @@ class MathRunnerEngine:
     ) -> MathQuestion:
         profile = LEVEL_PROFILES[level - 1]
         option_count = self.rng.randint(profile.choice_min, profile.choice_max)
-        sampled = set(self.rng.sample(list(DIRECTIONS), option_count))
-        available = [direction for direction in DIRECTIONS if direction in sampled]
-        correct_direction = self.rng.choice(available)
+        sampled = set(self.rng.sample(list(TRACK_LANES), option_count))
+        available_lanes = [lane for lane in TRACK_LANES if lane in sampled]
+        center_action = self.rng.choice(("jump", "slide"))
+        available_actions = [
+            center_action if lane == "center" else lane
+            for lane in available_lanes
+        ]
+        correct_action = self.rng.choice(available_actions)
         used_equations: set[str] = set()
         options: list[EquationOption] = []
-        for direction in available:
+        for lane, runner_action in zip(available_lanes, available_actions, strict=True):
             option = self._build_equation(
                 profile,
-                is_correct=direction == correct_direction,
+                is_correct=runner_action == correct_action,
                 used_equations=used_equations,
-                direction=direction,
+                runner_action=runner_action,
+                lane=lane,
+                obstacle=(
+                    "ground" if runner_action == "jump"
+                    else "overhead" if runner_action == "slide"
+                    else None
+                ),
             )
             used_equations.add(option.equation)
             options.append(option)
 
         if sum(option.is_correct for option in options) != 1:
-            raise RuntimeError("算途疾行生成的路口没有唯一正确方向")
+            raise RuntimeError("算途疾行生成的桥面题段没有唯一正确动作")
         deadline = now + profile.time_limit_ms / 1_000
         return MathQuestion(
             id=question_id,
@@ -436,7 +462,7 @@ class MathRunnerEngine:
             time_limit_ms=profile.time_limit_ms,
             created_monotonic=now,
             deadline_monotonic=deadline,
-            correct_direction=correct_direction,
+            correct_action=correct_action,
             options=tuple(options),
         )
 
@@ -446,7 +472,9 @@ class MathRunnerEngine:
         *,
         is_correct: bool,
         used_equations: set[str],
-        direction: str,
+        runner_action: str,
+        lane: str,
+        obstacle: str | None,
     ) -> EquationOption:
         for _attempt in range(300):
             left_target = self.rng.randint(4, profile.max_target)
@@ -465,7 +493,9 @@ class MathRunnerEngine:
             if (left.value == right.value) != is_correct:
                 continue
             return EquationOption(
-                direction=direction,
+                action=runner_action,
+                lane=lane,
+                obstacle=obstacle,
                 equation=equation,
                 left_value=left.value,
                 right_value=right.value,

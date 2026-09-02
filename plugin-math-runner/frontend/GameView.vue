@@ -28,18 +28,18 @@ import DirectionPad from './components/DirectionPad.vue'
 import TrackScene from './components/TrackScene.vue'
 import { mathRunnerRuleGuide } from './rules'
 import {
-  KEY_TO_DIRECTION,
-  directionLabel,
-  type Direction,
+  KEY_TO_ACTION,
+  actionLabel,
   type MathRunnerGameView,
+  type RunnerAction,
 } from './types'
 
 const props = defineProps<{ snapshot: ArcadeSnapshot }>()
 const actions = usePluginGameActions()
 const gameRoot = ref<HTMLElement | null>(null)
 const showRules = ref(false)
-const selectedDirection = ref<Direction | null>(null)
-const turnDirection = ref<Direction | null>(null)
+const selectedAction = ref<RunnerAction | null>(null)
+const runnerAction = ref<RunnerAction | null>(null)
 const displayRemainingMs = ref(0)
 const submitting = ref(false)
 const restarting = ref(false)
@@ -47,7 +47,6 @@ const timeoutSentFor = ref<number | null>(null)
 let countdownTimer: number | null = null
 let turnTimer: number | null = null
 let localDeadline = 0
-const viewportLockClass = 'math-runner-viewport-lock'
 
 const game = computed(() => props.snapshot.game as MathRunnerGameView)
 const { materials } = usePluginTheme()
@@ -58,8 +57,8 @@ const {
 } = usePluginFullscreen(gameRoot)
 
 const isSpectator = computed(() => props.snapshot.viewer?.mode === 'spectator')
-const availableDirections = computed(() => new Set(
-  (game.value.options ?? []).map((option) => option.direction),
+const availableActions = computed(() => new Set(
+  (game.value.options ?? []).map((option) => option.action),
 ))
 const canControl = computed(() => (
   props.snapshot.phase === 'playing'
@@ -160,19 +159,19 @@ const resultMetrics = computed<PluginMetricItem[]>(() => [
 
 const resultTitle = computed(() => ({
   completed: '十级赛道通关',
-  timeout: '未能及时转向',
-  wrong: '这次方向算错了',
+  timeout: '未能及时操作',
+  wrong: '这次路线算错了',
 }[game.value.endReason ?? 'wrong']))
 
 const resultDescription = computed(() => {
   if (game.value.endReason === 'completed') {
     return `连续通过 ${game.value.correctAnswers ?? 100} 个路口，用时 ${formatPluginDuration(game.value.elapsedMs, { style: 'readable', fractionDigits: 1 })}。`
   }
-  const correct = directionLabel(game.value.correctDirection)
+  const correct = actionLabel(game.value.correctAction)
   if (game.value.endReason === 'timeout') {
-    return `跑者到达路口前没有收到方向输入；正确路线是${correct}。`
+    return `跑者抵达桥面题段前没有收到操作；正确动作是${correct}。`
   }
-  return `所选方向的等式不成立；这道题的正确路线是${correct}。`
+  return `所选跑道的等式不成立；这道题的正确动作是${correct}。`
 })
 
 const resultTone = computed<'success' | 'danger'>(() => (
@@ -184,16 +183,16 @@ const statusAnnouncement = computed(() => {
     return `挑战完成，最大路程 ${game.value.distanceMeters ?? 0} 米`
   }
   if (game.value.endReason === 'timeout') {
-    return `挑战因超时结束，正确方向是${directionLabel(game.value.correctDirection)}`
+    return `挑战因超时结束，正确动作是${actionLabel(game.value.correctAction)}`
   }
   if (game.value.endReason === 'wrong') {
-    return `挑战因错答结束，正确方向是${directionLabel(game.value.correctDirection)}`
+    return `挑战因错答结束，正确动作是${actionLabel(game.value.correctAction)}`
   }
   if (game.value.levelUp) return `升级到第 ${game.value.level ?? 1} 级`
   const directions = (game.value.options ?? [])
-    .map((option) => directionLabel(option.direction))
+    .map((option) => actionLabel(option.action))
     .join('、')
-  return `${currentQuestionLabel.value}，开放方向：${directions}`
+  return `${currentQuestionLabel.value}，可用动作：${directions}`
 })
 
 function stopCountdown() {
@@ -248,16 +247,16 @@ async function submitTimeout() {
   submitting.value = false
 }
 
-async function chooseDirection(direction: Direction) {
-  if (!canControl.value || !availableDirections.value.has(direction)) return
+async function chooseAction(action: RunnerAction) {
+  if (!canControl.value || !availableActions.value.has(action)) return
   const questionId = game.value.questionId
   if (questionId == null) return
 
-  selectedDirection.value = direction
+  selectedAction.value = action
   submitting.value = true
-  const accepted = await actions.action('choose', { questionId, direction })
+  const accepted = await actions.action('choose', { questionId, runnerAction: action })
   if (!accepted && game.value.questionId === questionId && props.snapshot.phase === 'playing') {
-    selectedDirection.value = null
+    selectedAction.value = null
   }
   submitting.value = false
 }
@@ -276,10 +275,10 @@ function handleKeydown(event: KeyboardEvent) {
     || showRules.value
     || isEditableTarget(event.target)
   ) return
-  const direction = KEY_TO_DIRECTION[event.key.toLowerCase()]
-  if (!direction || !availableDirections.value.has(direction)) return
+  const action = KEY_TO_ACTION[event.key.toLowerCase()]
+  if (!action || !availableActions.value.has(action)) return
   event.preventDefault()
-  void chooseDirection(direction)
+  void chooseAction(action)
 }
 
 async function restartGame() {
@@ -296,16 +295,16 @@ watch(
       previousQuestionId != null
       && questionId != null
       && questionId !== previousQuestionId
-      && game.value.lastDirection
+      && game.value.lastAction
     ) {
-      turnDirection.value = game.value.lastDirection
+      runnerAction.value = game.value.lastAction
       if (turnTimer !== null) window.clearTimeout(turnTimer)
       turnTimer = window.setTimeout(() => {
-        turnDirection.value = null
+        runnerAction.value = null
       }, 650)
     }
     if (questionId !== previousQuestionId) {
-      selectedDirection.value = null
+      selectedAction.value = null
       timeoutSentFor.value = null
       submitting.value = false
     }
@@ -319,8 +318,6 @@ watch(
 )
 
 onMounted(() => {
-  document.documentElement.classList.add(viewportLockClass)
-  document.body.classList.add(viewportLockClass)
   window.addEventListener('keydown', handleKeydown)
 })
 
@@ -328,8 +325,6 @@ onBeforeUnmount(() => {
   stopCountdown()
   if (turnTimer !== null) window.clearTimeout(turnTimer)
   window.removeEventListener('keydown', handleKeydown)
-  document.documentElement.classList.remove(viewportLockClass)
-  document.body.classList.remove(viewportLockClass)
 })
 </script>
 
@@ -383,10 +378,10 @@ onBeforeUnmount(() => {
         <TrackScene
           :game="game"
           :remaining-ms="displayRemainingMs"
-          :selected-direction="selectedDirection"
-          :turn-direction="turnDirection"
+          :selected-action="selectedAction"
+          :runner-action="runnerAction"
           :disabled="!canControl"
-          @choose="chooseDirection"
+          @choose="chooseAction"
         />
       </div>
 
@@ -404,7 +399,7 @@ onBeforeUnmount(() => {
         <div class="control-copy">
           <small>{{ isSpectator ? '只读观战' : '方向控制' }}</small>
           <strong>
-            {{ submitting ? '正在确认路线…' : isSpectator ? '正在观看挑战者作答' : 'WASD / 点击四向键' }}
+            {{ submitting ? '正在确认路线…' : isSpectator ? '正在观看挑战者作答' : 'A/D 变道 · W 跳跃 · S 下蹲' }}
           </strong>
           <span :class="{ urgent: remainingRatio <= .25 }">
             必须在路口前完成选择 · 剩余 {{ (displayRemainingMs / 1000).toFixed(1) }} 秒
@@ -413,9 +408,9 @@ onBeforeUnmount(() => {
 
         <DirectionPad
           :options="game.options ?? []"
-          :selected-direction="selectedDirection"
+          :selected-action="selectedAction"
           :disabled="!canControl"
-          @choose="chooseDirection"
+          @choose="chooseAction"
         />
 
         <footer class="runner-footer">
@@ -454,7 +449,7 @@ onBeforeUnmount(() => {
     <div class="orientation-hint" role="status">
       <Route :size="34" />
       <strong>请将手机旋转为横屏</strong>
-      <span>横屏可同时看清四向题牌、跑者和触控方向键。</span>
+      <span>横屏可同时看清三跑道题牌、障碍、跑者和触控键。</span>
     </div>
 
     <p class="sr-announcement" aria-live="polite" aria-atomic="true">
@@ -634,35 +629,20 @@ onBeforeUnmount(() => {
 </style>
 
 <style scoped>
-:global(html.math-runner-viewport-lock),
-:global(body.math-runner-viewport-lock) {
-  width: 100%;
-  height: 100%;
-  overflow: hidden !important;
-  overscroll-behavior: none;
-}
-
-.math-runner,
-.math-runner:fullscreen {
-  position: fixed;
-  z-index: 38;
-  inset: 0;
+.math-runner {
+  position: relative;
+  z-index: 1;
   width: 100%;
   min-width: 0;
   max-width: none;
-  height: 100dvh;
-  min-height: 0;
-  max-height: 100dvh;
+  height: clamp(610px, calc(100dvh - 104px), 920px);
+  min-height: 610px;
+  max-height: calc(100dvh - 86px);
   grid-template-rows: auto minmax(0, 1fr);
   gap: clamp(7px, 1.15vmin, 13px);
   margin: 0;
-  border: 0;
-  border-radius: 0;
-  padding:
-    max(8px, env(safe-area-inset-top))
-    max(9px, env(safe-area-inset-right))
-    max(8px, env(safe-area-inset-bottom))
-    max(9px, env(safe-area-inset-left));
+  border-radius: clamp(16px, 2vw, 25px);
+  padding: clamp(8px, 1.15vmin, 13px);
   overflow: clip;
   overscroll-behavior: none;
   touch-action: manipulation;
@@ -671,6 +651,24 @@ onBeforeUnmount(() => {
     radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--mr-scene-glow) 42%, transparent), transparent 28%),
     linear-gradient(160deg, var(--mr-scene-top), var(--mr-scene-center) 52%, var(--mr-scene-bottom));
   box-shadow: none;
+}
+
+.math-runner:fullscreen {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  min-height: 0;
+  max-height: 100dvh;
+  border: 0;
+  border-radius: 0;
+  padding:
+    max(8px, env(safe-area-inset-top))
+    max(9px, env(safe-area-inset-right))
+    max(8px, env(safe-area-inset-bottom))
+    max(9px, env(safe-area-inset-left));
 }
 
 .viewport-ambient {
@@ -861,6 +859,18 @@ onBeforeUnmount(() => {
       max(6px, env(safe-area-inset-right))
       max(5px, env(safe-area-inset-bottom))
       max(6px, env(safe-area-inset-left));
+  }
+
+  .math-runner {
+    height: max(360px, calc(100dvh - 70px));
+    min-height: 360px;
+    max-height: none;
+  }
+
+  .math-runner:fullscreen {
+    height: 100dvh;
+    min-height: 0;
+    max-height: 100dvh;
   }
 
   .runner-header {

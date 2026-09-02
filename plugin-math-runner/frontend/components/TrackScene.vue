@@ -27,6 +27,8 @@ const emit = defineEmits<{
 }>()
 
 const TRACK_LANES: readonly TrackLane[] = ['left', 'center', 'right']
+const SLEEPER_INDEXES = Array.from({ length: 10 }, (_, index) => index)
+const MARKER_INDEXES = Array.from({ length: 7 }, (_, index) => index)
 const optionByLane = computed(() => new Map(
   (props.game.options ?? []).map((option) => [option.lane, option]),
 ))
@@ -40,6 +42,12 @@ const remainingRatio = computed(() => {
 })
 const stageStyle = computed(() => ({
   '--track-period': `${props.game.speed?.trackPeriodMs ?? 1500}ms`,
+  '--backdrop-period': `${(props.game.speed?.trackPeriodMs ?? 1500) * 7}ms`,
+  '--question-period': `${Math.max(1000, props.game.timeLimitMs ?? 6500)}ms`,
+  '--question-delay': `${-Math.max(
+    0,
+    (props.game.timeLimitMs ?? 6500) - (props.game.remainingMs ?? props.game.timeLimitMs ?? 6500),
+  )}ms`,
   '--timer-angle': `${remainingRatio.value * 360}deg`,
 }))
 const stageClass = computed(() => ({
@@ -106,6 +114,20 @@ function lineStyle(index: number) {
     opacity: `${0.1 + (index % 4) * 0.04}`,
   }
 }
+
+function sleeperStyle(index: number) {
+  const period = props.game.speed?.trackPeriodMs ?? 1500
+  return {
+    animationDelay: `${-(period * index / SLEEPER_INDEXES.length)}ms`,
+  }
+}
+
+function markerStyle(index: number) {
+  const period = props.game.speed?.trackPeriodMs ?? 1500
+  return {
+    animationDelay: `${-(period * index / MARKER_INDEXES.length)}ms`,
+  }
+}
 </script>
 
 <template>
@@ -115,6 +137,13 @@ function lineStyle(index: number) {
     :style="stageStyle"
     aria-label="算途疾行三跑道桥面与题目障碍"
   >
+    <div
+      class="scene-camera"
+      :class="runnerAction ? `scene-camera--${runnerAction}` : ''"
+      aria-hidden="true"
+    >
+      <div class="scene-backdrop" />
+    </div>
     <div class="scene-vignette" aria-hidden="true" />
     <div class="horizon-haze" aria-hidden="true" />
     <div class="bridge-towers" aria-hidden="true">
@@ -142,6 +171,17 @@ function lineStyle(index: number) {
         <span class="bridge-seam bridge-seam--left" />
         <span class="bridge-seam bridge-seam--right" />
         <span class="bridge-motion-grid" />
+        <span class="bridge-center-glow" />
+        <span
+          v-for="index in SLEEPER_INDEXES"
+          :key="`sleeper-${index}`"
+          class="bridge-sleeper"
+          :style="sleeperStyle(index)"
+        />
+        <template v-for="index in MARKER_INDEXES" :key="`marker-${index}`">
+          <span class="bridge-marker bridge-marker--left" :style="markerStyle(index)" />
+          <span class="bridge-marker bridge-marker--right" :style="markerStyle(index)" />
+        </template>
       </div>
 
       <div class="route-lanes">
@@ -156,7 +196,10 @@ function lineStyle(index: number) {
       </div>
     </div>
 
-    <template v-for="lane in TRACK_LANES" :key="lane">
+    <template
+      v-for="lane in TRACK_LANES"
+      :key="`${game.questionId ?? 'end'}-${game.endReason ?? 'running'}-${lane}`"
+    >
       <button
         v-if="optionForLane(lane)"
         type="button"
@@ -199,7 +242,10 @@ function lineStyle(index: number) {
       </div>
     </template>
 
-    <template v-for="option in game.options ?? []" :key="`${option.lane}-${option.action}`">
+    <template
+      v-for="option in game.options ?? []"
+      :key="`${game.questionId ?? 'end'}-${game.endReason ?? 'running'}-${option.lane}-${option.action}`"
+    >
       <div
         v-if="option.obstacle"
         class="lane-obstacle"
@@ -259,6 +305,9 @@ function lineStyle(index: number) {
 <style scoped>
 .track-scene {
   --track-period: 1500ms;
+  --backdrop-period: 10500ms;
+  --question-period: 6500ms;
+  --question-delay: 0ms;
   --timer-angle: 360deg;
   position: relative;
   width: 100%;
@@ -271,15 +320,40 @@ function lineStyle(index: number) {
   border-radius: clamp(18px, 2.2vw, 28px);
   color: var(--mr-copy-on-stage);
   background:
-    linear-gradient(180deg, rgba(8, 18, 31, .02) 0 46%, rgba(5, 13, 24, .5) 100%),
-    url('../assets/runner-bridge-backdrop.png') center / cover no-repeat,
+    linear-gradient(180deg, rgba(8, 18, 31, .04) 0 46%, rgba(5, 13, 24, .72) 100%),
     linear-gradient(180deg, var(--mr-scene-top), var(--mr-scene-bottom));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16), 0 20px 54px rgba(2, 8, 18, .34);
 }
 
+.scene-camera {
+  position: absolute;
+  z-index: -3;
+  inset: -5%;
+  overflow: hidden;
+  transform-origin: 50% 38%;
+  will-change: transform;
+}
+
+.scene-backdrop {
+  position: absolute;
+  inset: -3%;
+  background:
+    linear-gradient(180deg, rgba(8, 18, 31, 0) 0 55%, rgba(5, 13, 24, .28) 100%),
+    url('../assets/runner-bridge-backdrop.png') center / cover no-repeat;
+  transform: scale(1.035);
+  transform-origin: 50% 42%;
+  animation: backdrop-forward var(--backdrop-period) ease-in-out infinite alternate;
+  will-change: transform, background-position;
+}
+
+.scene-camera--left { animation: camera-turn-left 620ms cubic-bezier(.18, .78, .18, 1); }
+.scene-camera--right { animation: camera-turn-right 620ms cubic-bezier(.18, .78, .18, 1); }
+.scene-camera--jump { animation: camera-jump 620ms cubic-bezier(.2, .74, .24, 1); }
+.scene-camera--slide { animation: camera-slide 620ms cubic-bezier(.18, .78, .2, 1); }
+
 .scene-vignette {
   position: absolute;
-  z-index: -1;
+  z-index: 0;
   inset: 0;
   background:
     linear-gradient(90deg, rgba(3, 10, 20, .38), transparent 20% 80%, rgba(3, 10, 20, .38)),
@@ -351,15 +425,27 @@ function lineStyle(index: number) {
   position: absolute;
   inset: 34% -7% -8%;
   overflow: hidden;
+  isolation: isolate;
   clip-path: polygon(44% 0, 56% 0, 92% 100%, 8% 100%);
   background:
-    repeating-linear-gradient(180deg, transparent 0 11%, rgba(116, 171, 190, .19) 11.5% 12.5%, transparent 13% 23%),
-    linear-gradient(90deg, #111b29, #26384a 20% 80%, #111b29);
+    repeating-linear-gradient(180deg, transparent 0 9%, rgba(119, 184, 204, .14) 9.4% 10.4%, transparent 10.8% 19%),
+    linear-gradient(90deg, #0b1420, #2b4053 18% 50%, #263b4f 82%, #0b1420);
   box-shadow: 0 24px 38px rgba(2, 8, 17, .5);
   animation: bridge-scroll var(--track-period) linear infinite;
 }
+.bridge-deck::before {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    linear-gradient(108deg, transparent 0 23%, rgba(130, 231, 242, .05) 27%, transparent 31% 69%, rgba(130, 231, 242, .05) 73%, transparent 77%),
+    linear-gradient(180deg, rgba(211, 249, 255, .14), transparent 21%);
+  content: '';
+  pointer-events: none;
+}
 .bridge-rail {
   position: absolute;
+  z-index: 7;
   top: 0;
   bottom: 0;
   width: 3.2%;
@@ -370,6 +456,7 @@ function lineStyle(index: number) {
 .bridge-rail--right { right: 7.2%; transform: skewX(12deg); }
 .bridge-seam {
   position: absolute;
+  z-index: 3;
   top: 0;
   bottom: 0;
   width: 2px;
@@ -380,8 +467,67 @@ function lineStyle(index: number) {
 .bridge-seam--right { right: 39%; transform: rotate(3deg); }
 .bridge-motion-grid {
   position: absolute;
+  z-index: 2;
   inset: 0;
-  background: repeating-linear-gradient(180deg, transparent 0 9%, rgba(236, 250, 255, .08) 9.5% 10.2%, transparent 10.7% 19%);
+  background:
+    repeating-linear-gradient(180deg, transparent 0 7%, rgba(236, 250, 255, .075) 7.5% 8.2%, transparent 8.8% 15%),
+    repeating-linear-gradient(90deg, transparent 0 16.3%, rgba(90, 216, 232, .055) 16.5% 16.8%, transparent 17% 33%);
+  background-size: 100% 125%, 100% 100%;
+  animation: bridge-grid-rush var(--track-period) linear infinite;
+}
+
+.bridge-center-glow {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 38%;
+  background: linear-gradient(180deg, rgba(105, 229, 242, .18), rgba(105, 229, 242, 0) 58%);
+  filter: blur(12px);
+  transform: translateX(-50%);
+}
+
+.bridge-sleeper {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 50%;
+  width: 7%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(197, 240, 246, .78) 16% 84%, transparent);
+  box-shadow: 0 0 8px rgba(100, 219, 234, .26);
+  opacity: 0;
+  transform: translateX(-50%);
+  animation: sleeper-approach var(--track-period) linear infinite;
+  will-change: top, width, opacity;
+}
+
+.bridge-marker {
+  position: absolute;
+  z-index: 6;
+  top: 2%;
+  width: 4px;
+  height: 7px;
+  border-radius: 3px 3px 1px 1px;
+  background: linear-gradient(#f8df9e, #cf8734);
+  box-shadow: 0 0 9px rgba(255, 205, 111, .72);
+  opacity: 0;
+  animation-duration: var(--track-period);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: top, left, right, transform, opacity;
+}
+
+.bridge-marker--left {
+  left: 46%;
+  animation-name: marker-approach-left;
+}
+
+.bridge-marker--right {
+  right: 46%;
+  animation-name: marker-approach-right;
 }
 
 .route-lanes { position: absolute; z-index: 3; inset: 34% 5% -4%; pointer-events: none; }
@@ -394,6 +540,7 @@ function lineStyle(index: number) {
   border-top: 2px solid rgba(120, 230, 244, .42);
   background: linear-gradient(180deg, rgba(82, 209, 226, .12), rgba(82, 209, 226, .025));
   transition: filter 160ms ease, opacity 160ms ease;
+  animation: lane-flow var(--track-period) linear infinite;
 }
 .route-lane--left { left: 4%; transform: rotate(-5.5deg); transform-origin: 100% 0; }
 .route-lane--center { left: 34.5%; }
@@ -435,6 +582,9 @@ function lineStyle(index: number) {
   text-align: center;
   cursor: pointer;
   transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease;
+  animation: gate-approach var(--question-period) linear both;
+  animation-delay: var(--question-delay);
+  will-change: top, scale;
 }
 .lane-gate--left { left: 4%; transform: rotate(-2deg); }
 .lane-gate--center { left: 50%; transform: translateX(-50%); }
@@ -508,6 +658,9 @@ function lineStyle(index: number) {
   background: rgba(12, 22, 34, .72);
   text-align: center;
   opacity: .8;
+  animation: closed-route-approach var(--question-period) linear both;
+  animation-delay: var(--question-delay);
+  will-change: top, scale;
 }
 .closed-route-sign--left { left: 8%; }
 .closed-route-sign--center { left: 50%; transform: translateX(-50%); }
@@ -524,6 +677,9 @@ function lineStyle(index: number) {
   height: 77px;
   transform: translateX(-50%);
   pointer-events: none;
+  animation: obstacle-approach var(--question-period) linear both;
+  animation-delay: var(--question-delay);
+  will-change: top, scale;
 }
 .lane-obstacle > kbd { position: absolute; top: -7px; right: -9px; z-index: 3; background: #dffbff; box-shadow: 0 0 10px rgba(78, 213, 231, .65); }
 .ground-block {
@@ -631,7 +787,31 @@ function lineStyle(index: number) {
 .track-scene--completed .speed-line,
 .track-scene--wrong .bridge-deck,
 .track-scene--timeout .bridge-deck,
-.track-scene--completed .bridge-deck { animation-play-state: paused; }
+.track-scene--completed .bridge-deck,
+.track-scene--wrong .bridge-motion-grid,
+.track-scene--timeout .bridge-motion-grid,
+.track-scene--completed .bridge-motion-grid,
+.track-scene--wrong .bridge-sleeper,
+.track-scene--timeout .bridge-sleeper,
+.track-scene--completed .bridge-sleeper,
+.track-scene--wrong .bridge-marker,
+.track-scene--timeout .bridge-marker,
+.track-scene--completed .bridge-marker,
+.track-scene--wrong .route-lane,
+.track-scene--timeout .route-lane,
+.track-scene--completed .route-lane,
+.track-scene--wrong .scene-backdrop,
+.track-scene--timeout .scene-backdrop,
+.track-scene--completed .scene-backdrop,
+.track-scene--wrong .lane-gate,
+.track-scene--timeout .lane-gate,
+.track-scene--completed .lane-gate,
+.track-scene--wrong .closed-route-sign,
+.track-scene--timeout .closed-route-sign,
+.track-scene--completed .closed-route-sign,
+.track-scene--wrong .lane-obstacle,
+.track-scene--timeout .lane-obstacle,
+.track-scene--completed .lane-obstacle { animation-play-state: paused; }
 .track-scene--level-up::after {
   position: absolute;
   z-index: 17;
@@ -643,14 +823,66 @@ function lineStyle(index: number) {
   animation: stage-ring 900ms ease-out both;
 }
 
-@keyframes bridge-scroll { to { background-position: 0 120%, 0 0; } }
+@keyframes backdrop-forward {
+  from { transform: translate3d(0, -1.2%, 0) scale(1.035); background-position: 50% 48%; }
+  to { transform: translate3d(0, 1.8%, 0) scale(1.09); background-position: 50% 53%; }
+}
+@keyframes camera-turn-left {
+  0%, 100% { transform: translateX(0) rotate(0) scale(1); }
+  58% { transform: translateX(4.8%) rotate(2.2deg) scale(1.025); }
+}
+@keyframes camera-turn-right {
+  0%, 100% { transform: translateX(0) rotate(0) scale(1); }
+  58% { transform: translateX(-4.8%) rotate(-2.2deg) scale(1.025); }
+}
+@keyframes camera-jump {
+  0%, 100% { transform: translateY(0) scale(1); }
+  54% { transform: translateY(2.5%) scale(1.025); }
+}
+@keyframes camera-slide {
+  0%, 100% { transform: translateY(0) scale(1); }
+  52% { transform: translateY(-2%) scale(.985); }
+}
+@keyframes bridge-scroll { to { background-position: 0 146%, 0 0; } }
+@keyframes bridge-grid-rush { to { background-position: 0 125%, 0 0; } }
+@keyframes sleeper-approach {
+  0% { top: 0; width: 7%; height: 2px; opacity: 0; }
+  9% { opacity: .38; }
+  70% { opacity: .62; }
+  100% { top: 103%; width: 88%; height: 7px; opacity: 0; }
+}
+@keyframes marker-approach-left {
+  0% { top: 1%; left: 46%; opacity: 0; transform: scale(.22); }
+  12% { opacity: .72; }
+  76% { opacity: .88; }
+  100% { top: 97%; left: 8%; opacity: 0; transform: scale(2.9); }
+}
+@keyframes marker-approach-right {
+  0% { top: 1%; right: 46%; opacity: 0; transform: scale(.22); }
+  12% { opacity: .72; }
+  76% { opacity: .88; }
+  100% { top: 97%; right: 8%; opacity: 0; transform: scale(2.9); }
+}
+@keyframes lane-flow { to { background-position: 0 116%; } }
+@keyframes gate-approach {
+  0% { top: 22%; scale: .9; }
+  100% { top: 36%; scale: 1.12; }
+}
+@keyframes closed-route-approach {
+  0% { top: 25%; scale: .88; }
+  100% { top: 39%; scale: 1.08; }
+}
+@keyframes obstacle-approach {
+  0% { top: 47%; scale: .78; opacity: .78; }
+  100% { top: 65%; scale: 1.18; opacity: 1; }
+}
 @keyframes speed-line-fall { from { transform: translateY(-80%) scaleY(.5); } to { transform: translateY(650%) scaleY(2.5); } }
 @keyframes runner-lane-left { 0%, 100% { transform: translateX(-50%) scale(.88); } 62% { transform: translateX(-155%) scale(.9) rotate(-6deg); } }
 @keyframes runner-lane-right { 0%, 100% { transform: translateX(-50%) scale(.88); } 62% { transform: translateX(55%) scale(.9) rotate(6deg); } }
-@keyframes world-left { 0%, 100% { transform: translateX(0) rotate(0); } 60% { transform: translateX(3%) rotate(1.2deg); } }
-@keyframes world-right { 0%, 100% { transform: translateX(0) rotate(0); } 60% { transform: translateX(-3%) rotate(-1.2deg); } }
-@keyframes world-jump { 0%, 100% { transform: scale(1); } 55% { transform: scale(1.035); } }
-@keyframes world-slide { 0%, 100% { transform: translateY(0) scale(1); } 55% { transform: translateY(-1.5%) scale(.985); } }
+@keyframes world-left { 0%, 100% { transform: translateX(0) rotate(0); } 58% { transform: translateX(6.5%) rotate(2.4deg) scale(1.02); } }
+@keyframes world-right { 0%, 100% { transform: translateX(0) rotate(0); } 58% { transform: translateX(-6.5%) rotate(-2.4deg) scale(1.02); } }
+@keyframes world-jump { 0%, 100% { transform: scale(1); } 55% { transform: translateY(2%) scale(1.055); } }
+@keyframes world-slide { 0%, 100% { transform: translateY(0) scale(1); } 55% { transform: translateY(-2.5%) scale(.975); } }
 @keyframes timer-urgent { from { filter: none; } to { filter: drop-shadow(0 0 12px var(--mr-warning-glow)); } }
 @keyframes level-flash { 0% { opacity: 0; transform: translate(-50%, -42%) scale(.82); } 32% { opacity: 1; transform: translate(-50%, -50%) scale(1.04); } 78% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -58%) scale(1); } }
 @keyframes stage-ring { from { opacity: 1; transform: scale(.985); } to { opacity: 0; transform: scale(1.02); } }
@@ -686,8 +918,17 @@ function lineStyle(index: number) {
 @media (prefers-reduced-motion: reduce) {
   .speed-line,
   .bridge-deck,
+  .bridge-motion-grid,
+  .bridge-sleeper,
+  .bridge-marker,
+  .route-lane,
+  .scene-camera,
+  .scene-backdrop,
   .bridge-world,
   .runner-anchor,
+  .lane-gate,
+  .closed-route-sign,
+  .lane-obstacle,
   .scene-timer,
   .level-up-flash,
   .track-scene--level-up::after { animation: none !important; }

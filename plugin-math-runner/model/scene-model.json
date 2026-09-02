@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "logicalCanvas": { "width": 1, "height": 1 },
   "camera": {
     "projection": "perspective-chase",
@@ -42,6 +42,21 @@
   "runtime": {
     "renderer": "dom-css",
     "backgroundAsset": "frontend/assets/runner-bridge-backdrop.png",
+    "runnerAsset": "frontend/assets/runner-motion-atlas.png",
+    "runnerAtlas": {
+      "columns": 3,
+      "rows": 2,
+      "cellSize": [512, 512],
+      "poses": ["run-a", "run-b", "right", "left", "jump", "slide"]
+    },
+    "motionLayers": [
+      "backdrop-drift",
+      "bridge-grid",
+      "sleeper-approach",
+      "rail-marker-approach",
+      "question-section-approach",
+      "speed-lines"
+    ],
     "branchCounts": [2, 3],
     "maxSpeedLines": 12,
     "reducedMotion": "static-pose-and-fade",

@@ -11,7 +11,7 @@
 - 左跑道使用 `A`，右跑道使用 `D`。
 - 中间跑道若是地面障碍使用 `W` 跳跃；若是高空障碍使用 `S` 下蹲滑行。
 - 电脑同时支持方向键与空格；手机使用固定四个触控按钮，也可点击题牌。
-- 跑者持续向前，双腿与双臂交替摆动；服务端确认后播放左/右变道、跳跃收腿或下蹲滑行动画。
+- 跑者使用两帧完整人物步态持续向前；桥面枕木、护栏路标和题段持续向镜头移动；服务端确认后播放专用左/右转弯、跳跃收腿或低姿滑行动作。
 - 每连续答对 10 题升级，时限从 6.5 秒逐步缩短到 3.2 秒。
 - 错答、未操作或正确输入迟到服务端都会失败；断线不会暂停截止时间。
 - 每题 24 米，100 题总距离 2400 米。
@@ -80,16 +80,17 @@
 ## 视觉与交互模型
 
 - [`docs/SCENE_MODEL.md`](docs/SCENE_MODEL.md)：峡谷云桥、三跑道、2/3 路分叉、宿主返回按钮与响应式布局。
-- [`docs/PLAYER_MODEL.md`](docs/PLAYER_MODEL.md)：独立肢体、跑步循环、变道倾斜、跳跃收腿与下蹲滑行。
+- [`docs/PLAYER_MODEL.md`](docs/PLAYER_MODEL.md)：完整人物步态、专用转弯、跳跃收腿与低姿滑行。
 - [`docs/ANIMATION_MODEL.md`](docs/ANIMATION_MODEL.md)：服务端确认边界、单题时序和 10 级步频。
 - [`docs/TRACK_AND_QUESTION_MODEL.md`](docs/TRACK_AND_QUESTION_MODEL.md)：跑道、题牌、上下障碍、控制板和动作协议。
 - [`model/progression.json`](model/progression.json)：10 级题目与速度参数。
 - [`model/scene-model.json`](model/scene-model.json)：镜头、三跑道、动作、障碍和运行时资源。
 - [`frontend/assets/runner-bridge-backdrop.png`](frontend/assets/runner-bridge-backdrop.png)：原创峡谷城市桥梁背景。
+- [`frontend/assets/runner-motion-atlas.png`](frontend/assets/runner-motion-atlas.png)：同一人物的两帧奔跑、左右转向、跳跃与低姿滑行动作图集。
 - [`images/`](images/)：前期场景、角色和题牌建模参考图。
 - [`SOURCES.md`](SOURCES.md)：图像生成方式与提示摘要。
 
-运行时使用 Vue + DOM/CSS 构建桥面、跑道、断桥、题牌和障碍，并将原创背景作为远景。角色的头、躯干、双臂和双腿分别建模；`prefers-reduced-motion` 开启时改用静态姿态。
+运行时使用 Vue + DOM/CSS 构建桥面、跑道、断桥、题牌、障碍和五级视差，将原创背景作为远景，并从透明人物动作图集中切换完整姿态；`prefers-reduced-motion` 开启时改用静态动作帧。
 
 ## 目录结构
 

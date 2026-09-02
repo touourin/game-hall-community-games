@@ -97,6 +97,19 @@ describe('math runner plugin view', () => {
     wrapper.unmount()
   })
 
+  it('renders the atlas runner and continuous forward-motion bridge layers', () => {
+    const wrapper = mount(GameView, { props: { snapshot: snapshot() } })
+
+    expect(wrapper.findAll('.runner-sprite')).toHaveLength(2)
+    expect(wrapper.find('.runner-sprite--run-a').exists()).toBe(true)
+    expect(wrapper.find('.runner-sprite--run-b').exists()).toBe(true)
+    expect(wrapper.findAll('.bridge-sleeper')).toHaveLength(10)
+    expect(wrapper.findAll('.bridge-marker')).toHaveLength(14)
+    expect(wrapper.find('.scene-backdrop').exists()).toBe(true)
+
+    wrapper.unmount()
+  })
+
   it('renders all three branches when the server publishes a three-way section', () => {
     const wrapper = mount(GameView, {
       props: {
@@ -228,6 +241,7 @@ describe('math runner plugin view', () => {
 
     expect(wrapper.get('.runner-model').classes()).toContain(runnerClass)
     expect(wrapper.get('.bridge-world').classes()).toContain(worldClass)
+    expect(wrapper.get(`[data-runner-pose="${action}"]`).attributes('data-runner-pose')).toBe(action)
     wrapper.unmount()
   })
 

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "gameKey": "spoiled-fruit",
+  "playback": {
+    "discipline": "serial-by-event-sequence",
+    "defaultDurationMs": 760,
+    "finishDurationMs": 1250,
+    "reducedMotion": "hide-nonessential-animation-layer"
+  },
+  "layers": {
+    "animationPlane": { "zIndex": 16, "pointerEvents": "none", "overflow": "hidden", "contained": true },
+    "seatRing": { "zIndex": 20 },
+    "marketCore": { "zIndex": 22 },
+    "selfHand": { "zIndex": 28 },
+    "modalOverlay": { "zIndex": 80 }
+  },
+  "animations": [
+    { "kind": "deal", "eventTypes": ["deal"], "visual": "two backs fan from the center" },
+    { "kind": "pair", "eventTypes": ["initial_sweep", "pair"], "visual": "two matching face cards meet and dissolve" },
+    { "kind": "draw", "eventTypes": ["draw", "extra_draw"], "visual": "back travels across the table and down toward the rightmost hand edge" },
+    { "kind": "shuffle", "eventTypes": ["shuffle"], "visual": "five backs cross-shuffle within the table plane" },
+    { "kind": "skip", "eventTypes": ["skip"], "visual": "sour skip count blooms centrally" },
+    { "kind": "peek", "eventTypes": ["peek"], "visual": "private-eye glyph blooms without exposing public faces" },
+    { "kind": "exchange", "eventTypes": ["sweet_share", "half_exchange"], "visual": "two backs cross simultaneously" },
+    { "kind": "protect", "eventTypes": ["protect"], "visual": "shield glyph settles above the table" },
+    { "kind": "move", "eventTypes": ["move"], "visual": "one back slides laterally" },
+    { "kind": "conveyor", "eventTypes": ["conveyor_start", "market_conveyor"], "visual": "six representative backs orbit in one direction" },
+    { "kind": "safe", "eventTypes": ["safe"], "visual": "leaf-green sparkle bloom" },
+    { "kind": "finish", "eventTypes": ["finish"], "visual": "result overlay reveals authoritative Old Maid holders" }
+  ],
+  "collisionRules": [
+    "Only one animation event may be active at a time.",
+    "Every moving primitive is clipped to the animation plane inside the table stage.",
+    "Animation z-index must stay below seats, controls, private choices, hand cards, and results.",
+    "Animations never carry hidden card identity; only a publicly discarded pair may show its fruit art.",
+    "At widths up to 650px opponent seats collapse to compact chips and leave the market core collision-free."
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "gameKey": "spoiled-fruit",
+  "artDirection": {
+    "name": "暮市纸雕水粉",
+    "medium": "hand-painted gouache with subtle paper-cut dimensional layering",
+    "mood": "warm twilight fruit market, playful mystery, premium family tabletop game",
+    "copyrightBoundary": "Original fruit and market artwork only; no third-party logos, characters, card scans, or trademarks."
+  },
+  "palette": {
+    "plum900": "#281B32",
+    "plum700": "#513252",
+    "leaf700": "#315B43",
+    "leaf400": "#78A763",
+    "coral500": "#D86654",
+    "amber500": "#E9A33A",
+    "cream100": "#F6E9CF",
+    "wood600": "#865735",
+    "danger500": "#865052"
+  },
+  "cardFace": {
+    "aspectRatio": "2:3",
+    "cornerRadiusPercent": 6,
+    "safeInsetPercent": 7,
+    "illustrationBox": { "x": 12, "y": 16, "width": 76, "height": 52, "units": "percent" },
+    "titleBaselinePercent": 73,
+    "effectBox": { "x": 8, "y": 78, "width": 84, "height": 16, "units": "percent" },
+    "numberPlacement": ["top-left", "top-right"],
+    "textRendering": "runtime-html-or-vector",
+    "hiddenFaceAsset": "../assets/cards/card-back.png"
+  },
+  "effectThemes": [
+    { "id": "harvest", "label": "好收成", "icon": "basket", "accent": "#D89B3C" },
+    { "id": "shake_basket", "label": "摇匀果篮", "icon": "shuffle", "accent": "#8A67A8" },
+    { "id": "sour_skip", "label": "酸住了", "icon": "sour-face", "accent": "#B9B849" },
+    { "id": "peek_hand", "label": "偷瞄一串", "icon": "magnifier", "accent": "#5B76A5" },
+    { "id": "sweet_share", "label": "甜蜜分享", "icon": "gift", "accent": "#D95C78" },
+    { "id": "half_exchange", "label": "对半交换", "icon": "half-swap", "accent": "#4D99A0" },
+    { "id": "shell_guard", "label": "硬壳保护", "icon": "shield", "accent": "#A77849" },
+    { "id": "careful_stocking", "label": "精心理货", "icon": "single-move", "accent": "#628E65" },
+    { "id": "extra_pick", "label": "顺手再摘", "icon": "draw-plus", "accent": "#D97845" },
+    { "id": "market_conveyor", "label": "流水果摊", "icon": "ring-pass", "accent": "#7075A8" },
+    { "id": "old_maid", "label": "坏果老鳖", "icon": "spoiled-fruit", "accent": "#865052" }
+  ],
+  "generatedAssets": {
+    "provider": "Codex built-in ImageGen",
+    "generatedOn": "2026-09-02",
+    "fruitSubjects": { "size": [1254, 1254], "mode": "RGBA", "background": "transparent" },
+    "cardBack": { "size": [1024, 1536], "mode": "RGB" },
+    "scenes": { "size": [1672, 941], "mode": "RGB", "aspectRatio": "approximately 16:9" },
+    "runtimeTable": {
+      "asset": "../assets/scenes/scene-runtime-market-table-8p.png",
+      "seatStations": 8,
+      "layoutRule": "Rotate and hide unused stations for 4-7 players; keep the player's hand anchored bottom-center."
+    },
+    "promptRecord": "../assets/GENERATION.md",
+    "manifest": "../assets/asset-manifest.json"
+  }
+}

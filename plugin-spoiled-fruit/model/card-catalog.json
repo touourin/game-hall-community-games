@@ -1,0 +1,218 @@
+{
+  "$schema": "./card-catalog.schema.json",
+  "schemaVersion": 1,
+  "gameKey": "spoiled-fruit",
+  "deckRule": {
+    "normalCardCount": 60,
+    "normalPairCount": 30,
+    "oldMaidFormula": "floor(playerCount / 2)",
+    "playerCounts": [4, 5, 6, 7, 8],
+    "totalCardsByPlayerCount": { "4": 62, "5": 62, "6": 63, "7": 63, "8": 64 }
+  },
+  "cards": [
+    {
+      "id": "fruit-01", "cardCode": "01", "sortIndex": 1, "kind": "normal",
+      "nameZh": "苹果", "nameEn": "Apple", "slug": "apple", "copies": 2,
+      "pairKey": "fruit-01", "effectId": "harvest", "asset": "../assets/cards/fruit-01-apple.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-02", "cardCode": "02", "sortIndex": 2, "kind": "normal",
+      "nameZh": "梨", "nameEn": "Pear", "slug": "pear", "copies": 2,
+      "pairKey": "fruit-02", "effectId": "harvest", "asset": "../assets/cards/fruit-02-pear.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-03", "cardCode": "03", "sortIndex": 3, "kind": "normal",
+      "nameZh": "橙子", "nameEn": "Orange", "slug": "orange", "copies": 2,
+      "pairKey": "fruit-03", "effectId": "harvest", "asset": "../assets/cards/fruit-03-orange.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-04", "cardCode": "04", "sortIndex": 4, "kind": "normal",
+      "nameZh": "桃子", "nameEn": "Peach", "slug": "peach", "copies": 2,
+      "pairKey": "fruit-04", "effectId": "harvest", "asset": "../assets/cards/fruit-04-peach.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-05", "cardCode": "05", "sortIndex": 5, "kind": "normal",
+      "nameZh": "李子", "nameEn": "Plum", "slug": "plum", "copies": 2,
+      "pairKey": "fruit-05", "effectId": "harvest", "asset": "../assets/cards/fruit-05-plum.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-06", "cardCode": "06", "sortIndex": 6, "kind": "normal",
+      "nameZh": "杏", "nameEn": "Apricot", "slug": "apricot", "copies": 2,
+      "pairKey": "fruit-06", "effectId": "harvest", "asset": "../assets/cards/fruit-06-apricot.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-07", "cardCode": "07", "sortIndex": 7, "kind": "normal",
+      "nameZh": "番石榴", "nameEn": "Guava", "slug": "guava", "copies": 2,
+      "pairKey": "fruit-07", "effectId": "harvest", "asset": "../assets/cards/fruit-07-guava.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-08", "cardCode": "08", "sortIndex": 8, "kind": "normal",
+      "nameZh": "火龙果", "nameEn": "Dragon fruit", "slug": "dragon-fruit", "copies": 2,
+      "pairKey": "fruit-08", "effectId": "harvest", "asset": "../assets/cards/fruit-08-dragon-fruit.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-09", "cardCode": "09", "sortIndex": 9, "kind": "normal",
+      "nameZh": "香蕉", "nameEn": "Banana", "slug": "banana", "copies": 2,
+      "pairKey": "fruit-09", "effectId": "shake_basket", "asset": "../assets/cards/fruit-09-banana.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-10", "cardCode": "10", "sortIndex": 10, "kind": "normal",
+      "nameZh": "杨桃", "nameEn": "Starfruit", "slug": "starfruit", "copies": 2,
+      "pairKey": "fruit-10", "effectId": "shake_basket", "asset": "../assets/cards/fruit-10-starfruit.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-11", "cardCode": "11", "sortIndex": 11, "kind": "normal",
+      "nameZh": "百香果", "nameEn": "Passion fruit", "slug": "passion-fruit", "copies": 2,
+      "pairKey": "fruit-11", "effectId": "shake_basket", "asset": "../assets/cards/fruit-11-passion-fruit.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-12", "cardCode": "12", "sortIndex": 12, "kind": "normal",
+      "nameZh": "柠檬", "nameEn": "Lemon", "slug": "lemon", "copies": 2,
+      "pairKey": "fruit-12", "effectId": "sour_skip", "asset": "../assets/cards/fruit-12-lemon.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-13", "cardCode": "13", "sortIndex": 13, "kind": "normal",
+      "nameZh": "青柠", "nameEn": "Lime", "slug": "lime", "copies": 2,
+      "pairKey": "fruit-13", "effectId": "sour_skip", "asset": "../assets/cards/fruit-13-lime.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-14", "cardCode": "14", "sortIndex": 14, "kind": "normal",
+      "nameZh": "西柚", "nameEn": "Grapefruit", "slug": "grapefruit", "copies": 2,
+      "pairKey": "fruit-14", "effectId": "sour_skip", "asset": "../assets/cards/fruit-14-grapefruit.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-15", "cardCode": "15", "sortIndex": 15, "kind": "normal",
+      "nameZh": "葡萄", "nameEn": "Grape", "slug": "grape", "copies": 2,
+      "pairKey": "fruit-15", "effectId": "peek_hand", "asset": "../assets/cards/fruit-15-grape.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-16", "cardCode": "16", "sortIndex": 16, "kind": "normal",
+      "nameZh": "蓝莓", "nameEn": "Blueberry", "slug": "blueberry", "copies": 2,
+      "pairKey": "fruit-16", "effectId": "peek_hand", "asset": "../assets/cards/fruit-16-blueberry.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-17", "cardCode": "17", "sortIndex": 17, "kind": "normal",
+      "nameZh": "黑莓", "nameEn": "Blackberry", "slug": "blackberry", "copies": 2,
+      "pairKey": "fruit-17", "effectId": "peek_hand", "asset": "../assets/cards/fruit-17-blackberry.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-18", "cardCode": "18", "sortIndex": 18, "kind": "normal",
+      "nameZh": "草莓", "nameEn": "Strawberry", "slug": "strawberry", "copies": 2,
+      "pairKey": "fruit-18", "effectId": "sweet_share", "asset": "../assets/cards/fruit-18-strawberry.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-19", "cardCode": "19", "sortIndex": 19, "kind": "normal",
+      "nameZh": "樱桃", "nameEn": "Cherry", "slug": "cherry", "copies": 2,
+      "pairKey": "fruit-19", "effectId": "sweet_share", "asset": "../assets/cards/fruit-19-cherry.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-20", "cardCode": "20", "sortIndex": 20, "kind": "normal",
+      "nameZh": "覆盆子", "nameEn": "Raspberry", "slug": "raspberry", "copies": 2,
+      "pairKey": "fruit-20", "effectId": "sweet_share", "asset": "../assets/cards/fruit-20-raspberry.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-21", "cardCode": "21", "sortIndex": 21, "kind": "normal",
+      "nameZh": "西瓜", "nameEn": "Watermelon", "slug": "watermelon", "copies": 2,
+      "pairKey": "fruit-21", "effectId": "half_exchange", "asset": "../assets/cards/fruit-21-watermelon.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-22", "cardCode": "22", "sortIndex": 22, "kind": "normal",
+      "nameZh": "哈密瓜", "nameEn": "Cantaloupe", "slug": "cantaloupe", "copies": 2,
+      "pairKey": "fruit-22", "effectId": "half_exchange", "asset": "../assets/cards/fruit-22-cantaloupe.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-23", "cardCode": "23", "sortIndex": 23, "kind": "normal",
+      "nameZh": "椰子", "nameEn": "Coconut", "slug": "coconut", "copies": 2,
+      "pairKey": "fruit-23", "effectId": "shell_guard", "asset": "../assets/cards/fruit-23-coconut.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-24", "cardCode": "24", "sortIndex": 24, "kind": "normal",
+      "nameZh": "菠萝", "nameEn": "Pineapple", "slug": "pineapple", "copies": 2,
+      "pairKey": "fruit-24", "effectId": "shell_guard", "asset": "../assets/cards/fruit-24-pineapple.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-25", "cardCode": "25", "sortIndex": 25, "kind": "normal",
+      "nameZh": "猕猴桃", "nameEn": "Kiwi", "slug": "kiwi", "copies": 2,
+      "pairKey": "fruit-25", "effectId": "careful_stocking", "asset": "../assets/cards/fruit-25-kiwi.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-26", "cardCode": "26", "sortIndex": 26, "kind": "normal",
+      "nameZh": "无花果", "nameEn": "Fig", "slug": "fig", "copies": 2,
+      "pairKey": "fruit-26", "effectId": "careful_stocking", "asset": "../assets/cards/fruit-26-fig.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-27", "cardCode": "27", "sortIndex": 27, "kind": "normal",
+      "nameZh": "荔枝", "nameEn": "Lychee", "slug": "lychee", "copies": 2,
+      "pairKey": "fruit-27", "effectId": "extra_pick", "asset": "../assets/cards/fruit-27-lychee.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-28", "cardCode": "28", "sortIndex": 28, "kind": "normal",
+      "nameZh": "龙眼", "nameEn": "Longan", "slug": "longan", "copies": 2,
+      "pairKey": "fruit-28", "effectId": "extra_pick", "asset": "../assets/cards/fruit-28-longan.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-29", "cardCode": "29", "sortIndex": 29, "kind": "normal",
+      "nameZh": "芒果", "nameEn": "Mango", "slug": "mango", "copies": 2,
+      "pairKey": "fruit-29", "effectId": "market_conveyor", "asset": "../assets/cards/fruit-29-mango.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "fruit-30", "cardCode": "30", "sortIndex": 30, "kind": "normal",
+      "nameZh": "红毛丹", "nameEn": "Rambutan", "slug": "rambutan", "copies": 2,
+      "pairKey": "fruit-30", "effectId": "market_conveyor", "asset": "../assets/cards/fruit-30-rambutan.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "old-maid-01", "cardCode": "B01", "sortIndex": 101, "kind": "old_maid",
+      "nameZh": "发霉榴莲", "nameEn": "Moldy durian", "slug": "moldy-durian", "copies": 1,
+      "pairKey": null, "effectId": "old_maid", "asset": "../assets/cards/old-maid-01-moldy-durian.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "old-maid-02", "cardCode": "B02", "sortIndex": 102, "kind": "old_maid",
+      "nameZh": "黑斑木瓜", "nameEn": "Black-spotted papaya", "slug": "spotted-papaya", "copies": 1,
+      "pairKey": null, "effectId": "old_maid", "asset": "../assets/cards/old-maid-02-spotted-papaya.png",
+      "includeAtPlayerCounts": [4, 5, 6, 7, 8]
+    },
+    {
+      "id": "old-maid-03", "cardCode": "B03", "sortIndex": 103, "kind": "old_maid",
+      "nameZh": "酸败石榴", "nameEn": "Spoiled pomegranate", "slug": "spoiled-pomegranate", "copies": 1,
+      "pairKey": null, "effectId": "old_maid", "asset": "../assets/cards/old-maid-03-spoiled-pomegranate.png",
+      "includeAtPlayerCounts": [6, 7, 8]
+    },
+    {
+      "id": "old-maid-04", "cardCode": "B04", "sortIndex": 104, "kind": "old_maid",
+      "nameZh": "腐坏山竹", "nameEn": "Spoiled mangosteen", "slug": "spoiled-mangosteen", "copies": 1,
+      "pairKey": null, "effectId": "old_maid", "asset": "../assets/cards/old-maid-04-spoiled-mangosteen.png",
+      "includeAtPlayerCounts": [8]
+    }
+  ]
+}

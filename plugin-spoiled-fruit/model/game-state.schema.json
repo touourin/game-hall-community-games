@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/spoiled-fruit-game-state-v1.json",
+  "title": "Spoiled Fruit authoritative runtime state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "gameKey", "mode", "phase", "firstPlayerId", "currentPlayerId",
+    "playerCount", "oldMaidCount", "totalCardCount", "turnOrder", "players",
+    "removedPairCount", "initialRemovedPairCount", "normalDrawCount", "effectTransferCount",
+    "effectQueue", "pendingChoice", "skipCount", "safeOrder", "eventSequence", "events", "finished"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "gameKey": { "const": "spoiled-fruit" },
+    "mode": { "const": "standard" },
+    "phase": { "enum": ["setup_deal", "setup_pair_sweep", "turn_draw", "effect_queue", "effect_choice", "effect_insert", "finished"] },
+    "firstPlayerId": { "type": ["string", "null"] },
+    "currentPlayerId": { "type": ["string", "null"] },
+    "playerCount": { "type": "integer", "minimum": 4, "maximum": 8 },
+    "oldMaidCount": { "type": "integer", "minimum": 2, "maximum": 4 },
+    "totalCardCount": { "type": "integer", "minimum": 62, "maximum": 64 },
+    "turnOrder": { "type": "array", "minItems": 4, "maxItems": 8, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "players": { "type": "array", "minItems": 4, "maxItems": 8, "items": { "$ref": "#/$defs/player" } },
+    "removedPairCount": { "type": "integer", "minimum": 0, "maximum": 30 },
+    "initialRemovedPairCount": { "type": "integer", "minimum": 0, "maximum": 30 },
+    "normalDrawCount": { "type": "integer", "minimum": 0 },
+    "effectTransferCount": { "type": "integer", "minimum": 0 },
+    "effectQueue": { "type": "array", "items": { "$ref": "#/$defs/effectQueueItem" } },
+    "pendingChoice": { "anyOf": [{ "$ref": "#/$defs/pendingChoice" }, { "type": "null" }] },
+    "skipCount": { "type": "integer", "minimum": 0 },
+    "safeOrder": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "eventSequence": { "type": "integer", "minimum": 0 },
+    "events": { "type": "array", "maxItems": 48, "items": { "$ref": "#/$defs/event" } },
+    "finished": { "anyOf": [{ "$ref": "#/$defs/finishedState" }, { "type": "null" }] }
+  },
+  "$defs": {
+    "cardInstance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["instanceId", "catalogId"],
+      "properties": {
+        "instanceId": { "type": "string", "pattern": "^card-[0-9]{3}$" },
+        "catalogId": { "type": "string", "pattern": "^(fruit|old-maid)-[0-9]{2}$" }
+      }
+    },
+    "player": {
+      "type": "object", "additionalProperties": false,
+      "required": ["playerId", "seatIndex", "hand", "safe", "pendingEmpty", "protectedCardId", "shieldPairId", "harvestPairIds"],
+      "properties": {
+        "playerId": { "type": "string", "minLength": 1 },
+        "seatIndex": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "hand": { "description": "Authoritative fixed left-to-right order; index 0 is leftmost.", "type": "array", "items": { "$ref": "#/$defs/cardInstance" } },
+        "safe": { "type": "boolean" },
+        "pendingEmpty": { "type": "boolean" },
+        "protectedCardId": { "type": ["string", "null"] },
+        "shieldPairId": { "type": ["string", "null"] },
+        "harvestPairIds": { "type": "array", "items": { "type": "string", "pattern": "^fruit-[0-9]{2}$" } }
+      }
+    },
+    "effectQueueItem": {
+      "type": "object", "additionalProperties": false,
+      "required": ["queueId", "batchId", "pairCatalogId", "effectId", "ownerPlayerId"],
+      "properties": {
+        "queueId": { "type": "string" },
+        "batchId": { "type": "string" },
+        "pairCatalogId": { "type": "string", "pattern": "^fruit-[0-9]{2}$" },
+        "effectId": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "ownerPlayerId": { "type": "string" }
+      }
+    },
+    "pendingChoice": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "queueId", "effectId", "requiredPlayerIds"],
+      "properties": {
+        "type": { "enum": ["optional", "extra_draw", "half_select", "insert"] },
+        "queueId": { "type": "string" },
+        "effectId": { "type": "string" },
+        "requiredPlayerIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "sourcePlayerId": { "type": "string" },
+        "selectionCount": { "type": "integer", "minimum": 1 },
+        "handCount": { "type": "integer", "minimum": 1 },
+        "selections": { "type": "object" },
+        "received": { "type": "object" },
+        "placements": { "type": "object" },
+        "transferType": { "type": "string" }
+      }
+    },
+    "event": {
+      "type": "object", "required": ["sequence", "type", "message"],
+      "properties": { "sequence": { "type": "integer", "minimum": 1 }, "type": { "type": "string" }, "message": { "type": "string" } },
+      "additionalProperties": true
+    },
+    "finishedState": {
+      "type": "object", "additionalProperties": false,
+      "required": ["winnerIds", "loserIds", "oldMaidHolders"],
+      "properties": {
+        "winnerIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "loserIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "oldMaidHolders": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["playerId", "cards"],
+            "properties": {
+              "playerId": { "type": "string" },
+              "cards": {
+                "type": "array", "minItems": 1,
+                "items": {
+                  "type": "object", "required": ["instanceId", "catalogId"],
+                  "properties": { "instanceId": { "type": "string" }, "catalogId": { "type": "string" } },
+                  "additionalProperties": true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

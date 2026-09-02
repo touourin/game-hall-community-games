@@ -1,0 +1,4 @@
+.dev-dist/
+dev/dist/
+__pycache__/
+frontend/node_modules/

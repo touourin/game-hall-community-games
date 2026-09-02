@@ -37,6 +37,11 @@
 ## 6. 运行时人物动作图集
 
 - 输出：`frontend/assets/runner-motion-atlas.png`
+- 原始素材归档：
+  - `images/runner-motion/01-runner-atlas-checker.png`
+  - `images/runner-motion/02-runner-atlas-alpha-attempt.png`
+  - `images/runner-motion/03-runner-atlas-magenta-key.png`
+  - `images/runner-motion/04-runner-atlas-green-screen.png`
 - 用例：`stylized-concept`
 - 项目内参考：`images/runner-character-concept.png`
 - 提示摘要：同一名黑发、炭灰/橙色技术夹克、象牙色内层和青色腕表跑者的严格 3×2 动作图集；依次为两帧背面奔跑、右转、左转、收腿跳跃和低姿滑行；统一第三人称后视镜头、人物比例与 3D 游戏材质；纯绿幕背景，不含文字、UI、Logo、水印或额外人物。

@@ -87,7 +87,7 @@
 - [`model/scene-model.json`](model/scene-model.json)：镜头、三跑道、动作、障碍和运行时资源。
 - [`frontend/assets/runner-bridge-backdrop.png`](frontend/assets/runner-bridge-backdrop.png)：原创峡谷城市桥梁背景。
 - [`frontend/assets/runner-motion-atlas.png`](frontend/assets/runner-motion-atlas.png)：同一人物的两帧奔跑、左右转向、跳跃与低姿滑行动作图集。
-- [`images/`](images/)：前期场景、角色和题牌建模参考图。
+- [`images/`](images/)：完整场景建模素材集、角色概念图和人物动作原始生成稿。
 - [`SOURCES.md`](SOURCES.md)：图像生成方式与提示摘要。
 
 运行时使用 Vue + DOM/CSS 构建桥面、跑道、断桥、题牌、障碍和五级视差，将原创背景作为远景，并从透明人物动作图集中切换完整姿态；`prefers-reduced-motion` 开启时改用静态动作帧。

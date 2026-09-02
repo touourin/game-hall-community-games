@@ -45,12 +45,16 @@
       "order": 160
     },
     {
-      "id": "plugin-skull",
-      "path": "skull-game-model",
       "id": "plugin-math-runner",
       "path": "plugin-math-runner",
       "status": "enabled",
       "order": 170
+    },
+    {
+      "id": "plugin-skull",
+      "path": "skull-game-model",
+      "status": "enabled",
+      "order": 180
     }
   ]
 }

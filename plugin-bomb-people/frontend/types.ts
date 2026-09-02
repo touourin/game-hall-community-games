@@ -38,6 +38,7 @@ export interface BombPlayer {
   facingX: number
   facingY: number
   moving: boolean
+  moveIntervalTicks?: number
   alive: boolean
   eliminatedBy: string | null
   eliminationReason: string | null
@@ -135,6 +136,7 @@ export interface BombGame {
   collapseTotal: number
   dangerCells: [number, number][]
   selectedMap: string
+  mapRotation: 'random_no_repeat'
   currentMap: BombMap
   mapCatalog: BombMap[]
   mapProposal: MapProposal | null

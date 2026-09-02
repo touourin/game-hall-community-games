@@ -10,7 +10,8 @@ from backend.app.games.plugins import discover_game_plugins
 
 
 PLUGIN_ROOT = Path(__file__).resolve().parents[2]
-DIRECTIONS = {"up", "left", "down", "right"}
+RUNNER_ACTIONS = {"jump", "left", "slide", "right"}
+TRACK_LANES = {"left", "center", "right"}
 
 
 def load_engine(seed: int = 20260901):
@@ -41,15 +42,12 @@ def choose_correct(game, room, player, now, response_seconds: float = 0.5) -> in
         room,
         player,
         "choose",
-        {
-            "questionId": question.id,
-            "direction": question.correct_direction,
-        },
+        {"questionId": question.id, "runnerAction": question.correct_action},
     )
     return room.state.score - before
 
 
-def test_initial_view_exposes_choices_but_hides_the_answer() -> None:
+def test_initial_view_exposes_bridge_choices_but_hides_the_answer() -> None:
     game, room, player, _now = make_room()
     question = room.state.question
     view = game.view(room, player)
@@ -57,45 +55,68 @@ def test_initial_view_exposes_choices_but_hides_the_answer() -> None:
     assert room.phase == "playing"
     assert view["level"] == 1
     assert view["questionId"] == 1
-    assert 2 <= len(view["options"]) <= 4
-    assert set(view["blockedDirections"]) | {
-        option["direction"] for option in view["options"]
-    } == DIRECTIONS
-    assert view["correctDirection"] is None
-    assert "correct_direction" not in view
-    assert all(set(option) == {"direction", "equation"} for option in view["options"])
-    assert question.correct_direction in {option.direction for option in question.options}
+    assert 2 <= len(view["options"]) <= 3
+    assert view["branchCount"] == len(view["options"])
+    assert set(view["blockedActions"]) | {
+        option["action"] for option in view["options"]
+    } == RUNNER_ACTIONS
+    assert view["correctAction"] is None
+    assert "correct_action" not in view
+    assert all(
+        set(option) == {"action", "lane", "obstacle", "equation"}
+        for option in view["options"]
+    )
+    assert question.correct_action in {option.action for option in question.options}
 
 
-def test_generated_junctions_have_two_to_four_unique_routes_and_one_truth() -> None:
+def test_generated_sections_have_two_or_three_lanes_and_vertical_obstacles() -> None:
     game = load_engine(7)
-    now = 0.0
     seen_counts: set[int] = set()
+    seen_actions: set[str] = set()
+    seen_obstacles: set[str] = set()
 
     for level in range(1, 11):
         for question_id in range(1, 301):
-            question = game._new_question(
-                level=level,
-                question_id=question_id,
-                now=now,
-            )
-            seen_counts.add(len(question.options))
-            directions = [option.direction for option in question.options]
+            question = game._new_question(level=level, question_id=question_id, now=0.0)
+            lanes = [option.lane for option in question.options]
+            actions = [option.action for option in question.options]
             equations = [option.equation for option in question.options]
-            assert 2 <= len(directions) <= 4
-            assert len(directions) == len(set(directions))
-            assert len(equations) == len(set(equations))
-            assert sum(option.left_value == option.right_value for option in question.options) == 1
-            assert sum(option.is_correct for option in question.options) == 1
-            assert all(" = " in option.equation for option in question.options)
-            assert all(len(option.equation) <= 32 for option in question.options)
-            assert all(option.left_value > 0 and option.right_value > 0 for option in question.options)
-            assert question.correct_direction == next(
-                option.direction for option in question.options if option.is_correct
+            seen_counts.add(len(lanes))
+            seen_actions.update(actions)
+            seen_obstacles.update(
+                option.obstacle for option in question.options if option.obstacle
             )
 
-    assert 2 in seen_counts
-    assert 4 in seen_counts
+            assert 2 <= len(lanes) <= 3
+            assert set(lanes) <= TRACK_LANES
+            assert len(lanes) == len(set(lanes))
+            assert len(actions) == len(set(actions))
+            assert len(equations) == len(set(equations))
+            assert sum(option.is_correct for option in question.options) == 1
+            assert sum(
+                option.left_value == option.right_value
+                for option in question.options
+            ) == 1
+            assert question.correct_action == next(
+                option.action for option in question.options if option.is_correct
+            )
+
+            for option in question.options:
+                assert " = " in option.equation
+                assert len(option.equation) <= 32
+                assert option.left_value > 0 and option.right_value > 0
+                if option.lane == "center":
+                    assert option.action in {"jump", "slide"}
+                    assert option.obstacle == (
+                        "ground" if option.action == "jump" else "overhead"
+                    )
+                else:
+                    assert option.action == option.lane
+                    assert option.obstacle is None
+
+    assert seen_counts == {2, 3}
+    assert seen_actions == RUNNER_ACTIONS
+    assert seen_obstacles == {"ground", "overhead"}
 
 
 def test_correct_choice_scores_from_level_and_remaining_time() -> None:
@@ -107,7 +128,7 @@ def test_correct_choice_scores_from_level_and_remaining_time() -> None:
         room,
         player,
         "choose",
-        {"questionId": question.id, "direction": question.correct_direction},
+        {"questionId": question.id, "runnerAction": question.correct_action},
     )
 
     assert room.state.correct_answers == 1
@@ -117,7 +138,7 @@ def test_correct_choice_scores_from_level_and_remaining_time() -> None:
     assert game.view(room, player)["distanceMeters"] == 24
 
 
-def test_every_tenth_correct_answer_levels_up_the_next_question() -> None:
+def test_every_tenth_correct_answer_levels_up_the_next_section() -> None:
     game, room, player, now = make_room()
 
     for _ in range(9):
@@ -154,18 +175,18 @@ def test_one_hundred_correct_answers_complete_all_ten_levels() -> None:
     assert game.player_score(room, player) == 2400
 
 
-def test_wrong_choice_ends_the_run_and_reveals_only_after_finish() -> None:
+def test_wrong_action_ends_the_run_and_reveals_only_after_finish() -> None:
     game, room, player, now = make_room()
     question = room.state.question
-    wrong = next(option.direction for option in question.options if not option.is_correct)
-    assert game.view(room, player)["correctDirection"] is None
+    wrong = next(option.action for option in question.options if not option.is_correct)
+    assert game.view(room, player)["correctAction"] is None
     now[0] += 0.5
 
     game.act(
         room,
         player,
         "choose",
-        {"questionId": question.id, "direction": wrong},
+        {"questionId": question.id, "runnerAction": wrong},
     )
     view = game.view(room, player)
 
@@ -173,8 +194,8 @@ def test_wrong_choice_ends_the_run_and_reveals_only_after_finish() -> None:
     assert room.winner == "failed"
     assert room.winner_player_ids == []
     assert view["endReason"] == "wrong"
-    assert view["correctDirection"] == question.correct_direction
-    assert view["lastDirection"] == wrong
+    assert view["correctAction"] == question.correct_action
+    assert view["lastAction"] == wrong
 
 
 def test_late_correct_choice_is_still_a_timeout() -> None:
@@ -186,10 +207,7 @@ def test_late_correct_choice_is_still_a_timeout() -> None:
         room,
         player,
         "choose",
-        {
-            "questionId": question.id,
-            "direction": question.correct_direction,
-        },
+        {"questionId": question.id, "runnerAction": question.correct_action},
     )
 
     assert room.phase == "finished"
@@ -209,7 +227,7 @@ def test_timeout_is_rejected_early_and_finishes_at_the_deadline() -> None:
 
     assert room.phase == "finished"
     assert room.state.end_reason == "timeout"
-    assert game.view(room, player)["correctDirection"] == question.correct_direction
+    assert game.view(room, player)["correctAction"] == question.correct_action
 
 
 def test_stale_timeout_cannot_end_a_new_question() -> None:
@@ -223,27 +241,32 @@ def test_stale_timeout_cannot_end_a_new_question() -> None:
     assert room.state.question.id == old_question_id + 1
 
 
-def test_blocked_direction_and_invalid_payload_are_rejected() -> None:
+def test_unavailable_action_and_invalid_payload_are_rejected() -> None:
     game, room, player, _now = make_room()
     question = room.state.question
-    open_directions = {option.direction for option in question.options}
-    blocked = next(direction for direction in DIRECTIONS if direction not in open_directions)
+    available = {option.action for option in question.options}
+    blocked = next(action for action in RUNNER_ACTIONS if action not in available)
 
-    with pytest.raises(GameRuleError, match="障碍封闭"):
+    with pytest.raises(GameRuleError, match="不能执行"):
         game.act(
             room,
             player,
             "choose",
-            {"questionId": question.id, "direction": blocked},
+            {"questionId": question.id, "runnerAction": blocked},
         )
     with pytest.raises(GameRuleError, match="题目编号"):
-        game.act(room, player, "choose", {"questionId": True, "direction": "up"})
-    with pytest.raises(GameRuleError, match="上、下、左、右"):
         game.act(
             room,
             player,
             "choose",
-            {"questionId": question.id, "direction": "forward"},
+            {"questionId": True, "runnerAction": "jump"},
+        )
+    with pytest.raises(GameRuleError, match="跳跃、左变道、下蹲、右变道"):
+        game.act(
+            room,
+            player,
+            "choose",
+            {"questionId": question.id, "runnerAction": "forward"},
         )
 
 
@@ -259,7 +282,7 @@ def test_only_the_host_can_act_and_scores_exist_only_after_finish() -> None:
             "choose",
             {
                 "questionId": room.state.question.id,
-                "direction": room.state.question.correct_direction,
+                "runnerAction": room.state.question.correct_action,
             },
         )
 
@@ -284,7 +307,8 @@ def test_record_state_contains_leaderboard_and_run_details() -> None:
     assert record["distance_meters"] == 24
     assert record["average_response_ms"] == 800
     assert record["end_reason"] == "timeout"
-    assert record["correct_direction"] in DIRECTIONS
+    assert record["last_action"] in RUNNER_ACTIONS
+    assert record["correct_action"] in RUNNER_ACTIONS
 
 
 def test_leaderboard_score_is_maximum_distance_not_skill_points() -> None:
@@ -294,13 +318,13 @@ def test_leaderboard_score_is_maximum_distance_not_skill_points() -> None:
         choose_correct(game, room, player, now, 0.2)
 
     question = room.state.question
-    wrong = next(option.direction for option in question.options if not option.is_correct)
+    wrong = next(option.action for option in question.options if not option.is_correct)
     now[0] += 0.2
     game.act(
         room,
         player,
         "choose",
-        {"questionId": question.id, "direction": wrong},
+        {"questionId": question.id, "runnerAction": wrong},
     )
 
     assert room.phase == "finished"

@@ -1,46 +1,47 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import {
-  DIRECTION_META,
-  type Direction,
-  type DirectionOption,
-  type DirectionMeta,
+  RUNNER_ACTION_META,
+  laneLabel,
+  type RunnerAction,
+  type RunnerActionMeta,
+  type RunnerOption,
 } from '../types'
 
 const props = withDefaults(defineProps<{
-  options?: DirectionOption[]
-  selectedDirection?: Direction | null
+  options?: RunnerOption[]
+  selectedAction?: RunnerAction | null
   disabled?: boolean
 }>(), {
   options: () => [],
-  selectedDirection: null,
+  selectedAction: null,
   disabled: false,
 })
 
 const emit = defineEmits<{
-  choose: [direction: Direction]
+  choose: [action: RunnerAction]
 }>()
 
 const optionMap = computed(() => new Map(
-  props.options.map((option) => [option.direction, option]),
+  props.options.map((option) => [option.action, option]),
 ))
 
-function optionFor(direction: Direction) {
-  return optionMap.value.get(direction)
+function optionFor(action: RunnerAction) {
+  return optionMap.value.get(action)
 }
 
-function buttonLabel(meta: DirectionMeta): string {
+function buttonLabel(meta: RunnerActionMeta): string {
   const option = optionFor(meta.id)
   return option
-    ? `${meta.label}方向，按 ${meta.key}，等式 ${option.equation}`
-    : `${meta.label}方向封闭`
+    ? `${laneLabel(option.lane)}，按 ${meta.key} ${meta.label}，等式 ${option.equation}`
+    : `${meta.label}在当前桥面题段不可用`
 }
 </script>
 
 <template>
-  <nav class="direction-pad" aria-label="四向跑酷控制">
+  <nav class="direction-pad" aria-label="跑酷键盘与触控控制">
     <button
-      v-for="meta in DIRECTION_META"
+      v-for="meta in RUNNER_ACTION_META"
       :key="meta.id"
       type="button"
       class="direction-button"
@@ -48,7 +49,7 @@ function buttonLabel(meta: DirectionMeta): string {
         `direction-button--${meta.id}`,
         {
           'direction-button--blocked': !optionFor(meta.id),
-          'direction-button--selected': selectedDirection === meta.id,
+          'direction-button--selected': selectedAction === meta.id,
         },
       ]"
       :disabled="disabled || !optionFor(meta.id)"
@@ -108,9 +109,9 @@ function buttonLabel(meta: DirectionMeta): string {
 }
 
 .direction-button:not(:disabled):active { transform: translateY(1px) scale(.97); }
-.direction-button--up { grid-column: 2; grid-row: 1; }
+.direction-button--jump { grid-column: 2; grid-row: 1; }
 .direction-button--left { grid-column: 1; grid-row: 2; }
-.direction-button--down { grid-column: 2; grid-row: 2; }
+.direction-button--slide { grid-column: 2; grid-row: 2; }
 .direction-button--right { grid-column: 3; grid-row: 2; }
 
 .direction-symbol {

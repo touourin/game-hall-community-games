@@ -17,53 +17,105 @@ class MapSpec:
     hard_rate: float
     soft_rate: float
     seed: int
+    spawn_points: tuple[tuple[int, int], ...]
     spawn_mode: str = "standard"
     starting_items: tuple[str, ...] = ()
 
 
+# Spawn tuples follow player-seat order: the first two are opposed, the first
+# four remain balanced, and every point is the nearest 20×20 cell centre to a
+# portal painted into that map's artwork.
 MAP_SPECS: tuple[MapSpec, ...] = (
     MapSpec(
         "magma_crucible", "熔岩熔炉", "均衡箱群与熔炉环道", "均衡", "中密度",
         "islands", 0.12, 0.45, 101,
+        (
+            (3, 2), (16, 16), (16, 2), (3, 16),
+            (10, 2), (10, 16), (2, 9), (17, 9),
+        ),
     ),
     MapSpec(
         "frost_fracture", "冰霜裂谷", "宽阔冰道，追击空间更大", "快速", "稀疏",
-        "scatter", 0.08, 0.34, 211, starting_items=("speed",),
+        "scatter", 0.08, 0.34, 211,
+        (
+            (3, 3), (16, 16), (16, 3), (3, 16),
+            (9, 3), (9, 16), (3, 9), (16, 9),
+        ),
+        starting_items=("speed",),
     ),
     MapSpec(
         "neon_reactor", "霓虹反应堆", "十字反应堆切分四区", "战术", "中密度",
         "cross", 0.14, 0.44, 307,
+        (
+            (3, 2), (17, 17), (16, 2), (2, 17),
+            (10, 2), (9, 17), (1, 9), (18, 9),
+        ),
     ),
     MapSpec(
-        "jungle_ziggurat", "丛林金字塔", "高密箱墙保护出生区", "保守", "高密度",
-        "rooms", 0.19, 0.53, 401, spawn_mode="fortress",
+        "jungle_ziggurat", "丛林金字塔", "中央神坛八点集结，高密箱墙环绕", "保守", "高密度",
+        "rooms", 0.19, 0.53, 401,
+        (
+            (8, 8), (11, 10), (11, 8), (8, 10),
+            (9, 8), (10, 10), (10, 8), (9, 10),
+        ),
+        spawn_mode="fortress",
     ),
     MapSpec(
-        "sky_citadel", "云顶激斗场", "近距离开局，自带速度和脚踢", "激斗", "稀疏",
-        "scatter", 0.07, 0.29, 503, spawn_mode="close",
+        "sky_citadel", "云顶激斗场", "上下空港分列，自带速度和脚踢", "激斗", "稀疏",
+        "scatter", 0.07, 0.29, 503,
+        (
+            (6, 2), (13, 17), (13, 2), (6, 17),
+            (8, 2), (11, 17), (11, 2), (8, 17),
+        ),
+        spawn_mode="close",
         starting_items=("speed", "speed", "bomb_up", "kick"),
     ),
     MapSpec(
         "clockwork_foundry", "发条铸造厂", "机械墙分隔独立发展区", "保守", "高密度",
-        "rooms", 0.21, 0.49, 601, spawn_mode="fortress",
+        "rooms", 0.21, 0.49, 601,
+        (
+            (2, 4), (17, 15), (17, 4), (2, 15),
+            (2, 7), (17, 12), (17, 7), (2, 12),
+        ),
+        spawn_mode="fortress",
     ),
     MapSpec(
         "haunted_catacombs", "幽灵墓穴", "错落墓柱和密集宝箱", "探索", "高密度",
-        "islands", 0.16, 0.55, 701, starting_items=("ghost",),
+        "islands", 0.16, 0.55, 701,
+        (
+            (2, 2), (17, 16), (17, 2), (2, 16),
+            (2, 4), (17, 15), (17, 4), (2, 15),
+        ),
+        starting_items=("ghost",),
     ),
     MapSpec(
-        "storm_dockyard", "风暴船坞", "近身混战，自带打雷与扔雷", "激斗", "中低密度",
-        "islands", 0.10, 0.33, 809, spawn_mode="close",
+        "storm_dockyard", "风暴船坞", "四区双人接战，自带打雷与扔雷", "激斗", "中低密度",
+        "islands", 0.10, 0.33, 809,
+        (
+            (4, 4), (15, 15), (15, 4), (4, 15),
+            (6, 5), (13, 13), (13, 5), (6, 13),
+        ),
+        spawn_mode="close",
         starting_items=("speed", "bomb_up", "punch", "throw"),
     ),
     MapSpec(
-        "crystal_rift", "水晶裂隙", "环形壁垒保护外圈出生点", "保守", "中高密度",
-        "rings", 0.18, 0.47, 907, spawn_mode="fortress",
+        "crystal_rift", "水晶裂隙", "环形壁垒连接八处裂隙出生点", "保守", "中高密度",
+        "rings", 0.18, 0.47, 907,
+        (
+            (4, 3), (15, 16), (15, 3), (4, 16),
+            (9, 6), (9, 13), (7, 10), (12, 10),
+        ),
+        spawn_mode="fortress",
         starting_items=("shield",),
     ),
     MapSpec(
-        "solar_collapse", "太阳崩塌", "环道近战，定时雷提前压迫", "激斗", "中密度",
-        "rings", 0.12, 0.41, 1009, spawn_mode="close",
+        "solar_collapse", "太阳崩塌", "能量环与日核出生，定时雷提前压迫", "激斗", "中密度",
+        "rings", 0.12, 0.41, 1009,
+        (
+            (4, 4), (15, 14), (12, 6), (5, 14),
+            (7, 12), (12, 12), (9, 16), (9, 9),  # Seven rings + solar core.
+        ),
+        spawn_mode="close",
         starting_items=("flame_up", "timer"),
     ),
 )
@@ -71,25 +123,11 @@ MAP_SPECS: tuple[MapSpec, ...] = (
 MAP_BY_KEY = {spec.key: spec for spec in MAP_SPECS}
 
 
-def spawn_positions(count: int, mode: str) -> list[tuple[int, int]]:
-    if mode == "close":
-        positions = (
-            (8, 8), (11, 11), (11, 8), (8, 11),
-            (9, 6), (10, 13), (6, 10), (13, 9),
-        )
-        return list(positions[:count])
-    by_count = {
-        2: ((1, 1), (18, 18)),
-        3: ((1, 1), (18, 1), (9, 18)),
-        4: ((1, 1), (18, 1), (18, 18), (1, 18)),
-    }
-    if count in by_count:
-        return list(by_count[count])
-    positions = (
-        (1, 1), (18, 18), (18, 1), (1, 18),
-        (9, 1), (10, 18), (1, 10), (18, 9),
-    )
-    return list(positions[:count])
+def spawn_positions(count: int, spec: MapSpec) -> list[tuple[int, int]]:
+    """Return seat-ordered spawns aligned with the portals painted on a map."""
+    if not 2 <= count <= len(spec.spawn_points):
+        raise ValueError(f"spawn count must be between 2 and {len(spec.spawn_points)}")
+    return list(spec.spawn_points[:count])
 
 
 def _spawn_clearance(spawns: list[tuple[int, int]]) -> set[tuple[int, int]]:

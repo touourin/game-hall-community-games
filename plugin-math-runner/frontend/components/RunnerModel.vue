@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { Direction, EndReason } from '../types'
+import type { EndReason, RunnerAction } from '../types'
 
 const props = withDefaults(defineProps<{
-  turnDirection?: Direction | null
+  action?: RunnerAction | null
   endReason?: EndReason
   runCycleMs?: number
 }>(), {
-  turnDirection: null,
+  action: null,
   endReason: null,
   runCycleMs: 720,
 })
 
 const runnerClass = computed(() => ({
-  [`runner-model--turn-${props.turnDirection}`]: Boolean(props.turnDirection && !props.endReason),
+  [`runner-model--${props.action}`]: Boolean(props.action && !props.endReason),
   'runner-model--wrong': props.endReason === 'wrong',
   'runner-model--timeout': props.endReason === 'timeout',
   'runner-model--completed': props.endReason === 'completed',
@@ -253,10 +253,18 @@ const runnerStyle = computed(() => ({
   background: linear-gradient(90deg, var(--mr-copy-on-stage), var(--mr-metal-side));
 }
 
-.runner-model--turn-left { animation: runner-turn-left 620ms cubic-bezier(.2, .8, .2, 1); }
-.runner-model--turn-right { animation: runner-turn-right 620ms cubic-bezier(.2, .8, .2, 1); }
-.runner-model--turn-up { animation: runner-turn-up 540ms cubic-bezier(.2, .8, .2, 1); }
-.runner-model--turn-down { animation: runner-turn-down 540ms cubic-bezier(.2, .8, .2, 1); }
+.runner-model--left { animation: runner-turn-left 620ms cubic-bezier(.2, .8, .2, 1); }
+.runner-model--right { animation: runner-turn-right 620ms cubic-bezier(.2, .8, .2, 1); }
+.runner-model--jump { animation: runner-jump 620ms cubic-bezier(.22, .75, .25, 1); }
+.runner-model--slide { animation: runner-slide 620ms cubic-bezier(.2, .8, .2, 1); }
+
+.runner-model--jump .runner-leg--left { animation: runner-jump-leg-left 620ms cubic-bezier(.2, .8, .2, 1); }
+.runner-model--jump .runner-leg--right { animation: runner-jump-leg-right 620ms cubic-bezier(.2, .8, .2, 1); }
+.runner-model--jump .runner-arm--left { animation: runner-jump-arm-left 620ms cubic-bezier(.2, .8, .2, 1); }
+.runner-model--jump .runner-arm--right { animation: runner-jump-arm-right 620ms cubic-bezier(.2, .8, .2, 1); }
+.runner-model--slide .runner-body { animation: runner-slide-body 620ms cubic-bezier(.2, .8, .2, 1); }
+.runner-model--slide .runner-leg--left { animation: runner-slide-leg-left 620ms cubic-bezier(.2, .8, .2, 1); }
+.runner-model--slide .runner-leg--right { animation: runner-slide-leg-right 620ms cubic-bezier(.2, .8, .2, 1); }
 
 .runner-model--wrong {
   animation: runner-stumble 540ms cubic-bezier(.2, .8, .2, 1) forwards;
@@ -311,16 +319,51 @@ const runnerStyle = computed(() => ({
   100% { transform: translateX(0) rotate(0deg); }
 }
 
-@keyframes runner-turn-up {
-  0% { transform: translateY(0) scale(1); }
-  58% { transform: translateY(-7px) scale(.95); }
-  100% { transform: translateY(0) scale(1); }
+@keyframes runner-jump {
+  0%, 100% { transform: translateY(0) scale(1); }
+  18% { transform: translateY(-8px) scale(.98, 1.03); }
+  55% { transform: translateY(-39px) scale(.96, 1.04); }
+  82% { transform: translateY(-9px) scale(1.02, .97); }
 }
 
-@keyframes runner-turn-down {
-  0% { transform: translateY(0) rotate(0deg); }
-  52% { transform: translateY(8px) rotate(18deg); }
-  100% { transform: translateY(0) rotate(0deg); }
+@keyframes runner-jump-leg-left {
+  0%, 100% { transform: rotate(-27deg); }
+  45%, 68% { transform: translateY(-7px) rotate(58deg); }
+}
+
+@keyframes runner-jump-leg-right {
+  0%, 100% { transform: rotate(25deg); }
+  45%, 68% { transform: translateY(-9px) rotate(-52deg); }
+}
+
+@keyframes runner-jump-arm-left {
+  0%, 100% { transform: rotate(26deg); }
+  45%, 68% { transform: rotate(-58deg); }
+}
+
+@keyframes runner-jump-arm-right {
+  0%, 100% { transform: rotate(-24deg); }
+  45%, 68% { transform: rotate(54deg); }
+}
+
+@keyframes runner-slide {
+  0%, 100% { transform: translateY(0) rotate(0) scale(1); }
+  28%, 72% { transform: translateY(22px) rotate(-12deg) scale(1.08, .62); }
+}
+
+@keyframes runner-slide-body {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  28%, 72% { transform: translate(7px, 9px) rotate(18deg); }
+}
+
+@keyframes runner-slide-leg-left {
+  0%, 100% { transform: rotate(-27deg); }
+  28%, 72% { transform: translate(2px, 5px) rotate(74deg); }
+}
+
+@keyframes runner-slide-leg-right {
+  0%, 100% { transform: rotate(25deg); }
+  28%, 72% { transform: translate(-2px, 4px) rotate(-68deg); }
 }
 
 @keyframes runner-stumble {
@@ -406,10 +449,10 @@ const runnerStyle = computed(() => ({
     animation: none !important;
   }
 
-  .runner-model--turn-left { transform: translateX(-8px); }
-  .runner-model--turn-right { transform: translateX(8px); }
-  .runner-model--turn-up { transform: translateY(-5px) scale(.97); }
-  .runner-model--turn-down { transform: translateY(5px); }
+  .runner-model--left { transform: translateX(-8px) rotate(-8deg); }
+  .runner-model--right { transform: translateX(8px) rotate(8deg); }
+  .runner-model--jump { transform: translateY(-18px); }
+  .runner-model--slide { transform: translateY(12px) scaleY(.7); }
   .runner-model--wrong { transform: rotate(8deg); }
   .runner-model--timeout { transform: rotate(-5deg); }
   .runner-model--completed { transform: translateY(-12px) scale(.88); }

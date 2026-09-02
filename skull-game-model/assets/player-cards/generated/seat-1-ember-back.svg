@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc" data-model-version="1.0.0">
+  <title id="title">余烬放射纹牌背</title>
+  <desc id="desc">玩家一余烬套牌。同一玩家所有个人牌共用的隐藏牌背。原创中性占位设计，不含官方美术。</desc>
+  <defs>
+    <radialGradient id="ember-back-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#51413C"/>
+      <stop offset="0.68" stop-color="#322A28"/>
+      <stop offset="1" stop-color="#1E1A19"/>
+    </radialGradient>
+    <linearGradient id="ember-back-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#B29A88"/>
+      <stop offset="0.48" stop-color="#C96852"/>
+      <stop offset="1" stop-color="#1E1A19"/>
+    </linearGradient>
+    <filter id="ember-back-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="ember-back-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="ember-back-clip"><circle cx="256" cy="256" r="208"/></clipPath>
+  </defs>
+  <g id="ember-back-disc" data-player="player-1" data-face="back">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#ember-back-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#ember-back-edge)" filter="url(#ember-back-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#ember-back-surface)" stroke="#B29A88" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#C96852" stroke-width="3" opacity="0.7"/>
+      <g clip-path="url(#ember-back-clip)" opacity="0.82">
+<path d="M256 188L256 66" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M290 197.11L351 91.46" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<path d="M314.89 222L420.54 161" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M324 256L446 256" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<path d="M314.89 290L420.54 351" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M290 314.89L351 420.54" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<path d="M256 324L256 446" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M222 314.89L161 420.54" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<path d="M197.11 290L91.46 351" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M188 256L66 256" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<path d="M197.11 222L91.46 161" stroke="#E4B27B" stroke-width="7" stroke-linecap="round"/>
+<path d="M222 197.11L161 91.46" stroke="#C96852" stroke-width="3" stroke-linecap="round"/>
+<circle cx="256" cy="256" r="104" fill="none" stroke="#B29A88" stroke-width="3" stroke-dasharray="4 10"/>
+<circle cx="256" cy="256" r="154" fill="none" stroke="#B29A88" stroke-width="3" stroke-dasharray="4 10"/>
+</g>
+<circle cx="256" cy="256" r="45" fill="#C96852" stroke="#E4B27B" stroke-width="7"/>
+        <circle cx="256" cy="256" r="18" fill="#1E1A19"/>
+        <circle cx="250" cy="248" r="6" fill="#F2E8DA" opacity="0.7"/>
+      <path d="M256 446L256 463" stroke="#C96852" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#F2E8DA" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g>
+</svg>

@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/skull/player-card-model.schema.json",
+  "title": "Skull per-player card face and back models",
+  "description": "Canonical procedural model used to generate one back, one flower front, and one skull front for each player set.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "gameKey",
+    "modelVersion",
+    "renderer",
+    "invariants",
+    "players"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "gameKey": { "const": "skull" },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "renderer": { "$ref": "#/$defs/renderer" },
+    "invariants": { "$ref": "#/$defs/invariants" },
+    "players": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/playerModel" }
+    }
+  },
+  "$defs": {
+    "hexColor": {
+      "type": "string",
+      "pattern": "^#[0-9A-Fa-f]{6}$"
+    },
+    "renderer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generatorVersion",
+        "viewBox",
+        "outputSize",
+        "center",
+        "outerRadius",
+        "innerRadius",
+        "safeRadius",
+        "edgeWidth",
+        "format",
+        "background"
+      ],
+      "properties": {
+        "generatorVersion": { "const": 1 },
+        "viewBox": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "type": "integer" }
+        },
+        "outputSize": { "type": "integer", "minimum": 256, "maximum": 2048 },
+        "center": { "type": "integer", "minimum": 1 },
+        "outerRadius": { "type": "integer", "minimum": 100 },
+        "innerRadius": { "type": "integer", "minimum": 80 },
+        "safeRadius": { "type": "integer", "minimum": 60 },
+        "edgeWidth": { "type": "integer", "minimum": 2, "maximum": 40 },
+        "format": { "const": "svg" },
+        "background": { "const": "transparent" }
+      }
+    },
+    "invariants": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sameBackWithinPlayerSet",
+        "backIndependentOfCardKind",
+        "distinctBackAcrossPlayers",
+        "frontKeepsOwnerIdentity",
+        "semanticTypeUsesShapeAndColor",
+        "officialArtworkExcluded"
+      ],
+      "properties": {
+        "sameBackWithinPlayerSet": { "const": true },
+        "backIndependentOfCardKind": { "const": true },
+        "distinctBackAcrossPlayers": { "const": true },
+        "frontKeepsOwnerIdentity": { "const": true },
+        "semanticTypeUsesShapeAndColor": { "const": true },
+        "officialArtworkExcluded": { "const": true }
+      }
+    },
+    "palette": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "surface",
+        "surfaceHighlight",
+        "surfaceShadow",
+        "edge",
+        "accent",
+        "secondary",
+        "ink",
+        "safe",
+        "danger"
+      ],
+      "properties": {
+        "surface": { "$ref": "#/$defs/hexColor" },
+        "surfaceHighlight": { "$ref": "#/$defs/hexColor" },
+        "surfaceShadow": { "$ref": "#/$defs/hexColor" },
+        "edge": { "$ref": "#/$defs/hexColor" },
+        "accent": { "$ref": "#/$defs/hexColor" },
+        "secondary": { "$ref": "#/$defs/hexColor" },
+        "ink": { "$ref": "#/$defs/hexColor" },
+        "safe": { "$ref": "#/$defs/hexColor" },
+        "danger": { "$ref": "#/$defs/hexColor" }
+      }
+    },
+    "backModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "motif",
+        "centerMark",
+        "segmentCount",
+        "ringCount",
+        "rotation",
+        "patternOpacity"
+      ],
+      "properties": {
+        "motif": {
+          "type": "string",
+          "enum": ["sunburst", "waves", "vine", "diamonds", "compass", "hex-grid"]
+        },
+        "centerMark": {
+          "type": "string",
+          "enum": ["ember-dot", "tide-moon", "moss-leaf", "orchid-gem", "ochre-star", "slate-hex"]
+        },
+        "segmentCount": { "type": "integer", "minimum": 4, "maximum": 24 },
+        "ringCount": { "type": "integer", "minimum": 1, "maximum": 4 },
+        "rotation": { "type": "integer", "minimum": 0, "maximum": 359 },
+        "patternOpacity": { "type": "number", "minimum": 0.1, "maximum": 1.0 }
+      }
+    },
+    "flowerModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "motif",
+        "petalCount",
+        "petalLength",
+        "petalWidth",
+        "centerRadius",
+        "rotation",
+        "secondaryRing"
+      ],
+      "properties": {
+        "motif": {
+          "type": "string",
+          "enum": ["sunflower", "lotus", "wildflower", "orchid", "rosette", "geometric-bloom"]
+        },
+        "petalCount": { "type": "integer", "minimum": 4, "maximum": 12 },
+        "petalLength": { "type": "integer", "minimum": 50, "maximum": 150 },
+        "petalWidth": { "type": "integer", "minimum": 24, "maximum": 100 },
+        "centerRadius": { "type": "integer", "minimum": 18, "maximum": 80 },
+        "rotation": { "type": "integer", "minimum": 0, "maximum": 359 },
+        "secondaryRing": { "type": "boolean" }
+      }
+    },
+    "skullModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["silhouette", "eyeShape", "ornament", "jawTeeth", "rotation"],
+      "properties": {
+        "silhouette": {
+          "type": "string",
+          "enum": ["rounded", "elongated", "compact", "shielded", "angular", "faceted"]
+        },
+        "eyeShape": {
+          "type": "string",
+          "enum": ["oval", "round", "slit", "diamond", "teardrop", "hex"]
+        },
+        "ornament": {
+          "type": "string",
+          "enum": ["crack", "waves", "sprout", "halo", "compass", "facets"]
+        },
+        "jawTeeth": { "type": "integer", "minimum": 3, "maximum": 7 },
+        "rotation": { "type": "integer", "minimum": 0, "maximum": 359 }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["patternCode", "ownerLabel", "backLabel", "flowerLabel", "skullLabel"],
+      "properties": {
+        "patternCode": { "type": "string", "pattern": "^[A-F][1-6]$" },
+        "ownerLabel": { "type": "string", "minLength": 1 },
+        "backLabel": { "type": "string", "minLength": 1 },
+        "flowerLabel": { "type": "string", "minLength": 1 },
+        "skullLabel": { "type": "string", "minLength": 1 }
+      }
+    },
+    "playerModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "seatIndex",
+        "label",
+        "slug",
+        "palette",
+        "back",
+        "flowerFront",
+        "skullFront",
+        "accessibility"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^player-[1-6]$" },
+        "seatIndex": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "label": { "type": "string", "minLength": 1, "maxLength": 20 },
+        "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]+$" },
+        "palette": { "$ref": "#/$defs/palette" },
+        "back": { "$ref": "#/$defs/backModel" },
+        "flowerFront": { "$ref": "#/$defs/flowerModel" },
+        "skullFront": { "$ref": "#/$defs/skullModel" },
+        "accessibility": { "$ref": "#/$defs/accessibility" }
+      }
+    }
+  }
+}

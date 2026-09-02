@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "gameKey": "skull",
+  "sceneId": "penalty.blind-pick",
+  "revision": 28,
+  "phase": "penalty",
+  "viewer": {
+    "mode": "player",
+    "playerId": "p3"
+  },
+  "players": [
+    {
+      "id": "p1",
+      "seat": 0,
+      "displayName": "阿岚",
+      "status": "active",
+      "challengeWins": 0,
+      "matSide": "blank",
+      "lastChanceUsed": false,
+      "passedBid": false,
+      "handCount": 2,
+      "hand": [
+        { "id": "opaque-p1-hand-1", "kind": "unknown", "faceUp": false, "knowledge": "hidden" },
+        { "id": "opaque-p1-hand-2", "kind": "unknown", "faceUp": false, "knowledge": "hidden" }
+      ],
+      "stack": [
+        { "id": "public-p1-stack-1", "kind": "flower", "faceUp": true, "knowledge": "public" },
+        { "id": "public-p1-stack-2", "kind": "flower", "faceUp": true, "knowledge": "public" }
+      ],
+      "removedCount": 0,
+      "removed": []
+    },
+    {
+      "id": "p2",
+      "seat": 1,
+      "displayName": "白露",
+      "status": "active",
+      "challengeWins": 1,
+      "matSide": "flower",
+      "lastChanceUsed": false,
+      "passedBid": true,
+      "handCount": 3,
+      "hand": [
+        { "id": "opaque-p2-hand-1", "kind": "unknown", "faceUp": false, "knowledge": "hidden" },
+        { "id": "opaque-p2-hand-2", "kind": "unknown", "faceUp": false, "knowledge": "hidden" },
+        { "id": "opaque-p2-hand-3", "kind": "unknown", "faceUp": false, "knowledge": "hidden" }
+      ],
+      "stack": [
+        { "id": "opaque-p2-stack-1", "kind": "unknown", "faceUp": false, "knowledge": "hidden" }
+      ],
+      "removedCount": 0,
+      "removed": []
+    },
+    {
+      "id": "p3",
+      "seat": 2,
+      "displayName": "赤岩",
+      "status": "active",
+      "challengeWins": 0,
+      "matSide": "blank",
+      "lastChanceUsed": false,
+      "passedBid": true,
+      "handCount": 3,
+      "hand": [
+        { "id": "self-hand-1", "kind": "flower", "faceUp": false, "knowledge": "self" },
+        { "id": "self-hand-2", "kind": "flower", "faceUp": false, "knowledge": "self" },
+        { "id": "self-hand-3", "kind": "flower", "faceUp": false, "knowledge": "self" }
+      ],
+      "stack": [
+        { "id": "public-p3-stack-1", "kind": "skull", "faceUp": true, "knowledge": "public" }
+      ],
+      "removedCount": 0,
+      "removed": []
+    }
+  ],
+  "sharedDiscs": [
+    {
+      "id": "last-chance",
+      "kind": "last_chance_flower",
+      "faceUp": true,
+      "knowledge": "public"
+    }
+  ],
+  "round": {
+    "number": 1,
+    "firstPlayerId": "p2",
+    "currentPlayerId": "p3",
+    "totalPlaced": 4,
+    "currentBid": 3,
+    "highBidderId": "p1",
+    "passedPlayerIds": ["p2", "p3"],
+    "challengerId": "p1",
+    "targetBid": 3,
+    "revealedCount": 3,
+    "failed": true,
+    "lastChanceHolderId": null,
+    "lastChanceExpiresAfterRound": null,
+    "penaltySlots": ["opaque-1", "opaque-2", "opaque-3", "opaque-4"]
+  },
+  "actions": ["choose_penalty"],
+  "result": null
+}

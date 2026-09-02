@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc" data-model-version="1.0.0">
+  <title id="title">潮汐波纹牌背</title>
+  <desc id="desc">玩家二潮汐套牌。同一玩家所有个人牌共用的隐藏牌背。原创中性占位设计，不含官方美术。</desc>
+  <defs>
+    <radialGradient id="tide-back-surface" cx="35%" cy="26%" r="76%">
+      <stop offset="0" stop-color="#36505E"/>
+      <stop offset="0.68" stop-color="#202D35"/>
+      <stop offset="1" stop-color="#141D22"/>
+    </radialGradient>
+    <linearGradient id="tide-back-edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A1B8C3"/>
+      <stop offset="0.48" stop-color="#5C98B1"/>
+      <stop offset="1" stop-color="#141D22"/>
+    </linearGradient>
+    <filter id="tide-back-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="tide-back-soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+    <clipPath id="tide-back-clip"><circle cx="256" cy="256" r="208"/></clipPath>
+  </defs>
+  <g id="tide-back-disc" data-player="player-2" data-face="back">
+      <circle cx="256" cy="267" r="224" fill="#000000" opacity="0.28" filter="url(#tide-back-soft)"/>
+      <circle cx="256" cy="256" r="232" fill="url(#tide-back-edge)" filter="url(#tide-back-shadow)"/>
+      <circle cx="256" cy="256" r="216" fill="url(#tide-back-surface)" stroke="#A1B8C3" stroke-width="4"/>
+      <circle cx="256" cy="256" r="202" fill="none" stroke="#5C98B1" stroke-width="3" opacity="0.7"/>
+      <g clip-path="url(#tide-back-clip)" opacity="0.78">
+<path d="M54 126 C104 91 154 161 204 126 S304 91 354 126 S454 161 508 126" fill="none" stroke="#5C98B1" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 171 C104 156 154 186 204 171 S304 156 354 171 S454 186 508 171" fill="none" stroke="#8BC6D6" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 216 C104 181 154 251 204 216 S304 181 354 216 S454 251 508 216" fill="none" stroke="#5C98B1" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 261 C104 246 154 276 204 261 S304 246 354 261 S454 276 508 261" fill="none" stroke="#8BC6D6" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 306 C104 271 154 341 204 306 S304 271 354 306 S454 341 508 306" fill="none" stroke="#5C98B1" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 351 C104 336 154 366 204 351 S304 336 354 351 S454 366 508 351" fill="none" stroke="#8BC6D6" stroke-width="6" stroke-linecap="round"/>
+<path d="M54 396 C104 361 154 431 204 396 S304 361 354 396 S454 431 508 396" fill="none" stroke="#5C98B1" stroke-width="6" stroke-linecap="round"/>
+<circle cx="256" cy="256" r="112" fill="none" stroke="#A1B8C3" stroke-width="2" opacity="0.65"/>
+<circle cx="256" cy="256" r="172" fill="none" stroke="#A1B8C3" stroke-width="2" opacity="0.65"/>
+</g>
+<circle cx="256" cy="256" r="48" fill="#8BC6D6"/>
+        <circle cx="274" cy="242" r="48" fill="#202D35"/>
+        <circle cx="256" cy="256" r="51" fill="none" stroke="#5C98B1" stroke-width="5"/>
+      <path d="M277.51 444.78L279.43 461.67" stroke="#5C98B1" stroke-width="7" stroke-linecap="round"/>
+<path d="M234.49 444.78L232.57 461.67" stroke="#5C98B1" stroke-width="7" stroke-linecap="round"/>
+      <path d="M126 154A166 166 0 0 1 235 92" fill="none" stroke="#EDF5F6" stroke-width="8" stroke-linecap="round" opacity="0.16"/>
+    </g>
+</svg>

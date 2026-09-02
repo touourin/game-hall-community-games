@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "gameKey": "skull",
+  "modelVersion": "1.0.0",
+  "generatorVersion": 1,
+  "source": "../../model/player-card-models.json",
+  "sourceSha256": "4d9a219de88ae0bf04231b673a075119f0c15a63004006f0f763c18e6d89eb93",
+  "assetCount": 18,
+  "atlas": {
+    "path": "player-card-atlas.svg",
+    "sha256": "f401e6b77b3f7843cac7f564614f0c697e11b4fd4e56767fb58ad09383f6e1ad",
+    "width": 1900,
+    "height": 1090
+  },
+  "players": [
+    {
+      "id": "player-1",
+      "seatIndex": 0,
+      "label": "余烬",
+      "slug": "ember",
+      "patternCode": "A1",
+      "assets": {
+        "back": {
+          "path": "generated/seat-1-ember-back.svg",
+          "sha256": "91f7a04d3292f27d31f147dae1de7e69ed6301ed6c3d3d937c9b214d92283833",
+          "width": 512,
+          "height": 512
+        },
+        "flower": {
+          "path": "generated/seat-1-ember-flower.svg",
+          "sha256": "90ef18618be5bbbe0aa400eae97700df41ab46aff82e6397c2cafd1f2f0cf855",
+          "width": 512,
+          "height": 512
+        },
+        "skull": {
+          "path": "generated/seat-1-ember-skull.svg",
+          "sha256": "b7b5c352c42145e2570ba5461faf1036cdd851ae74edbf32de4da4bdb74a5ff5",
+          "width": 512,
+          "height": 512
+        }
+      }
+    },
+    {
+      "id": "player-2",
+      "seatIndex": 1,
+      "label": "潮汐",
+      "slug": "tide",
+      "patternCode": "B2",
+      "assets": {
+        "back": {
+          "path": "generated/seat-2-tide-back.svg",
+          "sha256": "74f44c76f8246547645136dc9f146af163200567109cc8f3cec0e3f1c7b226f2",
+          "width": 512,
+          "height": 512
+        },
+        "flower": {
+          "path": "generated/seat-2-tide-flower.svg",
+          "sha256": "f49b133698d237540d607297ba50aa38e86eec5c18b476dcae48db9573496bd0",
+          "width": 512,
+          "height": 512
+        },
+        "skull": {
+          "path": "generated/seat-2-tide-skull.svg",
+          "sha256": "d28a648dbe661584984f294d923b2be17103862f67ebf64483134bc3833f2baf",
+          "width": 512,
+          "height": 512
+        }
+      }
+    },
+    {
+      "id": "player-3",
+      "seatIndex": 2,
+      "label": "苔原",
+      "slug": "moss",
+      "patternCode": "C3",
+      "assets": {
+        "back": {
+          "path": "generated/seat-3-moss-back.svg",
+          "sha256": "d73e3809fc14c3e42cfb9c140b62872fe703cc784c049b00ff84a5514202aff2",
+          "width": 512,
+          "height": 512
+        },
+        "flower": {
+          "path": "generated/seat-3-moss-flower.svg",
+          "sha256": "5d3d8bfb56ec046aa4c025cbc9babec951d100b839e2a927135771e6d3df25c6",
+          "width": 512,
+          "height": 512
+        },
+        "skull": {
+          "path": "generated/seat-3-moss-skull.svg",
+          "sha256": "65dfcaaa3bf9e4e8e0bfaaba67bff190b9299a9a1a3515014173a01c96064cf0",
+          "width": 512,
+          "height": 512
+        }
+      }
+    },
+    {
+      "id": "player-4",
+      "seatIndex": 3,
+      "label": "兰影",
+      "slug": "orchid",
+      "patternCode": "D4",
+      "assets": {
+        "back": {
+          "path": "generated/seat-4-orchid-back.svg",
+          "sha256": "279e72fc1cad3a79c850a2dc339d6665963c614c21771bd53a993bbdc70901ac",
+          "width": 512,
+          "height": 512
+        },
+        "flower": {
+          "path": "generated/seat-4-orchid-flower.svg",
+          "sha256": "326c6c8d1a14d6cf912a98e3cd3f2b508237e9f1db375c34cc83d5db18adb4fe",
+          "width": 512,
+          "height": 512
+        },
+        "skull": {
+          "path": "generated/seat-4-orchid-skull.svg",
+          "sha256": "3f855719e9af6acb2af46eb856ee3874547e2dc26a24916fbb40b5cdfe84df23",
+          "width": 512,
+          "height": 512
+        }
+      }
+    },
+    {
+      "id": "player-5",
+      "seatIndex": 4,
+      "label": "赭石",
+      "slug": "ochre",
+      "patternCode": "E5",
+      "assets": {
+        "back": {
+          "path": "generated/seat-5-ochre-back.svg",
+          "sha256": "52418393063354d4e66b5688c853e32af2755f1ea03725a672ef67e344bafed4",
+          "width": 512,
+          "height": 512
+        },
+        "flower": {
+          "path": "generated/seat-5-ochre-flower.svg",
+          "sha256": "513d48ee36ff899771bd748499abc01eeb197a3d5e64a751d8aa79859deffba8",
+          "width": 512,
+          "height": 512
+        },
+        "skull": {
+          "path": "generated/seat-5-ochre-skull.svg",
+          "sha256": "b79034992d158614b201975b60bd5b83ca45439f80a8a4b2738a773a85e53e45",
+          "width": 512,
+          "height": 512
+        }
+      }
+    },
+    {
+      "id": "player-6",
+      "seatIndex": 5,
+      "label": "岩板",
+      "slug": "slate",
+      "patternCode": "F6",
+      "assets": {
+        "back": {
+          "path": "generated/seat-6-slate-back.svg",
+          "sha256": "a8d80781f785aff1f09b4cd54a4edcefc306f4c07257f2fc6f82610052fb229a",
+          "width": 512,
+          "height": 512
+        },
+        "flower": {
+          "path": "generated/seat-6-slate-flower.svg",
+          "sha256": "c68a68293cc9199e2b1e01e03e2ccbd2cfa62be99575c85903dd52733ef37a40",
+          "width": 512,
+          "height": 512
+        },
+        "skull": {
+          "path": "generated/seat-6-slate-skull.svg",
+          "sha256": "9ed5f57e337b647773b5d3582b617aa82124fea50a55aa203878418756c1edb9",
+          "width": 512,
+          "height": 512
+        }
+      }
+    }
+  ]
+}

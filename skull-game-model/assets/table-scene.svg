@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">骷髅牌三人桌面场景模型</title>
+  <desc id="desc">三名玩家围绕桌面，中央显示叫价三比五，底部当前玩家可见自己的牌，其他人的暗牌保持未知。</desc>
+  <defs>
+    <linearGradient id="page" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111419"/>
+      <stop offset="1" stop-color="#252a31"/>
+    </linearGradient>
+    <radialGradient id="table" cx="50%" cy="42%" r="65%">
+      <stop offset="0" stop-color="#45433d"/>
+      <stop offset=".72" stop-color="#302f2c"/>
+      <stop offset="1" stop-color="#232321"/>
+    </radialGradient>
+    <linearGradient id="mat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#393c40"/>
+      <stop offset="1" stop-color="#26282b"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000" flood-opacity=".42"/>
+    </filter>
+    <g id="backDisc">
+      <circle r="42" fill="#302d2b" stroke="#c86b56" stroke-width="5"/>
+      <circle r="31" fill="none" stroke="#756b64" stroke-width="2" stroke-dasharray="2 6"/>
+      <circle r="9" fill="#c86b56"/>
+    </g>
+    <g id="unknownDisc">
+      <circle r="42" fill="#303338" stroke="#8e969f" stroke-width="5"/>
+      <circle r="28" fill="none" stroke="#68717a" stroke-width="3" stroke-dasharray="4 6"/>
+      <text y="9" text-anchor="middle" fill="#aeb5bc" font-family="Arial, sans-serif" font-size="28" font-weight="700">?</text>
+    </g>
+    <g id="flowerDisc">
+      <circle r="42" fill="#302d2b" stroke="#6e9e7b" stroke-width="5"/>
+      <g fill="#d6c9b7">
+        <ellipse cy="-14" rx="8" ry="15"/>
+        <ellipse cx="13" cy="-4" rx="8" ry="15" transform="rotate(72 13 -4)"/>
+        <ellipse cx="8" cy="11" rx="8" ry="15" transform="rotate(144 8 11)"/>
+        <ellipse cx="-8" cy="11" rx="8" ry="15" transform="rotate(216 -8 11)"/>
+        <ellipse cx="-13" cy="-4" rx="8" ry="15" transform="rotate(288 -13 -4)"/>
+      </g>
+      <circle r="8" fill="#b88a51"/>
+    </g>
+    <g id="skullDisc">
+      <circle r="42" fill="#302d2b" stroke="#b45f5f" stroke-width="5"/>
+      <path d="M-19 1c0-19 8-29 19-29S19-18 19 1c0 11-4 16-10 19v10H-9V20c-6-3-10-8-10-19Z" fill="#ddd3c6"/>
+      <circle cx="-8" cy="2" r="5" fill="#2c2927"/>
+      <circle cx="8" cy="2" r="5" fill="#2c2927"/>
+      <path d="M0 8l-3 6h6Z" fill="#2c2927"/>
+    </g>
+  </defs>
+
+  <rect width="1440" height="900" fill="url(#page)"/>
+  <text x="56" y="58" fill="#f2eee8" font-family="Microsoft YaHei, sans-serif" font-size="28" font-weight="700">三人竞标场景 · 玩家视图</text>
+  <text x="56" y="91" fill="#9fa7af" font-family="Microsoft YaHei, sans-serif" font-size="15">当前玩家固定在底部；中央只展示公共叫价；他人的牌面和处罚映射保持隐藏。</text>
+
+  <ellipse cx="720" cy="477" rx="520" ry="328" fill="#15171a" opacity=".75" transform="translate(0 18)"/>
+  <ellipse cx="720" cy="465" rx="520" ry="328" fill="url(#table)" stroke="#676057" stroke-width="8"/>
+  <ellipse cx="720" cy="465" rx="474" ry="286" fill="none" stroke="#807468" stroke-width="2" stroke-dasharray="5 12" opacity=".65"/>
+
+  <g transform="translate(430 250)" filter="url(#shadow)">
+    <rect x="-112" y="-52" width="224" height="104" rx="22" fill="url(#mat)" stroke="#5f91aa" stroke-width="4"/>
+    <text y="-18" text-anchor="middle" fill="#e6e9ec" font-family="Microsoft YaHei, sans-serif" font-size="18" font-weight="700">白露 · 1 次成功</text>
+    <text y="12" text-anchor="middle" fill="#9eb2bf" font-family="Microsoft YaHei, sans-serif" font-size="14">最高叫价者</text>
+    <g transform="translate(-18 58)"><use href="#unknownDisc"/></g>
+    <g transform="translate(18 50)"><use href="#unknownDisc"/></g>
+    <rect x="76" y="58" width="66" height="27" rx="13" fill="#5f91aa"/>
+    <text x="109" y="77" text-anchor="middle" fill="#f4f7f9" font-family="Microsoft YaHei, sans-serif" font-size="13">2 枚</text>
+  </g>
+
+  <g transform="translate(1010 250)" filter="url(#shadow)">
+    <rect x="-112" y="-52" width="224" height="104" rx="22" fill="url(#mat)" stroke="#b28a4e" stroke-width="4"/>
+    <text y="-18" text-anchor="middle" fill="#e6e9ec" font-family="Microsoft YaHei, sans-serif" font-size="18" font-weight="700">赤岩 · 0 次成功</text>
+    <text y="12" text-anchor="middle" fill="#baa888" font-family="Microsoft YaHei, sans-serif" font-size="14">已退出竞标</text>
+    <g transform="translate(0 54)"><use href="#unknownDisc"/></g>
+    <rect x="72" y="58" width="66" height="27" rx="13" fill="#5f5547"/>
+    <text x="105" y="77" text-anchor="middle" fill="#e2d8c8" font-family="Microsoft YaHei, sans-serif" font-size="13">1 枚</text>
+  </g>
+
+  <g transform="translate(720 692)" filter="url(#shadow)">
+    <rect x="-165" y="-66" width="330" height="132" rx="28" fill="url(#mat)" stroke="#c86b56" stroke-width="5"/>
+    <text y="-31" text-anchor="middle" fill="#f3efea" font-family="Microsoft YaHei, sans-serif" font-size="20" font-weight="700">阿岚 · 轮到你</text>
+    <text y="0" text-anchor="middle" fill="#cdb2a9" font-family="Microsoft YaHei, sans-serif" font-size="14">自己的暗牌种类仅本人可见</text>
+    <g transform="translate(-24 74)"><use href="#flowerDisc"/></g>
+    <g transform="translate(24 66)"><use href="#skullDisc"/></g>
+    <rect x="100" y="66" width="76" height="27" rx="13" fill="#8d4f40"/>
+    <text x="138" y="85" text-anchor="middle" fill="#fff4ef" font-family="Microsoft YaHei, sans-serif" font-size="13">2 枚</text>
+  </g>
+
+  <g transform="translate(720 438)" filter="url(#shadow)">
+    <circle r="105" fill="#202328" stroke="#d0a85c" stroke-width="6"/>
+    <circle r="83" fill="none" stroke="#69645a" stroke-width="2"/>
+    <text y="-34" text-anchor="middle" fill="#c6bda9" font-family="Microsoft YaHei, sans-serif" font-size="16">当前叫价</text>
+    <text y="24" text-anchor="middle" fill="#f5e8c6" font-family="Arial, sans-serif" font-size="64" font-weight="700">3</text>
+    <text y="54" text-anchor="middle" fill="#9fa7af" font-family="Microsoft YaHei, sans-serif" font-size="14">桌面共 5 枚</text>
+  </g>
+
+  <g transform="translate(720 566)">
+    <rect x="-160" y="-22" width="150" height="44" rx="22" fill="#c86b56"/>
+    <text x="-85" y="7" text-anchor="middle" fill="#fff7f2" font-family="Microsoft YaHei, sans-serif" font-size="17" font-weight="700">加价到 4</text>
+    <rect x="10" y="-22" width="150" height="44" rx="22" fill="#3c4148" stroke="#68717a"/>
+    <text x="85" y="7" text-anchor="middle" fill="#d7dce0" font-family="Microsoft YaHei, sans-serif" font-size="17" font-weight="700">退出</text>
+  </g>
+
+  <g transform="translate(48 744)">
+    <rect width="360" height="112" rx="20" fill="#171a1f" stroke="#373d45"/>
+    <text x="20" y="31" fill="#e8e3dc" font-family="Microsoft YaHei, sans-serif" font-size="16" font-weight="700">信息层级</text>
+    <circle cx="28" cy="58" r="6" fill="#6e9e7b"/>
+    <text x="45" y="64" fill="#adb6bd" font-family="Microsoft YaHei, sans-serif" font-size="14">公开：叫价、数量、已翻牌、成功次数</text>
+    <circle cx="28" cy="86" r="6" fill="#c86b56"/>
+    <text x="45" y="92" fill="#adb6bd" font-family="Microsoft YaHei, sans-serif" font-size="14">私有：自己的手牌、暗置牌、秘密弃牌</text>
+  </g>
+
+  <g transform="translate(1032 744)">
+    <rect width="360" height="112" rx="20" fill="#171a1f" stroke="#373d45"/>
+    <text x="20" y="31" fill="#e8e3dc" font-family="Microsoft YaHei, sans-serif" font-size="16" font-weight="700">合法目标</text>
+    <text x="20" y="61" fill="#adb6bd" font-family="Microsoft YaHei, sans-serif" font-size="14">竞标阶段只开放“加价 / 退出”。</text>
+    <text x="20" y="88" fill="#adb6bd" font-family="Microsoft YaHei, sans-serif" font-size="14">翻牌阶段只高亮每个合法牌堆的顶部牌。</text>
+  </g>
+</svg>

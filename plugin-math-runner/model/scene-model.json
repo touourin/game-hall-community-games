@@ -1,47 +1,50 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "logicalCanvas": { "width": 1, "height": 1 },
   "camera": {
     "projection": "perspective-chase",
     "fieldOfViewDegrees": 52,
-    "desktopVanishingPoint": [0.5, 0.28],
-    "mobileVanishingPoint": [0.5, 0.25]
+    "desktopVanishingPoint": [0.5, 0.31],
+    "mobileVanishingPoint": [0.5, 0.28]
   },
   "anchors": {
     "desktop": {
-      "junction": [0.5, 0.48],
-      "runner": [0.5, 0.79],
-      "up": [0.5, 0.18],
-      "left": [0.19, 0.43],
-      "down": [0.5, 0.67],
-      "right": [0.81, 0.43]
+      "runner": [0.5, 0.88],
+      "leftLane": [0.18, 0.35],
+      "centerLane": [0.5, 0.31],
+      "rightLane": [0.82, 0.35],
+      "obstacle": [0.5, 0.58]
     },
     "mobile": {
-      "junction": [0.5, 0.43],
-      "runner": [0.5, 0.73],
-      "up": [0.5, 0.16],
-      "left": [0.18, 0.42],
-      "down": [0.5, 0.64],
-      "right": [0.82, 0.42]
+      "runner": [0.5, 0.86],
+      "leftLane": [0.17, 0.34],
+      "centerLane": [0.5, 0.3],
+      "rightLane": [0.83, 0.34],
+      "obstacle": [0.5, 0.56]
     }
   },
-  "directions": [
-    { "id": "up", "key": "w", "symbol": "↑", "rotationDegrees": 0 },
-    { "id": "left", "key": "a", "symbol": "←", "rotationDegrees": -90 },
-    { "id": "down", "key": "s", "symbol": "↓", "rotationDegrees": 180 },
-    { "id": "right", "key": "d", "symbol": "→", "rotationDegrees": 90 }
+  "lanes": [
+    { "id": "left", "action": "left", "key": "a", "symbol": "←" },
+    { "id": "center", "actions": ["jump", "slide"], "keys": ["w", "s"] },
+    { "id": "right", "action": "right", "key": "d", "symbol": "→" }
+  ],
+  "obstacles": [
+    { "id": "ground", "action": "jump", "key": "w", "clearance": "above" },
+    { "id": "overhead", "action": "slide", "key": "s", "clearance": "below" }
   ],
   "modules": {
-    "straight": [1.0, 0.34],
-    "junction": [0.52, 0.52],
-    "branch": [0.38, 0.2],
-    "gate": [0.24, 0.1],
-    "barrier": [0.22, 0.12]
+    "bridge": [1.0, 0.68],
+    "lane": [0.31, 0.66],
+    "gate": [0.27, 0.13],
+    "groundObstacle": [0.13, 0.1],
+    "overheadObstacle": [0.13, 0.16]
   },
   "runtime": {
     "renderer": "dom-css",
+    "backgroundAsset": "frontend/assets/runner-bridge-backdrop.png",
+    "branchCounts": [2, 3],
     "maxSpeedLines": 12,
-    "usesConceptArtAsBackground": false,
-    "reducedMotion": "static-pose-and-fade"
+    "reducedMotion": "static-pose-and-fade",
+    "keepsHostHeaderVisible": true
   }
 }

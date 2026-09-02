@@ -2,100 +2,108 @@
 import { computed } from 'vue'
 import RunnerModel from './RunnerModel.vue'
 import {
-  DIRECTION_META,
-  type Direction,
-  type DirectionMeta,
+  RUNNER_ACTION_META,
+  laneLabel,
   type MathRunnerGameView,
+  type RunnerAction,
+  type RunnerOption,
+  type TrackLane,
 } from '../types'
 
 const props = withDefaults(defineProps<{
   game: MathRunnerGameView
   remainingMs: number
-  selectedDirection?: Direction | null
-  turnDirection?: Direction | null
+  selectedAction?: RunnerAction | null
+  runnerAction?: RunnerAction | null
   disabled?: boolean
 }>(), {
-  selectedDirection: null,
-  turnDirection: null,
+  selectedAction: null,
+  runnerAction: null,
   disabled: false,
 })
 
 const emit = defineEmits<{
-  choose: [direction: Direction]
+  choose: [action: RunnerAction]
 }>()
 
-const optionMap = computed(() => new Map(
-  (props.game.options ?? []).map((option) => [option.direction, option]),
+const TRACK_LANES: readonly TrackLane[] = ['left', 'center', 'right']
+const optionByLane = computed(() => new Map(
+  (props.game.options ?? []).map((option) => [option.lane, option]),
 ))
-
 const speedLineIndexes = computed(() => Array.from(
   { length: Math.max(0, props.game.speed?.speedLines ?? 4) },
   (_, index) => index,
 ))
-
 const remainingRatio = computed(() => {
   const limit = Math.max(1, props.game.timeLimitMs ?? 1)
   return Math.min(1, Math.max(0, props.remainingMs / limit))
 })
-
 const stageStyle = computed(() => ({
   '--track-period': `${props.game.speed?.trackPeriodMs ?? 1500}ms`,
   '--timer-angle': `${remainingRatio.value * 360}deg`,
 }))
-
 const stageClass = computed(() => ({
   'track-scene--urgent': remainingRatio.value <= 0.25 && !props.game.endReason,
   'track-scene--level-up': Boolean(props.game.levelUp && !props.game.endReason),
   [`track-scene--${props.game.endReason}`]: Boolean(props.game.endReason),
+  [`track-scene--branches-${props.game.branchCount ?? props.game.options?.length ?? 2}`]: true,
 }))
 
-function optionFor(direction: Direction) {
-  return optionMap.value.get(direction)
+function optionForLane(lane: TrackLane): RunnerOption | undefined {
+  return optionByLane.value.get(lane)
 }
 
-function gateClass(meta: DirectionMeta) {
-  const option = optionFor(meta.id)
-  const selected = props.selectedDirection === meta.id
-    || (Boolean(props.game.endReason) && props.game.lastDirection === meta.id)
+function metaFor(action: RunnerAction) {
+  return RUNNER_ACTION_META.find((entry) => entry.id === action)!
+}
+
+function laneClass(lane: TrackLane) {
+  const option = optionForLane(lane)
   return {
-    [`question-gate--${meta.id}`]: true,
-    'question-gate--blocked': !option,
-    'question-gate--selected': selected,
-    'question-gate--correct': Boolean(
-      props.game.endReason && props.game.correctDirection === meta.id,
+    [`route-lane--${lane}`]: true,
+    'route-lane--closed': !option,
+    'route-lane--selected': Boolean(option && props.selectedAction === option.action),
+    'route-lane--correct': Boolean(
+      option && props.game.endReason && props.game.correctAction === option.action,
     ),
-    'question-gate--wrong': Boolean(
+  }
+}
+
+function gateClass(option: RunnerOption) {
+  return {
+    [`lane-gate--${option.lane}`]: true,
+    [`lane-gate--${option.action}`]: true,
+    'lane-gate--selected': props.selectedAction === option.action
+      || Boolean(props.game.endReason && props.game.lastAction === option.action),
+    'lane-gate--correct': Boolean(
+      props.game.endReason && props.game.correctAction === option.action,
+    ),
+    'lane-gate--wrong': Boolean(
       props.game.endReason === 'wrong'
-      && props.game.lastDirection === meta.id
-      && props.game.correctDirection !== meta.id,
+      && props.game.lastAction === option.action
+      && props.game.correctAction !== option.action,
     ),
   }
 }
 
-function routeClass(direction: Direction) {
-  return {
-    [`track-branch--${direction}`]: true,
-    'track-branch--blocked': !optionFor(direction),
-    'track-branch--correct': Boolean(
-      props.game.endReason && props.game.correctDirection === direction,
-    ),
-  }
-}
-
-function gateLabel(meta: DirectionMeta): string {
-  const option = optionFor(meta.id)
-  if (!option) return `${meta.label}方向封闭`
-  const result = props.game.endReason && props.game.correctDirection === meta.id
-    ? '，这是正确方向'
+function gateLabel(option: RunnerOption): string {
+  const meta = metaFor(option.action)
+  const obstacle = option.obstacle === 'ground'
+    ? '，前方是地面障碍'
+    : option.obstacle === 'overhead'
+      ? '，前方是高空障碍'
+      : ''
+  const result = props.game.endReason && props.game.correctAction === option.action
+    ? '，这是正确路线'
     : ''
-  return `${meta.label}方向，${option.equation}${result}`
+  return `${laneLabel(option.lane)}，按 ${meta.key} ${meta.label}${obstacle}，等式 ${option.equation}${result}`
 }
 
 function lineStyle(index: number) {
   return {
-    left: `${10 + ((index * 37) % 80)}%`,
+    left: `${7 + ((index * 37) % 86)}%`,
     animationDelay: `${-((index * 113) % 900)}ms`,
-    opacity: `${0.08 + (index % 4) * 0.035}`,
+    opacity: `${0.1 + (index % 4) * 0.04}`,
   }
 }
 </script>
@@ -105,31 +113,13 @@ function lineStyle(index: number) {
     class="track-scene"
     :class="stageClass"
     :style="stageStyle"
-    aria-label="算途疾行跑道与题目路口"
+    aria-label="算途疾行三跑道桥面与题目障碍"
   >
-    <div class="sky-glow" />
-    <div class="cloud cloud--one" />
-    <div class="cloud cloud--two" />
-    <div class="cloud cloud--three" />
-    <div class="horizon-architecture" aria-hidden="true">
-      <span class="tower tower--left" />
-      <span class="tower tower--center" />
-      <span class="tower tower--right" />
-      <span class="horizon-ring" />
-      <span class="observatory-dome" />
-    </div>
-
-    <div class="floating-islands" aria-hidden="true">
-      <span class="floating-island floating-island--one" />
-      <span class="floating-island floating-island--two" />
-      <span class="floating-island floating-island--three" />
-    </div>
-
-    <div class="crystal-beacons" aria-hidden="true">
-      <span class="crystal-beacon crystal-beacon--one" />
-      <span class="crystal-beacon crystal-beacon--two" />
-      <span class="crystal-beacon crystal-beacon--three" />
-      <span class="crystal-beacon crystal-beacon--four" />
+    <div class="scene-vignette" aria-hidden="true" />
+    <div class="horizon-haze" aria-hidden="true" />
+    <div class="bridge-towers" aria-hidden="true">
+      <span class="bridge-tower bridge-tower--left" />
+      <span class="bridge-tower bridge-tower--right" />
     </div>
 
     <div class="speed-lines" aria-hidden="true">
@@ -142,67 +132,104 @@ function lineStyle(index: number) {
     </div>
 
     <div
-      class="track-world"
-      :class="turnDirection ? `track-world--turn-${turnDirection}` : ''"
+      class="bridge-world"
+      :class="runnerAction ? `bridge-world--${runnerAction}` : ''"
       aria-hidden="true"
     >
-      <div class="approach-track">
-        <span class="track-rail track-rail--left" />
-        <span class="track-rail track-rail--right" />
-        <span class="track-seams" />
-        <span class="track-route-arrows" />
+      <div class="bridge-deck">
+        <span class="bridge-rail bridge-rail--left" />
+        <span class="bridge-rail bridge-rail--right" />
+        <span class="bridge-seam bridge-seam--left" />
+        <span class="bridge-seam bridge-seam--right" />
+        <span class="bridge-motion-grid" />
       </div>
-      <div class="junction-disc">
-        <span class="junction-ring junction-ring--outer" />
-        <span class="junction-ring junction-ring--inner" />
-        <span class="junction-core" />
+
+      <div class="route-lanes">
+        <span
+          v-for="lane in TRACK_LANES"
+          :key="lane"
+          class="route-lane"
+          :class="laneClass(lane)"
+        >
+          <i v-if="!optionForLane(lane)" class="broken-edge" />
+        </span>
       </div>
-      <span
-        v-for="meta in DIRECTION_META"
-        :key="meta.id"
-        class="track-branch"
-        :class="routeClass(meta.id)"
-      />
     </div>
 
-    <button
-      v-for="meta in DIRECTION_META"
-      :key="meta.id"
-      type="button"
-      class="question-gate"
-      :class="gateClass(meta)"
-      :disabled="disabled || !optionFor(meta.id)"
-      :aria-label="gateLabel(meta)"
-      :data-direction="meta.id"
-      @click="emit('choose', meta.id)"
-    >
-      <span class="gate-frame" aria-hidden="true" />
-      <span v-if="optionFor(meta.id)" class="gate-content">
-        <span class="gate-direction">
-          <b>{{ meta.symbol }}</b>
-          <span>{{ meta.label }} · {{ meta.key }}</span>
+    <template v-for="lane in TRACK_LANES" :key="lane">
+      <button
+        v-if="optionForLane(lane)"
+        type="button"
+        class="lane-gate"
+        :class="gateClass(optionForLane(lane)!)"
+        :disabled="disabled"
+        :aria-label="gateLabel(optionForLane(lane)!)"
+        :data-lane="lane"
+        :data-action="optionForLane(lane)!.action"
+        @click="emit('choose', optionForLane(lane)!.action)"
+      >
+        <span class="gate-frame" aria-hidden="true" />
+        <span class="gate-action">
+          <kbd>{{ metaFor(optionForLane(lane)!.action).key }}</kbd>
+          <b>{{ metaFor(optionForLane(lane)!.action).symbol }}</b>
+          <span>{{ metaFor(optionForLane(lane)!.action).label }}</span>
         </span>
-        <strong class="gate-equation">{{ optionFor(meta.id)?.equation }}</strong>
-      </span>
-      <span v-else class="gate-barrier">
-        <b aria-hidden="true">╱╲</b>
-        <span>封闭</span>
-      </span>
-      <span
-        v-if="game.endReason && game.correctDirection === meta.id"
-        class="gate-result-mark gate-result-mark--correct"
-        aria-hidden="true"
-      >✓</span>
-      <span
-        v-else-if="game.endReason === 'wrong' && game.lastDirection === meta.id"
-        class="gate-result-mark gate-result-mark--wrong"
-        aria-hidden="true"
-      >×</span>
-    </button>
+        <strong class="gate-equation">{{ optionForLane(lane)!.equation }}</strong>
+        <small>{{ laneLabel(lane) }}</small>
+        <span
+          v-if="game.endReason && game.correctAction === optionForLane(lane)!.action"
+          class="gate-result gate-result--correct"
+          aria-hidden="true"
+        >✓</span>
+        <span
+          v-else-if="game.endReason === 'wrong' && game.lastAction === optionForLane(lane)!.action"
+          class="gate-result gate-result--wrong"
+          aria-hidden="true"
+        >×</span>
+      </button>
 
-    <div class="runner-anchor">
+      <div
+        v-else
+        class="closed-route-sign"
+        :class="`closed-route-sign--${lane}`"
+        aria-hidden="true"
+      >
+        <b>断桥</b>
+        <span>╱╲</span>
+      </div>
+    </template>
+
+    <template v-for="option in game.options ?? []" :key="`${option.lane}-${option.action}`">
+      <div
+        v-if="option.obstacle"
+        class="lane-obstacle"
+        :class="[
+          `lane-obstacle--${option.lane}`,
+          `lane-obstacle--${option.obstacle}`,
+        ]"
+        :data-obstacle="option.obstacle"
+        aria-hidden="true"
+      >
+        <template v-if="option.obstacle === 'ground'">
+          <span class="ground-block ground-block--one" />
+          <span class="ground-block ground-block--two" />
+          <span class="ground-block ground-block--three" />
+        </template>
+        <template v-else>
+          <span class="overhead-post overhead-post--left" />
+          <span class="overhead-post overhead-post--right" />
+          <span class="overhead-beam" />
+        </template>
+        <kbd>{{ metaFor(option.action).key }}</kbd>
+      </div>
+    </template>
+
+    <div
+      class="runner-anchor"
+      :class="runnerAction ? `runner-anchor--${runnerAction}` : ''"
+    >
       <RunnerModel
-        :turn-direction="turnDirection"
+        :action="runnerAction"
         :end-reason="game.endReason"
         :run-cycle-ms="game.speed?.runCycleMs ?? 720"
       />
@@ -215,6 +242,11 @@ function lineStyle(index: number) {
     >
       <span>{{ Math.max(0, remainingMs / 1000).toFixed(1) }}</span>
       <small>秒</small>
+    </div>
+
+    <div class="section-radar" aria-hidden="true">
+      <b>{{ game.branchCount ?? game.options?.length ?? 2 }} 路分叉</b>
+      <span>W 跳 · S 蹲 · A/D 变道</span>
     </div>
 
     <div v-if="game.levelUp && !game.endReason" class="level-up-flash" aria-hidden="true">
@@ -232,626 +264,433 @@ function lineStyle(index: number) {
   width: 100%;
   height: 100%;
   min-width: 0;
-  min-height: 0;
+  min-height: 420px;
   overflow: hidden;
   isolation: isolate;
   border: 1px solid color-mix(in srgb, var(--mr-stage-edge) 70%, var(--mr-line));
-  border-radius: clamp(20px, 3vw, 34px);
-  background:
-    radial-gradient(circle at 14% 5%, color-mix(in srgb, #ffd58f 38%, transparent), transparent 30%),
-    radial-gradient(circle at 50% 20%, color-mix(in srgb, var(--mr-scene-glow) 72%, transparent), transparent 29%),
-    linear-gradient(180deg, var(--mr-scene-top), var(--mr-scene-center) 48%, var(--mr-scene-bottom));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 15%, transparent),
-    0 24px 60px color-mix(in srgb, var(--mr-shadow) 32%, transparent);
+  border-radius: clamp(18px, 2.2vw, 28px);
   color: var(--mr-copy-on-stage);
+  background:
+    linear-gradient(180deg, rgba(8, 18, 31, .02) 0 46%, rgba(5, 13, 24, .5) 100%),
+    url('../assets/runner-bridge-backdrop.png') center / cover no-repeat,
+    linear-gradient(180deg, var(--mr-scene-top), var(--mr-scene-bottom));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16), 0 20px 54px rgba(2, 8, 18, .34);
 }
 
-.sky-glow {
+.scene-vignette {
   position: absolute;
-  z-index: -5;
+  z-index: -1;
   inset: 0;
   background:
-    radial-gradient(circle at 16% 10%, color-mix(in srgb, var(--mr-accent) 20%, transparent), transparent 24%),
-    linear-gradient(110deg, transparent 34%, color-mix(in srgb, white 7%, transparent) 48%, transparent 60%);
+    linear-gradient(90deg, rgba(3, 10, 20, .38), transparent 20% 80%, rgba(3, 10, 20, .38)),
+    linear-gradient(0deg, rgba(2, 8, 18, .54), transparent 43%);
+  pointer-events: none;
 }
 
-.cloud {
+.horizon-haze {
   position: absolute;
-  z-index: -4;
-  width: 36%;
-  height: 17%;
+  z-index: 0;
+  top: 31%;
+  left: 50%;
+  width: 46%;
+  height: 18%;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--mr-scene-fog) 72%, transparent);
-  filter: blur(19px);
-  opacity: .48;
-  animation: cloud-drift calc(var(--track-period) * 9) ease-in-out infinite alternate;
+  background: color-mix(in srgb, #ffe4bd 24%, transparent);
+  filter: blur(22px);
+  transform: translateX(-50%);
 }
 
-.cloud--one { top: 22%; left: -10%; }
-.cloud--two { top: 31%; right: -8%; animation-delay: -2.2s; }
-.cloud--three { top: 43%; left: 31%; width: 42%; opacity: .22; animation-delay: -4.1s; }
-
-.horizon-architecture {
-  position: absolute;
-  z-index: -3;
-  inset: 8% 5% auto;
-  height: 31%;
-  opacity: .38;
-  filter: saturate(.7);
-}
-
-.tower {
+.bridge-towers { position: absolute; z-index: 1; inset: 19% 0 auto; height: 30%; pointer-events: none; }
+.bridge-tower {
   position: absolute;
   bottom: 0;
   width: 7%;
-  min-width: 28px;
-  border: 1px solid color-mix(in srgb, var(--mr-stage-edge) 65%, transparent);
-  border-radius: 42% 42% 10% 10%;
-  background:
-    linear-gradient(90deg, var(--mr-stage-bottom), var(--mr-stage-top), var(--mr-stage-bottom));
-  box-shadow: 0 0 22px color-mix(in srgb, var(--mr-scene-glow) 20%, transparent);
+  min-width: 32px;
+  height: 72%;
+  border: 2px solid rgba(85, 215, 232, .55);
+  border-radius: 44% 44% 10px 10px;
+  background: linear-gradient(90deg, #192536, #34485c 48%, #111c2b);
+  box-shadow: 0 0 20px rgba(66, 206, 223, .2);
+  opacity: .62;
 }
-
-.tower::before {
-  content: '';
+.bridge-tower::before {
   position: absolute;
+  top: -13px;
   left: 50%;
-  top: -18px;
-  width: 44%;
+  width: 15px;
   aspect-ratio: 1;
-  border: 2px solid var(--mr-stage-edge);
-  background: var(--mr-metal-glass);
-  transform: translateX(-50%) rotate(45deg);
-}
-
-.tower--left { left: 9%; height: 58%; }
-.tower--center { left: 47%; height: 82%; transform: scale(.72); }
-.tower--right { right: 8%; height: 64%; }
-
-.horizon-ring {
-  position: absolute;
-  left: 50%;
-  bottom: 8%;
-  width: 65%;
-  height: 26%;
-  border: 5px solid color-mix(in srgb, var(--mr-stage-edge) 54%, transparent);
-  border-bottom: 0;
-  border-radius: 50% 50% 0 0;
-  transform: translateX(-50%);
-}
-
-.observatory-dome {
-  position: absolute;
-  right: 18%;
-  bottom: 0;
-  width: 15%;
-  min-width: 64px;
-  aspect-ratio: 1.7;
-  border: 3px solid color-mix(in srgb, #d9ad64 62%, var(--mr-stage-edge));
-  border-bottom-width: 7px;
-  border-radius: 100% 100% 18% 18%;
-  background:
-    radial-gradient(circle at 50% 45%, color-mix(in srgb, #9ce9f2 55%, transparent), transparent 17%),
-    repeating-linear-gradient(90deg, transparent 0 18%, color-mix(in srgb, var(--mr-stage-edge) 45%, transparent) 19% 21%),
-    color-mix(in srgb, var(--mr-metal-glass) 44%, var(--mr-stage-bottom));
-  box-shadow: 0 0 24px color-mix(in srgb, #8fe8f3 24%, transparent);
-}
-
-.floating-islands {
-  position: absolute;
-  z-index: -2;
-  inset: 0;
-  pointer-events: none;
-}
-
-.floating-island {
-  position: absolute;
-  width: 8%;
-  min-width: 36px;
-  height: 4%;
-  border-top: 3px solid color-mix(in srgb, #d9ad64 56%, var(--mr-stage-edge));
-  background: linear-gradient(180deg, var(--mr-stage-bottom), color-mix(in srgb, var(--mr-shadow) 65%, transparent));
-  clip-path: polygon(0 0, 100% 0, 74% 42%, 57% 100%, 43% 100%, 25% 42%);
-  filter: drop-shadow(0 10px 8px color-mix(in srgb, var(--mr-shadow) 28%, transparent));
-  opacity: .52;
-  animation: island-float calc(var(--track-period) * 4.2) ease-in-out infinite alternate;
-}
-.floating-island--one { top: 17%; left: 4%; }
-.floating-island--two { top: 12%; right: 7%; width: 6%; animation-delay: -1.2s; }
-.floating-island--three { top: 37%; right: 24%; width: 4%; animation-delay: -2.4s; opacity: .32; }
-
-.crystal-beacons {
-  position: absolute;
-  z-index: 5;
-  inset: 0;
-  pointer-events: none;
-}
-.crystal-beacon {
-  position: absolute;
-  width: clamp(7px, 1.1vw, 13px);
-  aspect-ratio: .68;
-  border: 1px solid color-mix(in srgb, white 62%, #68dae9);
-  background: linear-gradient(145deg, #d9fbff, #4fc8dc 58%, #277d93);
-  clip-path: polygon(50% 0, 100% 42%, 72% 100%, 28% 100%, 0 42%);
-  box-shadow: 0 0 14px color-mix(in srgb, #71e8f5 70%, transparent);
-  animation: crystal-pulse calc(var(--track-period) * 1.4) ease-in-out infinite alternate;
-}
-.crystal-beacon::after {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  width: 18px;
-  height: 7px;
-  border: 1px solid color-mix(in srgb, #d9ad64 62%, var(--mr-stage-edge));
-  border-radius: 2px;
-  background: var(--mr-stage-bottom);
+  border: 1px solid #bff8ff;
+  background: #45cada;
   content: '';
-  transform: translateX(-50%);
+  transform: translateX(-50%) rotate(45deg);
+  box-shadow: 0 0 14px #4ed6e7;
 }
-.crystal-beacon--one { top: 39%; left: 17%; }
-.crystal-beacon--two { top: 39%; right: 17%; animation-delay: -.4s; }
-.crystal-beacon--three { top: 57%; left: 31%; animation-delay: -.8s; }
-.crystal-beacon--four { top: 57%; right: 31%; animation-delay: -1.2s; }
+.bridge-tower--left { left: 13%; }
+.bridge-tower--right { right: 13%; }
 
 .speed-lines {
   position: absolute;
-  z-index: -1;
-  inset: 16% 0 0;
+  z-index: 7;
+  inset: 42% 6% 0;
   overflow: hidden;
-  clip-path: polygon(28% 0, 72% 0, 100% 100%, 0 100%);
+  clip-path: polygon(27% 0, 73% 0, 100% 100%, 0 100%);
+  pointer-events: none;
 }
-
 .speed-line {
   position: absolute;
-  top: 8%;
+  top: -20%;
   width: 2px;
-  height: 18%;
+  height: 19%;
   border-radius: 999px;
-  background: linear-gradient(transparent, var(--mr-scene-particle));
-  transform: perspective(300px) rotateX(60deg);
+  background: linear-gradient(transparent, rgba(184, 244, 255, .92));
   animation: speed-line-fall var(--track-period) linear infinite;
 }
 
-.track-world {
+.bridge-world { position: absolute; z-index: 2; inset: 0; transform-origin: 50% 66%; }
+.bridge-deck {
   position: absolute;
-  z-index: 0;
-  inset: 0;
-  transform-origin: 50% 48%;
-}
-
-.approach-track {
-  position: absolute;
-  z-index: 1;
-  inset: 28% 0 0;
-  clip-path: polygon(45% 0, 55% 0, 86% 100%, 14% 100%);
-  border-bottom: 8px solid var(--mr-stage-edge);
+  inset: 34% -7% -8%;
+  overflow: hidden;
+  clip-path: polygon(44% 0, 56% 0, 92% 100%, 8% 100%);
   background:
-    repeating-linear-gradient(
-      180deg,
-      transparent 0 12%,
-      color-mix(in srgb, var(--mr-stage-detail) 75%, transparent) 12.5% 13.5%,
-      transparent 14% 25%
-    ),
-    linear-gradient(
-      90deg,
-      color-mix(in srgb, #141b24 76%, var(--mr-stage-bottom)),
-      color-mix(in srgb, #29313d 78%, var(--mr-stage-top)) 18% 82%,
-      color-mix(in srgb, #141b24 76%, var(--mr-stage-bottom))
-    );
-  background-size: 100% 120%, 100% 100%;
-  animation: track-scroll var(--track-period) linear infinite;
-  filter: drop-shadow(0 18px 16px color-mix(in srgb, var(--mr-shadow) 38%, transparent));
+    repeating-linear-gradient(180deg, transparent 0 11%, rgba(116, 171, 190, .19) 11.5% 12.5%, transparent 13% 23%),
+    linear-gradient(90deg, #111b29, #26384a 20% 80%, #111b29);
+  box-shadow: 0 24px 38px rgba(2, 8, 17, .5);
+  animation: bridge-scroll var(--track-period) linear infinite;
 }
-
-.track-seams {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 48.8%,
-    color-mix(in srgb, var(--mr-stage-detail) 58%, transparent) 49.5% 50.5%,
-    transparent 51.2%
-  );
-}
-
-.track-route-arrows {
-  position: absolute;
-  inset: 17% 35% 8%;
-  opacity: .72;
-  background:
-    linear-gradient(135deg, transparent 42%, color-mix(in srgb, #f4c56e 82%, var(--mr-accent)) 43% 57%, transparent 58%) 50% 10% / 22px 22px repeat-y,
-    linear-gradient(45deg, transparent 42%, color-mix(in srgb, #f4c56e 82%, var(--mr-accent)) 43% 57%, transparent 58%) 50% 10% / 22px 22px repeat-y;
-  filter: drop-shadow(0 0 6px color-mix(in srgb, #f2bd5f 45%, transparent));
-  animation: track-scroll var(--track-period) linear infinite;
-}
-
-.track-rail {
+.bridge-rail {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 3.4%;
-  background: linear-gradient(90deg, #71512a, #f0c873 45%, #8b6635);
-  box-shadow: 0 0 12px color-mix(in srgb, #f0c873 28%, transparent);
+  width: 3.2%;
+  background: linear-gradient(90deg, #8d6536, #f2cf86 45%, #664420);
+  box-shadow: 0 0 12px rgba(240, 196, 111, .35);
 }
-
-.track-rail--left { left: 0; }
-.track-rail--right { right: 0; }
-
-.junction-disc {
+.bridge-rail--left { left: 7.2%; transform: skewX(-12deg); }
+.bridge-rail--right { right: 7.2%; transform: skewX(12deg); }
+.bridge-seam {
   position: absolute;
-  z-index: 4;
-  top: 31%;
-  left: 50%;
-  width: clamp(170px, 29%, 330px);
-  aspect-ratio: 1;
-  border: clamp(8px, 1vw, 14px) solid var(--mr-stage-edge);
-  border-radius: 50%;
-  background:
-    radial-gradient(circle, var(--mr-stage-top) 0 25%, transparent 26%),
-    conic-gradient(from 45deg, var(--mr-stage-top), var(--mr-stage-bottom), var(--mr-stage-top));
-  transform: translate(-50%, -50%) perspective(520px) rotateX(58deg);
-  box-shadow:
-    inset 0 0 0 4px var(--mr-stage-inner-edge),
-    0 24px 32px color-mix(in srgb, var(--mr-shadow) 40%, transparent);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(rgba(116, 221, 233, .12), rgba(116, 221, 233, .7));
+  box-shadow: 0 0 8px rgba(76, 213, 231, .32);
 }
-
-.junction-ring {
+.bridge-seam--left { left: 39%; transform: rotate(-3deg); }
+.bridge-seam--right { right: 39%; transform: rotate(3deg); }
+.bridge-motion-grid {
   position: absolute;
-  border: 2px solid color-mix(in srgb, var(--mr-accent) 52%, var(--mr-stage-detail));
-  border-radius: 50%;
+  inset: 0;
+  background: repeating-linear-gradient(180deg, transparent 0 9%, rgba(236, 250, 255, .08) 9.5% 10.2%, transparent 10.7% 19%);
 }
 
-.junction-ring--outer { inset: 17%; }
-.junction-ring--inner { inset: 31%; }
-.junction-core {
+.route-lanes { position: absolute; z-index: 3; inset: 34% 5% -4%; pointer-events: none; }
+.route-lane {
   position: absolute;
-  inset: 42%;
-  background: var(--mr-accent);
-  transform: rotate(45deg);
-  box-shadow: 0 0 16px color-mix(in srgb, var(--mr-accent) 55%, transparent);
+  bottom: 0;
+  width: 31%;
+  height: 100%;
+  clip-path: polygon(43% 0, 57% 0, 100% 100%, 0 100%);
+  border-top: 2px solid rgba(120, 230, 244, .42);
+  background: linear-gradient(180deg, rgba(82, 209, 226, .12), rgba(82, 209, 226, .025));
+  transition: filter 160ms ease, opacity 160ms ease;
 }
-
-.track-branch {
+.route-lane--left { left: 4%; transform: rotate(-5.5deg); transform-origin: 100% 0; }
+.route-lane--center { left: 34.5%; }
+.route-lane--right { right: 4%; transform: rotate(5.5deg); transform-origin: 0 0; }
+.route-lane--selected { filter: drop-shadow(0 0 11px rgba(85, 221, 239, .75)); }
+.route-lane--correct { filter: drop-shadow(0 0 13px var(--mr-success-glow)); }
+.route-lane--closed {
+  opacity: .5;
+  background: repeating-linear-gradient(135deg, rgba(255, 160, 77, .18) 0 8px, rgba(16, 25, 37, .36) 8px 16px);
+  clip-path: polygon(43% 0, 57% 0, 79% 47%, 65% 55%, 91% 100%, 4% 100%, 35% 57%, 23% 47%);
+}
+.broken-edge {
   position: absolute;
-  z-index: 2;
-  display: block;
-  border: 3px solid var(--mr-stage-edge);
-  background:
-    repeating-linear-gradient(90deg, transparent 0 28px, color-mix(in srgb, var(--mr-stage-detail) 48%, transparent) 29px 31px),
-    linear-gradient(
-      color-mix(in srgb, #2c3541 80%, var(--mr-stage-top)),
-      color-mix(in srgb, #171e28 78%, var(--mr-stage-bottom))
-    );
-  box-shadow: 0 14px 22px color-mix(in srgb, var(--mr-shadow) 34%, transparent);
-  transition: filter 180ms ease, opacity 180ms ease;
+  top: 47%;
+  left: 31%;
+  width: 38%;
+  height: 3px;
+  background: var(--mr-warning);
+  box-shadow: 0 0 9px var(--mr-warning-glow);
+  transform: rotate(-7deg);
 }
 
-.track-branch--up {
-  top: 8%;
-  left: 43%;
-  width: 14%;
-  height: 31%;
-  clip-path: polygon(31% 0, 69% 0, 100% 100%, 0 100%);
-}
-
-.track-branch--left,
-.track-branch--right {
-  top: 29%;
-  width: 37%;
-  height: 17%;
-}
-
-.track-branch--left {
-  left: 5%;
-  clip-path: polygon(0 27%, 100% 0, 100% 100%, 0 73%);
-}
-
-.track-branch--right {
-  right: 5%;
-  clip-path: polygon(0 0, 100% 27%, 100% 73%, 0 100%);
-}
-
-.track-branch--down {
-  left: 40%;
-  bottom: 8%;
-  width: 20%;
-  height: 44%;
-  clip-path: polygon(17% 0, 83% 0, 100% 100%, 0 100%);
-}
-
-.track-branch--blocked { filter: grayscale(.65) brightness(.72); opacity: .56; }
-.track-branch--correct { filter: drop-shadow(0 0 10px var(--mr-success-glow)); }
-
-.question-gate {
+.lane-gate {
   position: absolute;
-  z-index: 7;
+  z-index: 10;
+  top: 24%;
+  width: min(27%, 260px);
+  min-height: 84px;
   display: grid;
-  min-width: 0;
-  min-height: 58px;
-  overflow: visible;
-  border: 0;
-  padding: 7px 10px;
-  border-radius: 13px;
-  color: var(--mr-copy-primary);
-  background:
-    radial-gradient(circle at 50% 0, rgba(240, 255, 255, .88), transparent 58%),
-    linear-gradient(145deg, rgba(219, 250, 252, .9), rgba(130, 191, 199, .76));
-  box-shadow:
-    inset 0 1px 0 color-mix(in srgb, white 18%, transparent),
-    0 8px 20px color-mix(in srgb, var(--mr-shadow) 40%, transparent),
-    0 0 0 1px var(--mr-metal-edge);
+  place-content: center;
+  gap: 5px;
+  border: 1px solid rgba(196, 245, 250, .72);
+  border-radius: 14px;
+  padding: 9px 10px;
+  color: #14202c;
+  background: linear-gradient(145deg, rgba(236, 253, 255, .96), rgba(129, 201, 211, .88));
+  box-shadow: 0 10px 24px rgba(1, 8, 17, .4), inset 0 1px 0 white;
   font: inherit;
   text-align: center;
   cursor: pointer;
-  transform-origin: 50% 100%;
-  transition: transform 150ms ease, filter 150ms ease, box-shadow 150ms ease;
+  transition: transform 140ms ease, filter 140ms ease, box-shadow 140ms ease;
 }
-
-.question-gate:not(:disabled):hover,
-.question-gate:not(:disabled):focus-visible {
-  z-index: 12;
+.lane-gate--left { left: 4%; transform: rotate(-2deg); }
+.lane-gate--center { left: 50%; transform: translateX(-50%); }
+.lane-gate--right { right: 4%; transform: rotate(2deg); }
+.lane-gate:not(:disabled):hover,
+.lane-gate:not(:disabled):focus-visible {
   outline: none;
-  filter: brightness(1.12);
-  box-shadow:
-    0 10px 24px color-mix(in srgb, var(--mr-shadow) 42%, transparent),
-    0 0 0 3px color-mix(in srgb, var(--mr-accent) 68%, transparent),
-    0 0 22px color-mix(in srgb, var(--mr-accent) 25%, transparent);
+  filter: brightness(1.08);
+  box-shadow: 0 0 0 3px rgba(79, 211, 229, .48), 0 12px 29px rgba(1, 8, 17, .48);
 }
-
-.question-gate:disabled { cursor: default; }
-
-.question-gate--up {
-  top: 6.5%;
-  left: 50%;
-  width: clamp(150px, 25%, 260px);
-  transform: translateX(-50%);
-}
-
-.question-gate--left,
-.question-gate--right {
-  top: 29%;
-  width: clamp(138px, 23%, 240px);
-}
-
-.question-gate--left { left: 3%; }
-.question-gate--right { right: 3%; }
-
-.question-gate--down {
-  left: 50%;
-  bottom: 25%;
-  width: clamp(150px, 27%, 275px);
-  transform: translateX(-50%);
-}
-
-.question-gate--up:not(:disabled):hover,
-.question-gate--up:not(:disabled):focus-visible,
-.question-gate--down:not(:disabled):hover,
-.question-gate--down:not(:disabled):focus-visible {
-  transform: translateX(-50%) translateY(-2px);
-}
-
+.lane-gate--left:not(:disabled):hover { transform: rotate(-2deg) translateY(-3px); }
+.lane-gate--center:not(:disabled):hover { transform: translateX(-50%) translateY(-3px); }
+.lane-gate--right:not(:disabled):hover { transform: rotate(2deg) translateY(-3px); }
+.lane-gate:disabled { cursor: default; }
 .gate-frame {
   position: absolute;
   inset: -4px;
   z-index: -1;
-  border: 2px solid color-mix(in srgb, #d9ad64 70%, var(--mr-metal-edge));
-  border-radius: 16px;
-  pointer-events: none;
+  border: 2px solid rgba(229, 188, 103, .78);
+  border-radius: 17px;
 }
-
-.gate-content { display: grid; gap: 4px; min-width: 0; }
-.gate-direction { display: flex; align-items: center; justify-content: center; gap: 5px; color: var(--mr-copy-secondary); font-size: 9px; font-weight: 850; letter-spacing: .08em; }
-.gate-direction b { color: var(--mr-accent); font-size: 15px; line-height: 1; }
-.gate-equation { min-width: 0; font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: clamp(12px, 1.55vw, 19px); font-weight: 900; line-height: 1.18; text-wrap: balance; text-shadow: 0 1px 2px var(--mr-copy-outline); }
-
-.question-gate--blocked {
-  color: var(--mr-copy-secondary);
-  background:
-    repeating-linear-gradient(135deg, transparent 0 8px, color-mix(in srgb, var(--mr-stage-detail) 48%, transparent) 8px 11px),
-    linear-gradient(var(--mr-stage-bottom), var(--mr-metal-body));
-  filter: saturate(.55) brightness(.78);
+.gate-action { display: flex; align-items: center; justify-content: center; gap: 5px; color: #345263; font-size: 9px; font-weight: 900; }
+.gate-action kbd,
+.lane-obstacle kbd {
+  min-width: 22px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(19, 47, 61, .36);
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  padding: 2px 5px;
+  color: #103746;
+  background: rgba(255, 255, 255, .72);
+  font: 900 10px/1 ui-monospace, monospace;
 }
-
-.question-gate--blocked .gate-frame { border-style: dashed; opacity: .62; }
-.gate-barrier { display: grid; place-items: center; gap: 1px; font-size: 9px; font-weight: 900; letter-spacing: .14em; }
-.gate-barrier b { font-size: 21px; color: var(--mr-warning); letter-spacing: -.35em; transform: translateX(-.18em); }
-
-.question-gate--selected:not(.question-gate--wrong) {
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--mr-accent) 70%, transparent),
-    0 0 28px color-mix(in srgb, var(--mr-accent) 32%, transparent);
-}
-
-.question-gate--correct {
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--mr-success) 78%, transparent),
-    0 0 32px var(--mr-success-glow);
-}
-
-.question-gate--wrong {
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--mr-danger) 78%, transparent),
-    0 0 30px var(--mr-danger-glow);
-}
-
-.gate-result-mark {
+.gate-action b { color: #127d92; font-size: 17px; line-height: 1; }
+.gate-equation { font: 900 clamp(12px, 1.45vw, 18px)/1.18 ui-monospace, "SFMono-Regular", Consolas, monospace; text-wrap: balance; }
+.lane-gate > small { color: #476574; font-size: 8px; font-weight: 850; }
+.lane-gate--selected { box-shadow: 0 0 0 3px rgba(73, 211, 230, .65), 0 0 28px rgba(73, 211, 230, .45); }
+.lane-gate--correct { box-shadow: 0 0 0 3px var(--mr-success), 0 0 30px var(--mr-success-glow); }
+.lane-gate--wrong { box-shadow: 0 0 0 3px var(--mr-danger), 0 0 30px var(--mr-danger-glow); }
+.gate-result {
   position: absolute;
-  top: -14px;
-  right: -12px;
-  width: 30px;
+  top: -13px;
+  right: -11px;
+  width: 29px;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  border: 2px solid currentColor;
+  border: 2px solid white;
   border-radius: 50%;
-  color: var(--mr-copy-on-stage);
-  font-size: 19px;
+  color: white;
+  font-size: 18px;
   font-weight: 950;
-  box-shadow: 0 5px 16px color-mix(in srgb, var(--mr-shadow) 40%, transparent);
 }
+.gate-result--correct { background: var(--mr-success-strong); }
+.gate-result--wrong { background: var(--mr-danger-strong); }
 
-.gate-result-mark--correct { background: var(--mr-success-strong); }
-.gate-result-mark--wrong { background: var(--mr-danger-strong); }
+.closed-route-sign {
+  position: absolute;
+  z-index: 8;
+  top: 27%;
+  width: min(18%, 150px);
+  min-height: 57px;
+  display: grid;
+  place-content: center;
+  gap: 2px;
+  border: 2px dashed rgba(255, 176, 86, .58);
+  border-radius: 11px;
+  color: #ffd09a;
+  background: rgba(12, 22, 34, .72);
+  text-align: center;
+  opacity: .8;
+}
+.closed-route-sign--left { left: 8%; }
+.closed-route-sign--center { left: 50%; transform: translateX(-50%); }
+.closed-route-sign--right { right: 8%; }
+.closed-route-sign b { font-size: 9px; }
+.closed-route-sign span { color: var(--mr-warning); font-size: 18px; letter-spacing: -.25em; transform: translateX(-.12em); }
+
+.lane-obstacle {
+  position: absolute;
+  z-index: 9;
+  left: 50%;
+  top: 52%;
+  width: clamp(72px, 13%, 122px);
+  height: 77px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.lane-obstacle > kbd { position: absolute; top: -7px; right: -9px; z-index: 3; background: #dffbff; box-shadow: 0 0 10px rgba(78, 213, 231, .65); }
+.ground-block {
+  position: absolute;
+  bottom: 0;
+  width: 34%;
+  height: 43%;
+  border: 2px solid #8b5c28;
+  background: linear-gradient(145deg, #f0bd65, #a65f24);
+  clip-path: polygon(50% 0, 100% 24%, 100% 100%, 0 100%, 0 24%);
+  box-shadow: 0 7px 13px rgba(0, 0, 0, .35);
+}
+.ground-block--one { left: 0; transform: rotate(-4deg); }
+.ground-block--two { left: 33%; height: 54%; }
+.ground-block--three { right: 0; transform: rotate(4deg); }
+.overhead-post,
+.overhead-beam {
+  position: absolute;
+  border: 2px solid #287a89;
+  background: linear-gradient(90deg, #143c4b, #66d7e5, #173f4c);
+  box-shadow: 0 0 10px rgba(77, 215, 232, .42);
+}
+.overhead-post { bottom: 0; width: 12px; height: 72%; border-radius: 5px; }
+.overhead-post--left { left: 5px; }
+.overhead-post--right { right: 5px; }
+.overhead-beam { top: 5px; left: 0; right: 0; height: 17px; border-radius: 6px; }
 
 .runner-anchor {
   position: absolute;
-  z-index: 8;
+  z-index: 12;
   left: 50%;
-  bottom: 4.5%;
-  transform: translateX(-50%);
+  bottom: 2.5%;
+  transform: translateX(-50%) scale(.88);
+  transform-origin: 50% 100%;
 }
+.runner-anchor--left { animation: runner-lane-left 620ms cubic-bezier(.2, .8, .2, 1); }
+.runner-anchor--right { animation: runner-lane-right 620ms cubic-bezier(.2, .8, .2, 1); }
 
 .scene-timer {
   position: absolute;
-  z-index: 9;
-  top: 16px;
-  right: 16px;
-  width: 66px;
+  z-index: 14;
+  top: 14px;
+  right: 14px;
+  width: 64px;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
   align-content: center;
   border-radius: 50%;
+  color: white;
   background:
-    radial-gradient(circle, var(--mr-metal-body) 57%, transparent 59%),
-    conic-gradient(var(--mr-accent) 0 var(--timer-angle), color-mix(in srgb, var(--mr-stage-detail) 55%, transparent) var(--timer-angle) 360deg);
-  color: var(--mr-copy-on-stage);
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--mr-shadow) 35%, transparent);
+    radial-gradient(circle, rgba(12, 27, 42, .94) 56%, transparent 58%),
+    conic-gradient(#54d8e9 0 var(--timer-angle), rgba(72, 100, 117, .5) var(--timer-angle) 360deg);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, .4);
 }
+.scene-timer span { font-size: 16px; font-weight: 950; line-height: 1; }
+.scene-timer small { margin-top: 2px; color: #b7d2dc; font-size: 8px; }
+.scene-timer--urgent { animation: timer-urgent 620ms ease-in-out infinite alternate; }
 
-.scene-timer span { font-size: 17px; font-weight: 950; line-height: 1; }
-.scene-timer small { margin-top: 2px; color: var(--mr-copy-secondary); font-size: 8px; font-weight: 850; letter-spacing: .08em; }
-.scene-timer--urgent { animation: timer-urgent 700ms ease-in-out infinite alternate; }
+.section-radar {
+  position: absolute;
+  z-index: 13;
+  top: 14px;
+  left: 14px;
+  display: grid;
+  gap: 2px;
+  border: 1px solid rgba(107, 220, 234, .46);
+  border-radius: 10px;
+  padding: 7px 10px;
+  color: white;
+  background: rgba(11, 26, 40, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
+  backdrop-filter: blur(10px);
+}
+.section-radar b { font-size: 10px; }
+.section-radar span { color: #b9d4de; font-size: 8px; }
 
 .level-up-flash {
   position: absolute;
-  z-index: 10;
+  z-index: 18;
   top: 50%;
   left: 50%;
   display: grid;
   place-items: center;
   gap: 3px;
   min-width: 150px;
-  border: 1px solid color-mix(in srgb, var(--mr-accent) 65%, white);
-  border-radius: 16px;
+  border: 1px solid rgba(130, 238, 250, .8);
+  border-radius: 15px;
   padding: 12px 22px;
-  background: color-mix(in srgb, var(--mr-metal-body) 88%, transparent);
-  box-shadow: 0 0 34px color-mix(in srgb, var(--mr-accent) 38%, transparent);
+  color: white;
+  background: rgba(11, 28, 43, .9);
+  box-shadow: 0 0 35px rgba(67, 214, 233, .4);
   transform: translate(-50%, -50%);
   animation: level-flash 900ms cubic-bezier(.2, .8, .2, 1) both;
 }
-
-.level-up-flash small { color: var(--mr-accent); font-size: 8px; font-weight: 950; letter-spacing: .2em; }
+.level-up-flash small { color: #7de6f3; font-size: 8px; font-weight: 950; letter-spacing: .2em; }
 .level-up-flash strong { font-size: 20px; }
 
-.track-world--turn-left { animation: world-turn-left 620ms cubic-bezier(.2, .8, .2, 1); }
-.track-world--turn-right { animation: world-turn-right 620ms cubic-bezier(.2, .8, .2, 1); }
-.track-world--turn-up { animation: world-turn-up 540ms cubic-bezier(.2, .8, .2, 1); }
-.track-world--turn-down { animation: world-turn-down 540ms cubic-bezier(.2, .8, .2, 1); }
-
+.bridge-world--left { animation: world-left 620ms cubic-bezier(.2, .8, .2, 1); }
+.bridge-world--right { animation: world-right 620ms cubic-bezier(.2, .8, .2, 1); }
+.bridge-world--jump { animation: world-jump 620ms cubic-bezier(.2, .8, .2, 1); }
+.bridge-world--slide { animation: world-slide 620ms cubic-bezier(.2, .8, .2, 1); }
 .track-scene--wrong .speed-line,
 .track-scene--timeout .speed-line,
 .track-scene--completed .speed-line,
-.track-scene--wrong .approach-track,
-.track-scene--timeout .approach-track,
-.track-scene--completed .approach-track {
-  animation-play-state: paused;
-}
-
+.track-scene--wrong .bridge-deck,
+.track-scene--timeout .bridge-deck,
+.track-scene--completed .bridge-deck { animation-play-state: paused; }
 .track-scene--level-up::after {
-  content: '';
   position: absolute;
-  z-index: 6;
+  z-index: 17;
   inset: 0;
-  border: 4px solid color-mix(in srgb, var(--mr-accent) 65%, transparent);
+  border: 4px solid rgba(82, 217, 234, .55);
   border-radius: inherit;
+  content: '';
   pointer-events: none;
-  animation: stage-level-ring 900ms ease-out both;
+  animation: stage-ring 900ms ease-out both;
 }
 
-@keyframes track-scroll { to { background-position: 0 120%, 0 0; } }
-@keyframes speed-line-fall { from { transform: translateY(-80%) scaleY(.5); } to { transform: translateY(640%) scaleY(2.4); } }
-@keyframes cloud-drift { from { transform: translateX(-3%); } to { transform: translateX(5%); } }
-@keyframes island-float { from { transform: translateY(-2px); } to { transform: translateY(6px); } }
-@keyframes crystal-pulse { from { filter: brightness(.88); transform: translateY(0); } to { filter: brightness(1.18); transform: translateY(-2px); } }
+@keyframes bridge-scroll { to { background-position: 0 120%, 0 0; } }
+@keyframes speed-line-fall { from { transform: translateY(-80%) scaleY(.5); } to { transform: translateY(650%) scaleY(2.5); } }
+@keyframes runner-lane-left { 0%, 100% { transform: translateX(-50%) scale(.88); } 62% { transform: translateX(-155%) scale(.9) rotate(-6deg); } }
+@keyframes runner-lane-right { 0%, 100% { transform: translateX(-50%) scale(.88); } 62% { transform: translateX(55%) scale(.9) rotate(6deg); } }
+@keyframes world-left { 0%, 100% { transform: translateX(0) rotate(0); } 60% { transform: translateX(3%) rotate(1.2deg); } }
+@keyframes world-right { 0%, 100% { transform: translateX(0) rotate(0); } 60% { transform: translateX(-3%) rotate(-1.2deg); } }
+@keyframes world-jump { 0%, 100% { transform: scale(1); } 55% { transform: scale(1.035); } }
+@keyframes world-slide { 0%, 100% { transform: translateY(0) scale(1); } 55% { transform: translateY(-1.5%) scale(.985); } }
 @keyframes timer-urgent { from { filter: none; } to { filter: drop-shadow(0 0 12px var(--mr-warning-glow)); } }
 @keyframes level-flash { 0% { opacity: 0; transform: translate(-50%, -42%) scale(.82); } 32% { opacity: 1; transform: translate(-50%, -50%) scale(1.04); } 78% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -58%) scale(1); } }
-@keyframes stage-level-ring { from { opacity: 1; transform: scale(.985); } to { opacity: 0; transform: scale(1.02); } }
-@keyframes world-turn-left { 0%, 100% { transform: translateX(0) rotate(0); } 60% { transform: translateX(6%) rotate(2deg); } }
-@keyframes world-turn-right { 0%, 100% { transform: translateX(0) rotate(0); } 60% { transform: translateX(-6%) rotate(-2deg); } }
-@keyframes world-turn-up { 0%, 100% { transform: scale(1); } 58% { transform: scale(1.055); } }
-@keyframes world-turn-down { 0%, 100% { transform: translateY(0) scale(1); } 58% { transform: translateY(-3%) scale(.96); } }
+@keyframes stage-ring { from { opacity: 1; transform: scale(.985); } to { opacity: 0; transform: scale(1.02); } }
 
-@media (max-width: 720px) {
-  .track-scene { min-height: 0; border-radius: 22px; }
-  .horizon-architecture { inset-inline: -8%; }
-  .question-gate { min-height: 52px; padding: 6px 7px; border-radius: 11px; }
-  .question-gate--up { top: 6%; width: min(46%, 200px); }
-  .question-gate--left,
-  .question-gate--right { top: 30%; width: min(36%, 156px); }
-  .question-gate--left { left: 2%; }
-  .question-gate--right { right: 2%; }
-  .question-gate--down { bottom: 25%; width: min(48%, 210px); }
-  .gate-direction span { font-size: 8px; }
-  .gate-equation { font-size: clamp(11px, 3.25vw, 15px); }
-  .scene-timer { top: 10px; right: 10px; width: 56px; }
-  .scene-timer span { font-size: 14px; }
-  .runner-anchor { bottom: 3%; transform: translateX(-50%) scale(.86); }
-  .junction-disc { top: 34%; width: clamp(145px, 44%, 230px); }
-  .track-branch--left,
-  .track-branch--right { top: 31%; }
-  .approach-track { inset: 30% 0 0; }
-}
-
-@media (max-width: 390px) {
-  .track-scene { min-height: 0; }
-  .question-gate--left,
-  .question-gate--right { width: 36%; }
-  .gate-direction { gap: 3px; font-size: 7px; }
-  .gate-direction b { font-size: 12px; }
-  .gate-equation { font-size: 10px; overflow-wrap: anywhere; }
-  .question-gate--down { bottom: 26%; }
-  .runner-anchor { bottom: 1.5%; transform: translateX(-50%) scale(.76); }
+@media (max-width: 760px) {
+  .track-scene { min-height: 360px; border-radius: 16px; }
+  .lane-gate { top: 25%; min-height: 69px; padding: 6px; border-radius: 11px; }
+  .gate-frame { border-radius: 14px; }
+  .gate-action { gap: 3px; font-size: 7px; }
+  .gate-action kbd { min-width: 18px; font-size: 8px; }
+  .gate-action b { font-size: 13px; }
+  .gate-equation { font-size: clamp(9px, 2.5vw, 13px); overflow-wrap: anywhere; }
+  .lane-gate > small { font-size: 7px; }
+  .closed-route-sign { top: 27%; min-height: 47px; }
+  .lane-obstacle { top: 53%; transform: translateX(-50%) scale(.8); }
+  .runner-anchor { bottom: 0; transform: translateX(-50%) scale(.7); }
+  .scene-timer { top: 9px; right: 9px; width: 54px; }
+  .section-radar { top: 9px; left: 9px; }
 }
 
 @media (orientation: landscape) and (max-height: 620px) {
-  .track-scene { border-radius: 12px; }
-  .horizon-architecture { inset: 4% 2% auto; height: 29%; }
-  .floating-island--three { display: none; }
-  .question-gate { min-height: 43px; padding: 4px 6px; border-radius: 9px; }
-  .question-gate--up { top: 3%; width: min(38%, 220px); }
-  .question-gate--left,
-  .question-gate--right { top: 27%; width: min(31%, 190px); }
-  .question-gate--left { left: 1.5%; }
-  .question-gate--right { right: 1.5%; }
-  .question-gate--down { bottom: 36%; width: min(40%, 225px); }
-  .gate-content { gap: 2px; }
-  .gate-direction { font-size: 7px; }
-  .gate-direction b { font-size: 11px; }
-  .gate-equation { font-size: clamp(9px, 1.75vw, 13px); }
-  .scene-timer { top: 7px; right: 7px; width: 48px; }
-  .scene-timer span { font-size: 12px; }
-  .runner-anchor { bottom: 1%; transform: translateX(-50%) scale(.63); }
-  .junction-disc { top: 33%; width: clamp(118px, 30%, 205px); }
-  .approach-track { inset: 28% 0 0; }
-  .crystal-beacon--three,
-  .crystal-beacon--four { top: 55%; }
+  .track-scene { min-height: 0; border-radius: 12px; }
+  .lane-gate { top: 19%; min-height: 54px; gap: 2px; padding: 4px 5px; }
+  .lane-gate > small { display: none; }
+  .gate-equation { font-size: clamp(8px, 1.55vw, 12px); }
+  .closed-route-sign { top: 22%; min-height: 42px; }
+  .lane-obstacle { top: 49%; transform: translateX(-50%) scale(.64); }
+  .runner-anchor { bottom: -8%; transform: translateX(-50%) scale(.55); }
+  .scene-timer { width: 48px; }
+  .section-radar span { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cloud,
-  .floating-island,
-  .crystal-beacon,
   .speed-line,
-  .approach-track,
+  .bridge-deck,
+  .bridge-world,
+  .runner-anchor,
   .scene-timer,
   .level-up-flash,
-  .track-world,
-  .track-scene--level-up::after {
-    animation: none !important;
-  }
-
-  .question-gate { transition-duration: 0s; }
+  .track-scene--level-up::after { animation: none !important; }
+  .lane-gate { transition: none; }
 }
 </style>

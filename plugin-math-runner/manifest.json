@@ -1,12 +1,12 @@
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "version": "1.1.0",
+  "version": "2.0.0",
   "author": "Game Hall Contributors",
   "license": "UNLICENSED",
   "id": "plugin-math-runner",
   "name": "算途疾行",
-  "description": "在四向路口判断唯一正确等式，连续答题冲刺十级赛道与最大路程榜",
+  "description": "在二/三路云桥分叉判断唯一正确等式，用变道、跳跃和下蹲冲刺十级赛道",
   "category": "益智跑酷",
   "tone": "math-runner",
   "roomLayout": "immersive",
@@ -31,5 +31,5 @@
   "defaultOptions": {
     "listed": false
   },
-  "ruleLabels": ["四向等式判断", "每 10 题升级", "共 10 级", "WASD / 触控", "迟到即失败", "最大路程排行榜"]
+  "ruleLabels": ["二/三路桥面分叉", "A/D 左右变道", "W 跳跃 / S 下蹲", "每 10 题升级", "迟到即失败", "最大路程排行榜"]
 }

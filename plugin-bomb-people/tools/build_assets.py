@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -118,56 +118,10 @@ def build_items() -> None:
                 rendered.save(target / f"item-{item_name}.png", "PNG", optimize=True)
 
 
-def rounded_gradient(size: int, top: tuple[int, int, int], bottom: tuple[int, int, int]) -> Image.Image:
-    result = Image.new("RGB", (size, size))
-    pixels = result.load()
-    for y in range(size):
-        ratio = y / max(1, size - 1)
-        color = tuple(round(top[index] * (1 - ratio) + bottom[index] * ratio) for index in range(3))
-        for x in range(size):
-            pixels[x, y] = color
-    return result
-
-
-def build_catalog_icon(output_name: str, light: bool) -> None:
-    size = 768
-    if light:
-        image = rounded_gradient(size, (244, 244, 240), (193, 198, 199))
-        grid = (96, 105, 107)
-        base = (223, 225, 219)
-        edge = (75, 80, 80)
-        hard = (86, 91, 90)
-        soft = (164, 116, 58)
-    else:
-        image = rounded_gradient(size, (35, 38, 40), (9, 11, 13))
-        grid = (85, 91, 92)
-        base = (29, 32, 33)
-        edge = (137, 143, 142)
-        hard = (105, 111, 110)
-        soft = (169, 112, 51)
-    draw = ImageDraw.Draw(image)
-    draw.rounded_rectangle((74, 74, 694, 694), radius=78, fill=base, outline=edge, width=8)
-    for offset in range(136, 650, 64):
-        draw.line((136, offset, 632, offset), fill=grid, width=2)
-        draw.line((offset, 136, offset, 632), fill=grid, width=2)
-    for x, y, color in (
-        (152, 152, hard), (536, 152, soft), (152, 536, soft), (536, 536, hard),
-        (216, 280, hard), (472, 408, soft),
-    ):
-        draw.rounded_rectangle((x, y, x + 60, y + 60), radius=12, fill=color, outline=edge, width=3)
-    with Image.open(ASSETS / "items" / "item-bomb_up.png") as icon_source:
-        icon = icon_source.convert("RGBA")
-        icon.thumbnail((390, 390), Image.Resampling.LANCZOS)
-        image.paste(icon, ((size - icon.width) // 2, (size - icon.height) // 2), icon)
-    image.save(ASSETS / output_name, "WEBP", quality=90, method=6)
-
-
 def main() -> None:
     build_maps()
     build_players()
     build_items()
-    build_catalog_icon("catalog-dark.webp", light=False)
-    build_catalog_icon("catalog-light.webp", light=True)
     print(f"Built assets in {ASSETS}")
 
 

@@ -26,7 +26,6 @@
 | `assets/player-cards/` | 18 张生成 SVG、总览图与哈希清单 |
 | `scripts/validate_models.py` | 数据与跨字段不变量校验 |
 | `scripts/generate_player_cards.py` | 从模型重建全部玩家卡牌 SVG |
-| `scripts/generate_catalog_artwork.py` | 重建深浅大厅 WebP 图标 |
 | `SOURCES.md` | 规则来源、版本取舍与版权边界 |
 
 ## 规则基线
@@ -91,7 +90,7 @@ frontend/node_modules/.bin/vitest run --config game-hall-third-party-games/skull
 frontend/node_modules/.bin/vue-tsc --noEmit -p game-hall-third-party-games/skull-game-model/frontend/tsconfig.json
 ```
 
-Windows PowerShell 中将上述两个前端可执行文件分别写为 `vitest.cmd` 和 `vue-tsc.cmd`。前端配置保存在本插件目录中，只复用大厅已安装的 Vue/Vitest 工具链与公开 SDK。模型校验只依赖 Python 标准库；PDF 构建需要 `reportlab`；大厅图标重建需要 Pillow。
+Windows PowerShell 中将上述两个前端可执行文件分别写为 `vitest.cmd` 和 `vue-tsc.cmd`。前端配置保存在本插件目录中，只复用大厅已安装的 Vue/Vitest 工具链与公开 SDK。模型校验只依赖 Python 标准库；PDF 构建需要 `reportlab`。
 
 确定性后端用例会分别对 3、4、5、6 人验证两轮挑战获胜、仅剩一人获胜、赢家/输家角色、战绩记录和所有玩家结算视图；前端用例也会分别渲染四种人数的座位与结算页。
 
@@ -110,12 +109,11 @@ SKULL_SOAK_SAMPLES=100 python -m pytest game-hall-third-party-games/skull-game-m
 
 PowerShell 可先执行 `$env:SKULL_SOAK_SAMPLES = "100"`，再运行同一条 pytest 命令。
 
-在本目录重建规则 PDF、卡牌和大厅图标：
+在本目录重建规则 PDF、卡牌并校验模型：
 
 ```bash
 python scripts/build_rulebook.py
 python scripts/generate_player_cards.py
-python scripts/generate_catalog_artwork.py
 python scripts/validate_models.py
 ```
 

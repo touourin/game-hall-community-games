@@ -170,6 +170,39 @@ describe('math runner plugin view', () => {
     wrapper.unmount()
   })
 
+  it('sends timeout again when a restarted run reuses question id one', async () => {
+    vi.useFakeTimers()
+    const wrapper = mount(GameView, {
+      props: { snapshot: snapshot('playing', { remainingMs: 40 }) },
+    })
+
+    await vi.advanceTimersByTimeAsync(150)
+    await flushPromises()
+    expect(pluginActions.action).toHaveBeenCalledTimes(1)
+
+    await wrapper.setProps({
+      snapshot: snapshot('finished', {
+        remainingMs: 0,
+        endReason: 'timeout',
+        correctAction: 'jump',
+        result: 'failed',
+      }),
+    })
+    await wrapper.get('.runner-result .solo-result-restart').trigger('click')
+    await flushPromises()
+    expect(pluginActions.restart).toHaveBeenCalledOnce()
+
+    await wrapper.setProps({
+      snapshot: snapshot('playing', { questionId: 1, remainingMs: 40 }),
+    })
+    await vi.advanceTimersByTimeAsync(150)
+    await flushPromises()
+
+    expect(pluginActions.action).toHaveBeenCalledTimes(2)
+    expect(pluginActions.action).toHaveBeenLastCalledWith('timeout', { questionId: 1 })
+    wrapper.unmount()
+  })
+
   it.each([
     ['left', 'runner-model--left', 'bridge-world--left'],
     ['jump', 'runner-model--jump', 'bridge-world--jump'],

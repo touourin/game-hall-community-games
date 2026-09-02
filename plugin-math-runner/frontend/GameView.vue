@@ -284,8 +284,19 @@ function handleKeydown(event: KeyboardEvent) {
 async function restartGame() {
   if (!props.snapshot.actions.canRestart || restarting.value) return
   restarting.value = true
-  await actions.restart()
-  restarting.value = false
+  selectedAction.value = null
+  runnerAction.value = null
+  timeoutSentFor.value = null
+  submitting.value = false
+  if (turnTimer !== null) {
+    window.clearTimeout(turnTimer)
+    turnTimer = null
+  }
+  try {
+    await actions.restart()
+  } finally {
+    restarting.value = false
+  }
 }
 
 watch(

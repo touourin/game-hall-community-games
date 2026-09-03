@@ -73,6 +73,24 @@
       "path": "plugin-bullhead-king",
       "status": "enabled",
       "order": 210
+    },
+    {
+      "id": "plugin-ticket-to-ride-europe",
+      "path": "ticket-to-ride-europe-model",
+      "status": "enabled",
+      "order": 220
+    },
+    {
+      "id": "plugin-manila",
+      "path": "plugin-manila",
+      "status": "enabled",
+      "order": 230
+    },
+    {
+      "id": "plugin-dead-mans-draw",
+      "path": "plugin-dead-mans-draw",
+      "status": "enabled",
+      "order": 240
     }
   ]
 }

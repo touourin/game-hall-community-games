@@ -14,7 +14,7 @@ vi.mock('@game-hall/plugin-sdk', async (original) => ({
   usePluginGameActions: () => ({ action: mocks.action, restart: mocks.restart }),
 }))
 
-function snapshot(playerCount: 2 | 4 = 4): ArcadeSnapshot {
+function snapshot(playerCount: 2 | 4 = 4, selfIndex = 0): ArcadeSnapshot {
   const colors = (['blue', 'yellow', 'red', 'green'] as const).slice(0, playerCount)
   const size = playerCount === 2 ? DUO_SIZE : FOUR_SIZE
   const starts = playerCount === 2 ? DUO_STARTS : FOUR_STARTS
@@ -25,15 +25,17 @@ function snapshot(playerCount: 2 | 4 = 4): ArcadeSnapshot {
     players: colors.map((color, index) => ({
       id: `p${index}`, color, colorName: ['蓝', '黄', '红', '绿'][index]!,
       start: starts[index]!, remainingPieces: PIECES.map(piece => piece.id),
-      remainingSquares: 89, placedSquares: 0, status: 'active', rank: null, points: null,
+      remainingSquares: 89, placedSquares: 0,
+      openingPieceSize: playerCount === 4 && index < 2 ? 4 : null,
+      status: 'active', rank: null, points: null,
     })),
-    currentPlayerId: 'p0', isMyTurn: true, turnNumber: 1, moveCount: 0, lastMove: null,
+    currentPlayerId: `p${selfIndex}`, isMyTurn: true, turnNumber: selfIndex + 1, moveCount: selfIndex, lastMove: null,
     events: [], rankings: [], rankPoints: [2, 1, 0, -1].slice(0, playerCount),
   }
   return {
     revision: 1, roomCode: 'BLOK', gameKey: 'plugin-blokus', gameName: '方格游戏',
     phase: 'playing', roundNumber: 1, statsEligible: true,
-    self: { id: 'p0', name: '玩家1', seat: 0 }, viewer: { mode: 'player' },
+    self: { id: `p${selfIndex}`, name: `玩家${selfIndex + 1}`, seat: selfIndex }, viewer: { mode: 'player' },
     players: colors.map((_, index) => ({ id: `p${index}`, name: `玩家${index + 1}`, seat: index, connected: true })),
     actions: { canAct: true, canRestart: false }, game,
   } as unknown as ArcadeSnapshot
@@ -117,28 +119,52 @@ describe('two- and four-player game interface', () => {
     expect(wrapper.text()).toContain('四人局只要剩余格数相同')
     expect(wrapper.text()).toContain('初始顺位较后的玩家就直接排在前面')
     expect(wrapper.text()).toContain('作为后手补偿')
+    expect(wrapper.text()).toContain('第 1、2 位首块必须使用恰好 4 格')
+    expect(wrapper.text()).toContain('第 3、4 位可以使用 5 格棋块')
+    expect(wrapper.text()).toContain('没有落子倒计时')
+    expect(wrapper.text()).toContain('断线也不会自动弃权')
+    expect(wrapper.text()).toContain('在房间存续期间保留座位和当前回合')
+  })
+
+  it('limits the first two classic openings to four-square pieces', async () => {
+    const wrapper = render()
+    expect(wrapper.text()).toContain('首块必须用 4 格棋块覆盖起始点')
+    expect(wrapper.text()).toContain('首块只能选择 4 格棋块')
+    expect(wrapper.get('button[aria-label="M1，1 格，首步不可用"]').attributes('disabled')).toBeDefined()
+    expect(wrapper.get('button[aria-label="L5，5 格，首步不可用"]').attributes('disabled')).toBeDefined()
+    expect(wrapper.get('button[aria-label="I4，4 格"]').attributes('disabled')).toBeUndefined()
+    expect(wrapper.findAll('.piece-button:not([disabled])')).toHaveLength(5)
+
+    const later = render(snapshot(4, 2))
+    expect(later.get('button[aria-label="L5，5 格"]').attributes('disabled')).toBeUndefined()
+    await later.get('button[aria-label="L5，5 格"]').trigger('click')
+    expect(later.findAll('.preview-tile')).toHaveLength(5)
+
+    const duo = render(snapshot(2))
+    expect(duo.get('button[aria-label="M1，1 格"]').attributes('disabled')).toBeUndefined()
+    expect(duo.get('button[aria-label="L5，5 格"]').attributes('disabled')).toBeUndefined()
   })
 
   it('previews without sending a move and submits only on confirmation', async () => {
     const wrapper = render()
-    await wrapper.get('button[aria-label="L5，5 格"]').trigger('click')
-    expect(wrapper.findAll('.preview-tile')).toHaveLength(5)
+    await wrapper.get('button[aria-label="I4，4 格"]').trigger('click')
+    expect(wrapper.findAll('.preview-tile')).toHaveLength(4)
     expect(mocks.action).not.toHaveBeenCalled()
     expect(wrapper.text()).toContain('位置合法')
     await button(wrapper, '确认落子').trigger('click')
     await flushPromises()
     expect(mocks.action).toHaveBeenCalledExactlyOnceWith('place', {
-      pieceId: 'L5', x: 0, y: 0, rotation: 0, flipped: false, turnNumber: 1,
+      pieceId: 'I4', x: 0, y: 0, rotation: 0, flipped: false, turnNumber: 1,
     })
     expect(wrapper.findAll('.preview-tile')).toHaveLength(0)
   })
 
   it('supports rotation, reflection, nudging, and keyboard controls', async () => {
     const wrapper = render()
-    await wrapper.get('button[aria-label="L5，5 格"]').trigger('click')
+    await wrapper.get('button[aria-label="L4，4 格"]').trigger('click')
     await button(wrapper, '旋转').trigger('click')
     const rotated = wrapper.findAll('.preview-tile').map(cell => [cell.attributes('x'), cell.attributes('y')])
-    expect(new Set(rotated.map(([x]) => x)).size).toBe(4)
+    expect(new Set(rotated.map(([x]) => x)).size).toBe(3)
     await button(wrapper, '翻转').trigger('click')
     await wrapper.get('[aria-label="向右一格"]').trigger('click')
     expect(wrapper.text()).toContain('2 列 / 1 行')
@@ -154,7 +180,7 @@ describe('two- and four-player game interface', () => {
     let resolve!: (value: boolean) => void
     mocks.action.mockReturnValue(new Promise<boolean>(done => { resolve = done }))
     const wrapper = render()
-    await wrapper.get('button[aria-label="M1，1 格"]').trigger('click')
+    await wrapper.get('button[aria-label="I4，4 格"]').trigger('click')
     await button(wrapper, '确认落子').trigger('click')
     await wrapper.get('.board-svg').trigger('keydown', { key: 'Enter' })
     expect(mocks.action).toHaveBeenCalledTimes(1)
@@ -165,9 +191,9 @@ describe('two- and four-player game interface', () => {
   it('clears stale previews on a new turn but keeps them during unrelated snapshots', async () => {
     const data = snapshot()
     const wrapper = render(data)
-    await wrapper.get('button[aria-label="M1，1 格"]').trigger('click')
+    await wrapper.get('button[aria-label="I4，4 格"]').trigger('click')
     await wrapper.setProps({ snapshot: { ...data, revision: 2 } })
-    expect(wrapper.findAll('.preview-tile')).toHaveLength(1)
+    expect(wrapper.findAll('.preview-tile')).toHaveLength(4)
     await wrapper.setProps({ snapshot: { ...data, game: { ...data.game, turnNumber: 2, currentPlayerId: 'p1', isMyTurn: false } } })
     expect(wrapper.findAll('.preview-tile')).toHaveLength(0)
     expect(button(wrapper, '等待你的回合').attributes('disabled')).toBeDefined()
@@ -186,8 +212,8 @@ describe('two- and four-player game interface', () => {
   it('clears an existing preview when switching to spectator mode', async () => {
     const data = snapshot()
     const wrapper = render(data)
-    await wrapper.get('button[aria-label="M1，1 格"]').trigger('click')
-    expect(wrapper.findAll('.preview-tile')).toHaveLength(1)
+    await wrapper.get('button[aria-label="I4，4 格"]').trigger('click')
+    expect(wrapper.findAll('.preview-tile')).toHaveLength(4)
     await wrapper.setProps({ snapshot: { ...data, viewer: { mode: 'spectator', id: 'watcher', name: '观众' } } })
     expect(wrapper.findAll('.preview-tile')).toHaveLength(0)
     expect(wrapper.find('[aria-label="落子操作"]').exists()).toBe(false)
@@ -199,7 +225,8 @@ describe('two- and four-player game interface', () => {
     expect(wrapper.text()).toContain('玩家2的棋块')
     expect(wrapper.findAll('.piece-button').every(piece => piece.attributes('disabled') !== undefined)).toBe(true)
     await button(wrapper, '返回我的棋块').trigger('click')
-    expect(wrapper.get('button[aria-label="M1，1 格"]').attributes('disabled')).toBeUndefined()
+    expect(wrapper.get('button[aria-label="M1，1 格，首步不可用"]').attributes('disabled')).toBeDefined()
+    expect(wrapper.get('button[aria-label="I4，4 格"]').attributes('disabled')).toBeUndefined()
   })
 
   it('shows all four result points including zero, negative, and guest exclusion', () => {

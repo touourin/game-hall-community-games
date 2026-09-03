@@ -14,6 +14,7 @@ export interface BlokusPlayer {
   remainingPieces: string[]
   remainingSquares: number
   placedSquares: number
+  openingPieceSize: number | null
   status: 'active' | 'blocked' | 'finished' | 'forfeited'
   rank: number | null
   points: number | null

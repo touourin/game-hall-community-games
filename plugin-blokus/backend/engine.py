@@ -106,7 +106,31 @@ class BlokusEngine:
             current_player_id=order[0],
             turn_number=1,
         )
+        self._disable_disconnect_forfeit(room)
         room.phase = "playing"
+
+    @staticmethod
+    def _disable_disconnect_forfeit(room: ArcadeRoom) -> None:
+        """Keep every seat indefinitely instead of starting the host grace timer."""
+        for player in room.players:
+            player.disconnected_at = None
+            player.disconnect_timeout_handled = True
+
+    def repair_restored_room(self, room: ArcadeRoom) -> None:
+        """Apply the no-timeout policy to games restored from an older release."""
+        self._disable_disconnect_forfeit(room)
+
+    @staticmethod
+    def _required_opening_size(
+        state: BlokusState, player_id: str,
+    ) -> int | None:
+        if (
+            len(state.player_ids) == 4
+            and len(state.remaining[player_id]) == 21
+            and state.player_ids.index(player_id) < 2
+        ):
+            return 4
+        return None
 
     @staticmethod
     def _member(room: ArcadeRoom, player: ArcadePlayer) -> None:
@@ -146,6 +170,12 @@ class BlokusEngine:
         piece_id = payload.get("pieceId")
         if not isinstance(piece_id, str) or piece_id not in state.remaining[player.id]:
             raise GameRuleError("这块棋块不存在或已经使用")
+        required_opening_size = self._required_opening_size(state, player.id)
+        if (
+            required_opening_size is not None
+            and len(PIECES[piece_id]) != required_opening_size
+        ):
+            raise GameRuleError("四人局初始顺位前两位的首块必须使用 4 格棋块")
         cells = tuple(
             (x + payload["x"], y + payload["y"])
             for x, y in transform(piece_id, payload["rotation"], payload["flipped"])
@@ -175,6 +205,7 @@ class BlokusEngine:
             return None
         color = state.player_ids.index(player_id)
         first_move = len(state.remaining[player_id]) == 21
+        required_opening_size = self._required_opening_size(state, player_id)
         if first_move:
             anchors = {state.start_points[color]}
         else:
@@ -193,6 +224,11 @@ class BlokusEngine:
                 )
             }
         for piece_id in sorted(state.remaining[player_id], key=lambda key: -len(PIECES[key])):
+            if (
+                required_opening_size is not None
+                and len(PIECES[piece_id]) != required_opening_size
+            ):
+                continue
             for rotation, flipped, shape in orientations(piece_id):
                 checked: set[tuple[int, int]] = set()
                 for ax, ay in sorted(anchors, key=lambda p: (p[1], p[0])):
@@ -275,7 +311,10 @@ class BlokusEngine:
         return True
 
     def disconnect_timeout(self, room: ArcadeRoom, player: ArcadePlayer) -> bool:
-        return self.manual_forfeit(room, player)
+        self._member(room, player)
+        # A timeout notification from an older/restored host must never change
+        # the board, turn, ranking, or the player's seat.
+        return False
 
     def view(self, room: ArcadeRoom, viewer: ArcadePlayer) -> dict[str, Any]:
         state: BlokusState = room.state
@@ -292,6 +331,7 @@ class BlokusEngine:
                 "start": list(state.start_points[color]), "remainingPieces": list(remaining),
                 "remainingSquares": sum(len(PIECES[key]) for key in remaining),
                 "placedSquares": 89 - sum(len(PIECES[key]) for key in remaining),
+                "openingPieceSize": self._required_opening_size(state, player_id),
                 "status": status,
                 "rank": state.rankings.index(player_id) + 1 if player_id in state.rankings else None,
                 "points": state.scores.get(player_id),

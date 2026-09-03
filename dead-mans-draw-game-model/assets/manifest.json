@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "generator": "scripts/generate_assets.py",
+  "sourceFiles": {
+    "model/card-catalog.json": "74037aa81850313befc5455105ee199b42eaf8db69ad71e13c741e2a7a46bb46",
+    "model/scene-catalog.json": "4739c7875de1f8fcce72f71179195aa2c2deee6644a6f924f08f8b432c2ec11a"
+  },
+  "combinedSourceSha256": "e428d2df851ed9aa2c51445193f5014b26fa0b630e17f4b2dbe1d58e149d4794",
+  "outputs": [
+    {
+      "path": "assets/loot-card-atlas.svg",
+      "sha256": "d7b00e7f6f5e21495b4d6e774a0fcb16054e944b3dbbeac15cfbdcb10a2e2215",
+      "bytes": 82805
+    },
+    {
+      "path": "assets/trait-card-atlas.svg",
+      "sha256": "552a4a684d889044ed97132962649f7631dd02df66a4a61fd8a9a43b3161a4b6",
+      "bytes": 31035
+    },
+    {
+      "path": "assets/table-scene.svg",
+      "sha256": "2598c5c1773b7a71fcdc5a1645c956b30bd47fce9e5185dc0843e42d7510269b",
+      "bytes": 21510
+    }
+  ]
+}

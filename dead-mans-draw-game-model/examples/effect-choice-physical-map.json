@@ -1,0 +1,33 @@
+{
+  "$schema": "../model/scenario.schema.json",
+  "schemaVersion": 1,
+  "scenarioId": "effect-choice-physical-map",
+  "titleZh": "实体版藏宝图必须允许选择会爆牌的候选",
+  "profileId": "tabletop_base_2015",
+  "given": {
+    "actorId": "p1",
+    "playArea": [
+      { "entryId": "entry-8", "cardId": "loot-cannon-6", "protected": true },
+      { "entryId": "entry-9", "cardId": "loot-anchor-5", "protected": false },
+      { "entryId": "entry-10", "cardId": "loot-map-4", "protected": false }
+    ],
+    "mapCandidates": ["loot-cannon-2", "loot-hook-2", "loot-mermaid-4"],
+    "choiceOptions": [
+      { "optionId": "option-1", "cardId": "loot-cannon-2", "causesImmediateBust": true },
+      { "optionId": "option-2", "cardId": "loot-hook-2", "causesImmediateBust": false },
+      { "optionId": "option-3", "cardId": "loot-mermaid-4", "causesImmediateBust": false }
+    ]
+  },
+  "when": {
+    "action": "resolve_effect",
+    "payload": { "choiceId": "choice-4", "optionId": "option-1" }
+  },
+  "then": {
+    "bust": true,
+    "abilityOfBustingCardActivates": false,
+    "bankedByP1": ["loot-cannon-6"],
+    "baseBustCards": ["loot-anchor-5", "loot-map-4", "loot-cannon-2"],
+    "returnedMapCandidates": ["loot-hook-2", "loot-mermaid-4"],
+    "turnEnds": true
+  }
+}

@@ -1,0 +1,345 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/dead-mans-draw/game-state.schema.json",
+  "title": "Dead Man's Draw authoritative state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "modelVersion", "gameId", "gameNumber", "revision", "phase", "rules", "players", "traitDeck", "unusedTraits", "drawPile", "discardPile", "removedFromGame", "playArea", "activePlayerId", "turn", "result", "eventSeq", "events", "rng"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "dead-mans-draw" },
+    "gameNumber": { "type": "integer", "minimum": 1 },
+    "revision": { "type": "integer", "minimum": 0 },
+    "phase": { "enum": ["waiting", "trait_selection", "turn", "effect_choice", "finished"] },
+    "rules": { "$ref": "#/$defs/rules" },
+    "players": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/player" }
+    },
+    "traitDeck": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/traitId" }
+    },
+    "unusedTraits": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/traitId" }
+    },
+    "drawPile": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/cardId" }
+    },
+    "discardPile": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/cardId" }
+    },
+    "removedFromGame": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/cardId" }
+    },
+    "playArea": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/playEntry" }
+    },
+    "activePlayerId": { "type": ["string", "null"] },
+    "turn": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/turn" }
+      ]
+    },
+    "result": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/result" }
+      ]
+    },
+    "eventSeq": { "type": "integer", "minimum": 0 },
+    "events": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/event" }
+    },
+    "rng": { "$ref": "#/$defs/rng" }
+  },
+  "$defs": {
+    "cardId": {
+      "type": "string",
+      "pattern": "^loot-(anchor|hook|cannon|key|chest|map|oracle|sword|kraken|mermaid)-[2-9]$"
+    },
+    "traitId": {
+      "type": "string",
+      "pattern": "^trait-[a-z][a-z0-9-]*$"
+    },
+    "suitId": {
+      "enum": ["anchor", "hook", "cannon", "key", "chest", "map", "oracle", "sword", "kraken", "mermaid"]
+    },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profileId", "traitsEnabled", "globalVariantId", "firstPlayerPolicy", "turnTimeoutSeconds"],
+      "properties": {
+        "profileId": { "enum": ["tabletop_base_2015", "digital_safe_2014", "tabletop_mermaid_variant"] },
+        "traitsEnabled": { "type": "boolean" },
+        "globalVariantId": {
+          "type": ["string", "null"],
+          "pattern": "^variant-[a-z][a-z0-9-]*$"
+        },
+        "firstPlayerPolicy": { "enum": ["random", "host"] },
+        "turnTimeoutSeconds": { "type": "integer", "minimum": 0, "maximum": 600 }
+      }
+    },
+    "bank": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["anchor", "hook", "cannon", "key", "chest", "map", "oracle", "sword", "kraken", "mermaid"],
+      "properties": {
+        "anchor": { "$ref": "#/$defs/cardStack" },
+        "hook": { "$ref": "#/$defs/cardStack" },
+        "cannon": { "$ref": "#/$defs/cardStack" },
+        "key": { "$ref": "#/$defs/cardStack" },
+        "chest": { "$ref": "#/$defs/cardStack" },
+        "map": { "$ref": "#/$defs/cardStack" },
+        "oracle": { "$ref": "#/$defs/cardStack" },
+        "sword": { "$ref": "#/$defs/cardStack" },
+        "kraken": { "$ref": "#/$defs/cardStack" },
+        "mermaid": { "$ref": "#/$defs/cardStack" }
+      }
+    },
+    "cardStack": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/cardId" }
+    },
+    "player": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "seat", "displayName", "connected", "bank", "traitOffer", "traitId", "lockerTargetId", "liveScore"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "seat": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "connected": { "type": "boolean" },
+        "bank": { "$ref": "#/$defs/bank" },
+        "traitOffer": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/traitId" }
+        },
+        "traitId": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/traitId" }
+          ]
+        },
+        "lockerTargetId": { "type": ["string", "null"] },
+        "liveScore": { "type": "integer" }
+      }
+    },
+    "playEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entryId", "cardId", "sourceZone", "sourceOwnerId", "parentEffectId", "protected", "protectionReasons", "enteredAtEventSeq"],
+      "properties": {
+        "entryId": { "type": "string", "pattern": "^entry-[0-9]+$" },
+        "cardId": { "$ref": "#/$defs/cardId" },
+        "sourceZone": { "enum": ["draw", "discard", "actor-bank", "opponent-bank"] },
+        "sourceOwnerId": { "type": ["string", "null"] },
+        "parentEffectId": { "type": ["string", "null"], "pattern": "^effect-[0-9]+$" },
+        "protected": { "type": "boolean" },
+        "protectionReasons": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["anchor-prefix", "miser-hook", "miser-child", "safe-harbor-anchor", "safe-harbor-next"] }
+        },
+        "enteredAtEventSeq": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "turn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["number", "actorId", "enteredCardCount", "krakenDebt", "protectedEntryIds", "safeHarborSlots", "oraclePeekCardIds", "mapRevealCardIds", "bustingCardId", "deckExhaustedDuringTurn", "pendingChoice", "effectQueue"],
+      "properties": {
+        "number": { "type": "integer", "minimum": 1 },
+        "actorId": { "type": "string", "minLength": 1 },
+        "enteredCardCount": { "type": "integer", "minimum": 0 },
+        "krakenDebt": { "type": "integer", "minimum": 0 },
+        "protectedEntryIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^entry-[0-9]+$" }
+        },
+        "safeHarborSlots": { "type": "integer", "minimum": 0 },
+        "oraclePeekCardIds": {
+          "type": "array",
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/cardId" }
+        },
+        "mapRevealCardIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/cardId" }
+        },
+        "bustingCardId": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/cardId" }
+          ]
+        },
+        "deckExhaustedDuringTurn": { "type": "boolean" },
+        "pendingChoice": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/pendingChoice" }
+          ]
+        },
+        "effectQueue": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/effect" }
+        }
+      }
+    },
+    "pendingChoice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["choiceId", "kind", "actorId", "sourceEntryId", "promptZh", "options", "createdAtRevision"],
+      "properties": {
+        "choiceId": { "type": "string", "pattern": "^choice-[0-9]+$" },
+        "kind": { "enum": ["hook-stack", "cannon-target", "map-card", "sword-target", "mermaid-replay", "plunderer-target"] },
+        "actorId": { "type": "string", "minLength": 1 },
+        "sourceEntryId": { "type": ["string", "null"], "pattern": "^entry-[0-9]+$" },
+        "promptZh": { "type": "string", "minLength": 1 },
+        "options": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/choiceOption" }
+        },
+        "createdAtRevision": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "choiceOption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["optionId", "labelZh", "playerId", "suit", "cardId", "entryId", "causesImmediateBust"],
+      "properties": {
+        "optionId": { "type": "string", "pattern": "^option-[0-9]+$" },
+        "labelZh": { "type": "string", "minLength": 1 },
+        "playerId": { "type": ["string", "null"] },
+        "suit": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/suitId" }
+          ]
+        },
+        "cardId": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/cardId" }
+          ]
+        },
+        "entryId": { "type": ["string", "null"], "pattern": "^entry-[0-9]+$" },
+        "causesImmediateBust": { "type": "boolean" }
+      }
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effectId", "kind", "actorId", "cardId", "parentEffectId", "countsTowardKraken", "remaining"],
+      "properties": {
+        "effectId": { "type": "string", "pattern": "^effect-[0-9]+$" },
+        "kind": { "enum": ["enter-card", "resolve-suit", "bank-batch", "bust-batch", "key-chest-bonus", "advance-turn", "finish-game"] },
+        "actorId": { "type": "string", "minLength": 1 },
+        "cardId": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/cardId" }
+          ]
+        },
+        "parentEffectId": { "type": ["string", "null"], "pattern": "^effect-[0-9]+$" },
+        "countsTowardKraken": { "type": "boolean" },
+        "remaining": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seq", "type", "actorId", "cardIds", "targetPlayerIds", "textZh"],
+      "properties": {
+        "seq": { "type": "integer", "minimum": 1 },
+        "type": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "actorId": { "type": ["string", "null"] },
+        "cardIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/cardId" }
+        },
+        "targetPlayerIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "textZh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "scoreBreakdown": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playerId", "suitSubtotals", "cardAdjustments", "variantAdjustment", "total", "eligible", "bankCardCount"],
+      "properties": {
+        "playerId": { "type": "string" },
+        "suitSubtotals": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "cardAdjustments": { "type": "integer" },
+        "variantAdjustment": { "type": "integer" },
+        "total": { "type": "integer" },
+        "eligible": { "type": "boolean" },
+        "bankCardCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["winnerIds", "outcome", "reason", "scores", "summaryZh"],
+      "properties": {
+        "winnerIds": {
+          "type": "array",
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "outcome": { "enum": ["win", "shared-win", "shared-draw"] },
+        "reason": { "enum": ["draw-pile-exhausted", "sudden-death", "no-eligible-player", "player-exit"] },
+        "scores": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/scoreBreakdown" }
+        },
+        "summaryZh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "rng": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "seedSecret", "commitment", "drawsUsed"],
+      "properties": {
+        "algorithm": { "const": "python-random-v1" },
+        "seedSecret": { "type": "string", "minLength": 16 },
+        "commitment": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "drawsUsed": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

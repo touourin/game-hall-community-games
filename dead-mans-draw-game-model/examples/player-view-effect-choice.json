@@ -1,0 +1,114 @@
+{
+  "$schema": "../model/view-state.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "dead-mans-draw",
+  "gameNumber": 1,
+  "revision": 17,
+  "phase": "effect_choice",
+  "rules": {
+    "profileId": "tabletop_base_2015",
+    "profileNameZh": "实体基础版",
+    "traitsEnabled": true,
+    "globalVariantId": null,
+    "globalVariantNameZh": null
+  },
+  "viewer": { "mode": "player", "playerId": "p1" },
+  "players": [
+    {
+      "id": "p1", "seat": 0, "displayName": "阿岚", "connected": true, "isActive": true,
+      "traitId": "trait-navigator", "traitNameZh": "领航员", "selectingTrait": false, "lockerTargetId": null,
+      "bank": [
+        { "suit": "anchor", "cardIds": ["loot-anchor-7"], "topValue": 7, "count": 1, "subtotal": 7 },
+        { "suit": "hook", "cardIds": ["loot-hook-6"], "topValue": 6, "count": 1, "subtotal": 6 },
+        { "suit": "cannon", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "key", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "chest", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "map", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "oracle", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "sword", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "kraken", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "mermaid", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 }
+      ],
+      "liveScore": 13
+    },
+    {
+      "id": "p2", "seat": 1, "displayName": "白露", "connected": true, "isActive": false,
+      "traitId": "trait-misfire", "traitNameZh": "哑火", "selectingTrait": false, "lockerTargetId": null,
+      "bank": [
+        { "suit": "anchor", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "hook", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "cannon", "cardIds": ["loot-cannon-7"], "topValue": 7, "count": 1, "subtotal": 7 },
+        { "suit": "key", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "chest", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "map", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "oracle", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "sword", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "kraken", "cardIds": ["loot-kraken-6"], "topValue": 6, "count": 1, "subtotal": 6 },
+        { "suit": "mermaid", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 }
+      ],
+      "liveScore": 13
+    },
+    {
+      "id": "p3", "seat": 2, "displayName": "赤岩", "connected": true, "isActive": false,
+      "traitId": "trait-davy-jones-locker", "traitNameZh": "戴维·琼斯的魔柜", "selectingTrait": false, "lockerTargetId": "p1",
+      "bank": [
+        { "suit": "anchor", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "hook", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "cannon", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "key", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "chest", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "map", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "oracle", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "sword", "cardIds": ["loot-sword-5"], "topValue": 5, "count": 1, "subtotal": 5 },
+        { "suit": "kraken", "cardIds": [], "topValue": null, "count": 0, "subtotal": 0 },
+        { "suit": "mermaid", "cardIds": ["loot-mermaid-9"], "topValue": 9, "count": 1, "subtotal": 9 }
+      ],
+      "liveScore": 14
+    }
+  ],
+  "drawCount": 33,
+  "discard": {
+    "count": 2,
+    "cardIds": ["loot-key-2", "loot-chest-2"]
+  },
+  "playArea": [
+    { "entryId": "entry-8", "cardId": "loot-cannon-6", "protected": true, "protectionLabelsZh": ["船锚保护"], "sourceLabelZh": "抽牌堆" },
+    { "entryId": "entry-9", "cardId": "loot-anchor-5", "protected": false, "protectionLabelsZh": [], "sourceLabelZh": "抽牌堆" },
+    { "entryId": "entry-10", "cardId": "loot-map-4", "protected": false, "protectionLabelsZh": [], "sourceLabelZh": "抽牌堆" }
+  ],
+  "turn": {
+    "number": 4,
+    "actorId": "p1",
+    "krakenDebt": 0,
+    "bustKey": "suit",
+    "presentBustKeys": ["cannon", "anchor", "map"],
+    "oraclePeekCardIds": [],
+    "pendingChoice": {
+      "choiceId": "choice-4",
+      "kind": "map-card",
+      "actorId": "p1",
+      "promptZh": "藏宝图：选择一张牌放入航道。实体规则允许会爆牌的候选。",
+      "options": [
+        { "optionId": "option-1", "labelZh": "火炮 2（将爆牌）", "cardId": "loot-cannon-2", "playerId": null, "suit": "cannon", "entryId": null, "causesImmediateBust": true, "actionable": true },
+        { "optionId": "option-2", "labelZh": "抓钩 2", "cardId": "loot-hook-2", "playerId": null, "suit": "hook", "entryId": null, "causesImmediateBust": false, "actionable": true },
+        { "optionId": "option-3", "labelZh": "美人鱼 4", "cardId": "loot-mermaid-4", "playerId": null, "suit": "mermaid", "entryId": null, "causesImmediateBust": false, "actionable": true }
+      ]
+    }
+  },
+  "self": { "playerId": "p1", "traitOffer": [], "mustChooseLockerTarget": false },
+  "actions": {
+    "canChooseTrait": false,
+    "canChooseLockerTarget": false,
+    "canDraw": false,
+    "canCollect": false,
+    "canResolveEffect": true,
+    "disabledReasonZh": "请先解决藏宝图能力。"
+  },
+  "result": null,
+  "events": [
+    { "seq": 8, "type": "card-entered", "textZh": "阿岚抽到火炮 6。" },
+    { "seq": 9, "type": "card-entered", "textZh": "阿岚抽到船锚 5，火炮受到保护。" },
+    { "seq": 10, "type": "map-candidates-revealed", "textZh": "藏宝图公开了三张候选。" }
+  ]
+}

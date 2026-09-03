@@ -1,0 +1,109 @@
+{
+  "$schema": "./rules-profiles.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "defaultProfileId": "tabletop_base_2015",
+  "maxGlobalVariants": 1,
+  "profiles": [
+    {
+      "id": "tabletop_base_2015",
+      "nameZh": "实体基础版",
+      "basis": "Mayday Games current base rulebook",
+      "bustKey": "suit",
+      "forcedChoicePolicy": "allow-bust",
+      "mapCandidatePolicy": "shuffle-reveal-up-to-three",
+      "mermaidValues": [4, 5, 6, 7, 8, 9],
+      "mermaidAbility": "high-value-only",
+      "traitPool": "base-17",
+      "traitsDefault": true,
+      "allowedVariantIds": [
+        "variant-thieves-island",
+        "variant-pile-o-treasure",
+        "variant-sudden-death",
+        "variant-all-hands-on-deck",
+        "variant-strange-lands",
+        "variant-beneath-the-waves",
+        "variant-bottom-feeder"
+      ]
+    },
+    {
+      "id": "digital_safe_2014",
+      "nameZh": "数字安全版",
+      "basis": "Stardock digital behavior documented by Mayday Games",
+      "bustKey": "suit",
+      "forcedChoicePolicy": "filter-immediate-bust",
+      "mapCandidatePolicy": "safe-scan-up-to-three",
+      "mermaidValues": [4, 5, 6, 7, 8, 9],
+      "mermaidAbility": "high-value-only",
+      "traitPool": "base-17",
+      "traitsDefault": true,
+      "allowedVariantIds": [
+        "variant-thieves-island",
+        "variant-pile-o-treasure",
+        "variant-sudden-death",
+        "variant-all-hands-on-deck",
+        "variant-strange-lands",
+        "variant-beneath-the-waves",
+        "variant-bottom-feeder"
+      ]
+    },
+    {
+      "id": "tabletop_mermaid_variant",
+      "nameZh": "实体美人鱼能力版",
+      "basis": "Mayday Games rulebook Mermaid Variant",
+      "bustKey": "suit",
+      "forcedChoicePolicy": "allow-bust",
+      "mapCandidatePolicy": "shuffle-reveal-up-to-three",
+      "mermaidValues": [2, 3, 4, 5, 6, 7],
+      "mermaidAbility": "replay-entry",
+      "traitPool": "base-17-plus-siren",
+      "traitsDefault": true,
+      "allowedVariantIds": [
+        "variant-thieves-island",
+        "variant-pile-o-treasure",
+        "variant-sudden-death",
+        "variant-all-hands-on-deck",
+        "variant-strange-lands",
+        "variant-beneath-the-waves",
+        "variant-bottom-feeder"
+      ]
+    }
+  ],
+  "conflicts": [
+    {
+      "left": "variant-thieves-island",
+      "right": "trait-davy-jones-locker",
+      "policy": "forbid",
+      "reasonZh": "两者都会替换同一批爆牌的目的地，官方没有给出优先级。"
+    },
+    {
+      "left": "variant-bottom-feeder",
+      "right": "trait-master-gunner",
+      "policy": "right-wins",
+      "reasonZh": "整堆火炮不再区分顶牌或底牌。"
+    },
+    {
+      "left": "variant-bottom-feeder",
+      "right": "trait-parry",
+      "policy": "compose",
+      "reasonZh": "格挡先把目标花色限定为海怪，再由变体选择该堆底牌。"
+    }
+  ],
+  "priorityRules": [
+    { "order": 1, "stage": "component-profile", "summaryZh": "先决定美人鱼卡表、能力和特性池。" },
+    { "order": 2, "stage": "before-entry", "summaryZh": "风流船长或渔夫可以在重复检查前直接入库。" },
+    { "order": 3, "stage": "bust-check", "summaryZh": "按当前档案与奇异之地变体确定爆牌键。" },
+    { "order": 4, "stage": "protection", "summaryZh": "成功入场后更新船锚、守财奴和安全港保护。" },
+    { "order": 5, "stage": "opponent-interceptors", "summaryZh": "哑火、格挡、驯兽师和海妖先修改对手效果。" },
+    { "order": 6, "stage": "actor-modifiers", "summaryZh": "再应用当前玩家自己的花色强化。" },
+    { "order": 7, "stage": "base-ability", "summaryZh": "生成基础花色效果与服务端合法选项。" },
+    { "order": 8, "stage": "destination-and-score", "summaryZh": "最后处理收牌、爆牌去向、奖励和即时获胜。" }
+  ],
+  "digitalRulings": [
+    { "id": "empty-deck-clears-unfulfillable-kraken", "summaryZh": "抽牌堆为空且没有可继续入场的效果时，清零无法完成的海怪债务。" },
+    { "id": "discard-shortage-take-all", "summaryZh": "钥匙宝箱奖励大于弃牌数量时拿完为止。" },
+    { "id": "anchored-key-chest-still-triggers", "summaryZh": "船锚在爆牌后收入的批次若含钥匙与宝箱，按实际批次张数触发奖励。" },
+    { "id": "beneath-no-eligible-shared-draw", "summaryZh": "浪下求生无人低于 60 分时，全员按和局结算。" },
+    { "id": "one-global-variant-only", "summaryZh": "正式房间一次最多启用一个全局变体。" }
+  ]
+}

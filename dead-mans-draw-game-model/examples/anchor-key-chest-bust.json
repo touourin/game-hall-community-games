@@ -1,0 +1,29 @@
+{
+  "$schema": "../model/scenario.schema.json",
+  "schemaVersion": 1,
+  "scenarioId": "anchor-key-chest-bust",
+  "titleZh": "船锚保护的钥匙宝箱在爆牌后仍触发奖励",
+  "profileId": "tabletop_base_2015",
+  "given": {
+    "actorId": "p1",
+    "playArea": [
+      { "entryId": "entry-21", "cardId": "loot-key-2", "protected": true },
+      { "entryId": "entry-22", "cardId": "loot-chest-3", "protected": true },
+      { "entryId": "entry-23", "cardId": "loot-anchor-4", "protected": false }
+    ],
+    "nextDrawCardId": "loot-key-6",
+    "discardBeforeBust": ["loot-map-2", "loot-oracle-2", "loot-sword-2"]
+  },
+  "when": {
+    "action": "draw",
+    "payload": {}
+  },
+  "then": {
+    "bust": true,
+    "duplicateKey": "key",
+    "protectedCollected": ["loot-key-2", "loot-chest-3"],
+    "keyChestBonusCount": 2,
+    "bustCards": ["loot-anchor-4", "loot-key-6"],
+    "turnEnds": true
+  }
+}

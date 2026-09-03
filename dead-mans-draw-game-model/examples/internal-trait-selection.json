@@ -1,0 +1,91 @@
+{
+  "$schema": "../model/game-state.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "dead-mans-draw",
+  "gameNumber": 1,
+  "revision": 1,
+  "phase": "trait_selection",
+  "rules": {
+    "profileId": "tabletop_base_2015",
+    "traitsEnabled": true,
+    "globalVariantId": null,
+    "firstPlayerPolicy": "random",
+    "turnTimeoutSeconds": 60
+  },
+  "players": [
+    {
+      "id": "p1",
+      "seat": 0,
+      "displayName": "阿岚",
+      "connected": true,
+      "bank": {
+        "anchor": [], "hook": [], "cannon": [], "key": [], "chest": [],
+        "map": [], "oracle": [], "sword": [], "kraken": [], "mermaid": []
+      },
+      "traitOffer": ["trait-navigator", "trait-golden-scales"],
+      "traitId": null,
+      "lockerTargetId": null,
+      "liveScore": 0
+    },
+    {
+      "id": "p2",
+      "seat": 1,
+      "displayName": "白露",
+      "connected": true,
+      "bank": {
+        "anchor": [], "hook": [], "cannon": [], "key": [], "chest": [],
+        "map": [], "oracle": [], "sword": [], "kraken": [], "mermaid": []
+      },
+      "traitOffer": ["trait-misfire", "trait-davy-jones-locker"],
+      "traitId": null,
+      "lockerTargetId": null,
+      "liveScore": 0
+    }
+  ],
+  "traitDeck": [
+    "trait-casanova",
+    "trait-plunderer",
+    "trait-treasure-hunter",
+    "trait-master-gunner",
+    "trait-scavenger",
+    "trait-mystic",
+    "trait-swordsman",
+    "trait-miser",
+    "trait-captains-hook",
+    "trait-safe-harbor",
+    "trait-fisherman",
+    "trait-beastmaster",
+    "trait-parry"
+  ],
+  "unusedTraits": [],
+  "drawPile": [
+    "loot-anchor-3", "loot-hook-3", "loot-cannon-3", "loot-key-3", "loot-chest-3",
+    "loot-map-3", "loot-oracle-3", "loot-sword-3", "loot-kraken-3", "loot-mermaid-5",
+    "loot-anchor-4", "loot-hook-4", "loot-cannon-4", "loot-key-4", "loot-chest-4",
+    "loot-map-4", "loot-oracle-4", "loot-sword-4", "loot-kraken-4", "loot-mermaid-6",
+    "loot-anchor-5", "loot-hook-5", "loot-cannon-5", "loot-key-5", "loot-chest-5",
+    "loot-map-5", "loot-oracle-5", "loot-sword-5", "loot-kraken-5", "loot-mermaid-7",
+    "loot-anchor-6", "loot-hook-6", "loot-cannon-6", "loot-key-6", "loot-chest-6",
+    "loot-map-6", "loot-oracle-6", "loot-sword-6", "loot-kraken-6", "loot-mermaid-8",
+    "loot-anchor-7", "loot-hook-7", "loot-cannon-7", "loot-key-7", "loot-chest-7",
+    "loot-map-7", "loot-oracle-7", "loot-sword-7", "loot-kraken-7", "loot-mermaid-9"
+  ],
+  "discardPile": [
+    "loot-anchor-2", "loot-hook-2", "loot-cannon-2", "loot-key-2", "loot-chest-2",
+    "loot-map-2", "loot-oracle-2", "loot-sword-2", "loot-kraken-2", "loot-mermaid-4"
+  ],
+  "removedFromGame": [],
+  "playArea": [],
+  "activePlayerId": null,
+  "turn": null,
+  "result": null,
+  "eventSeq": 0,
+  "events": [],
+  "rng": {
+    "algorithm": "python-random-v1",
+    "seedSecret": "example-seed-not-for-production",
+    "commitment": "0000000000000000000000000000000000000000000000000000000000000000",
+    "drawsUsed": 3
+  }
+}

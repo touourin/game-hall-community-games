@@ -78,14 +78,14 @@ function snapshot(phase: ArcadeSnapshot['phase'] = 'playing'): ArcadeSnapshot {
     selectedMap: 'magma_crucible', currentMap: maps[0]!, mapCatalog: maps,
     mapRotation: 'random_no_repeat', mapProposal: null, canProposeMap: false, canVoteMap: false,
     board, players: phase === 'lobby' ? [] : [player('p0', 0, '红队'), player('p1', 1, '蓝队')],
-    bombs: [{ id: 1, ownerId: 'p0', creditPlayerId: 'p0', x: 3, y: 3, fuseTicks: 30, maxFuseTicks: 40, moving: false, motionX: 0, motionY: 0, carriedBy: null }],
+    bombs: [{ id: 1, ownerId: 'p0', creditPlayerId: 'p0', x: 3, y: 3, fuseTicks: 30, maxFuseTicks: 40, moving: false, motionX: 0, motionY: 0, carriedBy: null, remote: false }],
     items: [{ id: 1, kind: 'speed', x: 4, y: 4 }],
     flames: [{ x: 5, y: 5, remainingTicks: 4 }], iceTiles: [], events: [], effects: [],
     winnerId: null, clockLeaderId: 'p1', frozen: false, selfInputSequence: 0,
-    controls: { move: 'WASD', bomb: 'Space', punch: 'Z', throw: 'X', kick: 'automatic' },
+    controls: { move: 'WASD', bomb: 'Space', punch: 'Z', throw: 'X', timer: 'C', kick: 'automatic' },
     itemLabels: {
       bomb_up: '多一个炸弹', flame_up: '火焰增强', speed: '加速靴', kick: '脚踢雷',
-      punch: '拳击手套', throw: '扔雷手套', timer: '定时炸弹', chain: '连锁引线',
+      punch: '拳击手套', throw: '扔雷手套', timer: '遥控定时炸弹', chain: '连锁引线',
       shield: '能量护盾', skull: '骷髅诅咒', ghost: '幽灵相位', magnet: '磁力线圈',
       ice: '冰冻核心', swap: '传送交换', star: '无敌星盾',
     },
@@ -151,6 +151,21 @@ describe('Bomb People arena', () => {
     wrapper.unmount()
   })
 
+  it('renders remote timer bombs as a distinct C-controlled model', () => {
+    const data = snapshot()
+    const game = data.game as unknown as BombGame
+    game.bombs.push({
+      id: 2, ownerId: 'p0', creditPlayerId: 'p0', x: 6, y: 6,
+      fuseTicks: 40, maxFuseTicks: 40, moving: false,
+      motionX: 0, motionY: 0, carriedBy: null, remote: true,
+    })
+    const wrapper = render(data)
+    const remote = wrapper.get('.bomb.remote')
+    expect(remote.attributes('title')).toContain('按 C 引爆')
+    expect(remote.get('small').text()).toBe('C')
+    wrapper.unmount()
+  })
+
   it('sends WASD and action keys as authoritative input masks', async () => {
     const wrapper = render()
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', cancelable: true }))
@@ -165,6 +180,17 @@ describe('Bomb People arena', () => {
     expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 4, inputMask: 33 })
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyW', cancelable: true }))
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyZ', cancelable: true }))
+    wrapper.unmount()
+  })
+
+  it('uses C as the dedicated remote timer trigger', async () => {
+    const wrapper = render()
+    const trigger = new KeyboardEvent('keydown', { code: 'KeyC', cancelable: true })
+    window.dispatchEvent(trigger)
+    await flushPromises()
+    expect(trigger.defaultPrevented).toBe(true)
+    expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 1, inputMask: 128 })
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyC', cancelable: true }))
     wrapper.unmount()
   })
 
@@ -331,7 +357,7 @@ describe('Bomb People arena', () => {
     joystick.element.dispatchEvent(pointerEvent('pointerdown', 7, 110, 58))
     await flushPromises()
     expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 1, inputMask: 8 })
-    const bombButton = wrapper.get('button[aria-label="放置炸弹或定时引爆"]')
+    const bombButton = wrapper.get('button[aria-label="放置普通炸弹或部署遥控定时炸弹"]')
     bombButton.element.dispatchEvent(pointerEvent('pointerdown', 8))
     await flushPromises()
     expect(mocks.rapidAction).toHaveBeenLastCalledWith('input', { sequence: 2, inputMask: 24 })

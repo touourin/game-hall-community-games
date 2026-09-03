@@ -65,6 +65,7 @@ export interface BombObject {
   motionX: number
   motionY: number
   carriedBy: string | null
+  remote: boolean
 }
 
 export interface BombItem {

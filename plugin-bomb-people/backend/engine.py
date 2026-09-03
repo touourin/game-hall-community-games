@@ -50,6 +50,7 @@ INPUT_RIGHT = 8
 INPUT_BOMB = 16
 INPUT_PUNCH = 32
 INPUT_THROW = 64
+INPUT_TIMER = 128
 VALID_INPUT_MASK = (
     INPUT_UP
     | INPUT_DOWN
@@ -58,6 +59,7 @@ VALID_INPUT_MASK = (
     | INPUT_BOMB
     | INPUT_PUNCH
     | INPUT_THROW
+    | INPUT_TIMER
 )
 
 PLAYER_COLORS = (
@@ -78,7 +80,7 @@ ITEM_LABELS = {
     "kick": "脚踢雷",
     "punch": "拳击手套",
     "throw": "扔雷手套",
-    "timer": "定时炸弹",
+    "timer": "遥控定时炸弹",
     "chain": "连锁引线",
     "shield": "能量护盾",
     "skull": "骷髅诅咒",
@@ -261,6 +263,8 @@ class BombPeopleEngine:
             actor.punch_requested = True
         if pressed & INPUT_THROW:
             actor.throw_requested = True
+        if pressed & INPUT_TIMER:
+            actor.timer_requested = True
         for bit, direction in (
             (INPUT_UP, (0, -1)),
             (INPUT_DOWN, (0, 1)),
@@ -333,6 +337,7 @@ class BombPeopleEngine:
             actor.bomb_requested = False
             actor.punch_requested = False
             actor.throw_requested = False
+            actor.timer_requested = False
 
     @staticmethod
     def _advance_statuses(state: BombPeopleState) -> None:
@@ -368,19 +373,23 @@ class BombPeopleEngine:
             bomb_requested = actor.bomb_requested
             punch_requested = actor.punch_requested
             throw_requested = actor.throw_requested
+            timer_requested = actor.timer_requested
             actor.bomb_requested = False
             actor.punch_requested = False
             actor.throw_requested = False
+            actor.timer_requested = False
             if not actor.alive:
                 continue
+            if timer_requested and actor.carried_bomb_id is None:
+                self._trigger_remote_bomb(room, state, actor)
             if throw_requested and actor.can_throw:
                 self._toggle_throw_bomb(state, actor)
             if bomb_requested:
-                self._place_or_trigger_bomb(room, state, actor)
+                self._place_bomb(room, state, actor)
             if punch_requested and actor.can_punch:
                 self._punch_bomb(state, actor)
 
-    def _place_or_trigger_bomb(
+    def _place_bomb(
         self,
         room: ArcadeRoom,
         state: BombPeopleState,
@@ -390,20 +399,19 @@ class BombPeopleEngine:
             return
         if actor.carried_bomb_id is not None:
             return
-        owned = sorted(
-            (bomb for bomb in state.bombs.values() if bomb.owner_id == actor.player_id),
+        regular_owned = sorted(
+            (
+                bomb for bomb in state.bombs.values()
+                if bomb.owner_id == actor.player_id and not bomb.remote
+            ),
             key=lambda bomb: (bomb.placed_tick, bomb.bomb_id),
         )
-        if len(owned) >= actor.bomb_capacity:
-            if actor.can_timer and owned:
-                target = owned[0]
-                target.fuse_ticks = min(target.fuse_ticks, 1)
-                self._add_event(
-                    state,
-                    "timer_triggered",
-                    actor_id=actor.player_id,
-                    message=f"{self._name(room, actor.player_id)}提前引爆定时炸弹",
-                )
+        remote_active = any(
+            bomb.owner_id == actor.player_id and bomb.remote
+            for bomb in state.bombs.values()
+        )
+        remote = len(regular_owned) >= actor.bomb_capacity
+        if remote and (not actor.can_timer or remote_active):
             return
         if self._bomb_at(state, actor.x, actor.y) is not None:
             return
@@ -423,6 +431,7 @@ class BombPeopleEngine:
             blast_range=actor.blast_range,
             chain=actor.can_chain,
             ice=actor.has_ice,
+            remote=remote,
         )
         state.next_bomb_id += 1
         state.bombs[bomb.bomb_id] = bomb
@@ -434,6 +443,41 @@ class BombPeopleEngine:
             bomb_id=bomb.bomb_id,
             x=bomb.x,
             y=bomb.y,
+        )
+        if remote:
+            self._add_event(
+                state,
+                "timer_placed",
+                actor_id=actor.player_id,
+                message=f"{self._name(room, actor.player_id)}部署了遥控定时炸弹",
+            )
+
+    def _trigger_remote_bomb(
+        self,
+        room: ArcadeRoom,
+        state: BombPeopleState,
+        actor: PlayerState,
+    ) -> None:
+        if not actor.can_timer:
+            return
+        target = next(
+            (
+                bomb for bomb in sorted(
+                    state.bombs.values(),
+                    key=lambda item: (item.placed_tick, item.bomb_id),
+                )
+                if bomb.owner_id == actor.player_id and bomb.remote
+            ),
+            None,
+        )
+        if target is None:
+            return
+        target.fuse_ticks = 0
+        self._add_event(
+            state,
+            "timer_triggered",
+            actor_id=actor.player_id,
+            message=f"{self._name(room, actor.player_id)}按 C 引爆了遥控定时炸弹",
         )
 
     def _punch_bomb(self, state: BombPeopleState, actor: PlayerState) -> None:
@@ -677,9 +721,13 @@ class BombPeopleEngine:
                     self._move_bomb_once(state, bomb)
             # Picking a bomb up preserves its exact remaining fuse. The same
             # countdown resumes as soon as the bomb is thrown or dropped.
-            if state.tick > bomb.placed_tick and bomb.carrier_id is None:
+            if (
+                state.tick > bomb.placed_tick
+                and bomb.carrier_id is None
+                and not bomb.remote
+            ):
                 bomb.fuse_ticks -= 1
-            if (bomb.x, bomb.y) in state.flames:
+            if (bomb.x, bomb.y) in state.flames and not bomb.remote:
                 bomb.fuse_ticks = 0
         self._explode_due_bombs(room, state)
 
@@ -713,6 +761,23 @@ class BombPeopleEngine:
             ),
             None,
         )
+
+    @staticmethod
+    def _remove_remote_bombs(state: BombPeopleState, owner_id: str) -> None:
+        for bomb in list(state.bombs.values()):
+            if bomb.owner_id == owner_id and bomb.remote:
+                BombPeopleEngine._discard_bomb(state, bomb)
+
+    @staticmethod
+    def _discard_bomb(state: BombPeopleState, bomb: BombState) -> bool:
+        if state.bombs.pop(bomb.bomb_id, None) is None:
+            return False
+        if bomb.carrier_id is not None:
+            carrier = state.players.get(bomb.carrier_id)
+            if carrier is not None and carrier.carried_bomb_id == bomb.bomb_id:
+                carrier.carried_bomb_id = None
+            bomb.carrier_id = None
+        return True
 
     @staticmethod
     def _bomb_destination_open(
@@ -800,11 +865,11 @@ class BombPeopleEngine:
             if bomb.ice:
                 state.ice_tiles[cell] = state.tick + FLAME_TICKS + ICE_TICKS
         for other in state.bombs.values():
-            if (other.x, other.y) in blast_set:
+            if (other.x, other.y) in blast_set and not other.remote:
                 other.fuse_ticks = 0
         if bomb.chain:
             for other in state.bombs.values():
-                if other.owner_id == bomb.owner_id:
+                if other.owner_id == bomb.owner_id and not other.remote:
                     other.fuse_ticks = 0
         for x, y in destroyed_crates:
             self._maybe_drop_item(state, x, y, "crate")
@@ -861,6 +926,8 @@ class BombPeopleEngine:
         actor.eliminated_by = credit_player_id
         actor.elimination_reason = reason
         actor.bomb_requested = actor.punch_requested = actor.throw_requested = False
+        actor.timer_requested = False
+        self._remove_remote_bombs(state, actor.player_id)
 
         if (
             credit_player_id is not None
@@ -987,6 +1054,7 @@ class BombPeopleEngine:
 
     def _apply_skull(self, state: BombPeopleState, actor: PlayerState) -> None:
         self._drop_carried_bomb(state, actor)
+        self._remove_remote_bombs(state, actor.player_id)
         actor.bomb_capacity = 1
         actor.blast_range = 2
         actor.speed_level = 0
@@ -1082,9 +1150,12 @@ class BombPeopleEngine:
         x, y = state.collapse_order[state.collapse_index]
         state.collapse_index += 1
 
-        for bomb in state.bombs.values():
+        for bomb in list(state.bombs.values()):
             if (bomb.x, bomb.y) == (x, y):
-                bomb.fuse_ticks = 0
+                if bomb.remote:
+                    self._discard_bomb(state, bomb)
+                else:
+                    bomb.fuse_ticks = 0
         self._explode_due_bombs(room, state)
         for actor in state.players.values():
             if actor.alive and (actor.x, actor.y) == (x, y):
@@ -1140,6 +1211,9 @@ class BombPeopleEngine:
         actor.input_mask = 0
         actor.eliminated_tick = state.tick
         actor.elimination_reason = "forfeit"
+        actor.bomb_requested = actor.punch_requested = actor.throw_requested = False
+        actor.timer_requested = False
+        self._remove_remote_bombs(state, actor.player_id)
         self._add_event(
             state,
             "player_forfeited",
@@ -1212,6 +1286,7 @@ class BombPeopleEngine:
                     "motionX": bomb.motion_dx,
                     "motionY": bomb.motion_dy,
                     "carriedBy": bomb.carrier_id,
+                    "remote": bomb.remote,
                 }
                 for bomb in sorted(state.bombs.values(), key=lambda item: item.bomb_id)
             ],
@@ -1272,6 +1347,7 @@ class BombPeopleEngine:
                 "bomb": "Space",
                 "punch": "Z",
                 "throw": "X",
+                "timer": "C",
                 "kick": "automatic",
             },
             "itemLabels": dict(ITEM_LABELS),

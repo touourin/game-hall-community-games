@@ -29,6 +29,7 @@ class PlayerState:
     bomb_requested: bool = False
     punch_requested: bool = False
     throw_requested: bool = False
+    timer_requested: bool = False
     alive: bool = True
     eliminated_tick: int | None = None
     eliminated_by: str | None = None
@@ -68,6 +69,7 @@ class BombState:
     motion_delay: int = 0
     travel_left: int = -1
     carrier_id: str | None = None
+    remote: bool = False
 
 
 @dataclass

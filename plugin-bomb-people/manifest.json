@@ -1,7 +1,7 @@
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "version": "0.2.2",
+  "version": "0.2.4",
   "author": "Game Hall Contributors",
   "license": "UNLICENSED",
   "id": "plugin-bomb-people",
@@ -37,8 +37,8 @@
     "20×20 · 每局随机换图 · 炸弹 2 秒",
     "电脑：WASD/方向键移动",
     "Space：放雷/定时引爆",
-    "Z：拳套打雷 · X：扔雷",
-    "脚踢自动触发 · 幽灵 5 秒穿箱墙并可墙内放雷",
+    "Z：拳套即时打雷 · X：拿雷/再按投出",
+    "脚踢自动触发 · 幽灵本局永久穿箱墙并可墙内放雷",
     "手机：滑动摇杆＋动作键"
   ]
 }

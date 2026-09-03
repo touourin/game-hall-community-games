@@ -22,7 +22,7 @@ export interface BombEquipment {
   magnet: boolean
   ice: boolean
   shieldCharges: number
-  ghostTicks: number
+  ghost: boolean
   invincibleTicks: number
   cursedTicks: number
 }
@@ -39,6 +39,7 @@ export interface BombPlayer {
   facingY: number
   moving: boolean
   moveIntervalTicks?: number
+  carriedBombId: number | null
   alive: boolean
   eliminatedBy: string | null
   eliminationReason: string | null
@@ -63,6 +64,7 @@ export interface BombObject {
   moving: boolean
   motionX: number
   motionY: number
+  carriedBy: string | null
 }
 
 export interface BombItem {
@@ -99,6 +101,7 @@ export type BombEffectKind =
   | 'bomb_exploded'
   | 'bomb_kicked'
   | 'bomb_punched'
+  | 'bomb_picked_up'
   | 'bomb_thrown'
 
 export interface BombEffect {

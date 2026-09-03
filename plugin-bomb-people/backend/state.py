@@ -44,10 +44,11 @@ class PlayerState:
     has_magnet: bool = False
     has_ice: bool = False
     shield_charges: int = 0
-    ghost_ticks: int = 0
+    has_ghost: bool = False
     invincible_ticks: int = 0
     cursed_ticks: int = 0
     kills: int = 0
+    carried_bomb_id: int | None = None
 
 
 @dataclass
@@ -66,6 +67,7 @@ class BombState:
     motion_dy: int = 0
     motion_delay: int = 0
     travel_left: int = -1
+    carrier_id: str | None = None
 
 
 @dataclass

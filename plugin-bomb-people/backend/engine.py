@@ -35,7 +35,6 @@ BOMB_PLACE_EFFECT_TICKS = 7
 EXPLOSION_EFFECT_TICKS = 9
 SHIELD_GRACE_TICKS = TICK_RATE
 CURSE_TICKS = 5 * TICK_RATE
-GHOST_TICKS = 5 * TICK_RATE
 STAR_TICKS = 5 * TICK_RATE
 ICE_TICKS = 3 * TICK_RATE
 ITEM_REFRESH_TICKS = 10 * TICK_RATE
@@ -341,7 +340,6 @@ class BombPeopleEngine:
             if not actor.alive:
                 continue
             actor.cursed_ticks = max(0, actor.cursed_ticks - 1)
-            actor.ghost_ticks = max(0, actor.ghost_ticks - 1)
             actor.invincible_ticks = max(0, actor.invincible_ticks - 1)
 
     @staticmethod
@@ -375,12 +373,12 @@ class BombPeopleEngine:
             actor.throw_requested = False
             if not actor.alive:
                 continue
+            if throw_requested and actor.can_throw:
+                self._toggle_throw_bomb(state, actor)
             if bomb_requested:
                 self._place_or_trigger_bomb(room, state, actor)
             if punch_requested and actor.can_punch:
                 self._punch_bomb(state, actor)
-            if throw_requested and actor.can_throw:
-                self._throw_bomb(state, actor)
 
     def _place_or_trigger_bomb(
         self,
@@ -389,6 +387,8 @@ class BombPeopleEngine:
         actor: PlayerState,
     ) -> None:
         if actor.cursed_ticks > 0:
+            return
+        if actor.carried_bomb_id is not None:
             return
         owned = sorted(
             (bomb for bomb in state.bombs.values() if bomb.owner_id == actor.player_id),
@@ -410,7 +410,7 @@ class BombPeopleEngine:
         cell = state.board[actor.y][actor.x]
         if cell in {CELL_HARD, CELL_STONE}:
             return
-        if cell == CELL_SOFT and actor.ghost_ticks <= 0:
+        if cell == CELL_SOFT and not actor.has_ghost:
             return
         bomb = BombState(
             bomb_id=state.next_bomb_id,
@@ -437,6 +437,8 @@ class BombPeopleEngine:
         )
 
     def _punch_bomb(self, state: BombPeopleState, actor: PlayerState) -> None:
+        if actor.carried_bomb_id is not None:
+            return
         bomb = self._bomb_at(
             state,
             actor.x + actor.facing_x,
@@ -465,7 +467,18 @@ class BombPeopleEngine:
                 direction_y=actor.facing_y,
             )
 
-    def _throw_bomb(self, state: BombPeopleState, actor: PlayerState) -> None:
+    def _toggle_throw_bomb(
+        self,
+        state: BombPeopleState,
+        actor: PlayerState,
+    ) -> None:
+        carried = self._carried_bomb(state, actor)
+        if carried is not None:
+            self._throw_carried_bomb(state, actor, carried)
+            return
+        self._pick_up_bomb(state, actor)
+
+    def _pick_up_bomb(self, state: BombPeopleState, actor: PlayerState) -> None:
         bomb = self._bomb_at(
             state,
             actor.x + actor.facing_x,
@@ -474,6 +487,32 @@ class BombPeopleEngine:
         if bomb is None:
             return
         origin_x, origin_y = bomb.x, bomb.y
+        self._stop_bomb(bomb)
+        bomb.x, bomb.y = actor.x, actor.y
+        bomb.credit_player_id = actor.player_id
+        bomb.carrier_id = actor.player_id
+        actor.carried_bomb_id = bomb.bomb_id
+        self._add_effect(
+            state,
+            "bomb_picked_up",
+            ACTION_EFFECT_TICKS,
+            actor_id=actor.player_id,
+            bomb_id=bomb.bomb_id,
+            x=origin_x,
+            y=origin_y,
+            target_x=actor.x,
+            target_y=actor.y,
+            direction_x=actor.facing_x,
+            direction_y=actor.facing_y,
+        )
+
+    def _throw_carried_bomb(
+        self,
+        state: BombPeopleState,
+        actor: PlayerState,
+        bomb: BombState,
+    ) -> None:
+        origin_x, origin_y = actor.x, actor.y
         for distance in range(4, 0, -1):
             x = actor.x + actor.facing_x * distance
             y = actor.y + actor.facing_y * distance
@@ -481,6 +520,8 @@ class BombPeopleEngine:
                 bomb.x = x
                 bomb.y = y
                 bomb.credit_player_id = actor.player_id
+                bomb.carrier_id = None
+                actor.carried_bomb_id = None
                 self._stop_bomb(bomb)
                 self._add_effect(
                     state,
@@ -496,6 +537,32 @@ class BombPeopleEngine:
                     direction_y=actor.facing_y,
                 )
                 return
+
+    @staticmethod
+    def _carried_bomb(
+        state: BombPeopleState,
+        actor: PlayerState,
+    ) -> BombState | None:
+        if actor.carried_bomb_id is None:
+            return None
+        bomb = state.bombs.get(actor.carried_bomb_id)
+        if bomb is None or bomb.carrier_id != actor.player_id:
+            actor.carried_bomb_id = None
+            return None
+        return bomb
+
+    def _drop_carried_bomb(
+        self,
+        state: BombPeopleState,
+        actor: PlayerState,
+    ) -> None:
+        bomb = self._carried_bomb(state, actor)
+        actor.carried_bomb_id = None
+        if bomb is None:
+            return
+        bomb.carrier_id = None
+        bomb.x, bomb.y = actor.x, actor.y
+        self._stop_bomb(bomb)
 
     def _move_players(self, room: ArcadeRoom, state: BombPeopleState) -> None:
         for actor in sorted(state.players.values(), key=lambda item: (item.seat, item.player_id)):
@@ -517,7 +584,7 @@ class BombPeopleEngine:
             cell = state.board[target_y][target_x]
             if cell in {CELL_HARD, CELL_STONE}:
                 continue
-            if cell == CELL_SOFT and actor.ghost_ticks <= 0:
+            if cell == CELL_SOFT and not actor.has_ghost:
                 continue
 
             bomb = self._bomb_at(state, target_x, target_y)
@@ -592,12 +659,25 @@ class BombPeopleEngine:
 
     def _advance_bombs(self, room: ArcadeRoom, state: BombPeopleState) -> None:
         for bomb in sorted(state.bombs.values(), key=lambda item: item.bomb_id):
-            if bomb.motion_dx or bomb.motion_dy:
+            if bomb.carrier_id is not None:
+                carrier = state.players.get(bomb.carrier_id)
+                if (
+                    carrier is None
+                    or not carrier.alive
+                    or carrier.carried_bomb_id != bomb.bomb_id
+                ):
+                    bomb.carrier_id = None
+                else:
+                    bomb.x, bomb.y = carrier.x, carrier.y
+                    self._stop_bomb(bomb)
+            elif bomb.motion_dx or bomb.motion_dy:
                 if bomb.motion_delay > 0:
                     bomb.motion_delay -= 1
                 else:
                     self._move_bomb_once(state, bomb)
-            if state.tick > bomb.placed_tick:
+            # Picking a bomb up preserves its exact remaining fuse. The same
+            # countdown resumes as soon as the bomb is thrown or dropped.
+            if state.tick > bomb.placed_tick and bomb.carrier_id is None:
                 bomb.fuse_ticks -= 1
             if (bomb.x, bomb.y) in state.flames:
                 bomb.fuse_ticks = 0
@@ -627,7 +707,10 @@ class BombPeopleEngine:
     @staticmethod
     def _bomb_at(state: BombPeopleState, x: int, y: int) -> BombState | None:
         return next(
-            (bomb for bomb in state.bombs.values() if (bomb.x, bomb.y) == (x, y)),
+            (
+                bomb for bomb in state.bombs.values()
+                if bomb.carrier_id is None and (bomb.x, bomb.y) == (x, y)
+            ),
             None,
         )
 
@@ -642,7 +725,9 @@ class BombPeopleEngine:
         if not _inside(x, y) or state.board[y][x] != CELL_FLOOR:
             return False
         if any(
-            bomb.bomb_id != ignored_bomb and (bomb.x, bomb.y) == (x, y)
+            bomb.bomb_id != ignored_bomb
+            and bomb.carrier_id is None
+            and (bomb.x, bomb.y) == (x, y)
             for bomb in state.bombs.values()
         ):
             return False
@@ -674,6 +759,11 @@ class BombPeopleEngine:
     ) -> None:
         if state.bombs.pop(bomb.bomb_id, None) is None:
             return
+        if bomb.carrier_id is not None:
+            carrier = state.players.get(bomb.carrier_id)
+            if carrier is not None and carrier.carried_bomb_id == bomb.bomb_id:
+                carrier.carried_bomb_id = None
+            bomb.carrier_id = None
         self._add_effect(
             state,
             "bomb_exploded",
@@ -764,6 +854,7 @@ class BombPeopleEngine:
                 message=f"{self._name(room, actor.player_id)}的护盾挡住一次爆炸",
             )
             return
+        self._drop_carried_bomb(state, actor)
         actor.alive = False
         actor.input_mask = 0
         actor.eliminated_tick = state.tick
@@ -868,7 +959,7 @@ class BombPeopleEngine:
         elif kind == "shield":
             actor.shield_charges = min(2, actor.shield_charges + 1)
         elif kind == "ghost":
-            actor.ghost_ticks = max(actor.ghost_ticks, GHOST_TICKS)
+            actor.has_ghost = True
         elif kind == "magnet":
             actor.has_magnet = True
         elif kind == "ice":
@@ -878,7 +969,7 @@ class BombPeopleEngine:
         elif kind == "swap":
             self._swap_with_opponent(state, actor)
         elif kind == "skull":
-            self._apply_skull(actor)
+            self._apply_skull(state, actor)
         else:
             return
 
@@ -894,8 +985,8 @@ class BombPeopleEngine:
                 ),
             )
 
-    @staticmethod
-    def _apply_skull(actor: PlayerState) -> None:
+    def _apply_skull(self, state: BombPeopleState, actor: PlayerState) -> None:
+        self._drop_carried_bomb(state, actor)
         actor.bomb_capacity = 1
         actor.blast_range = 2
         actor.speed_level = 0
@@ -907,7 +998,7 @@ class BombPeopleEngine:
         actor.has_magnet = False
         actor.has_ice = False
         actor.shield_charges = 0
-        actor.ghost_ticks = 0
+        actor.has_ghost = False
         actor.invincible_ticks = 0
         actor.cursed_ticks = CURSE_TICKS
 
@@ -1044,6 +1135,7 @@ class BombPeopleEngine:
         actor = state.players.get(player.id)
         if actor is None or not actor.alive:
             return False
+        self._drop_carried_bomb(state, actor)
         actor.alive = False
         actor.input_mask = 0
         actor.eliminated_tick = state.tick
@@ -1119,6 +1211,7 @@ class BombPeopleEngine:
                     "moving": bool(bomb.motion_dx or bomb.motion_dy),
                     "motionX": bomb.motion_dx,
                     "motionY": bomb.motion_dy,
+                    "carriedBy": bomb.carrier_id,
                 }
                 for bomb in sorted(state.bombs.values(), key=lambda item: item.bomb_id)
             ],
@@ -1213,6 +1306,7 @@ class BombPeopleEngine:
                 <= self._move_interval_ticks(state, actor)
             ),
             "moveIntervalTicks": self._move_interval_ticks(state, actor),
+            "carriedBombId": actor.carried_bomb_id,
             "alive": actor.alive,
             "eliminatedBy": actor.eliminated_by,
             "eliminationReason": actor.elimination_reason,
@@ -1235,7 +1329,7 @@ class BombPeopleEngine:
                 "magnet": actor.has_magnet,
                 "ice": actor.has_ice,
                 "shieldCharges": actor.shield_charges,
-                "ghostTicks": actor.ghost_ticks,
+                "ghost": actor.has_ghost,
                 "invincibleTicks": actor.invincible_ticks,
                 "cursedTicks": actor.cursed_ticks,
             },

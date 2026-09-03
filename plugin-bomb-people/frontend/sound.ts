@@ -112,6 +112,9 @@ export function createBombPeopleSound(): BombPeopleSound {
     } else if (kind === 'bomb_punched') {
       noise(audio, now, 0.1, 0.14, 2_200, 'bandpass')
       tone(audio, now, 285, 92, 0.13, 0.22, 'triangle')
+    } else if (kind === 'bomb_picked_up') {
+      tone(audio, now, 135, 330, 0.16, 0.13, 'triangle')
+      tone(audio, now + 0.055, 260, 520, 0.13, 0.08, 'sine')
     } else if (kind === 'bomb_thrown') {
       noise(audio, now, 0.22, 0.08, 1_850, 'bandpass')
       tone(audio, now, 460, 155, 0.25, 0.12, 'sine')

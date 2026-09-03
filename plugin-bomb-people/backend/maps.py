@@ -109,7 +109,7 @@ MAP_SPECS: tuple[MapSpec, ...] = (
         starting_items=("shield",),
     ),
     MapSpec(
-        "solar_collapse", "太阳崩塌", "能量环与日核出生，定时雷提前压迫", "激斗", "中密度",
+        "solar_collapse", "太阳崩塌", "能量环与日核出生，遥控雷埋伏压迫", "激斗", "中密度",
         "rings", 0.12, 0.41, 1009,
         (
             (4, 4), (15, 14), (12, 6), (5, 14),

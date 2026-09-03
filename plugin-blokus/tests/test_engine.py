@@ -6,6 +6,7 @@ import json
 import random
 import pickle
 from collections import Counter
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -64,8 +65,10 @@ def place(engine, room, player, piece="M1", x=0, y=0, rotation=0, flipped=False,
 
 
 def open_starts(engine, room, players):
-    for player, (x, y) in zip(players, room.state.start_points, strict=True):
-        place(engine, room, player, x=x, y=y)
+    for player in players:
+        move = engine.find_move(room, player.id)
+        assert move is not None
+        engine.act(room, player, "place", move)
 
 
 def variants(shape):
@@ -157,6 +160,44 @@ def test_every_game_uses_a_fresh_random_order(factory, player_count):
     assert len(set(observed)) > 1
 
 
+def test_classic_opening_sizes_compensate_the_later_two_players(match):
+    engine, room, players = match
+    assert [
+        player["openingPieceSize"]
+        for player in engine.view(room, players[0])["players"]
+    ] == [4, 4, None, None]
+    for index, player in enumerate(players):
+        move = engine.find_move(room, player.id)
+        assert move is not None
+        assert len(SHAPES[move["pieceId"]]) == (4 if index < 2 else 5)
+
+    for player in players[:2]:
+        engine.start(room)
+        room.state.current_player_id = player.id
+        before = copy.deepcopy(room.state)
+        with pytest.raises(GameRuleError, match="前两位.*4 格"):
+            place(engine, room, player, "L5")
+        assert room.state == before
+
+    for player in players[2:]:
+        engine.start(room)
+        room.state.current_player_id = player.id
+        x, y = room.state.start_points[room.state.player_ids.index(player.id)]
+        place(engine, room, player, "M1", x, y)
+        assert room.state.board[y][x] == room.state.player_ids.index(player.id)
+
+
+def test_duo_openings_keep_every_piece_size_available(duo_match):
+    engine, room, players = duo_match
+    assert all(
+        player["openingPieceSize"] is None
+        for player in engine.view(room, players[0])["players"]
+    )
+    for player in players:
+        move = engine.find_move(room, player.id)
+        assert move is not None and len(SHAPES[move["pieceId"]]) == 5
+
+
 def test_every_rotation_and_reflection_matches_independent_geometry(match):
     engine, _, _ = match
     pieces_module = importlib.import_module(type(engine).__module__.rsplit(".", 1)[0] + ".pieces")
@@ -173,17 +214,18 @@ def test_first_piece_must_cover_that_players_start(request, fixture_name):
         engine.start(room)
         room.state.current_player_id = player.id
         with pytest.raises(GameRuleError, match="起始点"):
-            place(engine, room, player, x=room.state.board_size // 2, y=0)
+            place(engine, room, player, "I4", x=room.state.board_size // 2, y=0)
         for other, (x, y) in enumerate(room.state.start_points):
             if other != index:
+                x = min(x, room.state.board_size - 4)
                 with pytest.raises(GameRuleError, match="起始点"):
-                    place(engine, room, player, x=x, y=y)
+                    place(engine, room, player, "I4", x=x, y=y)
         x, y = room.state.start_points[index]
-        place(engine, room, player, x=x, y=y)
+        place(engine, room, player, "I4", x=min(x, room.state.board_size - 4), y=y)
 
 
 @pytest.mark.parametrize("fixture_name", ("duo_match", "match"))
-def test_all_shapes_can_open_from_each_start_under_some_transform(request, fixture_name):
+def test_all_allowed_shapes_can_open_from_each_start_under_some_transform(request, fixture_name):
     engine, room, players = request.getfixturevalue(fixture_name)
     starts = list(room.state.start_points)
     board_size = room.state.board_size
@@ -191,6 +233,12 @@ def test_all_shapes_can_open_from_each_start_under_some_transform(request, fixtu
         for key in SHAPES:
             engine.start(room)
             room.state.current_player_id = player.id
+            if fixture_name == "match" and index < 2 and len(SHAPES[key]) != 4:
+                before = copy.deepcopy(room.state)
+                with pytest.raises(GameRuleError, match="前两位.*4 格"):
+                    place(engine, room, player, key)
+                assert room.state == before
+                continue
             # Keep all 21 pieces but put the candidate first within its area group.
             module = importlib.import_module(type(engine).__module__.rsplit(".", 1)[0] + ".pieces")
             possibilities = []
@@ -212,12 +260,12 @@ def test_same_color_corner_only_and_foreign_color_edges_allowed(match):
     engine, room, players = match
     open_starts(engine, room, players)
     with pytest.raises(GameRuleError, match="不能边接"):
-        place(engine, room, players[0], "D2", 1, 0)
+        place(engine, room, players[0], "D2", 1, 1)
     with pytest.raises(GameRuleError, match="角接"):
         place(engine, room, players[0], "D2", 8, 8)
-    room.state.board[1][3] = 1
-    place(engine, room, players[0], "D2", 1, 1)
-    assert room.state.board[1][2] == 0 and room.state.board[1][3] == 1
+    room.state.board[1][6] = 1
+    place(engine, room, players[0], "D2", 4, 1)
+    assert room.state.board[1][5] == 0 and room.state.board[1][6] == 1
 
 
 def test_overlap_out_of_bounds_and_reusing_a_piece_are_rejected(match):
@@ -229,7 +277,7 @@ def test_overlap_out_of_bounds_and_reusing_a_piece_are_rejected(match):
     with pytest.raises(GameRuleError, match="超出"):
         place(engine, room, players[0], "I5", 19, 19)
     with pytest.raises(GameRuleError, match="已经使用"):
-        place(engine, room, players[0], "M1", 1, 1)
+        place(engine, room, players[0], "I4", 1, 1)
     assert room.state == before
 
 
@@ -265,7 +313,7 @@ def test_rejects_out_of_turn_spectator_stale_turn_and_voluntary_pass(match):
 def test_blocked_corner_is_automatically_skipped_and_other_players_continue(match):
     engine, room, players = match
     room.state.board[0][19] = 0
-    place(engine, room, players[0])
+    engine.act(room, players[0], "place", engine.find_move(room, players[0].id))
     assert room.state.current_player_id == players[2].id
     assert room.state.blocked_ids == [players[1].id]
     assert room.phase == "playing"
@@ -307,6 +355,8 @@ def test_complete_games_obey_all_rules_and_finish_with_exact_rank_points(
         first = len(hand) == 21
         engine.act(room, room.player(player_id), "place", move)
         cells = [tuple(cell) for cell in state.moves[-1]["cells"]]
+        if first and player_count == 4 and color < 2:
+            assert len(cells) == 4
         assert independent_legal(
             before, color, cells, first, tuple(state.start_points[color]),
         )
@@ -385,7 +435,7 @@ def test_duo_first_forfeit_finishes_with_two_player_points(duo_match):
 
 def test_forfeits_preserve_tiles_and_rank_earlier_departures_last(match):
     engine, room, players = match
-    place(engine, room, players[0])
+    engine.act(room, players[0], "place", engine.find_move(room, players[0].id))
     before = copy.deepcopy(room.state.board)
     engine.manual_forfeit(room, players[0])
     assert room.state.current_player_id == players[1].id
@@ -393,7 +443,7 @@ def test_forfeits_preserve_tiles_and_rank_earlier_departures_last(match):
     assert engine.manual_forfeit(room, players[0]) is False
     with pytest.raises(GameRuleError, match="弃权"):
         place(engine, room, players[0])
-    engine.disconnect_timeout(room, players[1])
+    engine.manual_forfeit(room, players[1])
     assert room.state.current_player_id == players[2].id
     engine.act(room, players[2], "resign", {})
     assert room.phase == "finished"
@@ -404,7 +454,7 @@ def test_forfeits_preserve_tiles_and_rank_earlier_departures_last(match):
 
 def test_view_is_public_detached_and_reconnection_keeps_hand_and_turn(match):
     engine, room, players = match
-    place(engine, room, players[0])
+    engine.act(room, players[0], "place", engine.find_move(room, players[0].id))
     before = copy.deepcopy(room.state)
     players[1].connected = False
     players[1].connected = True
@@ -417,6 +467,36 @@ def test_view_is_public_detached_and_reconnection_keeps_hand_and_turn(match):
     assert room.state == before
     assert engine.player_score(room, players[0]) is None
     assert "token" not in json.dumps(engine.view(room, players[1]))
+
+
+def test_waiting_and_disconnects_never_start_a_forfeit_timer(factory):
+    engine = factory(rng=IdentityRng())
+    manager = ArcadeRoomManager({engine.key: engine})
+    room, host, _ = manager.create_room(engine.key, "甲", "a0", {})
+    manager.join_room(room.code, engine.key, "乙", "a1")
+    manager.start(room, host.id)
+    current = room.player(room.state.current_player_id)
+    other = next(player for player in room.players if player.id != current.id)
+    assert all(player.disconnect_timeout_handled for player in room.players)
+
+    before = copy.deepcopy(room.state)
+    current.connected = False
+    disconnected_at = datetime(2026, 9, 2, tzinfo=timezone.utc)
+    manager.update_presence(room, now=disconnected_at)
+    assert current.disconnected_at is None
+    view = build_room_view(room, other, engine)
+    current_view = next(player for player in view["players"] if player["id"] == current.id)
+    assert current_view["disconnectForfeitAt"] is None
+
+    manager.maintain(
+        now=disconnected_at + timedelta(days=30),
+        disconnect_grace=timedelta(0),
+    )
+    assert room.phase == "playing"
+    assert room.state == before
+    assert current.id not in room.state.forfeited_ids
+    assert engine.disconnect_timeout(room, current) is False
+    assert room.state == before
 
 
 def test_registered_room_flow_reconnect_spectators_and_full_game(factory):
@@ -491,10 +571,12 @@ def test_rematches_preserve_seats_and_randomize_order_each_round(
         assert all(len(hand) == 21 for hand in room.state.remaining.values())
         for color, player_id in enumerate(expected_order):
             x, y = room.state.start_points[color]
-            manager.act(room, player_id, "place", {
-                "pieceId": "M1", "x": x, "y": y, "rotation": 0,
-                "flipped": False, "turnNumber": room.state.turn_number,
-            })
+            move = engine.find_move(room, player_id)
+            assert move is not None
+            assert len(SHAPES[move["pieceId"]]) == (
+                4 if player_count == 4 and color < 2 else 5
+            )
+            manager.act(room, player_id, "place", move)
             assert room.state.board[y][x] == color
         for player_id in expected_order[:player_count - 1]:
             manager.act(room, player_id, "resign", {})

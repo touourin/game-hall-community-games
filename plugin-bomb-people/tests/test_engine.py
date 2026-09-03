@@ -498,19 +498,95 @@ def test_two_stage_throw_stays_authoritative_for_two_to_eight_players(loaded, co
     assert bomb.carrier_id is None
 
 
-def test_timer_can_trigger_early_but_never_extends_the_two_second_limit(loaded):
-    Engine, _, _, engine_module = loaded
+def test_timer_adds_a_reusable_remote_slot_that_only_c_can_detonate(loaded):
+    Engine, state_module, _, engine_module = loaded
     engine = Engine(random.Random(4))
     room, members = start_active(engine, 2)
     clear_board(room)
     actor = room.state.players[members[0].id]
     actor.x = actor.y = 5
     actor.can_timer = True
+    actor.can_chain = True
+
+    # Fill the ordinary capacity, then Space deploys the independent remote slot.
     press(engine, room, members[0], 1, engine_module.INPUT_BOMB)
-    actor.x, actor.y = 10, 10
+    ordinary = next(iter(room.state.bombs.values()))
+    assert not ordinary.remote
+    actor.can_chain = False
+    actor.x, actor.y = 7, 5
     press(engine, room, members[0], 3, engine_module.INPUT_BOMB)
-    assert not room.state.bombs
-    assert room.state.flames
+    remote = next(bomb for bomb in room.state.bombs.values() if bomb.remote)
+    assert len(room.state.bombs) == actor.bomb_capacity + 1
+
+    # Even direct flame, a same-owner chain fuse and elapsed time cannot trigger it.
+    room.state.flames[(remote.x, remote.y)] = state_module.FlameState(
+        remote.x,
+        remote.y,
+        members[1].id,
+        room.state.tick + engine_module.BOMB_FUSE_TICKS + 10,
+    )
+    actor.x, actor.y = 12, 12
+    room.state.players[members[1].id].x = 18
+    room.state.players[members[1].id].y = 18
+    for _ in range(engine_module.BOMB_FUSE_TICKS - 1):
+        engine.tick(room)
+    assert list(room.state.bombs.values()) == [remote]
+    assert remote.fuse_ticks == engine_module.BOMB_FUSE_TICKS
+
+    # While the remote slot is occupied, the refreshed ordinary slot still works.
+    press(engine, room, members[0], 5, engine_module.INPUT_BOMB)
+    assert len(room.state.bombs) == 2
+    assert sum(not bomb.remote for bomb in room.state.bombs.values()) == 1
+
+    # C is the dedicated trigger. The ability survives and can deploy a new remote.
+    actor.x, actor.y = 15, 15
+    press(engine, room, members[0], 7, engine_module.INPUT_TIMER)
+    assert not any(bomb.remote for bomb in room.state.bombs.values())
+    assert actor.can_timer
+    actor.x, actor.y = 13, 15
+    press(engine, room, members[0], 9, engine_module.INPUT_BOMB)
+    assert sum(bomb.remote for bomb in room.state.bombs.values()) == 1
+    assert any(event.kind == "timer_triggered" for event in room.state.events)
+
+
+def test_remote_bomb_can_be_carried_but_only_its_owner_can_trigger_it(loaded):
+    Engine, state_module, _, engine_module = loaded
+    engine = Engine(random.Random(41))
+    room, members = start_active(engine, 3)
+    clear_board(room)
+    owner = room.state.players[members[0].id]
+    carrier = room.state.players[members[1].id]
+    owner.x, owner.y = 15, 15
+    owner.can_timer = True
+    carrier.x, carrier.y = 5, 5
+    carrier.facing_x, carrier.facing_y = 1, 0
+    carrier.can_throw = True
+    remote = state_module.BombState(
+        77,
+        owner.player_id,
+        owner.player_id,
+        6,
+        5,
+        room.state.tick,
+        engine_module.BOMB_FUSE_TICKS,
+        2,
+        remote=True,
+    )
+    room.state.bombs = {remote.bomb_id: remote}
+
+    press(engine, room, members[1], 1, engine_module.INPUT_THROW)
+    assert carrier.carried_bomb_id == remote.bomb_id
+    assert remote.carrier_id == carrier.player_id
+    assert remote.fuse_ticks == engine_module.BOMB_FUSE_TICKS
+
+    carrier.can_timer = True
+    press(engine, room, members[1], 3, engine_module.INPUT_TIMER)
+    assert remote.bomb_id in room.state.bombs
+
+    press(engine, room, members[0], 1, engine_module.INPUT_TIMER)
+    assert remote.bomb_id not in room.state.bombs
+    assert carrier.carried_bomb_id is None
+    assert any(event.kind == "timer_triggered" for event in room.state.events)
 
 
 def test_skull_removes_equipment_and_blocks_bombs_for_five_seconds(loaded):
@@ -523,11 +599,23 @@ def test_skull_removes_equipment_and_blocks_bombs_for_five_seconds(loaded):
     actor.blast_range = 6
     actor.speed_level = 3
     actor.can_kick = actor.can_punch = actor.can_throw = actor.can_timer = True
+    room.state.bombs[1] = state_module.BombState(
+        1,
+        actor.player_id,
+        actor.player_id,
+        actor.x + 1,
+        actor.y,
+        room.state.tick,
+        engine_module.BOMB_FUSE_TICKS,
+        2,
+        remote=True,
+    )
     room.state.items[1] = state_module.ItemState(1, "skull", actor.x, actor.y)
     engine.tick(room)
     assert actor.cursed_ticks == engine_module.CURSE_TICKS
     assert (actor.bomb_capacity, actor.blast_range, actor.speed_level) == (1, 2, 0)
-    assert not actor.can_kick and not actor.can_punch and not actor.can_throw
+    assert not actor.can_kick and not actor.can_punch and not actor.can_throw and not actor.can_timer
+    assert not room.state.bombs
     press(engine, room, members[0], 1, engine_module.INPUT_BOMB)
     assert not room.state.bombs
     for _ in range(engine_module.CURSE_TICKS):
@@ -852,7 +940,7 @@ def test_view_is_detached_public_and_state_is_pickle_safe(loaded):
     view = engine.view(room, members[0])
     assert len(view["board"]) == 20 and len(view["mapCatalog"]) == 10
     assert view["controls"] == {
-        "move": "WASD", "bomb": "Space", "punch": "Z", "throw": "X", "kick": "automatic",
+        "move": "WASD", "bomb": "Space", "punch": "Z", "throw": "X", "timer": "C", "kick": "automatic",
     }
     view["board"][0][0] = 99
     view["players"][0]["equipment"]["bombCapacity"] = 99

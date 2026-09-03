@@ -154,7 +154,7 @@ function fuseText(ticks: number) {
       class="arena-board"
       role="application"
       tabindex="0"
-      aria-label="炸弹超人 20×20 实时地图。使用 WASD 移动，空格放炸弹，Z 打雷，第一次按 X 拿雷、第二次按 X 扔雷。"
+      aria-label="炸弹超人 20×20 实时地图。使用 WASD 移动，空格放炸弹，C 引爆遥控定时炸弹，Z 打雷，第一次按 X 拿雷、第二次按 X 扔雷。"
     >
       <img class="map-art" :src="background" :alt="`${game.currentMap.name}地图背景`" draggable="false" />
       <div class="floor-grid" aria-hidden="true" />
@@ -191,12 +191,12 @@ function fuseText(ticks: number) {
         v-show="!bomb.carriedBy"
         :key="`bomb:${bomb.id}`"
         class="board-object bomb"
-        :class="{ moving: bomb.moving, 'just-placed': placedBombIds.has(bomb.id), landing: thrownBombIds.has(bomb.id) }"
+        :class="{ moving: bomb.moving, remote: bomb.remote, 'just-placed': placedBombIds.has(bomb.id), landing: thrownBombIds.has(bomb.id) }"
         :style="bombStyle(bomb)"
-        :title="`炸弹剩余 ${fuseText(bomb.fuseTicks)} 秒`"
+        :title="bomb.remote ? '遥控定时炸弹：仅所有者按 C 引爆' : `炸弹剩余 ${fuseText(bomb.fuseTicks)} 秒`"
       >
         <span class="bomb-body"><i /></span>
-        <small>{{ fuseText(bomb.fuseTicks) }}</small>
+        <small>{{ bomb.remote ? 'C' : fuseText(bomb.fuseTicks) }}</small>
       </div>
 
       <div
@@ -263,12 +263,13 @@ function fuseText(ticks: number) {
             v-if="carriedBombFor(player.id)"
             :key="`carried:${carriedBombFor(player.id)?.id}`"
             class="carried-bomb-rig"
-            :title="`手中炸弹剩余 ${carriedFuseText(player.id)} 秒`"
+            :class="{ remote: carriedBombFor(player.id)?.remote }"
+            :title="carriedBombFor(player.id)?.remote ? '手中的遥控定时炸弹：所有者按 C 可引爆' : `手中炸弹剩余 ${carriedFuseText(player.id)} 秒`"
           >
             <span class="carry-arm carry-arm-left" aria-hidden="true" />
             <span class="carry-arm carry-arm-right" aria-hidden="true" />
             <span class="carried-bomb-body" aria-hidden="true"><i /></span>
-            <small>{{ carriedFuseText(player.id) }}</small>
+            <small>{{ carriedBombFor(player.id)?.remote ? 'C' : carriedFuseText(player.id) }}</small>
           </span>
           <span class="player-name">{{ player.name }}</span>
         </span>
@@ -312,6 +313,12 @@ function fuseText(ticks: number) {
 .bomb-body::before { content: ''; position: absolute; width: 32%; height: 22%; left: 55%; top: -12%; border: 3px solid #b88643; border-bottom: 0; border-radius: 50% 50% 0 0; transform: rotate(35deg); }
 .bomb-body i { position: absolute; width: 14%; height: 14%; right: -5%; top: -15%; border-radius: 50%; background: #fff3a1; box-shadow: 0 0 6px 2px #ff7a18; animation: fuse .18s infinite alternate; }
 .bomb small { z-index: 2; margin-top: 1px; font: 800 clamp(6px, .7vw, 10px)/1 system-ui; text-shadow: 0 1px 2px #000; }
+.bomb.remote { color: #dffcff; filter: drop-shadow(0 0 4px #31dbea88); }
+.bomb.remote .bomb-body { width: 80%; height: 68%; border: 2px solid #68edf5; border-radius: 24%; background: linear-gradient(145deg, #397987 0 12%, #153a43 13% 58%, #07191e 59% 100%); box-shadow: 0 2px 5px #000, inset 2px 2px 3px #c9fbff55, inset -3px -3px 5px #001014; }
+.bomb.remote .bomb-body::before { width: 30%; height: 24%; left: 35%; top: -27%; border: 2px solid #70eaf2; border-bottom: 0; border-radius: 60% 60% 0 0; transform: none; }
+.bomb.remote .bomb-body::after { content: ''; position: absolute; inset: 14% 18%; border: 1px solid #78f5fc88; border-radius: 18%; box-shadow: inset 0 0 4px #20e1ef66; }
+.bomb.remote .bomb-body i { width: 20%; height: 24%; right: 40%; top: 38%; z-index: 1; background: #91fbff; box-shadow: 0 0 7px 2px #20dcec; animation: remote-signal .65s ease-in-out infinite alternate; }
+.bomb.remote small { min-width: 42%; padding: 1px 2px; border: 1px solid #8bf8ff99; border-radius: 3px; color: #dffcff; background: #08262dcc; text-align: center; text-shadow: 0 0 3px #23ddec; }
 .bomb.moving .bomb-body { animation: bomb-roll .16s linear infinite; }
 .bomb.just-placed { animation: bomb-drop .26s cubic-bezier(.2, 1.4, .5, 1) both; }
 .bomb.landing { animation: bomb-land .44s ease-out both; }
@@ -349,6 +356,10 @@ function fuseText(ticks: number) {
 .carried-bomb-body::before { content: ''; position: absolute; width: 34%; height: 24%; left: 54%; top: -13%; border: 3px solid #b88643; border-bottom: 0; border-radius: 50% 50% 0 0; transform: rotate(35deg); }
 .carried-bomb-body i { position: absolute; width: 15%; height: 15%; right: -5%; top: -16%; border-radius: 50%; background: #fff5aa; box-shadow: 0 0 7px 2px #ff7818; animation: fuse .18s infinite alternate; }
 .carried-bomb-rig > small { position: absolute; z-index: 5; left: 50%; top: 49%; transform: translate(-50%, -50%); color: #fff; font: 900 clamp(5px, .58vw, 8px)/1 ui-monospace, monospace; text-shadow: 0 1px 2px #000, 0 0 3px #000; }
+.carried-bomb-rig.remote .carried-bomb-body { border-color: #68edf5; border-radius: 24%; background: linear-gradient(145deg, #397987, #153a43 55%, #07191e); box-shadow: inset 0 0 5px #74f5ff66, 0 3px 5px #0009; }
+.carried-bomb-rig.remote .carried-bomb-body::before { left: 35%; border-color: #70eaf2; transform: none; }
+.carried-bomb-rig.remote .carried-bomb-body i { right: 40%; top: 38%; background: #91fbff; box-shadow: 0 0 7px 2px #20dcec; animation: remote-signal .65s ease-in-out infinite alternate; }
+.carried-bomb-rig.remote > small { color: #dffcff; text-shadow: 0 0 4px #20dcec; }
 .carry-arm { position: absolute; z-index: 4; top: 62%; width: 42%; height: 16%; border: 1px solid #d6dde0; border-radius: 999px; background: linear-gradient(90deg, var(--player-color), #edf2f4 68%); box-shadow: 0 2px 3px #0008; transform-origin: 12% 50%; }
 .carry-arm::after { content: ''; position: absolute; right: -8%; top: -28%; width: 34%; aspect-ratio: 1; border: 1px solid #fff8; border-radius: 50%; background: #f3c7a2; box-shadow: inset -1px -2px #9b654a66; }
 .carry-arm-left { left: -16%; transform: rotate(-37deg); }
@@ -388,6 +399,7 @@ function fuseText(ticks: number) {
 @keyframes danger-pulse { to { opacity: .25; transform: scale(.82); } }
 @keyframes item-bob { to { transform: translateY(-8%) scale(1.04); } }
 @keyframes fuse { to { transform: scale(1.5); background: white; } }
+@keyframes remote-signal { to { opacity: .42; transform: scale(.72); box-shadow: 0 0 3px 1px #20dcec; } }
 @keyframes bomb-roll { to { transform: rotate(var(--roll-angle)) translateY(-7%); } }
 @keyframes bomb-drop { 0% { opacity: 0; transform: translateY(-95%) scale(.45); } 68% { opacity: 1; transform: translateY(8%) scale(1.16, .84); } 100% { transform: none; } }
 @keyframes bomb-land { 0%, 62% { opacity: 0; transform: scale(.55); } 72% { opacity: 1; transform: scale(1.28, .76); } 86% { transform: scale(.9, 1.1); } 100% { opacity: 1; transform: none; } }

@@ -2,6 +2,7 @@ export type RunnerAction = 'jump' | 'left' | 'slide' | 'right'
 export type TrackLane = 'left' | 'center' | 'right'
 export type ObstacleKind = 'ground' | 'overhead' | null
 export type EndReason = 'wrong' | 'timeout' | 'completed' | null
+export type RunnerFailureKind = 'wall' | 'cliff' | null
 
 export interface RunnerOption {
   action: RunnerAction
@@ -13,7 +14,6 @@ export interface RunnerOption {
 export interface MathRunnerSpeed {
   trackPeriodMs: number
   runCycleMs: number
-  speedLines: number
 }
 
 export interface MathRunnerGameView {
@@ -53,9 +53,9 @@ export interface RunnerActionMeta {
 }
 
 export const RUNNER_ACTION_META: readonly RunnerActionMeta[] = [
-  { id: 'jump', label: '跳跃', key: 'W', symbol: '↑', help: '越过地面障碍' },
+  { id: 'jump', label: '跳跃', key: 'W', symbol: '↑', help: '越过低墙' },
   { id: 'left', label: '左变道', key: 'A', symbol: '←', help: '进入左侧分叉' },
-  { id: 'slide', label: '下蹲', key: 'S', symbol: '↓', help: '穿过高空障碍' },
+  { id: 'slide', label: '下蹲', key: 'S', symbol: '↓', help: '从高墙下方滑过' },
   { id: 'right', label: '右变道', key: 'D', symbol: '→', help: '进入右侧分叉' },
 ]
 

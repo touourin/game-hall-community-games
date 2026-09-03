@@ -12,8 +12,7 @@
       "maxFactor": 4,
       "templates": ["add"],
       "trackPeriodMs": 1500,
-      "runCycleMs": 720,
-      "speedLines": 4
+      "runCycleMs": 720
     },
     {
       "level": 2,
@@ -24,8 +23,7 @@
       "maxFactor": 5,
       "templates": ["add", "subtract"],
       "trackPeriodMs": 1390,
-      "runCycleMs": 685,
-      "speedLines": 5
+      "runCycleMs": 685
     },
     {
       "level": 3,
@@ -36,8 +34,7 @@
       "maxFactor": 6,
       "templates": ["add", "subtract", "multiply"],
       "trackPeriodMs": 1280,
-      "runCycleMs": 650,
-      "speedLines": 5
+      "runCycleMs": 650
     },
     {
       "level": 4,
@@ -48,8 +45,7 @@
       "maxFactor": 7,
       "templates": ["add", "subtract", "multiply"],
       "trackPeriodMs": 1170,
-      "runCycleMs": 615,
-      "speedLines": 6
+      "runCycleMs": 615
     },
     {
       "level": 5,
@@ -60,8 +56,7 @@
       "maxFactor": 8,
       "templates": ["add", "subtract", "multiply", "add_subtract", "multiply_add"],
       "trackPeriodMs": 1060,
-      "runCycleMs": 580,
-      "speedLines": 7
+      "runCycleMs": 580
     },
     {
       "level": 6,
@@ -72,8 +67,7 @@
       "maxFactor": 9,
       "templates": ["add", "subtract", "multiply", "divide_add", "multiply_add"],
       "trackPeriodMs": 950,
-      "runCycleMs": 545,
-      "speedLines": 8
+      "runCycleMs": 545
     },
     {
       "level": 7,
@@ -84,8 +78,7 @@
       "maxFactor": 10,
       "templates": ["multiply", "divide_add", "group_multiply", "multiply_add"],
       "trackPeriodMs": 860,
-      "runCycleMs": 515,
-      "speedLines": 9
+      "runCycleMs": 515
     },
     {
       "level": 8,
@@ -96,8 +89,7 @@
       "maxFactor": 11,
       "templates": ["divide_add", "group_multiply", "multiply_add", "multiply_subtract"],
       "trackPeriodMs": 780,
-      "runCycleMs": 485,
-      "speedLines": 10
+      "runCycleMs": 485
     },
     {
       "level": 9,
@@ -108,8 +100,7 @@
       "maxFactor": 12,
       "templates": ["divide_add", "group_multiply", "multiply_subtract", "group_multiply_subtract"],
       "trackPeriodMs": 710,
-      "runCycleMs": 455,
-      "speedLines": 11
+      "runCycleMs": 455
     },
     {
       "level": 10,
@@ -120,8 +111,7 @@
       "maxFactor": 12,
       "templates": ["divide_add", "multiply_subtract", "group_multiply_subtract", "multiply_add_divide"],
       "trackPeriodMs": 650,
-      "runCycleMs": 430,
-      "speedLines": 12
+      "runCycleMs": 430
     }
   ]
 }

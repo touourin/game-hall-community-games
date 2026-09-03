@@ -43,9 +43,11 @@ const runnerAction = ref<RunnerAction | null>(null)
 const displayRemainingMs = ref(0)
 const submitting = ref(false)
 const restarting = ref(false)
+const showResult = ref(props.snapshot.phase === 'finished')
 const timeoutSentFor = ref<number | null>(null)
 let countdownTimer: number | null = null
 let turnTimer: number | null = null
+let resultTimer: number | null = null
 let localDeadline = 0
 
 const game = computed(() => props.snapshot.game as MathRunnerGameView)
@@ -202,6 +204,13 @@ function stopCountdown() {
   }
 }
 
+function stopResultTimer() {
+  if (resultTimer !== null) {
+    window.clearTimeout(resultTimer)
+    resultTimer = null
+  }
+}
+
 function tickCountdown() {
   if (props.snapshot.phase !== 'playing') {
     displayRemainingMs.value = 0
@@ -312,7 +321,7 @@ watch(
       if (turnTimer !== null) window.clearTimeout(turnTimer)
       turnTimer = window.setTimeout(() => {
         runnerAction.value = null
-      }, 650)
+      }, 700)
     }
     if (questionId !== previousQuestionId) {
       selectedAction.value = null
@@ -328,12 +337,39 @@ watch(
   { immediate: true },
 )
 
+watch(
+  () => props.snapshot.phase,
+  (phase, previousPhase) => {
+    stopResultTimer()
+    if (phase !== 'finished') {
+      showResult.value = false
+      return
+    }
+    if (previousPhase !== 'playing') {
+      showResult.value = true
+      return
+    }
+
+    showResult.value = false
+    const decisiveAction = game.value.endReason === 'wrong'
+      ? game.value.lastAction
+      : game.value.correctAction
+    const failureUsesCliff = decisiveAction === 'left' || decisiveAction === 'right'
+    const revealDelay = game.value.endReason === 'completed' ? 900 : failureUsesCliff ? 1250 : 980
+    resultTimer = window.setTimeout(() => {
+      showResult.value = true
+      resultTimer = null
+    }, revealDelay)
+  },
+)
+
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown)
 })
 
 onBeforeUnmount(() => {
   stopCountdown()
+  stopResultTimer()
   if (turnTimer !== null) window.clearTimeout(turnTimer)
   window.removeEventListener('keydown', handleKeydown)
 })
@@ -433,7 +469,7 @@ onBeforeUnmount(() => {
       </aside>
 
       <PluginResultCard
-        v-else-if="snapshot.phase === 'finished'"
+        v-else-if="snapshot.phase === 'finished' && showResult"
         class="runner-result"
         eyebrow="最大路程排行榜成绩"
         :title="resultTitle"
@@ -830,6 +866,7 @@ onBeforeUnmount(() => {
   box-shadow: 0 22px 70px color-mix(in srgb, var(--mr-shadow) 55%, transparent), inset 0 1px 0 color-mix(in srgb, white 16%, transparent);
   transform: translate(-50%, -50%);
   backdrop-filter: blur(22px) saturate(115%);
+  animation: runner-result-reveal 260ms ease-out both;
 }
 .runner-result :deep(.solo-result-score) { font-size: clamp(34px, 7vmin, 56px); }
 .runner-result :deep(.solo-result-metrics) { margin: 4px 0 0; }
@@ -855,6 +892,11 @@ onBeforeUnmount(() => {
 .orientation-hint svg { color: var(--mr-accent); animation: phone-rotate-hint 1.8s ease-in-out infinite; }
 .orientation-hint strong { font-size: 22px; }
 .orientation-hint span { max-width: 280px; color: var(--mr-copy-secondary); font-size: 11px; line-height: 1.55; }
+
+@keyframes runner-result-reveal {
+  from { opacity: 0; transform: translate(-50%, -47%) scale(.96); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
 
 @keyframes phone-rotate-hint {
   0%, 20%, 100% { transform: rotate(0); }
@@ -961,6 +1003,8 @@ onBeforeUnmount(() => {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .orientation-hint svg { animation: none; transform: rotate(90deg); }
+  .orientation-hint svg,
+  .runner-result { animation: none; }
+  .orientation-hint svg { transform: rotate(90deg); }
 }
 </style>

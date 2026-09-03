@@ -12,7 +12,7 @@ export const mathRunnerRuleGuide: PluginRuleGuideContent = {
     steps: [
       { title: '看 2/3 路分叉', text: '桥面只会开放左、中、右三跑道中的两条或三条，断桥跑道不可选。' },
       { title: '找成立等式', text: '每块题牌都是左右两边的算式，恰好只有一条等式成立。' },
-      { title: '执行跑酷动作', text: 'A/D 左右变道；W 跳跃越过地面障碍；S 下蹲穿过高空障碍。' },
+      { title: '执行跑酷动作', text: 'A/D 左右转入分叉；W 跳跃越过低墙；S 下蹲从高墙底部滑过。' },
     ],
   },
   feature: {
@@ -27,7 +27,7 @@ export const mathRunnerRuleGuide: PluginRuleGuideContent = {
   },
   flowTitle: '一个桥面题段',
   steps: [
-    { title: '服务端出题', text: '生成 2/3 条开放跑道、唯一正确等式，以及中间跑道可能出现的地面或高空障碍。' },
+    { title: '服务端出题', text: '随机生成 2/3 条开放分叉、唯一正确等式，以及中间跑道可能出现的低墙或高墙。' },
     { title: '跑者接近', text: '桥面向后滚动、人物摆臂摆腿持续向前，题牌保持稳定可读。' },
     { title: '提交动作', text: '客户端只提交题目 ID 与 jump、left、slide、right 之一，不提交分数或判题结果。' },
     { title: '确认动画', text: '服务端确认后才播放左右变道、跳跃收腿或下蹲滑行动画，并进入下一题。' },
@@ -38,9 +38,9 @@ export const mathRunnerRuleGuide: PluginRuleGuideContent = {
       table: {
         headers: ['动作', '电脑', '用途'],
         rows: [
-          ['跳跃', 'W / ↑ / 空格', '越过地面障碍'],
+          ['跳跃', 'W / ↑ / 空格', '越过低墙'],
           ['左变道', 'A / ←', '进入左侧分叉'],
-          ['下蹲滑行', 'S / ↓', '穿过高空障碍'],
+          ['下蹲滑行', 'S / ↓', '从高墙底部穿过'],
           ['右变道', 'D / →', '进入右侧分叉'],
         ],
       },

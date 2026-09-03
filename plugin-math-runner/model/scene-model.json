@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "logicalCanvas": { "width": 1, "height": 1 },
   "camera": {
     "projection": "perspective-chase",
@@ -42,23 +42,44 @@
   "runtime": {
     "renderer": "dom-css",
     "backgroundAsset": "frontend/assets/runner-bridge-backdrop.png",
-    "runnerAsset": "frontend/assets/runner-motion-atlas.png",
+    "runnerAsset": "frontend/assets/runner-animation-atlas-v2.png",
+    "turnAsset": "frontend/assets/runner-turn-atlas-v2.png",
     "runnerAtlas": {
-      "columns": 3,
+      "columns": 4,
+      "rows": 4,
+      "sourceSize": [1254, 1254],
+      "cellSize": [313.5, 313.5],
+      "poses": [
+        "run-1", "run-2", "run-3", "run-4",
+        "run-5", "run-6", "run-7", "run-8",
+        "left-1", "left-2", "right-1", "right-2",
+        "jump", "slide", "wall-impact", "cliff-fall"
+      ]
+    },
+    "turnAtlas": {
+      "columns": 2,
       "rows": 2,
-      "cellSize": [512, 512],
-      "poses": ["run-a", "run-b", "right", "left", "jump", "slide"]
+      "sourceSize": [1254, 1254],
+      "cellSize": [627, 627],
+      "runtimeCells": {
+        "leftEntry": [0, 0],
+        "leftApex": [0, 1],
+        "rightEntry": [0, 0],
+        "rightApex": [1, 0]
+      }
     },
     "motionLayers": [
       "backdrop-drift",
-      "bridge-grid",
-      "sleeper-approach",
+      "road-stone-approach",
       "rail-marker-approach",
       "question-section-approach",
-      "speed-lines"
+      "failure-effects"
     ],
     "branchCounts": [2, 3],
-    "maxSpeedLines": 12,
+    "roadStoneCount": 7,
+    "railMarkerCount": 8,
+    "failureKinds": ["wall", "cliff"],
+    "resultRevealDelayMs": { "wall": 980, "cliff": 1250, "completed": 900 },
     "reducedMotion": "static-pose-and-fade",
     "keepsHostHeaderVisible": true
   }

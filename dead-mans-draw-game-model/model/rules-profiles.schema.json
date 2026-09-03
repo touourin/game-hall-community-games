@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/dead-mans-draw/rules-profiles.schema.json",
+  "title": "Dead Man's Draw rules profiles",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "modelVersion", "defaultProfileId", "maxGlobalVariants", "profiles", "conflicts", "priorityRules", "digitalRulings"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "defaultProfileId": { "const": "tabletop_base_2015" },
+    "maxGlobalVariants": { "const": 1 },
+    "profiles": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/profile" }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["left", "right", "policy", "reasonZh"],
+        "properties": {
+          "left": { "type": "string", "minLength": 1 },
+          "right": { "type": "string", "minLength": 1 },
+          "policy": { "enum": ["forbid", "left-wins", "right-wins", "compose"] },
+          "reasonZh": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "priorityRules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["order", "stage", "summaryZh"],
+        "properties": {
+          "order": { "type": "integer", "minimum": 1 },
+          "stage": { "type": "string", "minLength": 1 },
+          "summaryZh": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "digitalRulings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "summaryZh"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "summaryZh": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nameZh", "basis", "bustKey", "forcedChoicePolicy", "mapCandidatePolicy", "mermaidValues", "mermaidAbility", "traitPool", "traitsDefault", "allowedVariantIds"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "nameZh": { "type": "string", "minLength": 1 },
+        "basis": { "type": "string", "minLength": 1 },
+        "bustKey": { "enum": ["suit", "value"] },
+        "forcedChoicePolicy": { "enum": ["allow-bust", "filter-immediate-bust"] },
+        "mapCandidatePolicy": { "enum": ["shuffle-reveal-up-to-three", "safe-scan-up-to-three"] },
+        "mermaidValues": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": { "type": "integer", "minimum": 2, "maximum": 9 }
+        },
+        "mermaidAbility": { "enum": ["high-value-only", "replay-entry"] },
+        "traitPool": { "enum": ["base-17", "base-17-plus-siren"] },
+        "traitsDefault": { "type": "boolean" },
+        "allowedVariantIds": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 7,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^variant-[a-z][a-z0-9-]*$" }
+        }
+      }
+    }
+  }
+}

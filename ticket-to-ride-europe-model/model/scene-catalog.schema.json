@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/ticket-to-ride-europe/scene-catalog.schema.json",
+  "title": "Ticket to Ride Europe scene catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "modelVersion", "gameKey", "layout", "mapLayers", "scenes"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameKey": { "const": "ticket-to-ride-europe-base" },
+    "layout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["desktop", "mobile"],
+      "properties": {
+        "desktop": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "mapMinShare", "sidePanelMaxWidth", "privateHandPlacement"],
+          "properties": {
+            "mode": { "const": "immersive" },
+            "mapMinShare": { "type": "number", "minimum": 0.5, "maximum": 0.9 },
+            "sidePanelMaxWidth": { "type": "integer", "minimum": 300, "maximum": 600 },
+            "privateHandPlacement": { "const": "bottom" }
+          }
+        },
+        "mobile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mapViewport", "privateControls", "minimumTouchTarget"],
+          "properties": {
+            "mapViewport": { "const": "pan-zoom" },
+            "privateControls": { "const": "bottom-sheet" },
+            "minimumTouchTarget": { "type": "integer", "minimum": 44 }
+          }
+        }
+      }
+    },
+    "mapLayers": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "terrain-layer",
+          "route-base-layer",
+          "route-owner-layer",
+          "city-layer",
+          "station-layer",
+          "interaction-layer",
+          "effect-layer"
+        ]
+      }
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 13,
+      "maxItems": 13,
+      "items": { "$ref": "#/$defs/scene" }
+    }
+  },
+  "$defs": {
+    "phase": {
+      "enum": [
+        "setup_ticket_selection",
+        "turn_idle",
+        "train_draw_second",
+        "tunnel_payment",
+        "ticket_choice",
+        "final_station_assignment",
+        "scoring",
+        "finished"
+      ]
+    },
+    "action": {
+      "enum": [
+        "keep_initial_tickets",
+        "draw_train_card",
+        "claim_route",
+        "draw_destination_tickets",
+        "build_station",
+        "pay_tunnel_extra",
+        "decline_tunnel",
+        "keep_destination_tickets",
+        "assign_station_routes"
+      ]
+    },
+    "nonEmptyTextArray": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "phase",
+        "title",
+        "purpose",
+        "entry",
+        "actions",
+        "focusZones",
+        "privacy",
+        "exit",
+        "transient"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*(\\.[a-z][a-z0-9-]*)+$" },
+        "phase": { "$ref": "#/$defs/phase" },
+        "title": { "type": "string", "minLength": 2 },
+        "purpose": { "type": "string", "minLength": 8 },
+        "entry": { "$ref": "#/$defs/nonEmptyTextArray" },
+        "actions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/action" }
+        },
+        "focusZones": { "$ref": "#/$defs/nonEmptyTextArray" },
+        "privacy": { "enum": ["public", "private", "mixed"] },
+        "exit": { "type": "string", "minLength": 3 },
+        "transient": { "type": "boolean" }
+      }
+    }
+  }
+}

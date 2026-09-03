@@ -1,0 +1,139 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/ticket-to-ride-europe/card-catalog.schema.json",
+  "title": "Ticket to Ride Europe card catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "modelVersion",
+    "gameKey",
+    "trainCardTypes",
+    "destinationTickets",
+    "bonusCards",
+    "visualModel",
+    "summary",
+    "copyrightBoundary"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameKey": { "const": "ticket-to-ride-europe-base" },
+    "trainCardTypes": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": { "$ref": "#/$defs/trainCardType" }
+    },
+    "destinationTickets": {
+      "type": "array",
+      "minItems": 46,
+      "maxItems": 46,
+      "items": { "$ref": "#/$defs/destinationTicket" }
+    },
+    "bonusCards": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": { "$ref": "#/$defs/bonusCard" }
+    },
+    "visualModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trainCard", "destinationTicket"],
+      "properties": {
+        "trainCard": { "$ref": "#/$defs/cardDimensions" },
+        "destinationTicket": { "$ref": "#/$defs/cardDimensions" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trainCardCount",
+        "trainTypeCount",
+        "regularDestinationTicketCount",
+        "longDestinationTicketCount",
+        "destinationTicketCount"
+      ],
+      "properties": {
+        "trainCardCount": { "const": 110 },
+        "trainTypeCount": { "const": 9 },
+        "regularDestinationTicketCount": { "const": 40 },
+        "longDestinationTicketCount": { "const": 6 },
+        "destinationTicketCount": { "const": 46 }
+      }
+    },
+    "copyrightBoundary": { "type": "string", "minLength": 20 }
+  },
+  "$defs": {
+    "baseColor": {
+      "enum": ["purple", "blue", "orange", "white", "green", "yellow", "black", "red"]
+    },
+    "trainColor": {
+      "enum": ["purple", "blue", "orange", "white", "green", "yellow", "black", "red", "locomotive"]
+    },
+    "visual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accent", "pattern", "accessibilityCode"],
+      "properties": {
+        "accent": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+        "pattern": { "enum": ["dots", "horizontal", "diagonal", "cross", "diamonds", "waves", "grid", "triangles", "spectrum"] },
+        "accessibilityCode": { "type": "string", "pattern": "^[A-Z]{2}$" }
+      }
+    },
+    "trainCardType": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "color", "labelZhCN", "copies", "wild", "visual"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^train-(purple|blue|orange|white|green|yellow|black|red|locomotive)$" },
+        "color": { "$ref": "#/$defs/trainColor" },
+        "labelZhCN": { "type": "string", "minLength": 2 },
+        "copies": { "enum": [12, 14] },
+        "wild": { "type": "boolean" },
+        "visual": { "$ref": "#/$defs/visual" }
+      }
+    },
+    "destinationTicket": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "category", "fromCityId", "toCityId", "points", "labelZhCN"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^ticket-(long|regular)-[0-9]{3}$" },
+        "category": { "enum": ["long", "regular"] },
+        "fromCityId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "toCityId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "points": { "type": "integer", "minimum": 5, "maximum": 21 },
+        "labelZhCN": { "type": "string", "minLength": 3 }
+      }
+    },
+    "bonusCard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "labelZhCN", "points", "condition", "sharedOnTie"],
+      "properties": {
+        "id": { "const": "bonus-european-express" },
+        "labelZhCN": { "const": "欧洲快车" },
+        "points": { "const": 10 },
+        "condition": { "const": "longest-continuous-path" },
+        "sharedOnTie": { "const": true }
+      }
+    },
+    "cardDimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "cornerRadius", "safeInset", "sharedBackId"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 100 },
+        "height": { "type": "integer", "minimum": 100 },
+        "cornerRadius": { "type": "integer", "minimum": 0 },
+        "safeInset": { "type": "integer", "minimum": 0 },
+        "sharedBackId": { "enum": ["train-card-back", "destination-ticket-back"] }
+      }
+    }
+  }
+}

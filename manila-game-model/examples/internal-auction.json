@@ -1,0 +1,188 @@
+{
+  "version": "1.0.0",
+  "ruleset": "zoch-2005-base",
+  "revision": 3,
+  "lastEventId": 3,
+  "options": {
+    "pirateDisplacement": false
+  },
+  "stage": "auction",
+  "voyageNumber": 1,
+  "turnOrder": ["p1", "p2", "p3"],
+  "harborMasterId": null,
+  "auction": {
+    "openerId": "p1",
+    "currentPlayerId": "p2",
+    "leaderId": "p1",
+    "currentBid": 2,
+    "activeBidderIds": ["p1", "p2", "p3"],
+    "passedPlayerIds": []
+  },
+  "marketValues": {
+    "ginseng": 0,
+    "nutmeg": 0,
+    "silk": 0,
+    "jade": 0
+  },
+  "shareSupply": [
+    "share-ginseng-03",
+    "share-ginseng-04",
+    "share-ginseng-05",
+    "share-nutmeg-03",
+    "share-nutmeg-04",
+    "share-nutmeg-05",
+    "share-silk-02",
+    "share-silk-03",
+    "share-silk-04",
+    "share-silk-05",
+    "share-jade-02",
+    "share-jade-03",
+    "share-jade-04",
+    "share-jade-05"
+  ],
+  "players": {
+    "p1": {
+      "playerId": "p1",
+      "cash": 30,
+      "shareIds": ["share-ginseng-01", "share-silk-01"],
+      "mortgagedShareIds": [],
+      "accomplicesAvailable": 4,
+      "passedPlacement": false,
+      "forfeited": false,
+      "finalFortune": null
+    },
+    "p2": {
+      "playerId": "p2",
+      "cash": 30,
+      "shareIds": ["share-nutmeg-01", "share-jade-01"],
+      "mortgagedShareIds": [],
+      "accomplicesAvailable": 4,
+      "passedPlacement": false,
+      "forfeited": false,
+      "finalFortune": null
+    },
+    "p3": {
+      "playerId": "p3",
+      "cash": 30,
+      "shareIds": ["share-ginseng-02", "share-nutmeg-02"],
+      "mortgagedShareIds": [],
+      "accomplicesAvailable": 4,
+      "passedPlacement": false,
+      "forfeited": false,
+      "finalFortune": null
+    }
+  },
+  "punts": [
+    {
+      "id": "punt-1",
+      "cargoId": null,
+      "laneId": null,
+      "position": null,
+      "status": "ready",
+      "occupants": []
+    },
+    {
+      "id": "punt-2",
+      "cargoId": null,
+      "laneId": null,
+      "position": null,
+      "status": "ready",
+      "occupants": []
+    },
+    {
+      "id": "punt-3",
+      "cargoId": null,
+      "laneId": null,
+      "position": null,
+      "status": "ready",
+      "occupants": []
+    }
+  ],
+  "docks": {
+    "port": {
+      "kind": "port",
+      "slots": [
+        {
+          "id": "A",
+          "arrivalIndex": 1,
+          "placementCost": 4,
+          "payout": 6,
+          "bettorPlayerId": null,
+          "puntId": null
+        },
+        {
+          "id": "B",
+          "arrivalIndex": 2,
+          "placementCost": 3,
+          "payout": 8,
+          "bettorPlayerId": null,
+          "puntId": null
+        },
+        {
+          "id": "C",
+          "arrivalIndex": 3,
+          "placementCost": 2,
+          "payout": 15,
+          "bettorPlayerId": null,
+          "puntId": null
+        }
+      ]
+    },
+    "shipyard": {
+      "kind": "shipyard",
+      "slots": [
+        {
+          "id": "A",
+          "arrivalIndex": 1,
+          "placementCost": 4,
+          "payout": 6,
+          "bettorPlayerId": null,
+          "puntId": null
+        },
+        {
+          "id": "B",
+          "arrivalIndex": 2,
+          "placementCost": 3,
+          "payout": 8,
+          "bettorPlayerId": null,
+          "puntId": null
+        },
+        {
+          "id": "C",
+          "arrivalIndex": 3,
+          "placementCost": 2,
+          "payout": 15,
+          "bettorPlayerId": null,
+          "puntId": null
+        }
+      ]
+    }
+  },
+  "specials": {
+    "pirateBoat": [],
+    "smallPilotPlayerId": null,
+    "largePilotPlayerId": null,
+    "insurancePlayerId": null
+  },
+  "placement": {
+    "roundIndex": 0,
+    "totalRounds": 4,
+    "currentPlayerId": null,
+    "completedPlayerIds": []
+  },
+  "movement": {
+    "roundIndex": 0,
+    "dieResults": {
+      "ginseng": null,
+      "nutmeg": null,
+      "silk": null,
+      "jade": null
+    },
+    "unresolvedPuntIds": [],
+    "resolvedOrder": []
+  },
+  "pendingPirate": null,
+  "settlement": null,
+  "winnerPlayerIds": []
+}
+

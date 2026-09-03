@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/manila/card-model.schema.json",
+  "title": "Manila share card model",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "modelVersion",
+    "modelId",
+    "gameKey",
+    "cardKind",
+    "copiesPerCommodity",
+    "geometry",
+    "front",
+    "back",
+    "commodities",
+    "states",
+    "privacy",
+    "accessibility",
+    "copyrightBoundary"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "const": "1.0.0" },
+    "modelId": { "const": "manila-share-card-v1" },
+    "gameKey": { "const": "manila" },
+    "cardKind": { "const": "commodity_share" },
+    "copiesPerCommodity": { "const": 5 },
+    "geometry": {
+      "type": "object",
+      "required": [
+        "logicalWidth",
+        "logicalHeight",
+        "cornerRadius",
+        "safeInset",
+        "headerZone",
+        "identityZone",
+        "statusZone",
+        "minimumTouchTarget",
+        "units"
+      ],
+      "properties": {
+        "logicalWidth": { "type": "number", "exclusiveMinimum": 0 },
+        "logicalHeight": { "type": "number", "exclusiveMinimum": 0 },
+        "cornerRadius": { "type": "number", "minimum": 0 },
+        "safeInset": { "type": "number", "minimum": 0 },
+        "headerZone": { "$ref": "#/$defs/zone" },
+        "identityZone": { "$ref": "#/$defs/zone" },
+        "statusZone": { "$ref": "#/$defs/zone" },
+        "minimumTouchTarget": { "type": "number", "minimum": 44 },
+        "units": { "type": "string" }
+      }
+    },
+    "front": { "type": "object" },
+    "back": {
+      "type": "object",
+      "required": ["sharedAcrossAllCommodities", "design", "containsCommodityHint"],
+      "properties": {
+        "sharedAcrossAllCommodities": { "const": true },
+        "design": { "type": "string" },
+        "containsCommodityHint": { "const": false }
+      }
+    },
+    "commodities": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "labelEn", "code", "semanticColor", "pattern"],
+        "properties": {
+          "id": { "enum": ["ginseng", "nutmeg", "silk", "jade"] },
+          "label": { "type": "string", "minLength": 1 },
+          "labelEn": { "type": "string", "minLength": 1 },
+          "code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+          "semanticColor": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+          "pattern": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "states": { "type": "object" },
+    "privacy": { "type": "object" },
+    "accessibility": { "type": "object" },
+    "copyrightBoundary": { "type": "string", "minLength": 20 }
+  },
+  "$defs": {
+    "zone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0 },
+        "y": { "type": "number", "minimum": 0 },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    }
+  }
+}
+

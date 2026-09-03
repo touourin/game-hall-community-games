@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1058" height="1368" viewBox="0 0 1058 1368"
+     role="img" aria-labelledby="title desc" data-model-version="1.0.0" data-source-sha256="e428d2df851ed9aa2c51445193f5014b26fa0b630e17f4b2dbe1d58e149d4794">
+  <title id="title">亡命神抽 17 张基础特性牌建模总览</title>
+  <desc id="desc">原创功能建模图，不含官方插画、Logo 或扫描素材。</desc>
+  <metadata>Generated from model/card-catalog.json and model/scene-catalog.json</metadata>
+  <rect width="1058" height="1368" fill="#E7DBC2"/><text x="44" y="46" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="30" font-weight="700" fill="#1E2928">亡命神抽 · 17 张基础特性牌</text><text x="44" y="76" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="15" fill="#5E6965">规则修改器总览 · 每位玩家基础规则选择一张</text>
+        <g data-trait-id="trait-golden-scales" transform="translate(44 106)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#985173"/>
+          <circle cx="52" cy="73" r="34" fill="#985173" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#985173" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M0 -37C-18 -30 -29 -15 -29 4C-29 26 -12 39 0 45C12 39 29 26 29 4C29 -15 18 -30 0 -37Z"/><path d="M0 -31V39 M-23 -8C-10 -3 10 -3 23 -8 M-27 9C-11 14 11 14 27 9 M-19 27C-7 28 7 28 19 27"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">金鳞</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Golden Scales</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#985173" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#985173">强制特性 · mermaid</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">自己每张美人鱼的计分值</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">增加 5。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">01 / 17</text>
+        </g>
+        <g data-trait-id="trait-casanova" transform="translate(374 106)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#985173"/>
+          <circle cx="52" cy="73" r="34" fill="#985173" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#985173" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M0 -37C-18 -30 -29 -15 -29 4C-29 26 -12 39 0 45C12 39 29 26 29 4C29 -15 18 -30 0 -37Z"/><path d="M0 -31V39 M-23 -8C-10 -3 10 -3 23 -8 M-27 9C-11 14 11 14 27 9 M-19 27C-7 28 7 28 19 27"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">风流船长</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Casanova</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#985173" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#985173">强制特性 · mermaid</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">从抽牌堆抽到美人鱼时，在入场</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">前直接收入银行。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">02 / 17</text>
+        </g>
+        <g data-trait-id="trait-plunderer" transform="translate(704 106)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#A77B28"/>
+          <circle cx="52" cy="73" r="34" fill="#A77B28" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#A77B28" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="-21" cy="-10" r="15"/><circle cx="-21" cy="-10" r="5"/><path d="M-9 0L29 30 M13 16L22 7 M23 25L31 17"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">掠夺者</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Plunderer</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#A77B28" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#A77B28">强制特性 · key</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">钥匙宝箱奖励改为从所选一名对</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">手整个银行随机取得。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">03 / 17</text>
+        </g>
+        <g data-trait-id="trait-treasure-hunter" transform="translate(44 310)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#A77B28"/>
+          <circle cx="52" cy="73" r="34" fill="#A77B28" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#A77B28" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="-21" cy="-10" r="15"/><circle cx="-21" cy="-10" r="5"/><path d="M-9 0L29 30 M13 16L22 7 M23 25L31 17"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">寻宝专家</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Treasure Hunter</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#A77B28" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#A77B28">强制特性 · key</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">钥匙宝箱奖励数量加倍。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">04 / 17</text>
+        </g>
+        <g data-trait-id="trait-navigator" transform="translate(374 310)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#53744E"/>
+          <circle cx="52" cy="73" r="34" fill="#53744E" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#53744E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M-38 -31L-13 -38L13 -30L38 -38V31L13 38L-13 30L-38 38Z M-13 -38V30 M13 -30V38"/><path d="M-27 17C-12 2 -8 -14 4 -12C16 -10 13 7 28 13 M23 8L30 15 M30 8L23 15"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">领航员</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Navigator</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#53744E" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#53744E">强制特性 · map</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">藏宝图可以从整个弃牌内容中</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">选择一张。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">05 / 17</text>
+        </g>
+        <g data-trait-id="trait-master-gunner" transform="translate(704 310)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#9D4B3D"/>
+          <circle cx="52" cy="73" r="34" fill="#9D4B3D" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#9D4B3D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M-35 -14L20 -5L16 17L-39 8Z"/><circle cx="-8" cy="24" r="13"/><path d="M20 -2L35 -8 M-35 -4L-43 -7 M18 -9C24 -20 29 -22 35 -26"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">炮术大师</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Master Gunner</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#9D4B3D" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#9D4B3D">强制特性 · cannon</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">火炮弃掉所选对手的整个花色堆。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">06 / 17</text>
+        </g>
+        <g data-trait-id="trait-scavenger" transform="translate(44 514)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#9D4B3D"/>
+          <circle cx="52" cy="73" r="34" fill="#9D4B3D" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#9D4B3D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M-35 -14L20 -5L16 17L-39 8Z"/><circle cx="-8" cy="24" r="13"/><path d="M20 -2L35 -8 M-35 -4L-43 -7 M18 -9C24 -20 29 -22 35 -26"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">拾荒者</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Scavenger</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#9D4B3D" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#9D4B3D">强制特性 · cannon</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">火炮移除的牌改为进入自</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">己的银行。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">07 / 17</text>
+        </g>
+        <g data-trait-id="trait-mystic" transform="translate(374 514)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#615287"/>
+          <circle cx="52" cy="73" r="34" fill="#615287" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#615287" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="0" cy="-5" r="32"/><path d="M-25 19L-34 37H34L25 19 M-18 -8C-7 -24 9 -25 20 -12C9 -14 1 -7 0 4C-9 -1 -15 -4 -18 -8Z"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">神秘学家</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Mystic</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#615287" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#615287">强制特性 · oracle</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">水晶球公开查看抽牌堆顶连续三</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">张且不得重排。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">08 / 17</text>
+        </g>
+        <g data-trait-id="trait-swordsman" transform="translate(704 514)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#5F6D75"/>
+          <circle cx="52" cy="73" r="34" fill="#5F6D75" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#5F6D75" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M-29 31L24 -31L31 -39L29 -27L-22 36Z"/><path d="M-33 12L-7 34 M-28 37L-19 46"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">剑术大师</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Swordsman</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#5F6D75" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#5F6D75">强制特性 · sword</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">弯刀可以选择自己银行已经拥</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">有的花色。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">09 / 17</text>
+        </g>
+        <g data-trait-id="trait-miser" transform="translate(44 718)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#765642"/>
+          <circle cx="52" cy="73" r="34" fill="#765642" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#765642" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 -38V10C4 29 -7 39 -22 34C-36 29 -38 12 -29 2 M-29 2L-31 18 M-29 2L-14 8"/><path d="M-6 -38H14"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">守财奴</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Miser</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#765642" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#765642">强制特性 · hook</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">抓钩及它直接带入航道的牌受</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">爆牌保护。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">10 / 17</text>
+        </g>
+        <g data-trait-id="trait-captains-hook" transform="translate(374 718)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#765642"/>
+          <circle cx="52" cy="73" r="34" fill="#765642" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#765642" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 -38V10C4 29 -7 39 -22 34C-36 29 -38 12 -29 2 M-29 2L-31 18 M-29 2L-14 8"/><path d="M-6 -38H14"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">双钩船长</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Captain&#x27;s Hook</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#765642" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#765642">强制特性 · hook</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">抓钩依次从自己银行带入两张牌。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">11 / 17</text>
+        </g>
+        <g data-trait-id="trait-safe-harbor" transform="translate(704 718)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#2E7480"/>
+          <circle cx="52" cy="73" r="34" fill="#2E7480" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#2E7480" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="0" cy="-25" r="10"/><path d="M0 -15V31 M-29 10C-22 31 -9 39 0 31C9 39 22 31 29 10 M-29 10L-17 6 M29 10L17 6"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">安全港</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Safe Harbor</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#2E7480" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#2E7480">强制特性 · anchor</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">船锚自身与之后两张成功入场</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">牌受保护。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">12 / 17</text>
+        </g>
+        <g data-trait-id="trait-fisherman" transform="translate(44 922)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#345B58"/>
+          <circle cx="52" cy="73" r="34" fill="#345B58" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#345B58" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M-27 1C-27 -23 -16 -36 0 -36C16 -36 27 -23 27 1V12"/><circle cx="-9" cy="-9" r="3" fill="#345B58" stroke="none"/><circle cx="9" cy="-9" r="3" fill="#345B58" stroke="none"/><path d="M-27 10C-42 18 -37 39 -20 37C-6 36 -12 16 -1 13C12 9 3 39 20 38C38 37 42 17 27 10 M-10 15C-19 25 -15 42 -4 43 M11 15C20 25 17 42 7 44"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">渔夫</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Fisherman</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#345B58" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#345B58">强制特性 · kraken</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">从抽牌堆抽到海怪时，在入场前</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">直接收入银行。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">13 / 17</text>
+        </g>
+        <g data-trait-id="trait-beastmaster" transform="translate(374 922)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#345B58"/>
+          <circle cx="52" cy="73" r="34" fill="#345B58" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#345B58" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M-27 1C-27 -23 -16 -36 0 -36C16 -36 27 -23 27 1V12"/><circle cx="-9" cy="-9" r="3" fill="#345B58" stroke="none"/><circle cx="9" cy="-9" r="3" fill="#345B58" stroke="none"/><path d="M-27 10C-42 18 -37 39 -20 37C-6 36 -12 16 -1 13C12 9 3 39 20 38C38 37 42 17 27 10 M-10 15C-19 25 -15 42 -4 43 M11 15C20 25 17 42 7 44"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">驯兽师</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Beastmaster</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#345B58" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#345B58">强制特性 · kraken</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">所有对手的海怪改为要求再</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">入场四张。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">14 / 17</text>
+        </g>
+        <g data-trait-id="trait-misfire" transform="translate(704 922)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#9D4B3D"/>
+          <circle cx="52" cy="73" r="34" fill="#9D4B3D" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#9D4B3D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M-35 -14L20 -5L16 17L-39 8Z"/><circle cx="-8" cy="24" r="13"/><path d="M20 -2L35 -8 M-35 -4L-43 -7 M18 -9C24 -20 29 -22 35 -26"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">哑火</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Misfire</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#9D4B3D" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#9D4B3D">强制特性 · cannon</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">对手的火炮改为弃掉其自己银行</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">一个花色堆的顶牌。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">15 / 17</text>
+        </g>
+        <g data-trait-id="trait-parry" transform="translate(44 1126)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#5F6D75"/>
+          <circle cx="52" cy="73" r="34" fill="#5F6D75" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#5F6D75" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M-29 31L24 -31L31 -39L29 -27L-22 36Z"/><path d="M-33 12L-7 34 M-28 37L-19 46"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">格挡</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Parry</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#5F6D75" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#5F6D75">强制特性 · sword</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">对手弯刀必须从本特性拥有者的</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">海怪堆取牌；没有则弃掉弯刀。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">16 / 17</text>
+        </g>
+        <g data-trait-id="trait-davy-jones-locker" transform="translate(374 1126)">
+          <rect width="310" height="184" rx="16" fill="#FFF7E5" stroke="#B9A477" stroke-width="2"/>
+          <rect width="12" height="184" rx="6" fill="#6F4F32"/>
+          <circle cx="52" cy="73" r="34" fill="#6F4F32" opacity="0.13"/>
+          <g transform="translate(52.0 73.0) scale(0.420)" fill="none" stroke="#6F4F32" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="0" cy="-25" r="10"/><path d="M0 -15V31 M-29 10C-22 31 -9 39 0 31C9 39 22 31 29 10 M-29 10L-17 6 M29 10L17 6"/></g>
+          <text x="92" y="36" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="21" font-weight="700" fill="#1E2928">戴维·琼斯的魔柜</text>
+          <text x="92" y="59" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#6A736F">Davy Jones&#x27; Locker</text>
+          <rect x="92" y="70" width="104" height="21" rx="10" fill="#6F4F32" opacity="0.15"/>
+          <text x="144" y="85" text-anchor="middle" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="11" font-weight="700" fill="#6F4F32">强制特性 · global</text>
+          <text x="92" y="101" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">开局指定一名对手；该对手爆牌</text><text x="92" y="121" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">时本应弃掉的牌改由自己</text><text x="92" y="141" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="13" fill="#34413E">收入银行。</text>
+          <text x="295" y="171" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="10" fill="#8B806B">17 / 17</text>
+        </g><text x="1014" y="1346" text-anchor="end" font-family="'Microsoft YaHei','Noto Sans CJK SC','PingFang SC',sans-serif" font-size="12" fill="#746A58">非官方建模资产 · 人物区为抽象占位</text>
+</svg>

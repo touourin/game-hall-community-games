@@ -1,0 +1,324 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/ticket-to-ride-europe/view-state.schema.json",
+  "title": "Sanitized Ticket to Ride Europe view state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "gameKey",
+    "viewer",
+    "phase",
+    "revision",
+    "currentPlayerId",
+    "players",
+    "market",
+    "trainDeckCount",
+    "trainDiscardCount",
+    "destinationDeckCount",
+    "board",
+    "self",
+    "publicPendingTunnel",
+    "finalRound",
+    "actions",
+    "latestEvent",
+    "result"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "gameKey": { "const": "ticket-to-ride-europe-base" },
+    "viewer": { "$ref": "#/$defs/viewer" },
+    "phase": { "$ref": "#/$defs/phase" },
+    "revision": { "type": "integer", "minimum": 0 },
+    "currentPlayerId": { "$ref": "#/$defs/nullablePlayerId" },
+    "players": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/publicPlayer" }
+    },
+    "market": {
+      "type": "array",
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/cardInstance" }
+    },
+    "trainDeckCount": { "type": "integer", "minimum": 0, "maximum": 110 },
+    "trainDiscardCount": { "type": "integer", "minimum": 0, "maximum": 110 },
+    "destinationDeckCount": { "type": "integer", "minimum": 0, "maximum": 46 },
+    "board": { "$ref": "#/$defs/publicBoard" },
+    "self": {
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/privateSelf" }]
+    },
+    "publicPendingTunnel": {
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/publicTunnel" }]
+    },
+    "finalRound": {
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/finalRound" }]
+    },
+    "actions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/action" }
+    },
+    "latestEvent": {
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/publicEvent" }]
+    },
+    "result": {
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/publicResult" }]
+    }
+  },
+  "$defs": {
+    "phase": {
+      "enum": [
+        "setup_ticket_selection",
+        "turn_idle",
+        "train_draw_second",
+        "tunnel_payment",
+        "ticket_choice",
+        "final_station_assignment",
+        "scoring",
+        "finished"
+      ]
+    },
+    "playerId": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]*$" },
+    "nullablePlayerId": {
+      "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/playerId" }]
+    },
+    "routeId": { "type": "string", "pattern": "^route-[a-z0-9-]+$" },
+    "cityId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "ticketId": { "type": "string", "pattern": "^ticket-(long|regular)-[0-9]{3}$" },
+    "cardInstance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["instanceId", "typeId"],
+      "properties": {
+        "instanceId": { "type": "string", "pattern": "^train-[a-z]+-[0-9]{2}$" },
+        "typeId": {
+          "type": "string",
+          "pattern": "^train-(purple|blue|orange|white|green|yellow|black|red|locomotive)$"
+        }
+      }
+    },
+    "viewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "playerId"],
+      "properties": {
+        "mode": { "enum": ["player", "spectator"] },
+        "playerId": { "$ref": "#/$defs/nullablePlayerId" }
+      }
+    },
+    "publicPlayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "seatIndex",
+        "status",
+        "score",
+        "trainsRemaining",
+        "stationsRemaining",
+        "trainHandCount",
+        "destinationTicketCount",
+        "initialTicketChoiceSubmitted",
+        "finalStationAssignmentSubmitted"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/playerId" },
+        "seatIndex": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "status": { "enum": ["active", "forfeited", "disconnected"] },
+        "score": { "type": "integer" },
+        "trainsRemaining": { "type": "integer", "minimum": 0, "maximum": 45 },
+        "stationsRemaining": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "trainHandCount": { "type": "integer", "minimum": 0, "maximum": 110 },
+        "destinationTicketCount": { "type": "integer", "minimum": 0, "maximum": 46 },
+        "initialTicketChoiceSubmitted": { "type": "boolean" },
+        "finalStationAssignmentSubmitted": { "type": "boolean" }
+      }
+    },
+    "publicBoard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimedRoutes", "stationPlacements", "claimableRouteIds"],
+      "properties": {
+        "claimedRoutes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["routeId", "ownerPlayerId"],
+            "properties": {
+              "routeId": { "$ref": "#/$defs/routeId" },
+              "ownerPlayerId": { "$ref": "#/$defs/playerId" }
+            }
+          }
+        },
+        "stationPlacements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["cityId", "ownerPlayerId"],
+            "properties": {
+              "cityId": { "$ref": "#/$defs/cityId" },
+              "ownerPlayerId": { "$ref": "#/$defs/playerId" }
+            }
+          }
+        },
+        "claimableRouteIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/routeId" }
+        }
+      }
+    },
+    "ticketSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ticketId", "fromCityId", "toCityId", "points", "category", "completionPreview"],
+      "properties": {
+        "ticketId": { "$ref": "#/$defs/ticketId" },
+        "fromCityId": { "$ref": "#/$defs/cityId" },
+        "toCityId": { "$ref": "#/$defs/cityId" },
+        "points": { "type": "integer", "minimum": 5, "maximum": 21 },
+        "category": { "enum": ["long", "regular"] },
+        "completionPreview": { "type": "boolean" }
+      }
+    },
+    "privateTicketChoice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["offeredTickets", "minKeep", "kind"],
+      "properties": {
+        "offeredTickets": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/ticketSummary" }
+        },
+        "minKeep": { "type": "integer", "minimum": 1, "maximum": 2 },
+        "kind": { "enum": ["initial", "turn"] }
+      }
+    },
+    "privateTunnelPayment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["routeId", "declaredColor", "initialCards", "revealedCards", "extraCost", "paymentMode"],
+      "properties": {
+        "routeId": { "$ref": "#/$defs/routeId" },
+        "declaredColor": { "enum": ["purple", "blue", "orange", "white", "green", "yellow", "black", "red", "locomotive"] },
+        "initialCards": { "type": "array", "items": { "$ref": "#/$defs/cardInstance" } },
+        "revealedCards": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/cardInstance" } },
+        "extraCost": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "paymentMode": { "enum": ["declared-color", "locomotive-only"] }
+      }
+    },
+    "privateSelf": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playerId", "trainHand", "destinationTickets", "pendingTicketChoice", "pendingTunnelPayment"],
+      "properties": {
+        "playerId": { "$ref": "#/$defs/playerId" },
+        "trainHand": { "type": "array", "items": { "$ref": "#/$defs/cardInstance" } },
+        "destinationTickets": { "type": "array", "items": { "$ref": "#/$defs/ticketSummary" } },
+        "pendingTicketChoice": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/privateTicketChoice" }]
+        },
+        "pendingTunnelPayment": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/privateTunnelPayment" }]
+        }
+      }
+    },
+    "publicTunnel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actorPlayerId", "routeId", "revealedCards", "extraCost", "status"],
+      "properties": {
+        "actorPlayerId": { "$ref": "#/$defs/playerId" },
+        "routeId": { "$ref": "#/$defs/routeId" },
+        "revealedCards": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/cardInstance" } },
+        "extraCost": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "status": { "enum": ["revealing", "awaiting_payment"] }
+      }
+    },
+    "finalRound": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["triggerPlayerId", "remainingPlayerIds"],
+      "properties": {
+        "triggerPlayerId": { "$ref": "#/$defs/playerId" },
+        "remainingPlayerIds": {
+          "type": "array",
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/playerId" }
+        }
+      }
+    },
+    "action": {
+      "enum": [
+        "keep_initial_tickets",
+        "draw_train_card",
+        "claim_route",
+        "draw_destination_tickets",
+        "build_station",
+        "pay_tunnel_extra",
+        "decline_tunnel",
+        "keep_destination_tickets",
+        "assign_station_routes"
+      ]
+    },
+    "publicEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequence", "type", "publicMessage"],
+      "properties": {
+        "sequence": { "type": "integer", "minimum": 1 },
+        "type": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "publicMessage": { "type": "string", "minLength": 1 }
+      }
+    },
+    "publicScore": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playerId", "routePoints", "destinationPoints", "stationPoints", "longestPathPoints", "total"],
+      "properties": {
+        "playerId": { "$ref": "#/$defs/playerId" },
+        "routePoints": { "type": "integer", "minimum": 0 },
+        "destinationPoints": { "type": "integer" },
+        "stationPoints": { "type": "integer", "minimum": 0, "maximum": 12 },
+        "longestPathPoints": { "enum": [0, 10] },
+        "total": { "type": "integer" }
+      }
+    },
+    "publicResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["winnerPlayerIds", "ranking", "scoreBreakdown"],
+      "properties": {
+        "winnerPlayerIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/playerId" }
+        },
+        "ranking": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/playerId" }
+        },
+        "scoreBreakdown": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/publicScore" }
+        }
+      }
+    }
+  }
+}

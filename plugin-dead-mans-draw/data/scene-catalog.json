@@ -1,0 +1,105 @@
+{
+  "$schema": "./scene-catalog.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "dead-mans-draw",
+  "logicalCanvas": { "width": 1600, "height": 900, "unit": "logical-pixel" },
+  "theme": {
+    "table": "#173B3A",
+    "tableEdge": "#6F4F32",
+    "paper": "#EFE2C4",
+    "paperShadow": "#B7A47D",
+    "ink": "#1E2928",
+    "mutedInk": "#5E6965",
+    "brass": "#B28A4A",
+    "danger": "#A3473D",
+    "protected": "#4F7F78",
+    "focus": "#F2C96D",
+    "panel": "#203F3E",
+    "white": "#FFF9EA"
+  },
+  "cardMetrics": {
+    "width": 240,
+    "height": 336,
+    "cornerRadius": 18,
+    "compactWidth": 96,
+    "minimumTarget": 44
+  },
+  "breakpoints": { "compactMax": 759, "mediumMax": 1179, "wideMin": 1180 },
+  "zones": [
+    { "id": "status_rail", "role": "回合、规则档案、变体和牌数", "rect": { "x": 0.03, "y": 0.02, "width": 0.94, "height": 0.07 }, "zIndex": 20, "visibility": "always", "interaction": "read-only" },
+    { "id": "opponent_north", "role": "顶部对手银行", "rect": { "x": 0.28, "y": 0.10, "width": 0.44, "height": 0.17 }, "zIndex": 10, "visibility": "player-count-dependent", "interaction": "effect-target" },
+    { "id": "opponent_west", "role": "左侧对手银行", "rect": { "x": 0.02, "y": 0.20, "width": 0.20, "height": 0.44 }, "zIndex": 10, "visibility": "player-count-dependent", "interaction": "effect-target" },
+    { "id": "opponent_east", "role": "右侧对手银行", "rect": { "x": 0.78, "y": 0.20, "width": 0.20, "height": 0.44 }, "zIndex": 10, "visibility": "player-count-dependent", "interaction": "effect-target" },
+    { "id": "discard_pile", "role": "弃牌与藏宝图来源", "rect": { "x": 0.15, "y": 0.36, "width": 0.09, "height": 0.20 }, "zIndex": 12, "visibility": "always", "interaction": "expandable" },
+    { "id": "play_lane", "role": "本回合有序航道", "rect": { "x": 0.25, "y": 0.31, "width": 0.50, "height": 0.28 }, "zIndex": 14, "visibility": "always", "interaction": "effect-target" },
+    { "id": "draw_pile", "role": "抽牌堆与主抽牌操作", "rect": { "x": 0.76, "y": 0.36, "width": 0.09, "height": 0.20 }, "zIndex": 12, "visibility": "always", "interaction": "primary-action" },
+    { "id": "risk_meter", "role": "已出现爆牌键与海怪债务", "rect": { "x": 0.33, "y": 0.60, "width": 0.34, "height": 0.06 }, "zIndex": 18, "visibility": "always", "interaction": "read-only" },
+    { "id": "self_bank", "role": "当前视角玩家十个银行花色堆", "rect": { "x": 0.17, "y": 0.68, "width": 0.66, "height": 0.17 }, "zIndex": 12, "visibility": "always", "interaction": "effect-target" },
+    { "id": "action_dock", "role": "抽牌、收牌和规则操作", "rect": { "x": 0.26, "y": 0.86, "width": 0.48, "height": 0.11 }, "zIndex": 30, "visibility": "always", "interaction": "primary-action" },
+    { "id": "effect_sheet", "role": "强制效果说明与服务端合法选项", "rect": { "x": 0.28, "y": 0.57, "width": 0.44, "height": 0.28 }, "zIndex": 50, "visibility": "phase-dependent", "interaction": "modal" },
+    { "id": "event_tape", "role": "最近公开事件", "rect": { "x": 0.02, "y": 0.68, "width": 0.13, "height": 0.26 }, "zIndex": 8, "visibility": "always", "interaction": "expandable" },
+    { "id": "score_overlay", "role": "终局逐花色计分与胜负", "rect": { "x": 0.16, "y": 0.10, "width": 0.68, "height": 0.78 }, "zIndex": 60, "visibility": "phase-dependent", "interaction": "modal" }
+  ],
+  "seatLayouts": [
+    {
+      "playerCount": 2,
+      "seats": [
+        { "relativeSeat": 0, "zoneId": "self_bank", "rotation": 0 },
+        { "relativeSeat": 1, "zoneId": "opponent_north", "rotation": 180 }
+      ]
+    },
+    {
+      "playerCount": 3,
+      "seats": [
+        { "relativeSeat": 0, "zoneId": "self_bank", "rotation": 0 },
+        { "relativeSeat": 1, "zoneId": "opponent_west", "rotation": 90 },
+        { "relativeSeat": 2, "zoneId": "opponent_east", "rotation": 270 }
+      ]
+    },
+    {
+      "playerCount": 4,
+      "seats": [
+        { "relativeSeat": 0, "zoneId": "self_bank", "rotation": 0 },
+        { "relativeSeat": 1, "zoneId": "opponent_west", "rotation": 90 },
+        { "relativeSeat": 2, "zoneId": "opponent_north", "rotation": 180 },
+        { "relativeSeat": 3, "zoneId": "opponent_east", "rotation": 270 }
+      ]
+    }
+  ],
+  "scenes": [
+    { "id": "trait_selection", "phase": "trait_selection", "requiredZones": ["status_rail", "effect_sheet"], "primaryActions": ["choose_trait", "choose_locker_target"], "focusTarget": "effect_sheet", "announcementZh": "请选择一项特性；其他玩家看不到未选择的候选。" },
+    { "id": "turn_ready", "phase": "turn", "requiredZones": ["status_rail", "discard_pile", "play_lane", "draw_pile", "risk_meter", "self_bank", "action_dock"], "primaryActions": ["draw", "collect"], "focusTarget": "action_dock", "announcementZh": "能力已结算，可以收牌或继续抽。" },
+    { "id": "effect_choice", "phase": "effect_choice", "requiredZones": ["play_lane", "self_bank", "effect_sheet"], "primaryActions": ["resolve_effect"], "focusTarget": "effect_sheet", "announcementZh": "必须解决当前花色能力。" },
+    { "id": "forced_draw", "phase": "turn", "requiredZones": ["play_lane", "draw_pile", "risk_meter", "action_dock"], "primaryActions": ["draw"], "focusTarget": "draw_pile", "announcementZh": "海怪仍要求更多牌进入航道，当前不能收牌。" },
+    { "id": "bust_resolution", "phase": "presentation", "requiredZones": ["play_lane", "discard_pile", "risk_meter"], "primaryActions": [], "focusTarget": "play_lane", "announcementZh": "发生爆牌，正在结算保护和牌的去向。" },
+    { "id": "collect_resolution", "phase": "presentation", "requiredZones": ["play_lane", "self_bank"], "primaryActions": [], "focusTarget": "play_lane", "announcementZh": "本回合战利品正在收入银行。" },
+    { "id": "finished", "phase": "finished", "requiredZones": ["score_overlay"], "primaryActions": ["restart"], "focusTarget": "score_overlay", "announcementZh": "牌局结束，逐项得分已经结算。" }
+  ],
+  "animationCues": [
+    { "id": "card_drawn", "durationMs": 240, "fromZone": "draw_pile", "toZone": "play_lane", "reducedMotion": "fade", "ariaTemplateZh": "{player} 抽到 {card}。" },
+    { "id": "card_entered", "durationMs": 180, "fromZone": null, "toZone": "play_lane", "reducedMotion": "outline", "ariaTemplateZh": "{card} 进入航道。" },
+    { "id": "effect_targeted", "durationMs": 300, "fromZone": "play_lane", "toZone": null, "reducedMotion": "outline", "ariaTemplateZh": "{ability} 选择了 {target}。" },
+    { "id": "card_transferred", "durationMs": 360, "fromZone": null, "toZone": null, "reducedMotion": "fade", "ariaTemplateZh": "{card} 从 {from} 移到 {to}。" },
+    { "id": "oracle_revealed", "durationMs": 500, "fromZone": "draw_pile", "toZone": "draw_pile", "reducedMotion": "fade", "ariaTemplateZh": "水晶球公开了 {cards}。" },
+    { "id": "kraken_debt_changed", "durationMs": 260, "fromZone": "play_lane", "toZone": "risk_meter", "reducedMotion": "outline", "ariaTemplateZh": "海怪仍要求 {count} 张牌。" },
+    { "id": "bust_detected", "durationMs": 520, "fromZone": "play_lane", "toZone": "play_lane", "reducedMotion": "outline", "ariaTemplateZh": "{key} 重复，发生爆牌。" },
+    { "id": "protected_split", "durationMs": 650, "fromZone": "play_lane", "toZone": "self_bank", "reducedMotion": "fade", "ariaTemplateZh": "{count} 张受保护牌进入银行，其余牌按爆牌规则处理。" },
+    { "id": "key_chest_bonus", "durationMs": 600, "fromZone": "discard_pile", "toZone": "self_bank", "reducedMotion": "fade", "ariaTemplateZh": "钥匙与宝箱带来 {count} 张奖励牌。" },
+    { "id": "turn_changed", "durationMs": 220, "fromZone": null, "toZone": null, "reducedMotion": "outline", "ariaTemplateZh": "轮到 {player}。" },
+    { "id": "score_resolved", "durationMs": 800, "fromZone": "self_bank", "toZone": "score_overlay", "reducedMotion": "fade", "ariaTemplateZh": "{player} 最终得到 {score} 分。" }
+  ],
+  "responsiveStrategy": {
+    "wide": "四边牌桌，侧边玩家银行纵向显示，航道保持中央横向主视觉。",
+    "medium": "所有对手移到顶部三列，自己的十个银行槽允许两行。",
+    "compact": "单列牌桌，航道仅在自身容器横向滚动，底部固定操作条。",
+    "narrow": "小于等于 390px 时卡面隐藏能力短句，效果详情使用底部面板。"
+  },
+  "accessibility": {
+    "notColorOnly": true,
+    "liveRegion": "polite for normal events, assertive for bust and game end",
+    "reducedMotion": "replace movement, flip and shake with fade or persistent outline",
+    "keyboardActions": ["draw", "collect", "choose_trait", "choose_locker_target", "resolve_effect", "restart"],
+    "minimumContrast": 4.5
+  }
+}

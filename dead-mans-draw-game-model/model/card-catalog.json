@@ -1,0 +1,501 @@
+{
+  "$schema": "./card-catalog.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "dead-mans-draw",
+  "componentSummary": {
+    "lootCards": 60,
+    "baseTraits": 17,
+    "suits": 10,
+    "cardsPerSuit": 6
+  },
+  "sourceBasis": [
+    "https://www.maydaygames.com/products/dead-mans-draw",
+    "https://cdn.shopify.com/s/files/1/1098/0948/files/DMD_Rulebook.pdf?14247438916855222815=",
+    "https://www.maydaygames.com/blogs/news/dead-mans-draw-development-notes",
+    "https://store.steampowered.com/app/262450/Dead_Mans_Draw/"
+  ],
+  "suits": [
+    {
+      "id": "anchor",
+      "nameZh": "船锚",
+      "nameEn": "Anchor",
+      "symbol": "锚",
+      "icon": "anchor",
+      "color": "#2E7480",
+      "category": "protection",
+      "values": { "base": [2, 3, 4, 5, 6, 7], "mermaidVariant": [2, 3, 4, 5, 6, 7] },
+      "ability": {
+        "opcode": "protect-prefix",
+        "timing": "on_enter",
+        "choiceKind": "none",
+        "mandatory": true,
+        "canForceBust": false,
+        "summaryZh": "爆牌时仍收下船锚之前的牌。",
+        "params": { "includeSelf": false, "direction": "before" }
+      }
+    },
+    {
+      "id": "hook",
+      "nameZh": "抓钩",
+      "nameEn": "Hook",
+      "symbol": "钩",
+      "icon": "hook",
+      "color": "#765642",
+      "category": "replay",
+      "values": { "base": [2, 3, 4, 5, 6, 7], "mermaidVariant": [2, 3, 4, 5, 6, 7] },
+      "ability": {
+        "opcode": "play-from-own-bank",
+        "timing": "on_enter",
+        "choiceKind": "own_bank_stack",
+        "mandatory": true,
+        "canForceBust": true,
+        "summaryZh": "把自己银行一个花色堆的顶牌放入航道。",
+        "params": { "position": "top", "count": 1 }
+      }
+    },
+    {
+      "id": "cannon",
+      "nameZh": "火炮",
+      "nameEn": "Cannon",
+      "symbol": "炮",
+      "icon": "cannon",
+      "color": "#9D4B3D",
+      "category": "attack",
+      "values": { "base": [2, 3, 4, 5, 6, 7], "mermaidVariant": [2, 3, 4, 5, 6, 7] },
+      "ability": {
+        "opcode": "discard-opponent-bank",
+        "timing": "on_enter",
+        "choiceKind": "opponent_bank_stack",
+        "mandatory": true,
+        "canForceBust": false,
+        "summaryZh": "弃掉一名对手一个花色堆的顶牌。",
+        "params": { "position": "top", "quantity": "one", "destination": "discard" }
+      }
+    },
+    {
+      "id": "key",
+      "nameZh": "钥匙",
+      "nameEn": "Key",
+      "symbol": "钥",
+      "icon": "key",
+      "color": "#A77B28",
+      "category": "combo",
+      "values": { "base": [2, 3, 4, 5, 6, 7], "mermaidVariant": [2, 3, 4, 5, 6, 7] },
+      "ability": {
+        "opcode": "key-chest-bonus",
+        "timing": "on_collect",
+        "choiceKind": "none",
+        "mandatory": true,
+        "canForceBust": false,
+        "summaryZh": "与宝箱同批收牌时，从弃牌获得等量奖励。",
+        "params": { "requiresSuit": "chest", "multiplier": 1, "source": "discard", "destination": "actor-bank" }
+      }
+    },
+    {
+      "id": "chest",
+      "nameZh": "宝箱",
+      "nameEn": "Chest",
+      "symbol": "箱",
+      "icon": "chest",
+      "color": "#80612E",
+      "category": "combo",
+      "values": { "base": [2, 3, 4, 5, 6, 7], "mermaidVariant": [2, 3, 4, 5, 6, 7] },
+      "ability": {
+        "opcode": "key-chest-bonus",
+        "timing": "on_collect",
+        "choiceKind": "none",
+        "mandatory": true,
+        "canForceBust": false,
+        "summaryZh": "与钥匙同批收牌时，从弃牌获得等量奖励。",
+        "params": { "requiresSuit": "key", "multiplier": 1, "source": "discard", "destination": "actor-bank" }
+      }
+    },
+    {
+      "id": "map",
+      "nameZh": "藏宝图",
+      "nameEn": "Map",
+      "symbol": "图",
+      "icon": "map",
+      "color": "#53744E",
+      "category": "selection",
+      "values": { "base": [2, 3, 4, 5, 6, 7], "mermaidVariant": [2, 3, 4, 5, 6, 7] },
+      "ability": {
+        "opcode": "choose-from-discard",
+        "timing": "on_enter",
+        "choiceKind": "discard_card",
+        "mandatory": true,
+        "canForceBust": true,
+        "summaryZh": "混洗弃牌，公开至多三张并选一张放入航道。",
+        "params": { "candidateCount": 3, "shuffleBefore": true, "shuffleRemainder": true }
+      }
+    },
+    {
+      "id": "oracle",
+      "nameZh": "水晶球",
+      "nameEn": "Oracle",
+      "symbol": "晶",
+      "icon": "oracle",
+      "color": "#615287",
+      "category": "information",
+      "values": { "base": [2, 3, 4, 5, 6, 7], "mermaidVariant": [2, 3, 4, 5, 6, 7] },
+      "ability": {
+        "opcode": "peek-draw-pile",
+        "timing": "on_enter",
+        "choiceKind": "none",
+        "mandatory": true,
+        "canForceBust": false,
+        "summaryZh": "公开查看抽牌堆顶下一张，不改变顺序。",
+        "params": { "count": 1, "public": true, "reorder": false }
+      }
+    },
+    {
+      "id": "sword",
+      "nameZh": "弯刀",
+      "nameEn": "Sword",
+      "symbol": "刀",
+      "icon": "sword",
+      "color": "#5F6D75",
+      "category": "attack",
+      "values": { "base": [2, 3, 4, 5, 6, 7], "mermaidVariant": [2, 3, 4, 5, 6, 7] },
+      "ability": {
+        "opcode": "steal-opponent-bank",
+        "timing": "on_enter",
+        "choiceKind": "opponent_bank_stack",
+        "mandatory": true,
+        "canForceBust": true,
+        "summaryZh": "偷取自己银行尚无花色的对手顶牌并放入航道。",
+        "params": { "position": "top", "destination": "play", "requireSuitMissingFromActorBank": true }
+      }
+    },
+    {
+      "id": "kraken",
+      "nameZh": "海怪",
+      "nameEn": "Kraken",
+      "symbol": "怪",
+      "icon": "kraken",
+      "color": "#345B58",
+      "category": "forced",
+      "values": { "base": [2, 3, 4, 5, 6, 7], "mermaidVariant": [2, 3, 4, 5, 6, 7] },
+      "ability": {
+        "opcode": "add-forced-entries",
+        "timing": "on_enter",
+        "choiceKind": "none",
+        "mandatory": true,
+        "canForceBust": true,
+        "summaryZh": "收牌前必须再让两张牌成功进入航道。",
+        "params": { "count": 2, "fulfilBy": "successful-entry" }
+      }
+    },
+    {
+      "id": "mermaid",
+      "nameZh": "美人鱼",
+      "nameEn": "Mermaid",
+      "symbol": "鱼",
+      "icon": "mermaid",
+      "color": "#985173",
+      "category": "scoring",
+      "values": { "base": [4, 5, 6, 7, 8, 9], "mermaidVariant": [2, 3, 4, 5, 6, 7] },
+      "ability": {
+        "opcode": "high-value",
+        "timing": "passive_score",
+        "choiceKind": "none",
+        "mandatory": true,
+        "canForceBust": false,
+        "summaryZh": "基础版没有入场能力，但点数为 4–9。",
+        "params": { "activeAbility": false }
+      }
+    }
+  ],
+  "traits": [
+    {
+      "id": "trait-golden-scales",
+      "nameZh": "金鳞",
+      "nameEn": "Golden Scales",
+      "appliesTo": ["mermaid"],
+      "scope": "self",
+      "timing": ["score"],
+      "mandatory": true,
+      "summaryZh": "自己每张美人鱼的计分值增加 5。",
+      "modifier": { "opcode": "adjust-card-score", "params": { "suit": "mermaid", "amount": 5 } }
+    },
+    {
+      "id": "trait-casanova",
+      "nameZh": "风流船长",
+      "nameEn": "Casanova",
+      "appliesTo": ["mermaid"],
+      "scope": "self",
+      "timing": ["before-entry"],
+      "mandatory": true,
+      "summaryZh": "从抽牌堆抽到美人鱼时，在入场前直接收入银行。",
+      "modifier": { "opcode": "bank-on-draw-before-entry", "params": { "suit": "mermaid", "sources": ["draw"], "countsTowardKraken": false } },
+      "mermaidVariantSummaryZh": "触发美人鱼重演时，把所选牌收入自己的银行，不执行所选牌能力。",
+      "mermaidVariantModifier": { "opcode": "bank-mermaid-replay-target", "params": { "destination": "actor-bank", "activateTarget": false } }
+    },
+    {
+      "id": "trait-plunderer",
+      "nameZh": "掠夺者",
+      "nameEn": "Plunderer",
+      "appliesTo": ["key", "chest"],
+      "scope": "self",
+      "timing": ["on-collect"],
+      "mandatory": true,
+      "summaryZh": "钥匙宝箱奖励改为从所选一名对手整个银行随机取得。",
+      "modifier": { "opcode": "replace-key-chest-source", "params": { "source": "chosen-opponent-bank", "selection": "uniform-random", "singleOpponent": true, "fallback": "none" } }
+    },
+    {
+      "id": "trait-treasure-hunter",
+      "nameZh": "寻宝专家",
+      "nameEn": "Treasure Hunter",
+      "appliesTo": ["key", "chest"],
+      "scope": "self",
+      "timing": ["on-collect"],
+      "mandatory": true,
+      "summaryZh": "钥匙宝箱奖励数量加倍。",
+      "modifier": { "opcode": "multiply-key-chest-count", "params": { "factor": 2 } }
+    },
+    {
+      "id": "trait-navigator",
+      "nameZh": "领航员",
+      "nameEn": "Navigator",
+      "appliesTo": ["map"],
+      "scope": "self",
+      "timing": ["candidate-generation"],
+      "mandatory": true,
+      "summaryZh": "藏宝图可以从整个弃牌内容中选择一张。",
+      "modifier": { "opcode": "replace-map-candidates", "params": { "mode": "entire-discard" } }
+    },
+    {
+      "id": "trait-master-gunner",
+      "nameZh": "炮术大师",
+      "nameEn": "Master Gunner",
+      "appliesTo": ["cannon"],
+      "scope": "self",
+      "timing": ["ability-resolution"],
+      "mandatory": true,
+      "summaryZh": "火炮弃掉所选对手的整个花色堆。",
+      "modifier": { "opcode": "replace-cannon-quantity", "params": { "quantity": "entire-stack" } }
+    },
+    {
+      "id": "trait-scavenger",
+      "nameZh": "拾荒者",
+      "nameEn": "Scavenger",
+      "appliesTo": ["cannon"],
+      "scope": "self",
+      "timing": ["ability-resolution"],
+      "mandatory": true,
+      "summaryZh": "火炮移除的牌改为进入自己的银行。",
+      "modifier": { "opcode": "replace-cannon-destination", "params": { "destination": "actor-bank" } }
+    },
+    {
+      "id": "trait-mystic",
+      "nameZh": "神秘学家",
+      "nameEn": "Mystic",
+      "appliesTo": ["oracle"],
+      "scope": "self",
+      "timing": ["ability-resolution"],
+      "mandatory": true,
+      "summaryZh": "水晶球公开查看抽牌堆顶连续三张且不得重排。",
+      "modifier": { "opcode": "replace-oracle-peek-count", "params": { "count": 3, "reorder": false } }
+    },
+    {
+      "id": "trait-swordsman",
+      "nameZh": "剑术大师",
+      "nameEn": "Swordsman",
+      "appliesTo": ["sword"],
+      "scope": "self",
+      "timing": ["candidate-generation"],
+      "mandatory": true,
+      "summaryZh": "弯刀可以选择自己银行已经拥有的花色。",
+      "modifier": { "opcode": "remove-sword-bank-suit-restriction", "params": {} }
+    },
+    {
+      "id": "trait-miser",
+      "nameZh": "守财奴",
+      "nameEn": "Miser",
+      "appliesTo": ["hook"],
+      "scope": "self",
+      "timing": ["protection-update"],
+      "mandatory": true,
+      "summaryZh": "抓钩及它直接带入航道的牌受爆牌保护。",
+      "modifier": { "opcode": "protect-hook-and-direct-child", "params": { "includeHook": true, "includeDirectChildren": true } }
+    },
+    {
+      "id": "trait-captains-hook",
+      "nameZh": "双钩船长",
+      "nameEn": "Captain's Hook",
+      "appliesTo": ["hook"],
+      "scope": "self",
+      "timing": ["ability-resolution"],
+      "mandatory": true,
+      "summaryZh": "抓钩依次从自己银行带入两张牌。",
+      "modifier": { "opcode": "set-hook-play-count", "params": { "count": 2, "bestEffort": true } }
+    },
+    {
+      "id": "trait-safe-harbor",
+      "nameZh": "安全港",
+      "nameEn": "Safe Harbor",
+      "appliesTo": ["anchor"],
+      "scope": "self",
+      "timing": ["protection-update"],
+      "mandatory": true,
+      "summaryZh": "船锚自身与之后两张成功入场牌受保护。",
+      "modifier": { "opcode": "protect-anchor-and-next-entries", "params": { "includeAnchor": true, "nextSuccessfulEntries": 2 } }
+    },
+    {
+      "id": "trait-fisherman",
+      "nameZh": "渔夫",
+      "nameEn": "Fisherman",
+      "appliesTo": ["kraken"],
+      "scope": "self",
+      "timing": ["before-entry"],
+      "mandatory": true,
+      "summaryZh": "从抽牌堆抽到海怪时，在入场前直接收入银行。",
+      "modifier": { "opcode": "bank-on-draw-before-entry", "params": { "suit": "kraken", "sources": ["draw"], "countsTowardKraken": false } }
+    },
+    {
+      "id": "trait-beastmaster",
+      "nameZh": "驯兽师",
+      "nameEn": "Beastmaster",
+      "appliesTo": ["kraken"],
+      "scope": "opponents",
+      "timing": ["ability-resolution"],
+      "mandatory": true,
+      "summaryZh": "所有对手的海怪改为要求再入场四张。",
+      "modifier": { "opcode": "set-opponent-kraken-debt", "params": { "count": 4 } }
+    },
+    {
+      "id": "trait-misfire",
+      "nameZh": "哑火",
+      "nameEn": "Misfire",
+      "appliesTo": ["cannon"],
+      "scope": "opponents",
+      "timing": ["ability-resolution"],
+      "mandatory": true,
+      "summaryZh": "对手的火炮改为弃掉其自己银行一个花色堆的顶牌。",
+      "modifier": { "opcode": "replace-opponent-cannon-target", "params": { "target": "actor-bank", "position": "top", "destination": "discard" } }
+    },
+    {
+      "id": "trait-parry",
+      "nameZh": "格挡",
+      "nameEn": "Parry",
+      "appliesTo": ["sword"],
+      "scope": "opponents",
+      "timing": ["ability-resolution"],
+      "mandatory": true,
+      "summaryZh": "对手弯刀必须从本特性拥有者的海怪堆取牌；没有则弃掉弯刀。",
+      "modifier": { "opcode": "replace-opponent-sword-target", "params": { "owner": "trait-owner", "suit": "kraken", "position": "top", "onMissing": "discard-source-sword" } }
+    },
+    {
+      "id": "trait-davy-jones-locker",
+      "nameZh": "戴维·琼斯的魔柜",
+      "nameEn": "Davy Jones' Locker",
+      "appliesTo": ["global"],
+      "scope": "chosen-opponent",
+      "timing": ["setup", "after-bust"],
+      "mandatory": true,
+      "summaryZh": "开局指定一名对手；该对手爆牌时本应弃掉的牌改由自己收入银行。",
+      "modifier": { "opcode": "replace-chosen-opponent-bust-destination", "params": { "destination": "trait-owner-bank", "protectedCardsUnaffected": true } }
+    }
+  ],
+  "variants": [
+    {
+      "id": "variant-thieves-island",
+      "nameZh": "贼岛",
+      "nameEn": "Thieves Island",
+      "provenance": "official-web",
+      "axis": "bust-destination",
+      "summaryZh": "爆牌时本应弃掉的牌改由当前玩家左手边玩家收入银行。",
+      "modifier": { "opcode": "replace-bust-destination", "params": { "destination": "left-player-bank", "protectedCardsUnaffected": true } },
+      "requiresDigitalRuling": false
+    },
+    {
+      "id": "variant-pile-o-treasure",
+      "nameZh": "宝藏堆",
+      "nameEn": "Pile o' Treasure",
+      "provenance": "official-web",
+      "axis": "score-aggregation",
+      "summaryZh": "银行中的每张牌都计分。",
+      "modifier": { "opcode": "set-score-aggregation", "params": { "mode": "all-cards" } },
+      "requiresDigitalRuling": false
+    },
+    {
+      "id": "variant-sudden-death",
+      "nameZh": "猝死赛",
+      "nameEn": "Sudden Death",
+      "provenance": "official-web",
+      "axis": "instant-win",
+      "summaryZh": "首位银行计分达到或超过 50 的玩家立即获胜。",
+      "modifier": { "opcode": "set-instant-win-threshold", "params": { "threshold": 50, "comparison": "gte", "checkAfter": "atomic-bank-mutation" } },
+      "requiresDigitalRuling": false
+    },
+    {
+      "id": "variant-all-hands-on-deck",
+      "nameZh": "全员上甲板",
+      "nameEn": "All Hands on Deck",
+      "provenance": "official-web",
+      "axis": "end-score",
+      "summaryZh": "终局每缺少一个花色扣 5 分。",
+      "modifier": { "opcode": "apply-missing-suit-penalty", "params": { "pointsPerMissingSuit": -5 } },
+      "requiresDigitalRuling": false
+    },
+    {
+      "id": "variant-strange-lands",
+      "nameZh": "奇异之地",
+      "nameEn": "Strange Lands",
+      "provenance": "official-web",
+      "axis": "bust-key",
+      "summaryZh": "重复点数导致爆牌，重复花色不再爆牌。",
+      "modifier": { "opcode": "set-bust-key", "params": { "key": "value" } },
+      "requiresDigitalRuling": false
+    },
+    {
+      "id": "variant-beneath-the-waves",
+      "nameZh": "浪下求生",
+      "nameEn": "Beneath the Waves",
+      "provenance": "official-web",
+      "axis": "score-eligibility",
+      "summaryZh": "只有低于 60 分的玩家合格，在合格者中取最高分。",
+      "modifier": { "opcode": "set-score-eligibility", "params": { "maximumExclusive": 60, "noEligibleOutcome": "shared-draw" } },
+      "requiresDigitalRuling": true
+    },
+    {
+      "id": "variant-bottom-feeder",
+      "nameZh": "深海捞底",
+      "nameEn": "Bottom Feeder",
+      "provenance": "official-web",
+      "axis": "bank-target-position",
+      "summaryZh": "火炮和弯刀改为影响花色堆底部的最低点数牌。",
+      "modifier": { "opcode": "set-bank-target-position", "params": { "suits": ["cannon", "sword"], "position": "bottom" } },
+      "requiresDigitalRuling": false
+    }
+  ],
+  "mermaidVariant": {
+    "removedLootCardIds": ["loot-mermaid-8", "loot-mermaid-9"],
+    "addedLootCardIds": ["loot-mermaid-2", "loot-mermaid-3"],
+    "abilityOverride": {
+      "opcode": "replay-entry",
+      "timing": "on_enter",
+      "choiceKind": "play_entry",
+      "mandatory": true,
+      "canForceBust": true,
+      "summaryZh": "选择一张较早的航道牌移到美人鱼右侧并重演其能力。",
+      "params": { "candidatePosition": "before-self", "moveTo": "after-self", "countsTowardKraken": false }
+    },
+    "addedTrait": {
+      "id": "trait-siren",
+      "nameZh": "海妖",
+      "nameEn": "Siren",
+      "appliesTo": ["mermaid"],
+      "scope": "opponents",
+      "timing": ["ability-resolution"],
+      "mandatory": true,
+      "summaryZh": "对手选定美人鱼重演牌后，先把该牌收入自己的银行并阻止重演。",
+      "modifier": { "opcode": "intercept-opponent-mermaid-replay", "params": { "destination": "trait-owner-bank", "activateTarget": false } }
+    },
+    "casanovaOverride": {
+      "opcode": "bank-mermaid-replay-target",
+      "params": { "destination": "actor-bank", "activateTarget": false }
+    }
+  }
+}

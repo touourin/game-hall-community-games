@@ -1,0 +1,38 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-ticket-to-ride-europe",
+  "name": "欧洲车票之旅",
+  "description": "修筑欧洲铁路、完成秘密任务并经营火车站的 2–5 人策略游戏",
+  "category": "铁路策略",
+  "tone": "europe-rail",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 2,
+    "max": 5,
+    "label": "2–5 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "allowSpectators": true,
+    "firstPlayer": "random"
+  },
+  "ruleLabels": ["常规欧洲规则", "隧道与渡轮", "火车站借线", "最长路线 +10"]
+}

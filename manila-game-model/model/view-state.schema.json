@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/manila/view-state.schema.json",
+  "title": "Manila privacy-safe view state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "ruleset",
+    "revision",
+    "sceneId",
+    "stage",
+    "voyageNumber",
+    "viewer",
+    "self",
+    "players",
+    "market",
+    "auction",
+    "punts",
+    "docks",
+    "specials",
+    "placement",
+    "movement",
+    "legalActions",
+    "settlement",
+    "privacy"
+  ],
+  "properties": {
+    "version": { "const": "1.0.0" },
+    "ruleset": { "const": "zoch-2005-base" },
+    "revision": { "type": "integer", "minimum": 0 },
+    "sceneId": {
+      "enum": [
+        "setup.table",
+        "auction.bid",
+        "harbor.share",
+        "harbor.load",
+        "harbor.launch",
+        "placement.choose",
+        "movement.roll",
+        "movement.order",
+        "pirates.board",
+        "pilot.small",
+        "pilot.large",
+        "pirates.route",
+        "voyage.summary",
+        "game.finished"
+      ]
+    },
+    "stage": { "type": "string" },
+    "voyageNumber": { "type": "integer", "minimum": 0 },
+    "viewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "playerId"],
+      "properties": {
+        "mode": { "enum": ["player", "spectator"] },
+        "playerId": {
+          "oneOf": [
+            { "$ref": "#/$defs/playerId" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "self": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["playerId", "shareIds", "mortgagedShareIds"],
+          "properties": {
+            "playerId": { "$ref": "#/$defs/playerId" },
+            "shareIds": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/shareId" }
+            },
+            "mortgagedShareIds": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "$ref": "#/$defs/shareId" }
+            }
+          }
+        }
+      ]
+    },
+    "players": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "playerId",
+          "cash",
+          "shareCount",
+          "mortgagedShareCount",
+          "accomplicesAvailable",
+          "passedPlacement",
+          "forfeited"
+        ],
+        "properties": {
+          "playerId": { "$ref": "#/$defs/playerId" },
+          "cash": { "type": "integer", "minimum": 0 },
+          "shareCount": { "type": "integer", "minimum": 0, "maximum": 20 },
+          "mortgagedShareCount": { "type": "integer", "minimum": 0, "maximum": 20 },
+          "accomplicesAvailable": { "type": "integer", "minimum": 0, "maximum": 4 },
+          "passedPlacement": { "type": "boolean" },
+          "forfeited": { "type": "boolean" }
+        }
+      }
+    },
+    "market": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["values", "supplyCounts", "track"],
+      "properties": {
+        "values": { "$ref": "#/$defs/commodityValues" },
+        "supplyCounts": { "$ref": "#/$defs/commodityCounts" },
+        "track": {
+          "type": "array",
+          "const": [0, 5, 10, 20, 30]
+        }
+      }
+    },
+    "auction": { "type": "object" },
+    "punts": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "cargoId",
+          "laneId",
+          "position",
+          "status",
+          "occupants",
+          "capacity"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^punt-[1-3]$" },
+          "cargoId": {
+            "oneOf": [
+              { "$ref": "#/$defs/commodityId" },
+              { "type": "null" }
+            ]
+          },
+          "laneId": {
+            "type": ["string", "null"],
+            "pattern": "^lane-[1-3]$"
+          },
+          "position": { "type": ["integer", "null"], "minimum": 0, "maximum": 13 },
+          "status": { "enum": ["ready", "sailing", "port", "shipyard", "plundered"] },
+          "occupants": {
+            "type": "array",
+            "maxItems": 4,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["playerId", "origin", "slotIndex"],
+              "properties": {
+                "playerId": { "$ref": "#/$defs/playerId" },
+                "origin": { "enum": ["placed", "pirate_boarded"] },
+                "slotIndex": { "type": "integer", "minimum": 0, "maximum": 3 }
+              }
+            }
+          },
+          "capacity": { "type": "integer", "minimum": 0, "maximum": 4 }
+        }
+      }
+    },
+    "docks": { "type": "object" },
+    "specials": { "type": "object" },
+    "placement": { "type": "object" },
+    "movement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["roundIndex", "dieResults", "unresolvedPuntIds"],
+      "properties": {
+        "roundIndex": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "dieResults": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ginseng", "nutmeg", "silk", "jade"],
+          "properties": {
+            "ginseng": { "type": ["integer", "null"], "minimum": 1, "maximum": 6 },
+            "nutmeg": { "type": ["integer", "null"], "minimum": 1, "maximum": 6 },
+            "silk": { "type": ["integer", "null"], "minimum": 1, "maximum": 6 },
+            "jade": { "type": ["integer", "null"], "minimum": 1, "maximum": 6 }
+          }
+        },
+        "unresolvedPuntIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^punt-[1-3]$" }
+        }
+      }
+    },
+    "legalActions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "targets"],
+        "properties": {
+          "type": { "type": "string", "minLength": 1 },
+          "targets": { "type": "array" }
+        }
+      }
+    },
+    "settlement": {
+      "type": ["object", "null"]
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "shareIdentities",
+        "opponentShareCounts",
+        "cash",
+        "dice"
+      ],
+      "properties": {
+        "shareIdentities": { "const": "self-only" },
+        "opponentShareCounts": { "const": "public" },
+        "cash": { "const": "public" },
+        "dice": { "const": "public-after-roll" }
+      }
+    }
+  },
+  "$defs": {
+    "playerId": {
+      "type": "string",
+      "pattern": "^p[1-5]$"
+    },
+    "shareId": {
+      "type": "string",
+      "pattern": "^share-(ginseng|nutmeg|silk|jade)-0[1-5]$"
+    },
+    "commodityId": {
+      "enum": ["ginseng", "nutmeg", "silk", "jade"]
+    },
+    "commodityValues": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ginseng", "nutmeg", "silk", "jade"],
+      "properties": {
+        "ginseng": { "enum": [0, 5, 10, 20, 30] },
+        "nutmeg": { "enum": [0, 5, 10, 20, 30] },
+        "silk": { "enum": [0, 5, 10, 20, 30] },
+        "jade": { "enum": [0, 5, 10, 20, 30] }
+      }
+    },
+    "commodityCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ginseng", "nutmeg", "silk", "jade"],
+      "properties": {
+        "ginseng": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "nutmeg": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "silk": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "jade": { "type": "integer", "minimum": 0, "maximum": 5 }
+      }
+    }
+  }
+}
+

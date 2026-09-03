@@ -1,0 +1,226 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/dead-mans-draw/view-state.schema.json",
+  "title": "Dead Man's Draw safe client view",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "modelVersion", "gameId", "gameNumber", "revision", "phase", "rules", "viewer", "players", "drawCount", "discard", "playArea", "turn", "self", "actions", "result", "events"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "dead-mans-draw" },
+    "gameNumber": { "type": "integer", "minimum": 1 },
+    "revision": { "type": "integer", "minimum": 0 },
+    "phase": { "enum": ["waiting", "trait_selection", "turn", "effect_choice", "finished"] },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profileId", "profileNameZh", "traitsEnabled", "globalVariantId", "globalVariantNameZh"],
+      "properties": {
+        "profileId": { "type": "string" },
+        "profileNameZh": { "type": "string" },
+        "traitsEnabled": { "type": "boolean" },
+        "globalVariantId": { "type": ["string", "null"] },
+        "globalVariantNameZh": { "type": ["string", "null"] }
+      }
+    },
+    "viewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "playerId"],
+      "properties": {
+        "mode": { "enum": ["player", "spectator"] },
+        "playerId": { "type": ["string", "null"] }
+      }
+    },
+    "players": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/publicPlayer" }
+    },
+    "drawCount": { "type": "integer", "minimum": 0, "maximum": 60 },
+    "discard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "cardIds"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 0, "maximum": 60 },
+        "cardIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/cardId" }
+        }
+      }
+    },
+    "playArea": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/publicEntry" }
+    },
+    "turn": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/publicTurn" }
+      ]
+    },
+    "self": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/selfView" }
+      ]
+    },
+    "actions": { "$ref": "#/$defs/actions" },
+    "result": { "type": ["object", "null"] },
+    "events": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/publicEvent" }
+    }
+  },
+  "$defs": {
+    "cardId": {
+      "type": "string",
+      "pattern": "^loot-(anchor|hook|cannon|key|chest|map|oracle|sword|kraken|mermaid)-[2-9]$"
+    },
+    "bankSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["suit", "cardIds", "topValue", "count", "subtotal"],
+      "properties": {
+        "suit": { "type": "string" },
+        "cardIds": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/cardId" } },
+        "topValue": { "type": ["integer", "null"], "minimum": 2, "maximum": 14 },
+        "count": { "type": "integer", "minimum": 0 },
+        "subtotal": { "type": "integer" }
+      }
+    },
+    "publicPlayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "seat", "displayName", "connected", "isActive", "traitId", "traitNameZh", "selectingTrait", "lockerTargetId", "bank", "liveScore"],
+      "properties": {
+        "id": { "type": "string" },
+        "seat": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "displayName": { "type": "string" },
+        "connected": { "type": "boolean" },
+        "isActive": { "type": "boolean" },
+        "traitId": { "type": ["string", "null"] },
+        "traitNameZh": { "type": ["string", "null"] },
+        "selectingTrait": { "type": "boolean" },
+        "lockerTargetId": { "type": ["string", "null"] },
+        "bank": {
+          "type": "array",
+          "minItems": 10,
+          "maxItems": 10,
+          "items": { "$ref": "#/$defs/bankSummary" }
+        },
+        "liveScore": { "type": "integer" }
+      }
+    },
+    "publicEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entryId", "cardId", "protected", "protectionLabelsZh", "sourceLabelZh"],
+      "properties": {
+        "entryId": { "type": "string" },
+        "cardId": { "$ref": "#/$defs/cardId" },
+        "protected": { "type": "boolean" },
+        "protectionLabelsZh": { "type": "array", "items": { "type": "string" } },
+        "sourceLabelZh": { "type": "string" }
+      }
+    },
+    "publicOption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["optionId", "labelZh", "cardId", "playerId", "suit", "entryId", "causesImmediateBust", "actionable"],
+      "properties": {
+        "optionId": { "type": ["string", "null"] },
+        "labelZh": { "type": "string" },
+        "cardId": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/cardId" }
+          ]
+        },
+        "playerId": { "type": ["string", "null"] },
+        "suit": { "type": ["string", "null"] },
+        "entryId": { "type": ["string", "null"] },
+        "causesImmediateBust": { "type": "boolean" },
+        "actionable": { "type": "boolean" }
+      }
+    },
+    "publicTurn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["number", "actorId", "krakenDebt", "bustKey", "presentBustKeys", "oraclePeekCardIds", "pendingChoice"],
+      "properties": {
+        "number": { "type": "integer", "minimum": 1 },
+        "actorId": { "type": "string" },
+        "krakenDebt": { "type": "integer", "minimum": 0 },
+        "bustKey": { "enum": ["suit", "value"] },
+        "presentBustKeys": { "type": "array", "uniqueItems": true, "items": { "type": ["string", "integer"] } },
+        "oraclePeekCardIds": { "type": "array", "maxItems": 3, "uniqueItems": true, "items": { "$ref": "#/$defs/cardId" } },
+        "pendingChoice": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["choiceId", "kind", "actorId", "promptZh", "options"],
+              "properties": {
+                "choiceId": { "type": ["string", "null"] },
+                "kind": { "type": "string" },
+                "actorId": { "type": "string" },
+                "promptZh": { "type": "string" },
+                "options": { "type": "array", "items": { "$ref": "#/$defs/publicOption" } }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "traitOffer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nameZh", "summaryZh"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^trait-[a-z][a-z0-9-]*$" },
+        "nameZh": { "type": "string" },
+        "summaryZh": { "type": "string" }
+      }
+    },
+    "selfView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playerId", "traitOffer", "mustChooseLockerTarget"],
+      "properties": {
+        "playerId": { "type": "string" },
+        "traitOffer": { "type": "array", "maxItems": 2, "items": { "$ref": "#/$defs/traitOffer" } },
+        "mustChooseLockerTarget": { "type": "boolean" }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canChooseTrait", "canChooseLockerTarget", "canDraw", "canCollect", "canResolveEffect", "disabledReasonZh"],
+      "properties": {
+        "canChooseTrait": { "type": "boolean" },
+        "canChooseLockerTarget": { "type": "boolean" },
+        "canDraw": { "type": "boolean" },
+        "canCollect": { "type": "boolean" },
+        "canResolveEffect": { "type": "boolean" },
+        "disabledReasonZh": { "type": ["string", "null"] }
+      }
+    },
+    "publicEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seq", "type", "textZh"],
+      "properties": {
+        "seq": { "type": "integer", "minimum": 1 },
+        "type": { "type": "string" },
+        "textZh": { "type": "string" }
+      }
+    }
+  }
+}

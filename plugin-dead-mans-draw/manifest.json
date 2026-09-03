@@ -1,0 +1,40 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-dead-mans-draw",
+  "name": "亡命神抽",
+  "description": "逐张翻取战利品、发动花色能力并在爆牌前见好就收的 2–4 人试胆卡牌游戏",
+  "category": "桌面卡牌",
+  "tone": "dead-mans-draw",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 2,
+    "max": 4,
+    "label": "2–4 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": false,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "allowSpectators": false,
+    "firstPlayer": "random",
+    "rulesProfile": "tabletop_base_2015",
+    "traitsEnabled": true
+  },
+  "ruleLabels": ["实体基础规则", "10 种花色能力", "可选公开特性", "每花色只计最高牌"]
+}

@@ -1,0 +1,153 @@
+{
+  "version": "1.0.0",
+  "ruleset": "zoch-2005-base",
+  "revision": 31,
+  "sceneId": "movement.order",
+  "stage": "move_order",
+  "voyageNumber": 1,
+  "viewer": {
+    "mode": "spectator",
+    "playerId": null
+  },
+  "self": null,
+  "players": [
+    {
+      "playerId": "p1",
+      "cash": 22,
+      "shareCount": 2,
+      "mortgagedShareCount": 0,
+      "accomplicesAvailable": 2,
+      "passedPlacement": false,
+      "forfeited": false
+    },
+    {
+      "playerId": "p2",
+      "cash": 24,
+      "shareCount": 2,
+      "mortgagedShareCount": 0,
+      "accomplicesAvailable": 2,
+      "passedPlacement": false,
+      "forfeited": false
+    },
+    {
+      "playerId": "p3",
+      "cash": 35,
+      "shareCount": 2,
+      "mortgagedShareCount": 0,
+      "accomplicesAvailable": 2,
+      "passedPlacement": false,
+      "forfeited": false
+    }
+  ],
+  "market": {
+    "values": {
+      "ginseng": 0,
+      "nutmeg": 0,
+      "silk": 0,
+      "jade": 0
+    },
+    "supplyCounts": {
+      "ginseng": 3,
+      "nutmeg": 3,
+      "silk": 4,
+      "jade": 4
+    },
+    "track": [0, 5, 10, 20, 30]
+  },
+  "auction": {
+    "harborMasterId": "p1",
+    "winningBid": 6,
+    "passedPlayerIds": ["p2", "p3"]
+  },
+  "punts": [
+    {
+      "id": "punt-1",
+      "cargoId": "ginseng",
+      "laneId": "lane-1",
+      "position": 4,
+      "status": "sailing",
+      "occupants": [
+        {
+          "playerId": "p1",
+          "origin": "placed",
+          "slotIndex": 0
+        }
+      ],
+      "capacity": 3
+    },
+    {
+      "id": "punt-2",
+      "cargoId": "nutmeg",
+      "laneId": "lane-2",
+      "position": 3,
+      "status": "sailing",
+      "occupants": [
+        {
+          "playerId": "p2",
+          "origin": "placed",
+          "slotIndex": 0
+        }
+      ],
+      "capacity": 3
+    },
+    {
+      "id": "punt-3",
+      "cargoId": "jade",
+      "laneId": "lane-3",
+      "position": 2,
+      "status": "sailing",
+      "occupants": [
+        {
+          "playerId": "p3",
+          "origin": "placed",
+          "slotIndex": 0
+        }
+      ],
+      "capacity": 4
+    }
+  ],
+  "docks": {
+    "port": [
+      { "id": "A", "cost": 4, "payout": 6, "bettorPlayerId": "p1", "puntId": null },
+      { "id": "B", "cost": 3, "payout": 8, "bettorPlayerId": null, "puntId": null },
+      { "id": "C", "cost": 2, "payout": 15, "bettorPlayerId": null, "puntId": null }
+    ],
+    "shipyard": [
+      { "id": "A", "cost": 4, "payout": 6, "bettorPlayerId": null, "puntId": null },
+      { "id": "B", "cost": 3, "payout": 8, "bettorPlayerId": null, "puntId": null },
+      { "id": "C", "cost": 2, "payout": 15, "bettorPlayerId": null, "puntId": null }
+    ]
+  },
+  "specials": {
+    "pirateBoat": [
+      { "playerId": "p2", "role": "captain" }
+    ],
+    "smallPilotPlayerId": null,
+    "largePilotPlayerId": null,
+    "insurancePlayerId": "p3"
+  },
+  "placement": {
+    "roundIndex": 2,
+    "totalRounds": 4,
+    "currentPlayerId": null
+  },
+  "movement": {
+    "roundIndex": 1,
+    "dieResults": {
+      "ginseng": 4,
+      "nutmeg": 3,
+      "silk": null,
+      "jade": 6
+    },
+    "unresolvedPuntIds": ["punt-1", "punt-2", "punt-3"]
+  },
+  "legalActions": [],
+  "settlement": null,
+  "privacy": {
+    "shareIdentities": "self-only",
+    "opponentShareCounts": "public",
+    "cash": "public",
+    "dice": "public-after-roll"
+  }
+}
+

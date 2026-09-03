@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameKey": "manila",
+  "ruleset": "zoch-2005-base",
+  "players": {
+    "minimum": 3,
+    "maximum": 5,
+    "startingCash": 30,
+    "startingShares": 2,
+    "accomplicesByPlayerCount": {
+      "3": 4,
+      "4": 3,
+      "5": 3
+    }
+  },
+  "physicalComponents": {
+    "punts": 3,
+    "seaRoutes": 3,
+    "commodityLoads": 4,
+    "commodityDice": 4,
+    "marketMarkers": 4,
+    "shareCards": 20,
+    "accomplices": 20,
+    "playerColors": 5,
+    "digitalBank": "unbounded-integer-ledger"
+  },
+  "marketTrack": [0, 5, 10, 20, 30],
+  "sharePurchase": {
+    "buyerRole": "harbor_master",
+    "maximumPerVoyage": 1,
+    "minimumPrice": 5,
+    "priceFormula": "max(5, currentMarketValue)"
+  },
+  "finance": {
+    "loanAdvance": 12,
+    "redemptionCost": 15,
+    "unredeemedEndPenalty": 15,
+    "loanIsSecuredByOneShare": true,
+    "mortgagedShareStillCountsMarketValue": true
+  },
+  "navigation": {
+    "routeMinimum": 0,
+    "routeMaximum": 13,
+    "startMinimum": 0,
+    "startMaximum": 5,
+    "startPositionSum": 9,
+    "movementRounds": 3,
+    "arrivalCondition": "position > 13",
+    "pirateTriggerPosition": 13,
+    "dice": {
+      "kind": "standard-d6",
+      "faces": [1, 2, 3, 4, 5, 6],
+      "serverAuthoritative": true
+    }
+  },
+  "commodities": [
+    {
+      "id": "ginseng",
+      "label": "人参",
+      "labelEn": "Ginseng",
+      "code": "GS",
+      "shareCount": 5,
+      "boatProfit": 18,
+      "placementCosts": [1, 2, 3],
+      "semanticColor": "#B4862C",
+      "pattern": "diagonal-root"
+    },
+    {
+      "id": "nutmeg",
+      "label": "肉豆蔻",
+      "labelEn": "Nutmeg",
+      "code": "NM",
+      "shareCount": 5,
+      "boatProfit": 24,
+      "placementCosts": [2, 3, 4],
+      "semanticColor": "#9A5C3A",
+      "pattern": "seed-dots"
+    },
+    {
+      "id": "silk",
+      "label": "丝绸",
+      "labelEn": "Silk",
+      "code": "SK",
+      "shareCount": 5,
+      "boatProfit": 30,
+      "placementCosts": [3, 4, 5],
+      "semanticColor": "#456F9E",
+      "pattern": "woven-lines"
+    },
+    {
+      "id": "jade",
+      "label": "玉石",
+      "labelEn": "Jade",
+      "code": "JD",
+      "shareCount": 5,
+      "boatProfit": 36,
+      "placementCosts": [3, 4, 5, 5],
+      "semanticColor": "#3F806E",
+      "pattern": "faceted-diamonds"
+    }
+  ],
+  "destinations": [
+    {
+      "id": "port",
+      "label": "港口",
+      "payoutSource": "harbor_cash_box",
+      "slots": [
+        { "id": "A", "arrivalIndex": 1, "placementCost": 4, "payout": 6 },
+        { "id": "B", "arrivalIndex": 2, "placementCost": 3, "payout": 8 },
+        { "id": "C", "arrivalIndex": 3, "placementCost": 2, "payout": 15 }
+      ]
+    },
+    {
+      "id": "shipyard",
+      "label": "船坞",
+      "payoutSource": "insurance_agent_or_harbor_cash_box",
+      "slots": [
+        { "id": "A", "arrivalIndex": 1, "placementCost": 4, "payout": 6 },
+        { "id": "B", "arrivalIndex": 2, "placementCost": 3, "payout": 8 },
+        { "id": "C", "arrivalIndex": 3, "placementCost": 2, "payout": 15 }
+      ]
+    }
+  ],
+  "specialPositions": [
+    {
+      "id": "pirate-captain",
+      "kind": "pirate",
+      "role": "captain",
+      "placementCost": 5,
+      "capacity": 1,
+      "directPayout": 0
+    },
+    {
+      "id": "pirate-crew",
+      "kind": "pirate",
+      "role": "crew",
+      "placementCost": 5,
+      "capacity": 1,
+      "directPayout": 0
+    },
+    {
+      "id": "pilot-small",
+      "kind": "pilot",
+      "role": "small",
+      "placementCost": 2,
+      "capacity": 1,
+      "movementBudget": 1,
+      "directPayout": 0
+    },
+    {
+      "id": "pilot-large",
+      "kind": "pilot",
+      "role": "large",
+      "placementCost": 5,
+      "capacity": 1,
+      "movementBudget": 2,
+      "directPayout": 0
+    },
+    {
+      "id": "insurance",
+      "kind": "insurance",
+      "role": "agent",
+      "placementCost": 0,
+      "capacity": 1,
+      "immediateIncome": 10,
+      "blindPassengerAllowed": false
+    }
+  ],
+  "placementSchedules": {
+    "3": [
+      "placement",
+      "placement",
+      "movement",
+      "placement",
+      "movement",
+      "placement",
+      "pilots",
+      "movement"
+    ],
+    "4": [
+      "placement",
+      "movement",
+      "placement",
+      "movement",
+      "placement",
+      "pilots",
+      "movement"
+    ],
+    "5": [
+      "placement",
+      "movement",
+      "placement",
+      "movement",
+      "placement",
+      "pilots",
+      "movement"
+    ]
+  },
+  "officialVariant": {
+    "id": "pirate-displacement",
+    "defaultEnabled": false,
+    "description": "When every punt on space 13 is full, a boarding pirate may displace a non-pirate accomplice subject to captain protection."
+  },
+  "copyrightBoundary": "Rule facts and original neutral geometry only; no official Manila logo, board art, card illustrations, or scans."
+}
+

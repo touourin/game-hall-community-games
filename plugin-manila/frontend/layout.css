@@ -1,0 +1,327 @@
+.manila-table {
+  --ink: #e8efec;
+  --muted: #a9bfbc;
+  --gold: #e0b55e;
+  --panel: #172b2d;
+  --line: #496b6e;
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) minmax(166px, 19vh);
+  gap: clamp(6px, .7vw, 11px);
+  width: 100%;
+  height: max(760px, calc(100dvh - 4.5rem));
+  min-width: 0;
+  max-width: 100%;
+  padding: clamp(9px, 1vw, 16px);
+  overflow: hidden;
+  color: var(--ink);
+  font-family: "Microsoft YaHei", "Noto Sans CJK SC", Inter, system-ui, sans-serif;
+  background:
+    radial-gradient(circle at 52% 38%, rgba(47, 106, 106, .36), transparent 35%),
+    radial-gradient(circle at 12% 78%, rgba(170, 119, 54, .13), transparent 23%),
+    linear-gradient(145deg, #0a1b1d, #11292b 52%, #08191b);
+}
+
+.manila-table *,
+.manila-table *::before,
+.manila-table *::after { box-sizing: border-box; }
+.manila-table button,
+.manila-table input,
+.manila-table select { font: inherit; }
+.manila-table button { min-height: 44px; color: inherit; }
+.manila-table button:focus-visible,
+.manila-table input:focus-visible,
+.manila-table select:focus-visible {
+  outline: 3px solid #f3d78d;
+  outline-offset: 2px;
+}
+
+.manila-table .ambient-water {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: .42;
+}
+.manila-table .ambient-water i {
+  position: absolute;
+  width: 55%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #6aa09e, transparent);
+  animation: manila-water-drift 11s ease-in-out infinite alternate;
+}
+.manila-table .ambient-water i:nth-child(1) { top: 29%; left: -12%; }
+.manila-table .ambient-water i:nth-child(2) { top: 57%; right: -14%; animation-delay: -4s; }
+.manila-table .ambient-water i:nth-child(3) { top: 82%; left: 18%; animation-delay: -7s; }
+
+.manila-table .table-masthead {
+  display: grid;
+  grid-template-columns: minmax(230px, .8fr) minmax(320px, 1.5fr) auto;
+  align-items: center;
+  min-height: 58px;
+  padding: 4px 8px;
+  border-bottom: 1px solid rgba(126, 166, 165, .3);
+}
+.manila-table .brand-lockup { min-width: 0; }
+.manila-table .brand-lockup .eyebrow {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .18em;
+}
+.manila-table .brand-lockup > div { display: flex; align-items: center; gap: 7px; }
+.manila-table .brand-lockup h1 {
+  margin: 0;
+  font-family: Georgia, "Songti SC", serif;
+  font-size: clamp(22px, 2vw, 31px);
+  letter-spacing: .08em;
+}
+.manila-table .brand-lockup small {
+  padding-left: 8px;
+  border-left: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 10px;
+}
+.manila-table .status-copy { min-width: 0; padding: 0 18px; text-align: center; }
+.manila-table .status-copy strong {
+  display: block;
+  overflow: hidden;
+  color: #fff4d8;
+  font-size: clamp(13px, 1.2vw, 17px);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.manila-table .status-copy span {
+  display: block;
+  margin-top: 2px;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.manila-table .mast-actions { display: flex; align-items: center; gap: 8px; }
+.manila-table .voyage-stamp {
+  padding: 7px 10px;
+  border: 1px solid #8e7444;
+  border-radius: 999px;
+  color: #f3d999;
+  background: rgba(94, 68, 28, .4);
+  font-size: 11px;
+  font-weight: 800;
+}
+.manila-table .icon-button {
+  display: grid;
+  width: 44px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #1c3537;
+  cursor: pointer;
+}
+.manila-table .icon-button:hover { border-color: var(--gold); background: #29474a; }
+
+.manila-table .player-rail {
+  display: flex;
+  gap: 7px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.manila-table .player-ledger {
+  position: relative;
+  display: grid;
+  flex: 1 0 170px;
+  grid-template-columns: 7px minmax(68px, .8fr) minmax(95px, 1.2fr);
+  align-items: center;
+  min-width: 0;
+  min-height: 55px;
+  overflow: hidden;
+  border: 1px solid #426164;
+  border-radius: 13px;
+  background: linear-gradient(135deg, rgba(37, 66, 68, .98), rgba(24, 48, 51, .98));
+  box-shadow: inset 0 1px rgba(255, 255, 255, .05), 0 5px 15px rgba(0, 0, 0, .18);
+}
+.manila-table .player-ledger.current {
+  border-color: var(--player-color);
+  box-shadow: inset 0 0 0 1px var(--player-color), 0 0 16px color-mix(in srgb, var(--player-color) 32%, transparent);
+}
+.manila-table .player-ledger.master { background: linear-gradient(135deg, #55452e, #2d352f 68%); }
+.manila-table .player-ledger.forfeited { filter: grayscale(.75); opacity: .58; }
+.manila-table .player-color {
+  align-self: stretch;
+  background: var(--player-color);
+  box-shadow: 3px 0 8px color-mix(in srgb, var(--player-color) 35%, transparent);
+}
+.manila-table .player-name { min-width: 0; padding: 5px 7px; }
+.manila-table .player-name strong {
+  display: block;
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.manila-table .player-name span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
+  color: var(--gold);
+  font-size: 8px;
+  font-weight: 800;
+}
+.manila-table .player-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 2px 5px;
+  padding: 4px 7px 4px 0;
+  color: #d5e1de;
+  font-size: 9px;
+}
+.manila-table .player-metrics > span { display: flex; align-items: center; gap: 3px; white-space: nowrap; }
+.manila-table .worker-pips { grid-column: 1 / -1; }
+.manila-table .worker-pips i {
+  width: 8px;
+  height: 8px;
+  border: 1px solid rgba(255, 255, 255, .72);
+  border-radius: 50% 50% 45% 45%;
+  background: var(--player-color);
+}
+.manila-table .worker-pips i.spent { border-color: #587073; background: #263d3f; opacity: .65; }
+.manila-table .rank-badge { position: absolute; top: 3px; right: 4px; color: var(--gold); font-size: 9px; }
+
+.manila-table .voyage-schedule {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  overflow-x: auto;
+}
+.manila-table .voyage-schedule span {
+  flex: 0 0 auto;
+  min-width: 62px;
+  padding: 4px 10px;
+  border: 1px solid #3c5a5d;
+  border-radius: 999px;
+  color: #73908f;
+  background: rgba(20, 45, 47, .76);
+  font-size: 8px;
+  font-weight: 900;
+  text-align: center;
+}
+.manila-table .voyage-schedule span.done { color: #95aaa8; background: #22383a; }
+.manila-table .voyage-schedule span.done::before { content: "✓ "; color: #6fb49c; }
+.manila-table .voyage-schedule span.current {
+  border-color: var(--gold);
+  color: #ffe8ad;
+  background: #66502d;
+  box-shadow: 0 0 12px rgba(224, 181, 94, .24);
+}
+
+.manila-table .scene-grid {
+  display: grid;
+  grid-template-columns: minmax(184px, 17%) minmax(520px, 1fr) minmax(250px, 22%);
+  gap: clamp(7px, .7vw, 11px);
+  min-width: 0;
+  min-height: 0;
+}
+.manila-table .board-panel {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: linear-gradient(115deg, rgba(255, 255, 255, .025), transparent 42%), var(--panel);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .05), 0 10px 25px rgba(0, 0, 0, .21);
+}
+.manila-table .panel-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-height: 46px;
+  padding: 9px 11px 6px;
+  border-bottom: 1px solid rgba(81, 116, 119, .45);
+}
+.manila-table .panel-heading span {
+  display: block;
+  color: var(--gold);
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: .16em;
+}
+.manila-table .panel-heading h2 { margin: 1px 0 0; font-family: Georgia, "Songti SC", serif; font-size: 14px; }
+.manila-table .panel-heading > small { color: #809b99; font-size: 8px; }
+
+.manila-table .private-console {
+  display: grid;
+  grid-template-columns: minmax(330px, 41%) minmax(0, 1fr);
+  gap: 9px;
+  min-width: 0;
+  min-height: 0;
+  padding: 8px;
+  border: 1px solid #8e7543;
+  border-radius: 16px;
+  background: linear-gradient(120deg, #101f21, #182d2f 52%, #14282a);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .05), 0 -8px 25px rgba(0, 0, 0, .18);
+}
+
+.manila-table .rules-overlay {
+  position: absolute;
+  z-index: 100;
+  inset: 10px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: rgba(5, 17, 18, .82);
+  backdrop-filter: blur(8px);
+}
+.manila-table .rules-sheet {
+  position: relative;
+  width: min(920px, 94%);
+  max-height: 90%;
+  padding: 22px;
+  overflow: auto;
+  border: 1px solid #a48346;
+  border-radius: 18px;
+  color: #dce8e4;
+  background: linear-gradient(145deg, #1d3638, #102426);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, .55);
+}
+.manila-table .rules-sheet header > button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  width: 44px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid #587477;
+  border-radius: 10px;
+  background: #213e40;
+  cursor: pointer;
+}
+.manila-table .rules-sheet header span { color: var(--gold); font-size: 9px; font-weight: 900; letter-spacing: .14em; }
+.manila-table .rules-sheet h2 { margin: 5px 0 3px; font-family: Georgia, "Songti SC", serif; font-size: 25px; }
+.manila-table .rules-sheet header p { margin: 0; color: #9db2af; font-size: 10px; }
+.manila-table .rules-sheet header { padding-right: 48px; }
+.manila-table .rules-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 17px; }
+.manila-table .rules-grid article { padding: 12px; border: 1px solid #4d6e70; border-radius: 11px; background: #20383a; }
+.manila-table .rules-grid b { display: block; color: #f1d28b; font-size: 11px; }
+.manila-table .rules-grid p { margin: 5px 0 0; color: #b4c6c2; font-size: 9px; line-height: 1.55; }
+.manila-table .rules-footer {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 14px 0 0;
+  padding: 9px 12px;
+  border-left: 3px solid var(--gold);
+  color: #c7d4d1;
+  background: #162c2e;
+  font-size: 9px;
+}

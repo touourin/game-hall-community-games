@@ -1,0 +1,95 @@
+{
+  "$schema": "./card-model.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "modelId": "manila-share-card-v1",
+  "gameKey": "manila",
+  "cardKind": "commodity_share",
+  "copiesPerCommodity": 5,
+  "geometry": {
+    "logicalWidth": 72,
+    "logicalHeight": 104,
+    "cornerRadius": 8,
+    "safeInset": 7,
+    "headerZone": { "x": 7, "y": 7, "width": 58, "height": 17 },
+    "identityZone": { "x": 7, "y": 29, "width": 58, "height": 45 },
+    "statusZone": { "x": 7, "y": 80, "width": 58, "height": 17 },
+    "minimumTouchTarget": 44,
+    "units": "logical-css-px"
+  },
+  "front": {
+    "requiredText": ["commodityLabel", "commodityCode", "shareLabel"],
+    "dynamicOverlays": ["currentMarketValue", "mortgageStatus"],
+    "colorIsSecondaryEncoding": true
+  },
+  "back": {
+    "sharedAcrossAllCommodities": true,
+    "design": "neutral-harbor-ledger-lattice",
+    "containsCommodityHint": false
+  },
+  "commodities": [
+    {
+      "id": "ginseng",
+      "label": "人参",
+      "labelEn": "Ginseng",
+      "code": "GS",
+      "semanticColor": "#B4862C",
+      "pattern": "diagonal-root"
+    },
+    {
+      "id": "nutmeg",
+      "label": "肉豆蔻",
+      "labelEn": "Nutmeg",
+      "code": "NM",
+      "semanticColor": "#9A5C3A",
+      "pattern": "seed-dots"
+    },
+    {
+      "id": "silk",
+      "label": "丝绸",
+      "labelEn": "Silk",
+      "code": "SK",
+      "semanticColor": "#456F9E",
+      "pattern": "woven-lines"
+    },
+    {
+      "id": "jade",
+      "label": "玉石",
+      "labelEn": "Jade",
+      "code": "JD",
+      "semanticColor": "#3F806E",
+      "pattern": "faceted-diamonds"
+    }
+  ],
+  "states": {
+    "unencumbered": {
+      "ownerFaceVisible": true,
+      "opponentFaceVisible": false,
+      "loanAdvance": 12
+    },
+    "mortgaged": {
+      "ownerFaceVisible": true,
+      "opponentFaceVisible": false,
+      "ownerOverlay": "已抵押 12 / 赎回 15",
+      "redemptionCost": 15,
+      "stillCountsMarketValue": true
+    },
+    "marketSupply": {
+      "commodityPublic": true,
+      "copyIdentityRelevant": false
+    }
+  },
+  "privacy": {
+    "ownerReceivesCardIds": true,
+    "opponentsReceiveOnlyCounts": true,
+    "spectatorReceivesOnlyCounts": true,
+    "mortgagedCommodityRemainsPrivate": true
+  },
+  "accessibility": {
+    "ariaLabelTemplate": "{commodityLabel}份额，第 {copyIndex} 张",
+    "statusLabelTemplate": "{mortgageStatus}，当前市场价值 {currentMarketValue}",
+    "requiresPatternAndText": true
+  },
+  "copyrightBoundary": "Original neutral share-card system; do not reproduce official Manila card illustrations, logo, typography, or scans."
+}
+

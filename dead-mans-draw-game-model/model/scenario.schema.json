@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/dead-mans-draw/scenario.schema.json",
+  "title": "Dead Man's Draw transition scenario",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "scenarioId", "titleZh", "profileId", "given", "when", "then"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "scenarioId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "titleZh": { "type": "string", "minLength": 1 },
+    "profileId": { "enum": ["tabletop_base_2015", "digital_safe_2014", "tabletop_mermaid_variant"] },
+    "given": { "type": "object" },
+    "when": { "type": "object" },
+    "then": { "type": "object" }
+  }
+}

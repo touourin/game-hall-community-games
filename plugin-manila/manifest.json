@@ -1,0 +1,45 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-manila",
+  "name": "马尼拉",
+  "description": "3-5 人竞拍港务长、押注货船航程并经营货物份额",
+  "category": "竞价策略",
+  "tone": "manila-harbor",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 3,
+    "max": 5,
+    "label": "3-5 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": false,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "allowSpectators": false,
+    "firstPlayer": "random"
+  },
+  "ruleLabels": [
+    "3-5 人",
+    "基础常规规则",
+    "三轮航行",
+    "份额投资",
+    "海盗与保险",
+    "最高财富获胜"
+  ]
+}

@@ -39,7 +39,6 @@ class LevelProfile:
     templates: tuple[str, ...]
     track_period_ms: int
     run_cycle_ms: int
-    speed_lines: int
 
 
 @dataclass(frozen=True)
@@ -119,7 +118,6 @@ def _load_progression() -> tuple[int, int, tuple[LevelProfile, ...]]:
             templates=tuple(item["templates"]),
             track_period_ms=int(item["trackPeriodMs"]),
             run_cycle_ms=int(item["runCycleMs"]),
-            speed_lines=int(item["speedLines"]),
         )
         if not 2 <= profile.choice_min <= profile.choice_max <= 3:
             raise RuntimeError("算途疾行每级必须开放 2–3 条桥面跑道")
@@ -252,7 +250,6 @@ class MathRunnerEngine:
             "speed": {
                 "trackPeriodMs": profile.track_period_ms,
                 "runCycleMs": profile.run_cycle_ms,
-                "speedLines": profile.speed_lines,
             },
             "won": viewer.id in room.winner_player_ids,
             "result": room.winner if finished else None,

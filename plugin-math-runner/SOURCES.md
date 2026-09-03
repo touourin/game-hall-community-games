@@ -41,3 +41,19 @@
 - 项目内参考：`images/runner-character-concept.png`
 - 提示摘要：同一名黑发、炭灰/橙色技术夹克、象牙色内层和青色腕表跑者的严格 3×2 动作图集；依次为两帧背面奔跑、右转、左转、收腿跳跃和低姿滑行；统一第三人称后视镜头、人物比例与 3D 游戏材质；纯绿幕背景，不含文字、UI、Logo、水印或额外人物。
 - 发布整理：内置工具输出为 `1536 × 1024`，按绿色色相生成透明度、收缩一像素边缘并去除绿色溢色，保留六个 `512 × 512` 动作单元，写入透明 sRGB PNG。
+
+## 7. 第二代运行时人物动画图集
+
+- 输出：`frontend/assets/runner-animation-atlas-v2.png`
+- 用例：`stylized-concept`
+- 项目内参考：`images/runner-character-concept.png` 与第一代 `frontend/assets/runner-motion-atlas.png`
+- 提示摘要：保持同一名黑发、炭灰/橙色技术夹克、象牙色内层和青色腕表跑者，生成严格 `4 × 4` 的第三人称后视动作图集；前两行是连续八帧奔跑，第三行是左转两帧与右转两帧，第四行依次是收腿跳跃、低姿滑行、撞墙和坠落；所有单元保持统一人物比例、镜头和 3D 游戏材质，不含文字、UI、Logo、水印或额外人物。
+- 发布整理：内置工具最终输出为 `1254 × 1254` 透明 sRGB PNG，保留十六个等分动作单元；原样复制进项目，运行时以 CSS 百分比背景坐标切帧。
+
+## 8. 左右转弯过渡图集
+
+- 输出：`frontend/assets/runner-turn-atlas-v2.png`
+- 用例：`identity-preserve` + `background-extraction`
+- 项目内参考：`images/runner-character-concept.png` 与 `frontend/assets/runner-motion-atlas.png`
+- 提示摘要：同一跑者、同一第三人称后视镜头的严格 `2 × 2` 图集，分别生成植步与深倾的左右转弯姿态，要求转弯方向在屏幕上明确相反，禁止跳跃、滑行、横躺、文字、UI 和额外人物。
+- 透明化修正：仅移除首版棋盘格背景，人物像素、姿态、位置、光照与格位保持不变；最终输出为 `1254 × 1254` 透明 sRGB PNG。运行时使用左上作为左右植步帧、左下作为左深倾帧、右上作为右深倾帧。

@@ -65,7 +65,6 @@ function snapshot(
       speed: {
         trackPeriodMs: 1500,
         runCycleMs: 720,
-        speedLines: 4,
       },
       won: false,
       result: null,
@@ -97,14 +96,17 @@ describe('math runner plugin view', () => {
     wrapper.unmount()
   })
 
-  it('renders the atlas runner and continuous forward-motion bridge layers', () => {
+  it('renders the eight-frame atlas runner and sparse physical road details', () => {
     const wrapper = mount(GameView, { props: { snapshot: snapshot() } })
 
-    expect(wrapper.findAll('.runner-sprite')).toHaveLength(2)
-    expect(wrapper.find('.runner-sprite--run-a').exists()).toBe(true)
-    expect(wrapper.find('.runner-sprite--run-b').exists()).toBe(true)
-    expect(wrapper.findAll('.bridge-sleeper')).toHaveLength(10)
-    expect(wrapper.findAll('.bridge-marker')).toHaveLength(14)
+    expect(wrapper.findAll('.runner-sprite')).toHaveLength(8)
+    expect(wrapper.findAll('.runner-sprite--run-frame')).toHaveLength(8)
+    expect(wrapper.get('[data-runner-frame="1"]').classes()).toContain('runner-sprite--run-frame-1')
+    expect(wrapper.findAll('.road-stone')).toHaveLength(7)
+    expect(wrapper.findAll('.bridge-marker')).toHaveLength(8)
+    expect(wrapper.findAll('.bridge-sleeper')).toHaveLength(0)
+    expect(wrapper.findAll('.speed-line')).toHaveLength(0)
+    expect(wrapper.find('[data-obstacle="cliff"]').exists()).toBe(true)
     expect(wrapper.find('.scene-backdrop').exists()).toBe(true)
 
     wrapper.unmount()
@@ -201,6 +203,7 @@ describe('math runner plugin view', () => {
         result: 'failed',
       }),
     })
+    await vi.advanceTimersByTimeAsync(980)
     await wrapper.get('.runner-result .solo-result-restart').trigger('click')
     await flushPromises()
     expect(pluginActions.restart).toHaveBeenCalledOnce()
@@ -264,10 +267,46 @@ describe('math runner plugin view', () => {
     expect(wrapper.get('.runner-result').text()).toContain('这次路线算错了')
     expect(wrapper.get('.solo-result-score').text()).toContain('144 米')
     expect(wrapper.get('.runner-result').text()).toContain('技巧得分')
+    expect(wrapper.find('[data-runner-failure="cliff"]').exists()).toBe(true)
+    expect(wrapper.get('.route-lane--left').attributes('data-route-state')).toBe('failed-cliff')
 
     await wrapper.get('.runner-result .solo-result-restart').trigger('click')
     await flushPromises()
     expect(pluginActions.restart).toHaveBeenCalledOnce()
+    wrapper.unmount()
+  })
+
+  it('uses a wall-impact pose for a failed jump or slide route', () => {
+    const failed = snapshot('finished', {
+      lastAction: 'jump',
+      endReason: 'wrong',
+      correctAction: 'left',
+      result: 'failed',
+    })
+    const wrapper = mount(GameView, { props: { snapshot: failed } })
+
+    expect(wrapper.find('[data-runner-failure="wall"]').exists()).toBe(true)
+    expect(wrapper.find('[data-failure-effect="wall"]').exists()).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('lets the failure animation play before revealing a result after a live run', async () => {
+    vi.useFakeTimers()
+    const wrapper = mount(GameView, { props: { snapshot: snapshot() } })
+
+    await wrapper.setProps({
+      snapshot: snapshot('finished', {
+        lastAction: 'right',
+        endReason: 'wrong',
+        correctAction: 'jump',
+        result: 'failed',
+      }),
+    })
+
+    expect(wrapper.find('.runner-result').exists()).toBe(false)
+    expect(wrapper.find('[data-runner-failure="cliff"]').exists()).toBe(true)
+    await vi.advanceTimersByTimeAsync(1250)
+    expect(wrapper.find('.runner-result').exists()).toBe(true)
     wrapper.unmount()
   })
 

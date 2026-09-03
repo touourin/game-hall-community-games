@@ -6,6 +6,7 @@ import {
   laneLabel,
   type MathRunnerGameView,
   type RunnerAction,
+  type RunnerFailureKind,
   type RunnerOption,
   type TrackLane,
 } from '../types'
@@ -27,19 +28,23 @@ const emit = defineEmits<{
 }>()
 
 const TRACK_LANES: readonly TrackLane[] = ['left', 'center', 'right']
-const SLEEPER_INDEXES = Array.from({ length: 10 }, (_, index) => index)
-const MARKER_INDEXES = Array.from({ length: 7 }, (_, index) => index)
+const ROAD_STONE_INDEXES = Array.from({ length: 7 }, (_, index) => index)
+const MARKER_INDEXES = Array.from({ length: 4 }, (_, index) => index)
 const optionByLane = computed(() => new Map(
   (props.game.options ?? []).map((option) => [option.lane, option]),
-))
-const speedLineIndexes = computed(() => Array.from(
-  { length: Math.max(0, props.game.speed?.speedLines ?? 4) },
-  (_, index) => index,
 ))
 const remainingRatio = computed(() => {
   const limit = Math.max(1, props.game.timeLimitMs ?? 1)
   return Math.min(1, Math.max(0, props.remainingMs / limit))
 })
+const failureKind = computed<RunnerFailureKind>(() => {
+  if (!props.game.endReason || props.game.endReason === 'completed') return null
+  const decisiveAction = props.game.endReason === 'wrong'
+    ? props.game.lastAction
+    : props.game.correctAction
+  return decisiveAction === 'left' || decisiveAction === 'right' ? 'cliff' : 'wall'
+})
+const forkVariant = computed(() => Math.abs(props.game.questionId ?? 0) % 3)
 const stageStyle = computed(() => ({
   '--track-period': `${props.game.speed?.trackPeriodMs ?? 1500}ms`,
   '--backdrop-period': `${(props.game.speed?.trackPeriodMs ?? 1500) * 7}ms`,
@@ -54,6 +59,8 @@ const stageClass = computed(() => ({
   'track-scene--urgent': remainingRatio.value <= 0.25 && !props.game.endReason,
   'track-scene--level-up': Boolean(props.game.levelUp && !props.game.endReason),
   [`track-scene--${props.game.endReason}`]: Boolean(props.game.endReason),
+  [`track-scene--failure-${failureKind.value}`]: Boolean(failureKind.value),
+  [`track-scene--fork-${forkVariant.value}`]: true,
   [`track-scene--branches-${props.game.branchCount ?? props.game.options?.length ?? 2}`]: true,
 }))
 
@@ -70,6 +77,7 @@ function laneClass(lane: TrackLane) {
   return {
     [`route-lane--${lane}`]: true,
     'route-lane--closed': !option,
+    'route-lane--failed': laneFailedAtCliff(lane),
     'route-lane--selected': Boolean(option && props.selectedAction === option.action),
     'route-lane--correct': Boolean(
       option && props.game.endReason && props.game.correctAction === option.action,
@@ -97,9 +105,9 @@ function gateClass(option: RunnerOption) {
 function gateLabel(option: RunnerOption): string {
   const meta = metaFor(option.action)
   const obstacle = option.obstacle === 'ground'
-    ? '，前方是地面障碍'
+    ? '，前方是必须跳过的低墙'
     : option.obstacle === 'overhead'
-      ? '，前方是高空障碍'
+      ? '，前方是必须下蹲穿过的高墙'
       : ''
   const result = props.game.endReason && props.game.correctAction === option.action
     ? '，这是正确路线'
@@ -107,19 +115,30 @@ function gateLabel(option: RunnerOption): string {
   return `${laneLabel(option.lane)}，按 ${meta.key} ${meta.label}${obstacle}，等式 ${option.equation}${result}`
 }
 
-function lineStyle(index: number) {
+function seededUnit(index: number, salt: number): number {
+  const seed = (props.game.questionId ?? 1) * 97 + index * 53 + salt * 31
+  return Math.abs(Math.sin(seed) * 10_000) % 1
+}
+
+function roadStoneStyle(index: number) {
+  const period = props.game.speed?.trackPeriodMs ?? 1500
   return {
-    left: `${7 + ((index * 37) % 86)}%`,
-    animationDelay: `${-((index * 113) % 900)}ms`,
-    opacity: `${0.1 + (index % 4) * 0.04}`,
+    '--stone-x': `${18 + seededUnit(index, 1) * 64}%`,
+    '--stone-width': `${10 + seededUnit(index, 2) * 14}px`,
+    '--stone-rotation': `${-28 + seededUnit(index, 3) * 56}deg`,
+    animationDelay: `${-(period * index / ROAD_STONE_INDEXES.length)}ms`,
   }
 }
 
-function sleeperStyle(index: number) {
-  const period = props.game.speed?.trackPeriodMs ?? 1500
-  return {
-    animationDelay: `${-(period * index / SLEEPER_INDEXES.length)}ms`,
-  }
+function laneFailedAtCliff(lane: TrackLane): boolean {
+  const option = optionForLane(lane)
+  return Boolean(
+    option
+    && failureKind.value === 'cliff'
+    && props.game.endReason === 'wrong'
+    && props.game.lastAction === option.action
+    && props.game.correctAction !== option.action,
+  )
 }
 
 function markerStyle(index: number) {
@@ -135,7 +154,7 @@ function markerStyle(index: number) {
     class="track-scene"
     :class="stageClass"
     :style="stageStyle"
-    aria-label="算途疾行三跑道桥面与题目障碍"
+    aria-label="算途疾行随机分叉桥面与高低墙障碍"
   >
     <div
       class="scene-camera"
@@ -151,15 +170,6 @@ function markerStyle(index: number) {
       <span class="bridge-tower bridge-tower--right" />
     </div>
 
-    <div class="speed-lines" aria-hidden="true">
-      <span
-        v-for="index in speedLineIndexes"
-        :key="index"
-        class="speed-line"
-        :style="lineStyle(index)"
-      />
-    </div>
-
     <div
       class="bridge-world"
       :class="runnerAction ? `bridge-world--${runnerAction}` : ''"
@@ -170,13 +180,12 @@ function markerStyle(index: number) {
         <span class="bridge-rail bridge-rail--right" />
         <span class="bridge-seam bridge-seam--left" />
         <span class="bridge-seam bridge-seam--right" />
-        <span class="bridge-motion-grid" />
         <span class="bridge-center-glow" />
         <span
-          v-for="index in SLEEPER_INDEXES"
-          :key="`sleeper-${index}`"
-          class="bridge-sleeper"
-          :style="sleeperStyle(index)"
+          v-for="index in ROAD_STONE_INDEXES"
+          :key="`road-stone-${index}`"
+          class="road-stone"
+          :style="roadStoneStyle(index)"
         />
         <template v-for="index in MARKER_INDEXES" :key="`marker-${index}`">
           <span class="bridge-marker bridge-marker--left" :style="markerStyle(index)" />
@@ -190,8 +199,9 @@ function markerStyle(index: number) {
           :key="lane"
           class="route-lane"
           :class="laneClass(lane)"
+          :data-route-state="laneFailedAtCliff(lane) ? 'failed-cliff' : optionForLane(lane) ? 'open' : 'cliff'"
         >
-          <i v-if="!optionForLane(lane)" class="broken-edge" />
+          <i v-if="!optionForLane(lane) || laneFailedAtCliff(lane)" class="broken-edge" />
         </span>
       </div>
     </div>
@@ -233,12 +243,13 @@ function markerStyle(index: number) {
 
       <div
         v-else
-        class="closed-route-sign"
-        :class="`closed-route-sign--${lane}`"
+        class="cliff-mouth"
+        :class="`cliff-mouth--${lane}`"
+        data-obstacle="cliff"
         aria-hidden="true"
       >
-        <b>断桥</b>
-        <span>╱╲</span>
+        <span />
+        <i />
       </div>
     </template>
 
@@ -257,6 +268,7 @@ function markerStyle(index: number) {
         aria-hidden="true"
       >
         <template v-if="option.obstacle === 'ground'">
+          <span class="wall-face" />
           <span class="ground-block ground-block--one" />
           <span class="ground-block ground-block--two" />
           <span class="ground-block ground-block--three" />
@@ -265,6 +277,7 @@ function markerStyle(index: number) {
           <span class="overhead-post overhead-post--left" />
           <span class="overhead-post overhead-post--right" />
           <span class="overhead-beam" />
+          <span class="overhead-warning" />
         </template>
         <kbd>{{ metaFor(option.action).key }}</kbd>
       </div>
@@ -277,8 +290,19 @@ function markerStyle(index: number) {
       <RunnerModel
         :action="runnerAction"
         :end-reason="game.endReason"
+        :failure-kind="failureKind"
         :run-cycle-ms="game.speed?.runCycleMs ?? 720"
       />
+    </div>
+
+    <div
+      v-if="failureKind"
+      class="failure-fx"
+      :class="`failure-fx--${failureKind}`"
+      :data-failure-effect="failureKind"
+      aria-hidden="true"
+    >
+      <span v-for="index in 6" :key="index" :style="{ '--piece-index': index - 1 }" />
     </div>
 
     <div
@@ -291,8 +315,8 @@ function markerStyle(index: number) {
     </div>
 
     <div class="section-radar" aria-hidden="true">
-      <b>{{ game.branchCount ?? game.options?.length ?? 2 }} 路分叉</b>
-      <span>W 跳 · S 蹲 · A/D 变道</span>
+      <b>随机 {{ game.branchCount ?? game.options?.length ?? 2 }} 路分叉</b>
+      <span>低墙 W 跳 · 高墙 S 蹲 · A/D 转向</span>
     </div>
 
     <div v-if="game.levelUp && !game.endReason" class="level-up-flash" aria-hidden="true">
@@ -402,24 +426,6 @@ function markerStyle(index: number) {
 .bridge-tower--left { left: 13%; }
 .bridge-tower--right { right: 13%; }
 
-.speed-lines {
-  position: absolute;
-  z-index: 7;
-  inset: 42% 6% 0;
-  overflow: hidden;
-  clip-path: polygon(27% 0, 73% 0, 100% 100%, 0 100%);
-  pointer-events: none;
-}
-.speed-line {
-  position: absolute;
-  top: -20%;
-  width: 2px;
-  height: 19%;
-  border-radius: 999px;
-  background: linear-gradient(transparent, rgba(184, 244, 255, .92));
-  animation: speed-line-fall var(--track-period) linear infinite;
-}
-
 .bridge-world { position: absolute; z-index: 2; inset: 0; transform-origin: 50% 66%; }
 .bridge-deck {
   position: absolute;
@@ -428,18 +434,19 @@ function markerStyle(index: number) {
   isolation: isolate;
   clip-path: polygon(44% 0, 56% 0, 92% 100%, 8% 100%);
   background:
-    repeating-linear-gradient(180deg, transparent 0 9%, rgba(119, 184, 204, .14) 9.4% 10.4%, transparent 10.8% 19%),
-    linear-gradient(90deg, #0b1420, #2b4053 18% 50%, #263b4f 82%, #0b1420);
+    linear-gradient(104deg, transparent 0 23%, rgba(132, 177, 184, .07) 24% 25%, transparent 26% 73%, rgba(132, 177, 184, .06) 74% 75%, transparent 76%),
+    linear-gradient(90deg, #0a1118, #33464d 18%, #42565b 49%, #34484f 82%, #0a1118);
   box-shadow: 0 24px 38px rgba(2, 8, 17, .5);
-  animation: bridge-scroll var(--track-period) linear infinite;
 }
 .bridge-deck::before {
   position: absolute;
   z-index: 1;
   inset: 0;
   background:
-    linear-gradient(108deg, transparent 0 23%, rgba(130, 231, 242, .05) 27%, transparent 31% 69%, rgba(130, 231, 242, .05) 73%, transparent 77%),
-    linear-gradient(180deg, rgba(211, 249, 255, .14), transparent 21%);
+    radial-gradient(ellipse at 23% 64%, rgba(14, 22, 25, .38) 0 1.2%, transparent 1.45%),
+    radial-gradient(ellipse at 67% 38%, rgba(164, 191, 191, .09) 0 .8%, transparent 1.05%),
+    radial-gradient(ellipse at 48% 82%, rgba(10, 18, 20, .3) 0 1%, transparent 1.3%),
+    linear-gradient(180deg, rgba(222, 248, 244, .12), transparent 24%);
   content: '';
   pointer-events: none;
 }
@@ -465,51 +472,45 @@ function markerStyle(index: number) {
 }
 .bridge-seam--left { left: 39%; transform: rotate(-3deg); }
 .bridge-seam--right { right: 39%; transform: rotate(3deg); }
-.bridge-motion-grid {
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  background:
-    repeating-linear-gradient(180deg, transparent 0 7%, rgba(236, 250, 255, .075) 7.5% 8.2%, transparent 8.8% 15%),
-    repeating-linear-gradient(90deg, transparent 0 16.3%, rgba(90, 216, 232, .055) 16.5% 16.8%, transparent 17% 33%);
-  background-size: 100% 125%, 100% 100%;
-  animation: bridge-grid-rush var(--track-period) linear infinite;
-}
-
 .bridge-center-glow {
   position: absolute;
   z-index: 2;
   top: 0;
   bottom: 0;
   left: 50%;
-  width: 38%;
-  background: linear-gradient(180deg, rgba(105, 229, 242, .18), rgba(105, 229, 242, 0) 58%);
+  width: 34%;
+  background: linear-gradient(180deg, rgba(105, 229, 242, .14), rgba(105, 229, 242, 0) 58%);
   filter: blur(12px);
   transform: translateX(-50%);
 }
 
-.bridge-sleeper {
+.road-stone {
+  --stone-x: 50%;
+  --stone-width: 16px;
+  --stone-rotation: 0deg;
   position: absolute;
   z-index: 5;
-  top: 0;
-  left: 50%;
-  width: 7%;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(197, 240, 246, .78) 16% 84%, transparent);
-  box-shadow: 0 0 8px rgba(100, 219, 234, .26);
+  top: -3%;
+  left: var(--stone-x);
+  width: var(--stone-width);
+  aspect-ratio: 1.65;
+  border: 1px solid rgba(188, 206, 202, .13);
+  border-radius: 46% 54% 38% 62%;
+  background: linear-gradient(145deg, rgba(146, 166, 164, .36), rgba(10, 17, 20, .58));
+  box-shadow: 0 4px 7px rgba(2, 8, 12, .34);
+  clip-path: polygon(9% 24%, 63% 3%, 96% 42%, 73% 92%, 22% 82%);
   opacity: 0;
-  transform: translateX(-50%);
-  animation: sleeper-approach var(--track-period) linear infinite;
-  will-change: top, width, opacity;
+  transform: translateX(-50%) rotate(var(--stone-rotation)) scale(.18);
+  animation: road-stone-approach var(--track-period) linear infinite;
+  will-change: top, transform, opacity;
 }
 
 .bridge-marker {
   position: absolute;
   z-index: 6;
   top: 2%;
-  width: 4px;
-  height: 7px;
+  width: 5px;
+  height: 10px;
   border-radius: 3px 3px 1px 1px;
   background: linear-gradient(#f8df9e, #cf8734);
   box-shadow: 0 0 9px rgba(255, 205, 111, .72);
@@ -530,37 +531,71 @@ function markerStyle(index: number) {
   animation-name: marker-approach-right;
 }
 
-.route-lanes { position: absolute; z-index: 3; inset: 34% 5% -4%; pointer-events: none; }
+.route-lanes {
+  position: absolute;
+  z-index: 3;
+  inset: 34% 4% -4%;
+  pointer-events: none;
+  filter: drop-shadow(0 15px 17px rgba(1, 6, 10, .36));
+}
+.route-lanes::before {
+  position: absolute;
+  z-index: -1;
+  inset: 39% 23% -1%;
+  background:
+    linear-gradient(103deg, transparent 0 24%, rgba(177, 204, 202, .08) 25% 26%, transparent 27% 73%, rgba(177, 204, 202, .07) 74% 75%, transparent 76%),
+    linear-gradient(90deg, #172329, #41545a 18% 82%, #172329);
+  clip-path: polygon(43% 0, 57% 0, 100% 100%, 0 100%);
+  content: '';
+}
 .route-lane {
   position: absolute;
-  bottom: 0;
-  width: 31%;
-  height: 100%;
-  clip-path: polygon(43% 0, 57% 0, 100% 100%, 0 100%);
-  border-top: 2px solid rgba(120, 230, 244, .42);
-  background: linear-gradient(180deg, rgba(82, 209, 226, .12), rgba(82, 209, 226, .025));
+  inset: 0;
+  background:
+    linear-gradient(110deg, transparent 0 31%, rgba(158, 190, 188, .08) 32% 33%, transparent 34% 70%, rgba(158, 190, 188, .06) 71% 72%, transparent 73%),
+    linear-gradient(90deg, #18252b, #485b5f 20% 80%, #18252b);
+  filter: drop-shadow(0 0 1px rgba(164, 232, 233, .3));
   transition: filter 160ms ease, opacity 160ms ease;
-  animation: lane-flow var(--track-period) linear infinite;
 }
-.route-lane--left { left: 4%; transform: rotate(-5.5deg); transform-origin: 100% 0; }
-.route-lane--center { left: 34.5%; }
-.route-lane--right { right: 4%; transform: rotate(5.5deg); transform-origin: 0 0; }
+.route-lane::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(205, 237, 234, .12), transparent 38%);
+  content: '';
+}
+.route-lane--left { clip-path: polygon(4% 0, 28% 0, 56% 43%, 56% 50%, 44% 50%, 39% 44%); }
+.route-lane--center { clip-path: polygon(38% 0, 62% 0, 56% 50%, 44% 50%); }
+.route-lane--right { clip-path: polygon(72% 0, 96% 0, 61% 44%, 56% 50%, 44% 50%, 44% 43%); }
+.track-scene--fork-1 .route-lane--left { clip-path: polygon(0 0, 24% 0, 55% 43%, 55% 50%, 43% 50%, 36% 44%); }
+.track-scene--fork-1 .route-lane--right { clip-path: polygon(68% 0, 94% 0, 61% 44%, 57% 50%, 45% 50%, 45% 42%); }
+.track-scene--fork-2 .route-lane--left { clip-path: polygon(7% 0, 32% 0, 57% 44%, 56% 50%, 43% 50%, 41% 43%); }
+.track-scene--fork-2 .route-lane--right { clip-path: polygon(76% 0, 100% 0, 64% 44%, 57% 50%, 44% 50%, 45% 43%); }
 .route-lane--selected { filter: drop-shadow(0 0 11px rgba(85, 221, 239, .75)); }
 .route-lane--correct { filter: drop-shadow(0 0 13px var(--mr-success-glow)); }
 .route-lane--closed {
-  opacity: .5;
-  background: repeating-linear-gradient(135deg, rgba(255, 160, 77, .18) 0 8px, rgba(16, 25, 37, .36) 8px 16px);
-  clip-path: polygon(43% 0, 57% 0, 79% 47%, 65% 55%, 91% 100%, 4% 100%, 35% 57%, 23% 47%);
+  opacity: .62;
+  background: linear-gradient(180deg, #33464b 0 37%, #202e33 38% 43%, transparent 44%);
+}
+.route-lane--failed {
+  opacity: .82;
+  background: linear-gradient(180deg, #3d5054 0 32%, #253439 33% 39%, transparent 40%);
+  filter: drop-shadow(0 9px 8px rgba(1, 6, 10, .78));
 }
 .broken-edge {
   position: absolute;
-  top: 47%;
-  left: 31%;
-  width: 38%;
-  height: 3px;
-  background: var(--mr-warning);
-  box-shadow: 0 0 9px var(--mr-warning-glow);
-  transform: rotate(-7deg);
+  top: 38%;
+  left: 15%;
+  width: 70%;
+  height: 12%;
+  background: linear-gradient(180deg, #536268, #172126 64%, rgba(4, 9, 13, .9));
+  box-shadow: 0 10px 12px rgba(1, 5, 8, .72);
+  clip-path: polygon(0 0, 13% 18%, 27% 2%, 43% 21%, 58% 4%, 72% 23%, 88% 6%, 100% 17%, 91% 100%, 8% 92%);
+}
+.broken-edge::after {
+  position: absolute;
+  inset: 45% 4% -55%;
+  background: radial-gradient(ellipse, rgba(2, 7, 12, .96), rgba(3, 9, 15, 0) 72%);
+  content: '';
 }
 
 .lane-gate {
@@ -643,69 +678,119 @@ function markerStyle(index: number) {
 .gate-result--correct { background: var(--mr-success-strong); }
 .gate-result--wrong { background: var(--mr-danger-strong); }
 
-.closed-route-sign {
+.cliff-mouth {
   position: absolute;
   z-index: 8;
-  top: 27%;
-  width: min(18%, 150px);
-  min-height: 57px;
-  display: grid;
-  place-content: center;
-  gap: 2px;
-  border: 2px dashed rgba(255, 176, 86, .58);
-  border-radius: 11px;
-  color: #ffd09a;
-  background: rgba(12, 22, 34, .72);
-  text-align: center;
-  opacity: .8;
-  animation: closed-route-approach var(--question-period) linear both;
+  top: 42%;
+  width: min(24%, 210px);
+  height: clamp(36px, 7vw, 76px);
+  overflow: visible;
+  background: radial-gradient(ellipse at 50% 26%, #03080d 0 53%, rgba(3, 8, 13, .72) 66%, transparent 72%);
+  filter: drop-shadow(0 12px 12px rgba(0, 0, 0, .72));
+  opacity: .94;
+  transform: translateX(-50%);
+  animation: cliff-approach var(--question-period) linear both;
   animation-delay: var(--question-delay);
   will-change: top, scale;
 }
-.closed-route-sign--left { left: 8%; }
-.closed-route-sign--center { left: 50%; transform: translateX(-50%); }
-.closed-route-sign--right { right: 8%; }
-.closed-route-sign b { font-size: 9px; }
-.closed-route-sign span { color: var(--mr-warning); font-size: 18px; letter-spacing: -.25em; transform: translateX(-.12em); }
+.cliff-mouth--left { left: 17%; rotate: -5deg; }
+.cliff-mouth--center { left: 50%; }
+.cliff-mouth--right { left: 83%; rotate: 5deg; }
+.cliff-mouth span {
+  position: absolute;
+  inset: 18% 10% 2%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(111, 205, 219, .2), transparent 66%);
+  filter: blur(5px);
+}
+.cliff-mouth i {
+  position: absolute;
+  inset: 30% 17% -14%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(103, 188, 204, .14), transparent 68%);
+  filter: blur(6px);
+}
 
 .lane-obstacle {
   position: absolute;
   z-index: 9;
   left: 50%;
   top: 52%;
-  width: clamp(72px, 13%, 122px);
-  height: 77px;
+  width: clamp(104px, 18%, 168px);
+  height: clamp(88px, 12vw, 128px);
   transform: translateX(-50%);
   pointer-events: none;
   animation: obstacle-approach var(--question-period) linear both;
   animation-delay: var(--question-delay);
   will-change: top, scale;
 }
-.lane-obstacle > kbd { position: absolute; top: -7px; right: -9px; z-index: 3; background: #dffbff; box-shadow: 0 0 10px rgba(78, 213, 231, .65); }
+.lane-obstacle > kbd { position: absolute; top: -9px; right: -10px; z-index: 6; background: #dffbff; box-shadow: 0 0 10px rgba(78, 213, 231, .65); }
+.lane-obstacle--ground {
+  height: clamp(62px, 8vw, 86px);
+}
+.wall-face {
+  position: absolute;
+  z-index: 1;
+  right: 2%;
+  bottom: 0;
+  left: 2%;
+  height: 64%;
+  border: 2px solid #49341f;
+  border-radius: 3px 3px 7px 7px;
+  background:
+    radial-gradient(circle at 22% 34%, rgba(255, 219, 148, .17) 0 3%, transparent 3.5%),
+    radial-gradient(circle at 72% 68%, rgba(40, 24, 13, .28) 0 3%, transparent 3.5%),
+    linear-gradient(145deg, #ad7742, #65401f 58%, #35251a);
+  box-shadow: inset 0 3px 0 rgba(255, 219, 155, .18), 0 10px 15px rgba(0, 0, 0, .42);
+  clip-path: polygon(0 9%, 11% 2%, 22% 10%, 36% 0, 49% 8%, 64% 1%, 78% 11%, 90% 3%, 100% 10%, 100% 100%, 0 100%);
+}
 .ground-block {
   position: absolute;
-  bottom: 0;
-  width: 34%;
-  height: 43%;
-  border: 2px solid #8b5c28;
-  background: linear-gradient(145deg, #f0bd65, #a65f24);
-  clip-path: polygon(50% 0, 100% 24%, 100% 100%, 0 100%, 0 24%);
-  box-shadow: 0 7px 13px rgba(0, 0, 0, .35);
+  z-index: 2;
+  bottom: 44%;
+  width: 35%;
+  height: 34%;
+  border: 1px solid #61401e;
+  background: linear-gradient(145deg, #d09a55, #75461f);
+  clip-path: polygon(8% 18%, 52% 0, 94% 20%, 100% 100%, 0 100%);
+  box-shadow: inset 0 2px 0 rgba(255, 226, 168, .22);
 }
 .ground-block--one { left: 0; transform: rotate(-4deg); }
-.ground-block--two { left: 33%; height: 54%; }
+.ground-block--two { left: 33%; height: 43%; }
 .ground-block--three { right: 0; transform: rotate(4deg); }
 .overhead-post,
 .overhead-beam {
   position: absolute;
-  border: 2px solid #287a89;
-  background: linear-gradient(90deg, #143c4b, #66d7e5, #173f4c);
-  box-shadow: 0 0 10px rgba(77, 215, 232, .42);
+  border: 2px solid #273c43;
+  background: linear-gradient(90deg, #17282e, #62777a 48%, #1a292e);
+  box-shadow: inset 0 0 0 1px rgba(202, 229, 226, .1), 0 7px 14px rgba(0, 0, 0, .42);
 }
-.overhead-post { bottom: 0; width: 12px; height: 72%; border-radius: 5px; }
-.overhead-post--left { left: 5px; }
-.overhead-post--right { right: 5px; }
-.overhead-beam { top: 5px; left: 0; right: 0; height: 17px; border-radius: 6px; }
+.overhead-post { top: 0; width: 14px; height: 100%; border-radius: 5px; }
+.overhead-post--left { left: 1px; }
+.overhead-post--right { right: 1px; }
+.overhead-beam {
+  z-index: 2;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 58%;
+  border-radius: 6px 6px 3px 3px;
+  background:
+    radial-gradient(circle at 18% 32%, rgba(226, 241, 234, .12) 0 2%, transparent 2.5%),
+    linear-gradient(100deg, #15252b, #64787a 44%, #273b40 72%, #121f24);
+  clip-path: polygon(0 0, 100% 0, 100% 91%, 88% 84%, 76% 96%, 62% 87%, 48% 100%, 34% 88%, 20% 96%, 8% 86%, 0 92%);
+}
+.overhead-warning {
+  position: absolute;
+  z-index: 4;
+  top: 49%;
+  left: 15%;
+  width: 70%;
+  height: 5px;
+  border-radius: 999px;
+  background: #e3a34c;
+  box-shadow: 0 0 10px rgba(255, 178, 76, .62);
+}
 
 .runner-anchor {
   position: absolute;
@@ -717,6 +802,60 @@ function markerStyle(index: number) {
 }
 .runner-anchor--left { animation: runner-lane-left 620ms cubic-bezier(.2, .8, .2, 1); }
 .runner-anchor--right { animation: runner-lane-right 620ms cubic-bezier(.2, .8, .2, 1); }
+
+.failure-fx {
+  position: absolute;
+  z-index: 11;
+  pointer-events: none;
+}
+.failure-fx--wall {
+  inset: 0;
+  background: radial-gradient(circle at 50% 72%, rgba(255, 192, 91, .28), transparent 4%);
+  opacity: 0;
+  animation: wall-impact-flash 980ms ease-out both;
+}
+.failure-fx--wall span {
+  --piece-index: 0;
+  position: absolute;
+  top: 69%;
+  left: 50%;
+  width: 7px;
+  height: 16px;
+  border-radius: 2px;
+  background: linear-gradient(#ffe4a3, #ab682a);
+  box-shadow: 0 0 8px rgba(255, 189, 88, .72);
+  opacity: 0;
+  transform: rotate(calc(var(--piece-index) * 60deg));
+  animation: wall-fragment 980ms cubic-bezier(.18, .7, .22, 1) both;
+  animation-delay: calc(var(--piece-index) * 13ms);
+}
+.failure-fx--cliff {
+  bottom: -3%;
+  left: 50%;
+  width: 42%;
+  height: 31%;
+  border-radius: 50% 50% 0 0;
+  background:
+    radial-gradient(ellipse at 50% 28%, rgba(2, 7, 12, .98) 0 37%, rgba(4, 12, 19, .78) 52%, transparent 70%),
+    radial-gradient(ellipse at 50% 58%, rgba(112, 202, 218, .16), transparent 61%);
+  filter: drop-shadow(0 -8px 14px rgba(2, 7, 12, .74));
+  opacity: 0;
+  transform: translateX(-50%) scale(.4);
+  animation: cliff-open 1250ms ease-out both;
+}
+.failure-fx--cliff span {
+  --piece-index: 0;
+  position: absolute;
+  top: 20%;
+  left: calc(28% + var(--piece-index) * 8%);
+  width: calc(5px + var(--piece-index) * .5px);
+  aspect-ratio: 1.4;
+  border-radius: 45%;
+  background: #536168;
+  opacity: 0;
+  animation: cliff-fragment 1100ms ease-in both;
+  animation-delay: calc(90ms + var(--piece-index) * 35ms);
+}
 
 .scene-timer {
   position: absolute;
@@ -782,33 +921,25 @@ function markerStyle(index: number) {
 .bridge-world--right { animation: world-right 620ms cubic-bezier(.2, .8, .2, 1); }
 .bridge-world--jump { animation: world-jump 620ms cubic-bezier(.2, .8, .2, 1); }
 .bridge-world--slide { animation: world-slide 620ms cubic-bezier(.2, .8, .2, 1); }
-.track-scene--wrong .speed-line,
-.track-scene--timeout .speed-line,
-.track-scene--completed .speed-line,
-.track-scene--wrong .bridge-deck,
-.track-scene--timeout .bridge-deck,
-.track-scene--completed .bridge-deck,
-.track-scene--wrong .bridge-motion-grid,
-.track-scene--timeout .bridge-motion-grid,
-.track-scene--completed .bridge-motion-grid,
-.track-scene--wrong .bridge-sleeper,
-.track-scene--timeout .bridge-sleeper,
-.track-scene--completed .bridge-sleeper,
+.track-scene--failure-wall .scene-camera,
+.track-scene--failure-wall .bridge-world { animation: impact-camera-shake 980ms ease-out both; }
+.track-scene--failure-cliff .scene-camera { animation: cliff-camera-tilt 1250ms ease-in both; }
+.track-scene--failure-cliff .bridge-world { animation: cliff-world-tilt 1250ms ease-in both; }
+.track-scene--wrong .road-stone,
+.track-scene--timeout .road-stone,
+.track-scene--completed .road-stone,
 .track-scene--wrong .bridge-marker,
 .track-scene--timeout .bridge-marker,
 .track-scene--completed .bridge-marker,
-.track-scene--wrong .route-lane,
-.track-scene--timeout .route-lane,
-.track-scene--completed .route-lane,
 .track-scene--wrong .scene-backdrop,
 .track-scene--timeout .scene-backdrop,
 .track-scene--completed .scene-backdrop,
 .track-scene--wrong .lane-gate,
 .track-scene--timeout .lane-gate,
 .track-scene--completed .lane-gate,
-.track-scene--wrong .closed-route-sign,
-.track-scene--timeout .closed-route-sign,
-.track-scene--completed .closed-route-sign,
+.track-scene--wrong .cliff-mouth,
+.track-scene--timeout .cliff-mouth,
+.track-scene--completed .cliff-mouth,
 .track-scene--wrong .lane-obstacle,
 .track-scene--timeout .lane-obstacle,
 .track-scene--completed .lane-obstacle { animation-play-state: paused; }
@@ -843,13 +974,11 @@ function markerStyle(index: number) {
   0%, 100% { transform: translateY(0) scale(1); }
   52% { transform: translateY(-2%) scale(.985); }
 }
-@keyframes bridge-scroll { to { background-position: 0 146%, 0 0; } }
-@keyframes bridge-grid-rush { to { background-position: 0 125%, 0 0; } }
-@keyframes sleeper-approach {
-  0% { top: 0; width: 7%; height: 2px; opacity: 0; }
-  9% { opacity: .38; }
-  70% { opacity: .62; }
-  100% { top: 103%; width: 88%; height: 7px; opacity: 0; }
+@keyframes road-stone-approach {
+  0% { top: -3%; opacity: 0; transform: translateX(-50%) rotate(var(--stone-rotation)) scale(.16); }
+  13% { opacity: .34; }
+  74% { opacity: .62; }
+  100% { top: 105%; opacity: 0; transform: translateX(-50%) rotate(calc(var(--stone-rotation) + 14deg)) scale(3.4); }
 }
 @keyframes marker-approach-left {
   0% { top: 1%; left: 46%; opacity: 0; transform: scale(.22); }
@@ -863,26 +992,60 @@ function markerStyle(index: number) {
   76% { opacity: .88; }
   100% { top: 97%; right: 8%; opacity: 0; transform: scale(2.9); }
 }
-@keyframes lane-flow { to { background-position: 0 116%; } }
 @keyframes gate-approach {
   0% { top: 22%; scale: .9; }
   100% { top: 36%; scale: 1.12; }
 }
-@keyframes closed-route-approach {
-  0% { top: 25%; scale: .88; }
-  100% { top: 39%; scale: 1.08; }
+@keyframes cliff-approach {
+  0% { top: 39%; scale: .72; opacity: .76; }
+  100% { top: 58%; scale: 1.25; opacity: 1; }
 }
 @keyframes obstacle-approach {
-  0% { top: 47%; scale: .78; opacity: .78; }
-  100% { top: 65%; scale: 1.18; opacity: 1; }
+  0% { top: 43%; scale: .68; opacity: .76; }
+  100% { top: 66%; scale: 1.26; opacity: 1; }
 }
-@keyframes speed-line-fall { from { transform: translateY(-80%) scaleY(.5); } to { transform: translateY(650%) scaleY(2.5); } }
 @keyframes runner-lane-left { 0%, 100% { transform: translateX(-50%) scale(.88); } 62% { transform: translateX(-155%) scale(.9) rotate(-6deg); } }
 @keyframes runner-lane-right { 0%, 100% { transform: translateX(-50%) scale(.88); } 62% { transform: translateX(55%) scale(.9) rotate(6deg); } }
 @keyframes world-left { 0%, 100% { transform: translateX(0) rotate(0); } 58% { transform: translateX(6.5%) rotate(2.4deg) scale(1.02); } }
 @keyframes world-right { 0%, 100% { transform: translateX(0) rotate(0); } 58% { transform: translateX(-6.5%) rotate(-2.4deg) scale(1.02); } }
 @keyframes world-jump { 0%, 100% { transform: scale(1); } 55% { transform: translateY(2%) scale(1.055); } }
 @keyframes world-slide { 0%, 100% { transform: translateY(0) scale(1); } 55% { transform: translateY(-2.5%) scale(.975); } }
+@keyframes impact-camera-shake {
+  0%, 19%, 100% { transform: translate(0, 0) rotate(0) scale(1); }
+  25% { transform: translate(-1.2%, .8%) rotate(-.7deg) scale(1.025); }
+  31% { transform: translate(1.4%, -.7%) rotate(.8deg) scale(1.03); }
+  38% { transform: translate(-.8%, .5%) rotate(-.45deg) scale(1.02); }
+  48% { transform: translate(.5%, -.25%) rotate(.25deg) scale(1.01); }
+}
+@keyframes cliff-camera-tilt {
+  0%, 12% { transform: translate(0, 0) rotate(0) scale(1); }
+  42% { transform: translate(1.5%, -1%) rotate(1.4deg) scale(1.02); }
+  100% { transform: translate(3%, -4%) rotate(3deg) scale(1.07); }
+}
+@keyframes cliff-world-tilt {
+  0%, 14% { transform: translate(0, 0) rotate(0) scale(1); }
+  100% { transform: translate(-2%, -2%) rotate(-2.2deg) scale(1.04); }
+}
+@keyframes wall-impact-flash {
+  0%, 23% { opacity: 0; }
+  30% { opacity: 1; }
+  58%, 100% { opacity: 0; }
+}
+@keyframes wall-fragment {
+  0%, 23% { opacity: 0; transform: translate(0, 0) rotate(calc(var(--piece-index) * 60deg)) scale(.4); }
+  31% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc((var(--piece-index) - 2.5) * 24px), calc(-34px - var(--piece-index) * 7px)) rotate(calc(var(--piece-index) * 108deg)) scale(.85); }
+}
+@keyframes cliff-open {
+  0%, 12% { opacity: 0; transform: translateX(-50%) scale(.35); }
+  38% { opacity: .88; transform: translateX(-50%) scale(.82); }
+  100% { opacity: 1; transform: translateX(-50%) scale(1.14); }
+}
+@keyframes cliff-fragment {
+  0%, 14% { opacity: 0; transform: translateY(0) rotate(0); }
+  28% { opacity: .8; }
+  100% { opacity: 0; transform: translate(calc((var(--piece-index) - 2.5) * 9px), 128px) rotate(calc(var(--piece-index) * 94deg)) scale(.35); }
+}
 @keyframes timer-urgent { from { filter: none; } to { filter: drop-shadow(0 0 12px var(--mr-warning-glow)); } }
 @keyframes level-flash { 0% { opacity: 0; transform: translate(-50%, -42%) scale(.82); } 32% { opacity: 1; transform: translate(-50%, -50%) scale(1.04); } 78% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -58%) scale(1); } }
 @keyframes stage-ring { from { opacity: 1; transform: scale(.985); } to { opacity: 0; transform: scale(1.02); } }
@@ -896,7 +1059,7 @@ function markerStyle(index: number) {
   .gate-action b { font-size: 13px; }
   .gate-equation { font-size: clamp(9px, 2.5vw, 13px); overflow-wrap: anywhere; }
   .lane-gate > small { font-size: 7px; }
-  .closed-route-sign { top: 27%; min-height: 47px; }
+  .cliff-mouth { height: 48px; }
   .lane-obstacle { top: 53%; transform: translateX(-50%) scale(.8); }
   .runner-anchor { bottom: 0; transform: translateX(-50%) scale(.7); }
   .scene-timer { top: 9px; right: 9px; width: 54px; }
@@ -908,7 +1071,7 @@ function markerStyle(index: number) {
   .lane-gate { top: 19%; min-height: 54px; gap: 2px; padding: 4px 5px; }
   .lane-gate > small { display: none; }
   .gate-equation { font-size: clamp(8px, 1.55vw, 12px); }
-  .closed-route-sign { top: 22%; min-height: 42px; }
+  .cliff-mouth { height: 38px; }
   .lane-obstacle { top: 49%; transform: translateX(-50%) scale(.64); }
   .runner-anchor { bottom: -8%; transform: translateX(-50%) scale(.55); }
   .scene-timer { width: 48px; }
@@ -916,19 +1079,16 @@ function markerStyle(index: number) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .speed-line,
-  .bridge-deck,
-  .bridge-motion-grid,
-  .bridge-sleeper,
+  .road-stone,
   .bridge-marker,
-  .route-lane,
   .scene-camera,
   .scene-backdrop,
   .bridge-world,
   .runner-anchor,
   .lane-gate,
-  .closed-route-sign,
+  .cliff-mouth,
   .lane-obstacle,
+  .failure-fx,
   .scene-timer,
   .level-up-flash,
   .track-scene--level-up::after { animation: none !important; }

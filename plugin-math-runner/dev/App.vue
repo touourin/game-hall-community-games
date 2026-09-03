@@ -105,7 +105,6 @@ function makeSnapshot(questionIndex = 0): ArcadeSnapshot {
       speed: {
         trackPeriodMs: 1500 - (level - 1) * 90,
         runCycleMs: 720 - (level - 1) * 30,
-        speedLines: Math.min(12, 4 + level - 1),
       },
       won: false,
       result: null,

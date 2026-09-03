@@ -1,6 +1,6 @@
 # 《算途疾行》动画与时序模型
 
-> 跑步、桥面接近、镜头转向、跳跃、下蹲、反馈与重连规则 v3.0
+> 八帧跑步、桥面接近、动作反馈、撞墙/坠桥与重连规则 v4.0
 
 ## 1. 权威边界
 
@@ -17,32 +17,32 @@ sequenceDiagram
     participant S as 服务端
     participant C as 客户端
     S->>C: questionId / 2-3 options / remainingMs
-        C->>C: 双帧跑步 + 五级桥面视差 + 倒计时
+    C->>C: 八帧跑步 + 稀疏路面参照 + 倒计时
     C->>S: choose(runnerAction, questionId)
     S->>S: 校验截止时间、开放动作与唯一真值
     alt 正确
         S->>C: 下一题 + lastAction + levelUp
-        C->>C: 变道/跳跃/下蹲 620ms -> 跑步
+        C->>C: 变道 660ms / 跳蹲 680ms -> 跑步
     else 错误
         S->>C: finished(wrong) + correctAction
-        C->>C: 失衡刹停
+        C->>C: 撞墙 980ms 或坠桥 1250ms -> 结算卡
     end
 ```
 
 ## 3. 速度参数
 
-| 等级 | 时限 | 桥面周期 | 跑步周期 | 速度线 |
-| ---: | ---: | ---: | ---: | ---: |
-| 1 | 6500 ms | 1500 ms | 720 ms | 4 |
-| 2 | 6100 ms | 1390 ms | 685 ms | 5 |
-| 3 | 5700 ms | 1280 ms | 650 ms | 5 |
-| 4 | 5300 ms | 1170 ms | 615 ms | 6 |
-| 5 | 4900 ms | 1060 ms | 580 ms | 7 |
-| 6 | 4500 ms | 950 ms | 545 ms | 8 |
-| 7 | 4150 ms | 860 ms | 515 ms | 9 |
-| 8 | 3800 ms | 780 ms | 485 ms | 10 |
-| 9 | 3500 ms | 710 ms | 455 ms | 11 |
-| 10 | 3200 ms | 650 ms | 430 ms | 12 |
+| 等级 | 时限 | 路面参照周期 | 跑步周期 |
+| ---: | ---: | ---: | ---: |
+| 1 | 6500 ms | 1500 ms | 720 ms |
+| 2 | 6100 ms | 1390 ms | 685 ms |
+| 3 | 5700 ms | 1280 ms | 650 ms |
+| 4 | 5300 ms | 1170 ms | 615 ms |
+| 5 | 4900 ms | 1060 ms | 580 ms |
+| 6 | 4500 ms | 950 ms | 545 ms |
+| 7 | 4150 ms | 860 ms | 515 ms |
+| 8 | 3800 ms | 780 ms | 485 ms |
+| 9 | 3500 ms | 710 ms | 455 ms |
+| 10 | 3200 ms | 650 ms | 430 ms |
 
 视觉速度不改变服务端截止时间。
 
@@ -51,16 +51,16 @@ sequenceDiagram
 | 名称 | 时长 | 触发 | 表现 |
 | --- | ---: | --- | --- |
 | `backdrop-forward` | 慢循环 | `playing` | 峡谷远景缓慢缩放与纵向漂移 |
-| `bridge-scroll` | 循环 | `playing` | 桥面接缝和透视网格向后移动 |
-| `sleeper/marker-approach` | 循环 | `playing` | 枕木与护栏路标从消失点向镜头扩张 |
+| `road-stone/marker-approach` | 循环 | `playing` | 七枚稀疏路面碎石与八枚护栏路标从消失点向镜头扩张 |
 | `gate/obstacle-approach` | 单题时限 | 新题 | 题牌、断桥和障碍持续靠近玩家 |
-| `runner-cycle` | 循环 | `playing` | 两个完整奔跑姿态离散交替 |
-| `left/right` | 620 ms | 服务端答对 | 专用转弯姿势 + 跑道横移 + 镜头反向转动 |
-| `jump` | 620 ms | 服务端答对 | 腾空、收腿、落地 |
-| `slide` | 620 ms | 服务端答对 | 专用低姿动作、前倾、滑行 |
+| `runner-cycle` | 循环 | `playing` | 八个完整奔跑姿态离散循环 |
+| `left/right` | 660 ms | 服务端答对 | 两帧专用转弯 + 跑道横移 + 镜头反向转动 |
+| `jump` | 680 ms | 服务端答对 | 腾空、收腿、落地 |
+| `slide` | 680 ms | 服务端答对 | 专用低姿动作、前倾、滑行 |
 | `level-pulse` | 900 ms | 每 10 题 | 等级提示 |
-| `wrong-stumble` | 540 ms | 错答 | 失衡刹停 |
-| `timeout-brake` | 480 ms | 超时 | 障碍前急停 |
+| `wall-impact` | 980 ms | 错误/超时对应中道动作 | 撞墙姿态、冲击环、碎片和镜头震动 |
+| `cliff-fall` | 1250 ms | 错误/超时对应左右路线 | 坠桥姿态、裂口、落石和镜头倾斜 |
+| `result-reveal` | 失败动画结束后 | `finished` | 延迟显示结算卡，确保失败反馈完整可见 |
 | `finish-run` | 1100 ms | 第 100 题 | 冲向终点 |
 
 ## 5. 输入锁与键盘
@@ -94,4 +94,4 @@ displayRemaining = max(0, localDeadline - performance.now())
 
 ## 8. 减弱动态
 
-`prefers-reduced-motion: reduce` 时关闭远景漂移、桥面滚动、枕木/路标、题段接近、速度线和无限跑步循环；四个动作改为对应完整姿态与静态位移。输入锁、倒计时和服务端结算保持不变。
+`prefers-reduced-motion: reduce` 时关闭远景漂移、碎石/路标、题段接近、失败粒子和无限跑步循环；动作与失败状态改为对应完整姿态及较小静态位移。输入锁、倒计时和服务端结算保持不变。

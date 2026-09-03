@@ -87,8 +87,9 @@ def _snapshot(
     engine: Any,
     room: ArcadeRoom,
     players: list[ArcadePlayer],
+    viewer: ArcadePlayer | None = None,
 ) -> dict[str, Any]:
-    viewer = players[0]
+    viewer = viewer or players[0]
     game_view = engine.view(room, viewer)
     finished = room.phase == "finished"
     return {
@@ -99,7 +100,7 @@ def _snapshot(
         "phase": room.phase,
         "statsEligible": room.stats_eligible,
         "options": room.options,
-        "hostId": viewer.id,
+        "hostId": room.host_id,
         "self": {"id": viewer.id, "name": viewer.name, "seat": viewer.seat},
         "viewer": {
             "mode": "player",
@@ -113,7 +114,7 @@ def _snapshot(
                 "name": player.name,
                 "seat": player.seat,
                 "connected": True,
-                "isHost": player.id == viewer.id,
+                "isHost": player.id == room.host_id,
             }
             for player in players
         ],
@@ -138,6 +139,75 @@ def _snapshot(
         "request": None,
         "chat": {"maxLength": 200, "messages": []},
         "game": game_view,
+    }
+
+
+@app.post("/api/temporary-pass")
+def temporary_pass_scenario() -> dict[str, Any]:
+    """Stop at the moment a previous passer is reactivated by a raise."""
+    engine = ENGINE_FACTORY()
+    engine.rng = random.Random(7_300_099)
+    players = _players(3)
+    room = ArcadeRoom(
+        code="REJOIN",
+        game_key=engine.key,
+        host_id=players[0].id,
+        players=players,
+        state=engine.initial_state(),
+        options={"firstPlayer": "host", "lastChanceEnabled": True},
+    )
+    engine.start(room)
+
+    def flower_id(player_id: str) -> str:
+        return next(
+            disc.id for disc in room.state.players[player_id].hand
+            if disc.kind == "flower"
+        )
+
+    # The first player commits last, then everyone places one extra flower so
+    # the scenario can raise without reaching the table maximum.
+    for player in (players[1], players[2], players[0]):
+        engine.act(
+            room,
+            player,
+            "commit_initial",
+            {"discId": flower_id(player.id)},
+        )
+    for player in players:
+        engine.act(
+            room,
+            player,
+            "place_disc",
+            {"discId": flower_id(player.id)},
+        )
+
+    engine.act(room, players[0], "open_bid", {"count": 1})
+    engine.act(room, players[1], "pass_bid", {})
+    declined_before_raise = list(room.state.round.passed_player_ids)
+    engine.act(room, players[2], "raise_bid", {"count": 2})
+    declined_after_raise = list(room.state.round.passed_player_ids)
+    engine.act(room, players[0], "pass_bid", {})
+
+    reactivated = engine.view(room, players[1])
+    if (
+        declined_before_raise != [players[1].id]
+        or declined_after_raise
+        or room.state.round.current_player_id != players[1].id
+        or not {"raise_bid", "pass_bid"}.issubset(reactivated["actions"])
+    ):
+        raise HTTPException(500, "暂不跟价玩家未在加价后恢复行动资格")
+
+    return {
+        "snapshot": _snapshot(engine, room, players, players[1]),
+        "report": {
+            "playerCount": 3,
+            "actionCount": 10,
+            "phaseTrace": ["round_setup", "placement", "bidding"],
+            "resultReason": "temporary_pass_reactivated",
+            "winnerPlayerIds": [],
+            "settlement": [],
+            "summary": "规则通过 · 玩家2暂不跟价后，因玩家3加价而重新获得行动",
+        },
     }
 
 

@@ -89,7 +89,7 @@ const phaseCopy = computed(() => {
   }
   if (phase === 'bidding') {
     return game.value.round.currentPlayerId === perspectiveId.value
-      ? { eyebrow: '公开竞标', title: '加价，还是退出？', detail: '退出后本轮不能重新加入，但你的暗牌仍留在桌面' }
+      ? { eyebrow: '公开竞标', title: '加价，还是暂不跟价？', detail: '暂不跟价只对当前叫价有效；若有人加价，你会重新获得行动机会' }
       : { eyebrow: '公开竞标', title: (highBidder.value?.displayName ?? '玩家') + ' 暂时领先', detail: '当前叫价 ' + game.value.round.currentBid + ' / 桌面 ' + game.value.round.totalPlaced }
   }
   if (phase === 'reveal') {
@@ -335,7 +335,7 @@ function adjustBid(delta: number) {
           <span v-if="player.id === game.round?.firstPlayerId">首家</span>
           <span v-if="player.id === game.round?.currentPlayerId">行动</span>
           <span v-if="player.id === game.round?.highBidderId">高叫 {{ game.round.currentBid }}</span>
-          <span v-if="player.passedBid">已退出</span>
+          <span v-if="player.passedBid">本价不跟</span>
           <span v-if="player.id === game.round?.lastChanceHolderId">最后机会</span>
           <span v-if="playerConnection(player.id)" class="warning">{{ playerConnection(player.id) }}</span>
         </div>
@@ -526,10 +526,10 @@ function adjustBid(delta: number) {
               <button type="button" aria-label="叫价加一" :disabled="bidValue >= game.maximumBid" @click="adjustBid(1)">＋</button>
             </div>
             <PluginButton variant="primary" :disabled="!canSubmitBid" @click="submitBid">提高叫价</PluginButton>
-            <PluginButton :disabled="!canUseAction('pass_bid') || busy" @click="sendAction('pass_bid')">退出本轮</PluginButton>
+            <PluginButton :disabled="!canUseAction('pass_bid') || busy" @click="sendAction('pass_bid')">暂不加价</PluginButton>
           </div>
           <div v-else class="waiting-state">
-            <Gavel :size="24" /><span><b>{{ highBidder?.displayName ?? '玩家' }} 以 {{ game.round.currentBid }} 枚领先</b><small>等待 {{ currentPlayer?.displayName ?? '其他玩家' }} 加价或退出</small></span>
+            <Gavel :size="24" /><span><b>{{ highBidder?.displayName ?? '玩家' }} 以 {{ game.round.currentBid }} 枚领先</b><small>等待 {{ currentPlayer?.displayName ?? '其他玩家' }} 加价或暂不跟价</small></span>
           </div>
         </template>
 
@@ -622,7 +622,7 @@ function adjustBid(delta: number) {
     >
       <article class="rules-content">
         <section><span>01</span><div><h3>秘密暗置</h3><p>每人从自己的 3 枚花牌与 1 枚骷髅牌中暗置一枚。首家最后锁定，随后从首家开始轮流叠牌或开叫。</p></div></section>
-        <section><span>02</span><div><h3>叠牌或开叫</h3><p>轮到你时，继续把一枚牌面朝下叠在自己牌堆顶部，或宣布你敢翻开的数量。一旦开叫，所有人只能加价或退出。</p></div></section>
+        <section><span>02</span><div><h3>叠牌或开叫</h3><p>轮到你时，继续把一枚牌面朝下叠在自己牌堆顶部，或宣布你敢翻开的数量。一旦开叫，只能加价或暂不跟价；有人加价后，所有人重新获得回应机会。</p></div></section>
         <section><span>03</span><div><h3>挑战翻牌</h3><p>最高叫价者先从自己的牌堆顶部逐枚翻起。达到叫价且全部为花即成功；翻到任何骷髅立即失败。</p></div></section>
         <section><span>04</span><div><h3>失败处罚</h3><p>翻到自己的骷髅时秘密自选一枚牌移除；翻到别人骷髅时，由骷髅所有者从服务端打乱的槽位中盲选。</p></div></section>
         <section><span>05</span><div><h3>赢得整局</h3><p>率先成功挑战两次者获胜；若其他玩家都失去最后一枚个人牌，唯一仍在场的玩家立即获胜。</p></div></section>

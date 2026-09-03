@@ -241,6 +241,33 @@ describe('skull immersive game view', () => {
     revealWrapper.unmount()
   })
 
+  it('presents pass as temporary for the latest bid', async () => {
+    const biddingPlayers = players().map((player, index) => (
+      index === 2 ? { ...player, passedBid: true } : player
+    ))
+    const bidding = game({
+      phase: 'bidding',
+      sceneId: 'bid.raise-or-pass',
+      players: biddingPlayers,
+      actions: ['raise_bid', 'pass_bid'],
+      round: {
+        currentPlayerId: 'p1',
+        currentBid: 3,
+        highBidderId: 'p2',
+        passedPlayerIds: ['p3'],
+      } as SkullGameView['round'],
+      minimumBid: 4,
+    })
+    const wrapper = mount(GameView, { props: { snapshot: snapshot(bidding) } })
+
+    expect(wrapper.text()).toContain('暂不跟价只对当前叫价有效')
+    expect(wrapper.get('[data-player-id="p3"] .seat-flags').text()).toContain('本价不跟')
+    await buttonWithText(wrapper, '暂不加价').trigger('click')
+    await flushPromises()
+    expect(pluginActions.action).toHaveBeenCalledWith('pass_bid', {})
+    wrapper.unmount()
+  })
+
   it('renders opaque blind slots and submits only the selected slot', async () => {
     const penalty = game({
       phase: 'penalty',

@@ -10,6 +10,7 @@ type RunReport = {
   resultReason: string
   winnerPlayerIds: string[]
   settlement: Array<{ playerId: string; role: string; won: boolean }>
+  summary?: string
 }
 
 const snapshot = ref<ArcadeSnapshot | null>(null)
@@ -22,6 +23,22 @@ async function runGame(count: number) {
   error.value = ''
   try {
     const response = await fetch(`/api/autoplay?count=${count}`, { method: 'POST' })
+    if (!response.ok) throw new Error(await response.text())
+    const payload = await response.json()
+    snapshot.value = payload.snapshot as ArcadeSnapshot
+    report.value = payload.report as RunReport
+  } catch (reason) {
+    error.value = reason instanceof Error ? reason.message : String(reason)
+  } finally {
+    running.value = false
+  }
+}
+
+async function runTemporaryPassScenario() {
+  running.value = true
+  error.value = ''
+  try {
+    const response = await fetch('/api/temporary-pass', { method: 'POST' })
     if (!response.ok) throw new Error(await response.text())
     const payload = await response.json()
     snapshot.value = payload.snapshot as ArcadeSnapshot
@@ -49,10 +66,16 @@ onMounted(() => runGame(3))
       >
         测试 {{ count }} 人
       </button>
+      <button data-scenario="temporary-pass" :disabled="running" @click="runTemporaryPassScenario">
+        测试暂不跟价重入
+      </button>
       <span v-if="running" data-test-status="running">正在运行完整对局…</span>
       <span v-else-if="report" data-test-status="passed">
-        {{ report.playerCount }} 人通过 · {{ report.actionCount }} 动作 ·
-        {{ report.resultReason }} · 胜者 {{ report.winnerPlayerIds.join(', ') }}
+        <template v-if="report.summary">{{ report.summary }}</template>
+        <template v-else>
+          {{ report.playerCount }} 人通过 · {{ report.actionCount }} 动作 ·
+          {{ report.resultReason }} · 胜者 {{ report.winnerPlayerIds.join(', ') }}
+        </template>
       </span>
       <span v-if="error" data-test-status="failed">{{ error }}</span>
     </nav>

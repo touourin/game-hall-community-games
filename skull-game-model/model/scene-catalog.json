@@ -35,12 +35,12 @@
     {
       "id": "bid.raise-or-pass",
       "phase": "bidding",
-      "title": "加价或退出",
-      "purpose": "公开当前最高叫价与桌面牌数，推进竞标直至只剩一人。",
-      "entry": ["存在合法开叫", "竞标尚有至少两名未退出玩家"],
+      "title": "加价或暂不跟价",
+      "purpose": "公开当前最高叫价与桌面牌数，让每名对手回应最新叫价。",
+      "entry": ["存在合法开叫", "最新最高叫价仍有玩家尚未回应"],
       "actions": ["raise_bid", "pass_bid"],
       "focusZones": ["bid-dial", "active-bidder", "passed-markers"],
-      "exit": "只剩最高叫价者"
+      "exit": "其余所有仍在场玩家都拒绝最新最高叫价"
     },
     {
       "id": "challenge.reveal-own",

@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/spoiled-fruit-view-state-v1.json",
+  "title": "Spoiled Fruit safe runtime view",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "gameKey", "mode", "phase", "sceneId", "firstPlayerId", "currentPlayerId",
+    "playerCount", "oldMaidCount", "totalCardCount", "removedPairCount", "initialRemovedPairCount",
+    "normalDrawCount", "effectTransferCount", "players", "drawSourcePlayerId", "effectQueue",
+    "activeEffect", "skipCount", "pendingChoice", "privateChoice", "privatePeek", "legalActions",
+    "events", "eventSequence", "safeOrder", "finished", "won", "result"
+  ],
+  "allOf": [
+    {
+      "if": { "properties": { "phase": { "const": "lobby" } }, "required": ["phase"] },
+      "then": { "properties": { "players": { "maxItems": 0 } } },
+      "else": {
+        "properties": {
+          "playerCount": { "minimum": 4 },
+          "oldMaidCount": { "minimum": 2 },
+          "totalCardCount": { "minimum": 62 },
+          "players": { "minItems": 4 }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "gameKey": { "const": "spoiled-fruit" },
+    "mode": { "const": "standard" },
+    "phase": { "enum": ["lobby", "turn_draw", "effect_queue", "effect_choice", "effect_insert", "finished"] },
+    "sceneId": { "enum": ["setup.deal", "turn.normal-draw", "pair.effect-queue", "effect.private-exchange", "game.finished"] },
+    "firstPlayerId": { "type": ["string", "null"] },
+    "currentPlayerId": { "type": ["string", "null"] },
+    "playerCount": { "type": "integer", "minimum": 0, "maximum": 8 },
+    "oldMaidCount": { "type": "integer", "minimum": 0, "maximum": 4 },
+    "totalCardCount": { "type": "integer", "minimum": 60, "maximum": 64 },
+    "removedPairCount": { "type": "integer", "minimum": 0, "maximum": 30 },
+    "initialRemovedPairCount": { "type": "integer", "minimum": 0, "maximum": 30 },
+    "normalDrawCount": { "type": "integer", "minimum": 0 },
+    "effectTransferCount": { "type": "integer", "minimum": 0 },
+    "players": { "type": "array", "minItems": 0, "maxItems": 8, "items": { "$ref": "#/$defs/playerView" } },
+    "drawSourcePlayerId": { "type": ["string", "null"] },
+    "effectQueue": { "type": "array", "items": { "$ref": "#/$defs/effectView" } },
+    "activeEffect": { "anyOf": [{ "$ref": "#/$defs/effectView" }, { "type": "null" }] },
+    "skipCount": { "type": "integer", "minimum": 0 },
+    "pendingChoice": { "type": ["object", "null"] },
+    "privateChoice": { "type": ["object", "null"] },
+    "privatePeek": { "anyOf": [{ "$ref": "#/$defs/privatePeek" }, { "type": "null" }] },
+    "legalActions": {
+      "type": "array", "uniqueItems": true,
+      "items": { "enum": ["draw_card", "resolve_optional", "draw_extra", "select_exchange_cards", "place_received"] }
+    },
+    "events": { "type": "array", "maxItems": 48, "items": { "$ref": "#/$defs/event" } },
+    "eventSequence": { "type": "integer", "minimum": 0 },
+    "safeOrder": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+    "finished": { "type": ["object", "null"] },
+    "won": { "type": "boolean" },
+    "result": { "type": ["string", "null"] }
+  },
+  "$defs": {
+    "cardView": {
+      "type": "object", "additionalProperties": false,
+      "required": ["instanceId", "catalogId", "cardCode", "sortIndex", "kind", "nameZh", "effectId", "effectLabelZh", "effectTextZh", "slug"],
+      "properties": {
+        "instanceId": { "type": "string" },
+        "catalogId": { "type": "string", "pattern": "^(fruit|old-maid)-[0-9]{2}$" },
+        "cardCode": { "type": "string" },
+        "sortIndex": { "type": "integer" },
+        "kind": { "enum": ["normal", "old_maid"] },
+        "nameZh": { "type": "string" },
+        "effectId": { "type": "string" },
+        "effectLabelZh": { "type": "string" },
+        "effectTextZh": { "type": "string" },
+        "slug": { "type": "string" }
+      }
+    },
+    "handSlot": {
+      "type": "object", "additionalProperties": false,
+      "required": ["slotId", "index", "card", "protected", "selectable"],
+      "properties": {
+        "slotId": { "type": "string" },
+        "index": { "type": "integer", "minimum": 0 },
+        "card": { "anyOf": [{ "$ref": "#/$defs/cardView" }, { "type": "null" }] },
+        "protected": { "type": "boolean" },
+        "selectable": { "type": "boolean" }
+      }
+    },
+    "playerView": {
+      "type": "object", "additionalProperties": false,
+      "required": ["playerId", "seatIndex", "handCount", "handSlots", "safe", "pendingEmpty", "protectedSlotIndex", "harvestPairIds", "harvestCount"],
+      "properties": {
+        "playerId": { "type": "string" },
+        "seatIndex": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "handCount": { "type": "integer", "minimum": 0 },
+        "handSlots": { "type": "array", "items": { "$ref": "#/$defs/handSlot" } },
+        "safe": { "type": "boolean" },
+        "pendingEmpty": { "type": "boolean" },
+        "protectedSlotIndex": { "type": ["integer", "null"], "minimum": 0 },
+        "harvestPairIds": { "type": "array", "items": { "type": "string" } },
+        "harvestCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "effectView": {
+      "type": "object", "additionalProperties": false,
+      "required": ["queueId", "batchId", "pairCatalogId", "effectId", "effectLabelZh", "ownerPlayerId"],
+      "properties": {
+        "queueId": { "type": "string" },
+        "batchId": { "type": "string" },
+        "pairCatalogId": { "type": "string" },
+        "effectId": { "type": "string" },
+        "effectLabelZh": { "type": "string" },
+        "ownerPlayerId": { "type": "string" }
+      }
+    },
+    "privatePeek": {
+      "type": "object", "additionalProperties": false,
+      "required": ["effectOwnerId", "targetPlayerId", "orderedCards", "protectedSlotIndex", "capturedAtEventSequence"],
+      "properties": {
+        "effectOwnerId": { "type": "string" },
+        "targetPlayerId": { "type": "string" },
+        "orderedCards": { "type": "array", "items": { "$ref": "#/$defs/cardView" } },
+        "protectedSlotIndex": { "type": ["integer", "null"] },
+        "capturedAtEventSequence": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "event": {
+      "type": "object", "required": ["sequence", "type", "message"],
+      "properties": { "sequence": { "type": "integer" }, "type": { "type": "string" }, "message": { "type": "string" } },
+      "additionalProperties": true
+    }
+  }
+}

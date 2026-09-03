@@ -1,0 +1,46 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-spoiled-fruit",
+  "name": "坏果别留手！",
+  "description": "固定牌序、效果连锁与动态多老鳖的水果抽牌桌游",
+  "category": "桌面派对",
+  "tone": "spoiled-fruit",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 4,
+    "max": 8,
+    "label": "4–8 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": false,
+    "allowGuests": true,
+    "allowSpectators": true,
+    "firstPlayer": "random",
+    "mode": "standard"
+  },
+  "ruleLabels": [
+    "4–8 人沉浸牌桌",
+    "60 张水果牌",
+    "动态多老鳖",
+    "固定手牌顺序",
+    "所有新对子发动",
+    "效果队列连锁"
+  ]
+}

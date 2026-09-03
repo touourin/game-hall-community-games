@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "gameKey": "spoiled-fruit",
+  "sharedLayout": {
+    "mode": "immersive",
+    "seatCounts": [4, 5, 6, 7, 8],
+    "runtimeTableArt": "../assets/scenes/scene-runtime-market-table-8p.png",
+    "selfSeatAnchor": "bottom-center",
+    "handLayout": "ordered-horizontal-sequence",
+    "publicZones": ["seat-ring", "pair-harvests", "effect-queue", "skip-count", "current-player"],
+    "privateZones": ["self-hand-faces", "peek-result", "locked-exchange-cards", "received-card-insertion"]
+  },
+  "scenes": [
+    {
+      "id": "setup.deal",
+      "phase": "setup_deal",
+      "titleZh": "果市开摊",
+      "purposeZh": "根据人数加入老鳖、洗匀主牌组，并按固定顺序发完全部牌。",
+      "art": "../assets/scenes/scene-runtime-market-table-8p.png",
+      "entry": ["room has 4-8 valid players", "host starts standard mode"],
+      "actions": [],
+      "focusZones": ["seat-ring", "deck-origin", "ordered-hand-slots"],
+      "privateInformation": ["dealt card identities"],
+      "exit": "all 60 + floor(playerCount / 2) cards are dealt"
+    },
+    {
+      "id": "setup.initial-pair-sweep",
+      "phase": "setup_pair_sweep",
+      "titleZh": "开局收果",
+      "purposeZh": "同时移走每名玩家的初始对子，并明确这些对子不发动技能。",
+      "art": "../assets/scenes/scene-02-initial-pair-sweep.png",
+      "entry": ["deal complete"],
+      "actions": ["confirm_initial_pairs"],
+      "focusZones": ["self-hand", "public-initial-pairs", "no-effect-reminder"],
+      "privateInformation": ["remaining hand identities and order"],
+      "exit": "every hand contains no normal pair"
+    },
+    {
+      "id": "turn.normal-draw",
+      "phase": "turn_draw",
+      "titleZh": "顺时摘果",
+      "purposeZh": "当前玩家从顺时针最近可抽玩家的固定牌序中盲选一张，并追加到自己最右侧。",
+      "art": "../assets/scenes/scene-03-normal-draw.png",
+      "entry": ["effect queue empty", "current player has cards", "game not finished"],
+      "actions": ["draw_card"],
+      "focusZones": ["source-hand-backs", "protected-slot", "self-rightmost-slot"],
+      "privateInformation": ["drawn card identity after selection"],
+      "exit": "drawn card appended and pair sweep complete"
+    },
+    {
+      "id": "pair.effect-queue",
+      "phase": "effect_queue",
+      "titleZh": "果效连锁",
+      "purposeZh": "公开新对子，按座次和编号加入 FIFO 队列，并逐项结算到队列清空。",
+      "art": "../assets/scenes/scene-04-pair-effect-chain.png",
+      "entry": ["one or more post-setup pairs formed"],
+      "actions": ["resolve_mandatory_effect", "use_optional_effect", "decline_optional_effect"],
+      "focusZones": ["new-pairs", "effect-queue", "active-effect-owner", "public-effect-result"],
+      "privateInformation": [],
+      "exit": "queue empty or current effect requests a private choice"
+    },
+    {
+      "id": "effect.private-exchange",
+      "phase": "effect_choice",
+      "titleZh": "私下挑果",
+      "purposeZh": "承载偷瞄、分享、对半交换、保护、理货及技能牌插入等权限受限选择。",
+      "art": "../assets/scenes/scene-05-secret-exchange.png",
+      "entry": ["queue head requires target, private cards, or insertion slots"],
+      "actions": ["choose_target", "lock_cards", "choose_draw_slot", "choose_insertions", "choose_protected_card", "move_one_card"],
+      "focusZones": ["private-prompt", "legal-targets", "legal-card-slots", "insertion-slots"],
+      "privateInformation": ["peeked ordered hand", "locked outgoing cards", "received card identities"],
+      "exit": "all required choices are server-validated and the effect commits atomically"
+    },
+    {
+      "id": "player.safe",
+      "phase": "finalize_safety",
+      "titleZh": "空篮离场",
+      "purposeZh": "队列清空后确认所有零手牌玩家安全，随后结算跳过并交接当前玩家。",
+      "art": "../assets/scenes/scene-06-safe-exit.png",
+      "entry": ["effect queue empty", "one or more pending-empty players exist or turn is ending"],
+      "actions": [],
+      "focusZones": ["new-safe-players", "skip-count", "next-current-player"],
+      "privateInformation": [],
+      "exit": "next current player selected or finish condition reached"
+    },
+    {
+      "id": "game.finished",
+      "phase": "finished",
+      "titleZh": "坏果揭晓",
+      "purposeZh": "最后一个正常对子及其效果队列全部结算后，公开剩余老鳖、赢家和败者。",
+      "art": "../assets/scenes/scene-07-final-reveal-v2.png",
+      "entry": ["removedPairCount is 30", "effect queue empty"],
+      "actions": [],
+      "focusZones": ["old-maid-reveal", "winners", "losers", "restart"],
+      "privateInformation": [],
+      "exit": "host restart flow"
+    }
+  ],
+  "effectSceneRouting": {
+    "harvest": "pair.effect-queue",
+    "shake_basket": "pair.effect-queue",
+    "sour_skip": "pair.effect-queue",
+    "peek_hand": "effect.private-exchange",
+    "sweet_share": "effect.private-exchange",
+    "half_exchange": "effect.private-exchange",
+    "shell_guard": "effect.private-exchange",
+    "careful_stocking": "effect.private-exchange",
+    "extra_pick": "turn.normal-draw",
+    "market_conveyor": "pair.effect-queue"
+  }
+}

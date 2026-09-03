@@ -1,0 +1,594 @@
+{
+  "schemaVersion": 1,
+  "gameKey": "spoiled-fruit",
+  "generatedBy": "scripts/build_asset_manifest.py",
+  "assetCount": 44,
+  "assets": [
+    {
+      "path": "assets/cards/card-back.png",
+      "kind": "card",
+      "width": 1024,
+      "height": 1536,
+      "mode": "RGB",
+      "hasAlpha": false,
+      "alphaExtrema": null,
+      "bytes": 3015447,
+      "sha256": "4b47266d5045ccdf45788e52d4697dbdbe9d3374e8a9eca604417327de9feea4"
+    },
+    {
+      "path": "assets/cards/fruit-01-apple.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1648197,
+      "sha256": "62b0353b3836bd03d1d2a45786748498040b8064b0342f94f97935f5cb4301c6"
+    },
+    {
+      "path": "assets/cards/fruit-02-pear.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1344144,
+      "sha256": "77811b61b0f7b71dacecde6fdd3c4628ad78253413168835a5e074da6cb4970d"
+    },
+    {
+      "path": "assets/cards/fruit-03-orange.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1845337,
+      "sha256": "250c3c2dc6b784e663a695934235f26ec6e8a9f8098281d9b2c2e94512697172"
+    },
+    {
+      "path": "assets/cards/fruit-04-peach.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1879916,
+      "sha256": "9e45c7e649e4887beb770fcdf37d5d34b3116995ee149f981a70d3ac0e5956d4"
+    },
+    {
+      "path": "assets/cards/fruit-05-plum.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1781095,
+      "sha256": "656563970c54ca504f520f80eefdb6fd9b8aa929ac8fc0b1a684ded0599050ee"
+    },
+    {
+      "path": "assets/cards/fruit-06-apricot.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1555963,
+      "sha256": "1cffe4e0c6348e0c9f2167d95c073f5994bf0bc276bb95351d0f72defe0953ca"
+    },
+    {
+      "path": "assets/cards/fruit-07-guava.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 2071593,
+      "sha256": "85dc6bb4b3334ed080f68f9efa9465e046162ef17225baf79e04dbac883d5352"
+    },
+    {
+      "path": "assets/cards/fruit-08-dragon-fruit.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1591680,
+      "sha256": "8ff0aa6d4df4c503bdfc80643d61fb7d018753480318c926b7c12e70e83dbc1c"
+    },
+    {
+      "path": "assets/cards/fruit-09-banana.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1462955,
+      "sha256": "8023bbf2b5275af8b7f6a27cb9d26cbe835f07f74d42f7c17692bf855a4db3f2"
+    },
+    {
+      "path": "assets/cards/fruit-10-starfruit.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1424633,
+      "sha256": "3c8b4fdb122a88fba4b7c7d8803bc4f0b40c0c94ce0d3ce667d2810af4a1c995"
+    },
+    {
+      "path": "assets/cards/fruit-11-passion-fruit.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1994992,
+      "sha256": "04101b93febd2e7ab6346de1c05c8221bca5a56cba1a66e5d800c7fb480b61a2"
+    },
+    {
+      "path": "assets/cards/fruit-12-lemon.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1455694,
+      "sha256": "d37f123a8620880c4865d01e945b361ce7010369db0006aa4c5ed360d3b417cf"
+    },
+    {
+      "path": "assets/cards/fruit-13-lime.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1656118,
+      "sha256": "d13360cd79df6ae944c95c7b98b4cd9371b98c78380749ce9e079a84dbe3d108"
+    },
+    {
+      "path": "assets/cards/fruit-14-grapefruit.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 2300095,
+      "sha256": "6e2c19222a69813a0ddde2b01b566a2bc9311272d68d117ca1d87c098f02d331"
+    },
+    {
+      "path": "assets/cards/fruit-15-grape.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1494250,
+      "sha256": "26c3ab4778c8037e54c1f71d4cac1687da262262f54523b6a4fc386388ee7b7f"
+    },
+    {
+      "path": "assets/cards/fruit-16-blueberry.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 2060829,
+      "sha256": "e873afae7cd2136d19535a117f645b6ebef2852e9301dcc3eedf18a88b6c88ca"
+    },
+    {
+      "path": "assets/cards/fruit-17-blackberry.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1708230,
+      "sha256": "f04c0081852c57d5cb33488770ce33f4536899ba1b3d59e199cdedafdd84bbbf"
+    },
+    {
+      "path": "assets/cards/fruit-18-strawberry.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1698024,
+      "sha256": "128f120918fa926b45069a7f0fa8a630a3b47dd812aaf3f9c52b1e788c88adf1"
+    },
+    {
+      "path": "assets/cards/fruit-19-cherry.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1394392,
+      "sha256": "1fe543d9298e96d0191a8294bc7555d70aca41ff8d38a19c182b26d961d59f0e"
+    },
+    {
+      "path": "assets/cards/fruit-20-raspberry.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1704214,
+      "sha256": "1117befda32bdc87414fb79b0074e15d73530d86c659527adffbfef4fa887227"
+    },
+    {
+      "path": "assets/cards/fruit-21-watermelon.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1956471,
+      "sha256": "6168c54690ae09e6eec89fc6e7340510dcc1746fec4735f4abf9f4cd35611be2"
+    },
+    {
+      "path": "assets/cards/fruit-22-cantaloupe.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1892897,
+      "sha256": "7719c836b7f874901cdfec790e67b418e7749a19a541972dc01070124fd30c55"
+    },
+    {
+      "path": "assets/cards/fruit-23-coconut.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1988840,
+      "sha256": "799541d31b47b670ab5c95e460cb380a045a06794b27290c8eae5d8a9ddc0ab3"
+    },
+    {
+      "path": "assets/cards/fruit-24-pineapple.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1383268,
+      "sha256": "149f3f9892c9af176d79bda59f40613289989e41e5f8bd9de11334b1e70a02b7"
+    },
+    {
+      "path": "assets/cards/fruit-25-kiwi.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 2418182,
+      "sha256": "d7da485334de60bcd70b7958a8b5c6b8d06a054b8cf0f6ff8e14410a73040823"
+    },
+    {
+      "path": "assets/cards/fruit-26-fig.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 2130774,
+      "sha256": "463794450689c8f3c16bca204e561efd552dcbb94ebe8fdd89f96cc9423eeeaa"
+    },
+    {
+      "path": "assets/cards/fruit-27-lychee.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1968343,
+      "sha256": "4310d1a0f41dd14e6455fc6b6fd84b2b8e094a93bda153b7dd304750b479e480"
+    },
+    {
+      "path": "assets/cards/fruit-28-longan.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1623960,
+      "sha256": "c1147da33223ae0857c6fc16fee71bdf27a2ae094651a1d4db47467b6aace86b"
+    },
+    {
+      "path": "assets/cards/fruit-29-mango.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1810529,
+      "sha256": "12ee07037463a2e61c18e321ea5d6a3546365712cfd53369c3bfd0b3b9f9c1ac"
+    },
+    {
+      "path": "assets/cards/fruit-30-rambutan.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 2228811,
+      "sha256": "f20e5bf536c6f3b4ef1140034b557ed8007a6d89fd1426332fb35d028b085c84"
+    },
+    {
+      "path": "assets/cards/old-maid-01-moldy-durian.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 2078785,
+      "sha256": "0df3126a980785d0306da66c76d7b7864d3cdff89eeeb695747987034e86bdc1"
+    },
+    {
+      "path": "assets/cards/old-maid-02-spotted-papaya.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 1981034,
+      "sha256": "b251ae4f900ced1f1ea6057186e2b8f217f5d29842a9daffa1721ee65951d4d2"
+    },
+    {
+      "path": "assets/cards/old-maid-03-spoiled-pomegranate.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 2277401,
+      "sha256": "d86e360ea4592a34c51677d53d832f987e2af9e8c6888b919c93bea28f74b4ac"
+    },
+    {
+      "path": "assets/cards/old-maid-04-spoiled-mangosteen.png",
+      "kind": "card",
+      "width": 1254,
+      "height": 1254,
+      "mode": "RGBA",
+      "hasAlpha": true,
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "bytes": 2347320,
+      "sha256": "912ee6a6b0af070a6b6218c0a6f9a06d2ad60db519070fd28f266bfc9dfc9512"
+    },
+    {
+      "path": "assets/scenes/scene-01-market-setup.png",
+      "kind": "scene",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "hasAlpha": false,
+      "alphaExtrema": null,
+      "bytes": 2620617,
+      "sha256": "1ff057d6b86d020e57e9df4f849f40eca2f40e3bccbf5f97d4c2b60e4f8abbb5"
+    },
+    {
+      "path": "assets/scenes/scene-02-initial-pair-sweep.png",
+      "kind": "scene",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "hasAlpha": false,
+      "alphaExtrema": null,
+      "bytes": 2424029,
+      "sha256": "3b7352c7f631ec4bfda05a14e8c9082d851efc0a6e3b56b6dbd83516e27115d5"
+    },
+    {
+      "path": "assets/scenes/scene-03-normal-draw.png",
+      "kind": "scene",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "hasAlpha": false,
+      "alphaExtrema": null,
+      "bytes": 2610409,
+      "sha256": "7e450eaa9bd89381f9f05204a1a4a931e5a29a5ccf887e3286572e862050a9a3"
+    },
+    {
+      "path": "assets/scenes/scene-04-pair-effect-chain.png",
+      "kind": "scene",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "hasAlpha": false,
+      "alphaExtrema": null,
+      "bytes": 2562075,
+      "sha256": "e73850b83c746e8ce30460088a18dd02dbe2f34a101d59afdd446469d24a4a9c"
+    },
+    {
+      "path": "assets/scenes/scene-05-secret-exchange.png",
+      "kind": "scene",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "hasAlpha": false,
+      "alphaExtrema": null,
+      "bytes": 2223010,
+      "sha256": "ec2227155da2fbe865a76459994a92c527a200079d04d09d2cc1328674b53ba9"
+    },
+    {
+      "path": "assets/scenes/scene-06-safe-exit.png",
+      "kind": "scene",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "hasAlpha": false,
+      "alphaExtrema": null,
+      "bytes": 2265885,
+      "sha256": "ea74cbb1a673996e736b600f01bcb71cae923ba897dfdee94adbd60871f0ab17"
+    },
+    {
+      "path": "assets/scenes/scene-07-final-reveal-v2.png",
+      "kind": "scene",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "hasAlpha": false,
+      "alphaExtrema": null,
+      "bytes": 2691050,
+      "sha256": "c8d8590874522b896eee257503e448a4546b0e5c15811a29d6a8b12641cbe0e4"
+    },
+    {
+      "path": "assets/scenes/scene-07-final-reveal.png",
+      "kind": "scene",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "hasAlpha": false,
+      "alphaExtrema": null,
+      "bytes": 2378076,
+      "sha256": "fe1e429326bf38c5b3f08201fbc0b9ae0c4a9f10c51939cd96bcf4a56586af1a"
+    },
+    {
+      "path": "assets/scenes/scene-runtime-market-table-8p.png",
+      "kind": "scene",
+      "width": 1672,
+      "height": 941,
+      "mode": "RGB",
+      "hasAlpha": false,
+      "alphaExtrema": null,
+      "bytes": 2676043,
+      "sha256": "e3b6aea149363e79f9ac330ea41ae26ae1ff69ea2ed9adc7750134a52f73e00b"
+    }
+  ]
+}

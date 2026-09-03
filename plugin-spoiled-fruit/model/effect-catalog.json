@@ -1,0 +1,201 @@
+{
+  "schemaVersion": 1,
+  "gameKey": "spoiled-fruit",
+  "triggerPolicy": {
+    "setupPairsTrigger": false,
+    "postSetupPairsTrigger": true,
+    "effectCreatedPairsTrigger": true,
+    "queueDiscipline": "fifo",
+    "simultaneousOwnerOrder": "clockwise_from_current_player",
+    "sameOwnerOrder": "fruit_sort_index_ascending",
+    "gameFinishesAfterFinalQueue": true,
+    "terminationProof": "Each trigger permanently removes one of the 30 normal pairs; removed pairs never return."
+  },
+  "effects": [
+    {
+      "id": "harvest",
+      "labelZh": "好收成",
+      "fruitIds": ["fruit-01", "fruit-02", "fruit-03", "fruit-04", "fruit-05", "fruit-06", "fruit-07", "fruit-08"],
+      "pairCount": 8,
+      "mandatory": true,
+      "cardTextZh": "没有额外效果，收下这篮水果。",
+      "targetPolicy": "none",
+      "changesCardOwnership": false,
+      "changesHandOrder": false,
+      "mayCreatePairs": false,
+      "resolution": ["Move the resolved pair to its owner's public harvest area."]
+    },
+    {
+      "id": "shake_basket",
+      "labelZh": "摇匀果篮",
+      "fruitIds": ["fruit-09", "fruit-10", "fruit-11"],
+      "pairCount": 3,
+      "mandatory": true,
+      "cardTextZh": "随机打乱你自己的全部手牌顺序；你不能决定新顺序。",
+      "targetPolicy": "effect_owner",
+      "changesCardOwnership": false,
+      "changesHandOrder": true,
+      "mayCreatePairs": false,
+      "resolution": [
+        "Server creates a uniformly random permutation of the effect owner's ordered hand.",
+        "A protected-card marker follows its card.",
+        "With zero or one card, resolve with no state change."
+      ]
+    },
+    {
+      "id": "sour_skip",
+      "labelZh": "酸住了",
+      "fruitIds": ["fruit-12", "fruit-13", "fruit-14"],
+      "pairCount": 3,
+      "mandatory": true,
+      "cardTextZh": "本回合交接时，跳过下一名本应行动的玩家；多个效果累加。",
+      "targetPolicy": "next_turn_handoff",
+      "changesCardOwnership": false,
+      "changesHandOrder": false,
+      "mayCreatePairs": false,
+      "resolution": ["Increment skipCount by one.", "Consume all skipCount entries only after the effect queue is empty."]
+    },
+    {
+      "id": "peek_hand",
+      "labelZh": "偷瞄一串",
+      "fruitIds": ["fruit-15", "fruit-16", "fruit-17"],
+      "pairCount": 3,
+      "mandatory": false,
+      "cardTextZh": "查看一名其他未安全玩家的全部手牌及其左右顺序；查看后牌序不变。",
+      "targetPolicy": "choose_other_non_safe_player_with_cards",
+      "changesCardOwnership": false,
+      "changesHandOrder": false,
+      "mayCreatePairs": false,
+      "privateResult": "Only the effect owner receives the target's ordered card identities.",
+      "resolution": [
+        "Return a private snapshot of every card identity and its current left-to-right slot.",
+        "Include the protected card and protection flag.",
+        "Do not shuffle, reverse, or otherwise reorder the target hand afterward."
+      ]
+    },
+    {
+      "id": "sweet_share",
+      "labelZh": "甜蜜分享",
+      "fruitIds": ["fruit-18", "fruit-19", "fruit-20"],
+      "pairCount": 3,
+      "mandatory": false,
+      "cardTextZh": "选 1 张可用手牌送给一人，再从其原有可用手牌中盲抽 1 张；收到的牌各自任意插入。",
+      "targetPolicy": "choose_other_non_safe_player_with_available_card",
+      "changesCardOwnership": true,
+      "changesHandOrder": true,
+      "receivedPlacement": "recipient_selects_any_slot",
+      "mayCreatePairs": true,
+      "resolution": [
+        "Owner locks one available outgoing card face down.",
+        "Target exposes stable backs for only the available cards it owned before this effect.",
+        "Owner blindly selects one return card.",
+        "Both cards transfer simultaneously; each recipient selects an insertion slot.",
+        "After both insertions, perform one simultaneous pair sweep and append every effect to the queue."
+      ]
+    },
+    {
+      "id": "half_exchange",
+      "labelZh": "对半交换",
+      "fruitIds": ["fruit-21", "fruit-22"],
+      "pairCount": 2,
+      "mandatory": true,
+      "cardTextZh": "随机找一名手牌数与你相同的玩家；双方各选 ⌈H ÷ 2⌉ 张同时交换，收到后任意插入。",
+      "targetPolicy": "uniform_random_other_non_safe_player_with_equal_total_hand_count",
+      "changesCardOwnership": true,
+      "changesHandOrder": true,
+      "receivedPlacement": "recipient_orders_batch_and_selects_any_slots",
+      "mayCreatePairs": true,
+      "parameters": {
+        "handCountSymbol": "H",
+        "exchangeCountFormula": "ceil(H / 2)",
+        "protectedCardsCountInH": true,
+        "protectedCardsSelectable": false
+      },
+      "resolution": [
+        "Read H after removing the trigger pair and after every earlier queued effect.",
+        "Uniformly choose one legal equal-count target; if none exists or H is zero, resolve with no exchange.",
+        "Both players secretly lock exactly ceil(H / 2) available cards before either choice is revealed.",
+        "Transfer both batches simultaneously; recipients may order the batch and choose any insertion slots.",
+        "After both insertions, perform one simultaneous pair sweep and append every effect to the queue."
+      ]
+    },
+    {
+      "id": "shell_guard",
+      "labelZh": "硬壳保护",
+      "fruitIds": ["fruit-23", "fruit-24"],
+      "pairCount": 2,
+      "mandatory": false,
+      "cardTextZh": "保护自己 1 张手牌，使其不能被正常暗抽或甜蜜分享，直到下一次有人从你处正常暗抽。",
+      "targetPolicy": "choose_one_own_available_card",
+      "changesCardOwnership": false,
+      "changesHandOrder": false,
+      "mayCreatePairs": false,
+      "parameters": { "maximumProtectedCardsPerPlayer": 1 },
+      "resolution": [
+        "End any previous shield owned by this player.",
+        "Mark one chosen hand card without moving its slot.",
+        "Exclude it from normal draws, sweet-share outgoing cards, sweet-share returns, and half-exchange selections.",
+        "End protection after the next normal draw from this owner, when the card pairs, when it is forced through market conveyor, or when it becomes the sole hand card."
+      ]
+    },
+    {
+      "id": "careful_stocking",
+      "labelZh": "精心理货",
+      "fruitIds": ["fruit-25", "fruit-26"],
+      "pairCount": 2,
+      "mandatory": false,
+      "cardTextZh": "将自己 1 张手牌移到任意新位置。",
+      "targetPolicy": "choose_one_own_hand_card",
+      "changesCardOwnership": false,
+      "changesHandOrder": true,
+      "mayCreatePairs": false,
+      "resolution": ["Move exactly one existing card to one selected insertion slot; keep all other cards' relative order."]
+    },
+    {
+      "id": "extra_pick",
+      "labelZh": "顺手再摘",
+      "fruitIds": ["fruit-27", "fruit-28"],
+      "pairCount": 2,
+      "mandatory": true,
+      "cardTextZh": "立即从你顺时针方向最近的可抽玩家处再正常暗抽 1 张，放到最右侧。",
+      "targetPolicy": "nearest_clockwise_non_safe_player_with_available_card",
+      "changesCardOwnership": true,
+      "changesHandOrder": true,
+      "receivedPlacement": "append_rightmost",
+      "mayCreatePairs": true,
+      "resolution": [
+        "The effect owner performs one normal hidden draw without becoming current player.",
+        "Append the received card to the rightmost hand slot.",
+        "Sweep a new pair and append its effect to the queue."
+      ]
+    },
+    {
+      "id": "market_conveyor",
+      "labelZh": "流水果摊",
+      "fruitIds": ["fruit-29", "fruit-30"],
+      "pairCount": 2,
+      "mandatory": true,
+      "cardTextZh": "所有仍有手牌的未安全玩家同时把最左侧牌传给顺时针下一人；收到后任意插入。",
+      "targetPolicy": "clockwise_ring_of_non_safe_players_with_cards",
+      "changesCardOwnership": true,
+      "changesHandOrder": true,
+      "receivedPlacement": "recipient_selects_any_slot",
+      "mayCreatePairs": true,
+      "resolution": [
+        "If fewer than two eligible players remain, resolve with no transfer.",
+        "Every eligible player removes the current leftmost card simultaneously and passes it clockwise in the eligible ring.",
+        "A shield on a forced leftmost card ends when the card leaves.",
+        "Each recipient selects any insertion slot; then perform one simultaneous pair sweep and enqueue all effects."
+      ]
+    }
+  ],
+  "oldMaidRule": {
+    "id": "old_maid",
+    "labelZh": "坏果老鳖",
+    "cardTextZh": "永不配对。最终持有一张或多张老鳖的玩家落败。",
+    "canPair": false,
+    "canBeDiscardedByEffect": false,
+    "canBeMoved": true,
+    "losesIfHoldingAtFinish": true
+  }
+}

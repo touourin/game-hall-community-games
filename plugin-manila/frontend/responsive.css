@@ -1,0 +1,66 @@
+@media (max-width: 1180px) {
+  .manila-table { grid-template-rows: auto auto auto minmax(0, 1fr) minmax(175px, 22vh); }
+  .manila-table .scene-grid { grid-template-columns: 178px minmax(500px, 1fr) 235px; }
+  .manila-table .private-console { grid-template-columns: minmax(300px, 38%) minmax(0, 1fr); }
+}
+
+@media (max-width: 920px) {
+  .manila-table {
+    height: auto;
+    min-height: calc(100dvh - 4rem);
+    overflow: visible;
+    grid-template-rows: auto auto auto auto auto;
+  }
+  .manila-table .table-masthead { grid-template-columns: 1fr auto; }
+  .manila-table .status-copy { grid-column: 1 / -1; grid-row: 2; padding: 5px 0 0; text-align: left; }
+  .manila-table .mast-actions { grid-column: 2; grid-row: 1; }
+  .manila-table .scene-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: max-content;
+    min-height: auto;
+  }
+  .manila-table .market-board {
+    grid-template-rows: auto auto auto;
+    min-height: 0;
+  }
+  .manila-table .market-list {
+    grid-template-columns: repeat(4, minmax(135px, 1fr));
+    grid-template-rows: auto;
+    overflow-x: auto;
+  }
+  .manila-table .route-board { min-height: 430px; }
+  .manila-table .destination-board {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    min-height: 300px;
+  }
+  .manila-table .destination-board > header { grid-column: 1 / -1; }
+  .manila-table .liability-card { grid-column: 1 / -1; }
+  .manila-table .private-console { grid-template-columns: 1fr; min-height: 0; }
+  .manila-table .private-hand { min-height: 155px; }
+  .manila-table .action-console { min-height: 190px; }
+}
+
+@media (max-width: 620px) {
+  .manila-table { padding: 7px; gap: 7px; }
+  .manila-table .brand-lockup small,
+  .manila-table .voyage-stamp { display: none; }
+  .manila-table .player-rail { scroll-snap-type: x proximity; }
+  .manila-table .player-ledger { flex-basis: 172px; scroll-snap-align: start; }
+  .manila-table .voyage-schedule { justify-content: flex-start; }
+  .manila-table .market-list { grid-template-columns: repeat(4, 155px); }
+  .manila-table .route-board { min-height: 455px; }
+  .manila-table .lanes-canvas { min-width: 680px; }
+  .manila-table .shipping-lane { grid-template-columns: 88px minmax(540px, 1fr); }
+  .manila-table .special-islands { grid-template-columns: repeat(5, 105px); overflow-x: auto; }
+  .manila-table .destination-board {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+  }
+  .manila-table .destination-group { min-height: 200px; }
+  .manila-table .liability-card { grid-column: 1; }
+  .manila-table .private-console { padding: 7px; }
+  .manila-table .action-body { align-items: flex-start; flex-wrap: wrap; }
+  .manila-table .rules-grid { grid-template-columns: 1fr; }
+  .manila-table .rules-sheet { padding: 17px; }
+}

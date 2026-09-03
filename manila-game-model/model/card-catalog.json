@@ -1,0 +1,231 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameKey": "manila",
+  "modelId": "manila-share-card-v1",
+  "source": "./card-model.json",
+  "cardCount": 20,
+  "cardsPerCommodity": 5,
+  "cards": [
+    {
+      "id": "share-ginseng-01",
+      "kind": "commodity_share",
+      "commodityId": "ginseng",
+      "commodityLabel": "人参",
+      "commodityCode": "GS",
+      "copyIndex": 1,
+      "pattern": "diagonal-root",
+      "semanticColor": "#B4862C",
+      "ariaLabel": "人参份额，第 1 张"
+    },
+    {
+      "id": "share-ginseng-02",
+      "kind": "commodity_share",
+      "commodityId": "ginseng",
+      "commodityLabel": "人参",
+      "commodityCode": "GS",
+      "copyIndex": 2,
+      "pattern": "diagonal-root",
+      "semanticColor": "#B4862C",
+      "ariaLabel": "人参份额，第 2 张"
+    },
+    {
+      "id": "share-ginseng-03",
+      "kind": "commodity_share",
+      "commodityId": "ginseng",
+      "commodityLabel": "人参",
+      "commodityCode": "GS",
+      "copyIndex": 3,
+      "pattern": "diagonal-root",
+      "semanticColor": "#B4862C",
+      "ariaLabel": "人参份额，第 3 张"
+    },
+    {
+      "id": "share-ginseng-04",
+      "kind": "commodity_share",
+      "commodityId": "ginseng",
+      "commodityLabel": "人参",
+      "commodityCode": "GS",
+      "copyIndex": 4,
+      "pattern": "diagonal-root",
+      "semanticColor": "#B4862C",
+      "ariaLabel": "人参份额，第 4 张"
+    },
+    {
+      "id": "share-ginseng-05",
+      "kind": "commodity_share",
+      "commodityId": "ginseng",
+      "commodityLabel": "人参",
+      "commodityCode": "GS",
+      "copyIndex": 5,
+      "pattern": "diagonal-root",
+      "semanticColor": "#B4862C",
+      "ariaLabel": "人参份额，第 5 张"
+    },
+    {
+      "id": "share-nutmeg-01",
+      "kind": "commodity_share",
+      "commodityId": "nutmeg",
+      "commodityLabel": "肉豆蔻",
+      "commodityCode": "NM",
+      "copyIndex": 1,
+      "pattern": "seed-dots",
+      "semanticColor": "#9A5C3A",
+      "ariaLabel": "肉豆蔻份额，第 1 张"
+    },
+    {
+      "id": "share-nutmeg-02",
+      "kind": "commodity_share",
+      "commodityId": "nutmeg",
+      "commodityLabel": "肉豆蔻",
+      "commodityCode": "NM",
+      "copyIndex": 2,
+      "pattern": "seed-dots",
+      "semanticColor": "#9A5C3A",
+      "ariaLabel": "肉豆蔻份额，第 2 张"
+    },
+    {
+      "id": "share-nutmeg-03",
+      "kind": "commodity_share",
+      "commodityId": "nutmeg",
+      "commodityLabel": "肉豆蔻",
+      "commodityCode": "NM",
+      "copyIndex": 3,
+      "pattern": "seed-dots",
+      "semanticColor": "#9A5C3A",
+      "ariaLabel": "肉豆蔻份额，第 3 张"
+    },
+    {
+      "id": "share-nutmeg-04",
+      "kind": "commodity_share",
+      "commodityId": "nutmeg",
+      "commodityLabel": "肉豆蔻",
+      "commodityCode": "NM",
+      "copyIndex": 4,
+      "pattern": "seed-dots",
+      "semanticColor": "#9A5C3A",
+      "ariaLabel": "肉豆蔻份额，第 4 张"
+    },
+    {
+      "id": "share-nutmeg-05",
+      "kind": "commodity_share",
+      "commodityId": "nutmeg",
+      "commodityLabel": "肉豆蔻",
+      "commodityCode": "NM",
+      "copyIndex": 5,
+      "pattern": "seed-dots",
+      "semanticColor": "#9A5C3A",
+      "ariaLabel": "肉豆蔻份额，第 5 张"
+    },
+    {
+      "id": "share-silk-01",
+      "kind": "commodity_share",
+      "commodityId": "silk",
+      "commodityLabel": "丝绸",
+      "commodityCode": "SK",
+      "copyIndex": 1,
+      "pattern": "woven-lines",
+      "semanticColor": "#456F9E",
+      "ariaLabel": "丝绸份额，第 1 张"
+    },
+    {
+      "id": "share-silk-02",
+      "kind": "commodity_share",
+      "commodityId": "silk",
+      "commodityLabel": "丝绸",
+      "commodityCode": "SK",
+      "copyIndex": 2,
+      "pattern": "woven-lines",
+      "semanticColor": "#456F9E",
+      "ariaLabel": "丝绸份额，第 2 张"
+    },
+    {
+      "id": "share-silk-03",
+      "kind": "commodity_share",
+      "commodityId": "silk",
+      "commodityLabel": "丝绸",
+      "commodityCode": "SK",
+      "copyIndex": 3,
+      "pattern": "woven-lines",
+      "semanticColor": "#456F9E",
+      "ariaLabel": "丝绸份额，第 3 张"
+    },
+    {
+      "id": "share-silk-04",
+      "kind": "commodity_share",
+      "commodityId": "silk",
+      "commodityLabel": "丝绸",
+      "commodityCode": "SK",
+      "copyIndex": 4,
+      "pattern": "woven-lines",
+      "semanticColor": "#456F9E",
+      "ariaLabel": "丝绸份额，第 4 张"
+    },
+    {
+      "id": "share-silk-05",
+      "kind": "commodity_share",
+      "commodityId": "silk",
+      "commodityLabel": "丝绸",
+      "commodityCode": "SK",
+      "copyIndex": 5,
+      "pattern": "woven-lines",
+      "semanticColor": "#456F9E",
+      "ariaLabel": "丝绸份额，第 5 张"
+    },
+    {
+      "id": "share-jade-01",
+      "kind": "commodity_share",
+      "commodityId": "jade",
+      "commodityLabel": "玉石",
+      "commodityCode": "JD",
+      "copyIndex": 1,
+      "pattern": "faceted-diamonds",
+      "semanticColor": "#3F806E",
+      "ariaLabel": "玉石份额，第 1 张"
+    },
+    {
+      "id": "share-jade-02",
+      "kind": "commodity_share",
+      "commodityId": "jade",
+      "commodityLabel": "玉石",
+      "commodityCode": "JD",
+      "copyIndex": 2,
+      "pattern": "faceted-diamonds",
+      "semanticColor": "#3F806E",
+      "ariaLabel": "玉石份额，第 2 张"
+    },
+    {
+      "id": "share-jade-03",
+      "kind": "commodity_share",
+      "commodityId": "jade",
+      "commodityLabel": "玉石",
+      "commodityCode": "JD",
+      "copyIndex": 3,
+      "pattern": "faceted-diamonds",
+      "semanticColor": "#3F806E",
+      "ariaLabel": "玉石份额，第 3 张"
+    },
+    {
+      "id": "share-jade-04",
+      "kind": "commodity_share",
+      "commodityId": "jade",
+      "commodityLabel": "玉石",
+      "commodityCode": "JD",
+      "copyIndex": 4,
+      "pattern": "faceted-diamonds",
+      "semanticColor": "#3F806E",
+      "ariaLabel": "玉石份额，第 4 张"
+    },
+    {
+      "id": "share-jade-05",
+      "kind": "commodity_share",
+      "commodityId": "jade",
+      "commodityLabel": "玉石",
+      "commodityCode": "JD",
+      "copyIndex": 5,
+      "pattern": "faceted-diamonds",
+      "semanticColor": "#3F806E",
+      "ariaLabel": "玉石份额，第 5 张"
+    }
+  ]
+}

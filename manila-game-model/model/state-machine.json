@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "authority": "server",
+  "initial": "setup",
+  "states": {
+    "setup": {
+      "on": {
+        "start": "auction"
+      },
+      "invariants": [
+        "3-5 名玩家",
+        "每人 30 比索和 2 张私密份额",
+        "四种货物价值均为 0"
+      ]
+    },
+    "auction": {
+      "on": {
+        "bid": "auction",
+        "pass_auction": "auction",
+        "auction_resolved": "harbor_share"
+      },
+      "invariants": [
+        "报价为严格递增整数",
+        "Pass 玩家不能重新加入",
+        "报价不超过现金加可用贷款"
+      ]
+    },
+    "harbor_share": {
+      "on": {
+        "buy_share": "harbor_load",
+        "skip_share": "harbor_load"
+      },
+      "invariants": [
+        "仅港务长行动",
+        "每航行至多购买一张",
+        "价格为 max(5, 当前价值)"
+      ]
+    },
+    "harbor_load": {
+      "on": {
+        "select_cargo": "harbor_launch"
+      },
+      "invariants": [
+        "三艘船绑定三种不同货物",
+        "恰有一种货物留岸"
+      ]
+    },
+    "harbor_launch": {
+      "on": {
+        "set_start_positions": "placement"
+      },
+      "invariants": [
+        "三条航线唯一",
+        "起点都在 0-5",
+        "起点之和为 9"
+      ]
+    },
+    "placement": {
+      "on": {
+        "place_accomplice": "placement",
+        "pass_placement": "placement",
+        "placement_round_complete": "placement",
+        "roll_due": "roll",
+        "final_placement_complete": "pilot_small"
+      },
+      "invariants": [
+        "每轮每名有效玩家最多放置一名助手",
+        "Pass 后本航行不再部署",
+        "货船只占最低成本空位"
+      ]
+    },
+    "pilot_small": {
+      "on": {
+        "pilot_move": "pilot_large",
+        "pilot_pass": "pilot_large",
+        "vacant": "pilot_large"
+      },
+      "invariants": [
+        "只影响未抵港船",
+        "总移动量恰为 1 或放弃",
+        "移动到 13 不触发海盗"
+      ]
+    },
+    "pilot_large": {
+      "on": {
+        "pilot_move": "roll",
+        "pilot_pass": "roll",
+        "vacant": "roll"
+      },
+      "invariants": [
+        "只影响未抵港船",
+        "总移动量不超过 2",
+        "至多两个不同目标"
+      ]
+    },
+    "roll": {
+      "on": {
+        "roll_dice": "move_order"
+      },
+      "invariants": [
+        "随机数只由服务端产生",
+        "每艘航行船恰有一个 1-6 骰点"
+      ]
+    },
+    "move_order": {
+      "on": {
+        "choose_move_order": "move_order",
+        "round_2_has_targets": "pirate_board",
+        "movement_round_complete": "placement",
+        "round_3_plunder": "pirate_route",
+        "round_3_complete": "settlement"
+      },
+      "invariants": [
+        "提交所有未结算船的一次排列",
+        "船严格消耗对应骰点",
+        "越过 13 立即进入下一空港口"
+      ]
+    },
+    "pirate_board": {
+      "on": {
+        "pirate_board": "pirate_board",
+        "pirate_stay": "pirate_board",
+        "boarding_complete": "placement"
+      },
+      "invariants": [
+        "船长先决定",
+        "基础规则只登有空位的 13 格货船",
+        "登船海盗离开海盗船"
+      ]
+    },
+    "pirate_route": {
+      "on": {
+        "route_plundered_punt": "pirate_route",
+        "routing_complete": "settlement"
+      },
+      "invariants": [
+        "只有当前海盗船长决定",
+        "逐艘选择港口或船坞",
+        "目标区域按下一空 A/B/C 填充"
+      ]
+    },
+    "settlement": {
+      "on": {
+        "settlement_complete": "voyage_summary",
+        "commodity_at_30": "finished"
+      },
+      "invariants": [
+        "账目先构造后原子应用",
+        "保险代理先取得本航行收益再赔付",
+        "抵港货物只上升一个价值格"
+      ]
+    },
+    "voyage_summary": {
+      "on": {
+        "next_voyage": "auction"
+      },
+      "invariants": [
+        "本航行账目和涨价已稳定",
+        "所有助手将在下一航行前收回"
+      ]
+    },
+    "finished": {
+      "on": {},
+      "invariants": [
+        "至少一种货物价值为 30",
+        "赢家为最高财富的全部玩家",
+        "拒绝除宿主再来一局外的规则动作"
+      ]
+    }
+  },
+  "actions": {
+    "bid": {
+      "stages": ["auction"],
+      "payload": ["amount", "voyageNumber"],
+      "private": false
+    },
+    "pass_auction": {
+      "stages": ["auction"],
+      "payload": ["voyageNumber"],
+      "private": false
+    },
+    "buy_share": {
+      "stages": ["harbor_share"],
+      "payload": ["commodityId", "voyageNumber"],
+      "private": true
+    },
+    "skip_share": {
+      "stages": ["harbor_share"],
+      "payload": ["voyageNumber"],
+      "private": false
+    },
+    "select_cargo": {
+      "stages": ["harbor_load"],
+      "payload": ["assignments", "voyageNumber"],
+      "private": false
+    },
+    "set_start_positions": {
+      "stages": ["harbor_launch"],
+      "payload": ["assignments", "voyageNumber"],
+      "private": false
+    },
+    "place_accomplice": {
+      "stages": ["placement"],
+      "payload": ["targetType", "targetId", "voyageNumber"],
+      "private": false
+    },
+    "pass_placement": {
+      "stages": ["placement"],
+      "payload": ["voyageNumber"],
+      "private": false
+    },
+    "take_loan": {
+      "stages": [
+        "auction",
+        "harbor_share",
+        "placement",
+        "pilot_small",
+        "pilot_large",
+        "pirate_board",
+        "pirate_route",
+        "voyage_summary"
+      ],
+      "payload": ["shareId", "voyageNumber"],
+      "private": true
+    },
+    "repay_loan": {
+      "stages": [
+        "auction",
+        "harbor_share",
+        "placement",
+        "pilot_small",
+        "pilot_large",
+        "pirate_board",
+        "pirate_route",
+        "voyage_summary"
+      ],
+      "payload": ["shareId", "voyageNumber"],
+      "private": true
+    },
+    "roll_dice": {
+      "stages": ["roll"],
+      "payload": ["voyageNumber"],
+      "private": false
+    },
+    "choose_move_order": {
+      "stages": ["move_order"],
+      "payload": ["puntIds", "voyageNumber"],
+      "private": false
+    },
+    "pirate_board": {
+      "stages": ["pirate_board"],
+      "payload": ["puntId", "voyageNumber"],
+      "private": false
+    },
+    "pirate_stay": {
+      "stages": ["pirate_board"],
+      "payload": ["voyageNumber"],
+      "private": false
+    },
+    "pilot_move": {
+      "stages": ["pilot_small", "pilot_large"],
+      "payload": ["moves", "voyageNumber"],
+      "private": false
+    },
+    "pilot_pass": {
+      "stages": ["pilot_small", "pilot_large"],
+      "payload": ["voyageNumber"],
+      "private": false
+    },
+    "route_plundered_punt": {
+      "stages": ["pirate_route"],
+      "payload": ["puntId", "destination", "voyageNumber"],
+      "private": false
+    },
+    "next_voyage": {
+      "stages": ["voyage_summary"],
+      "payload": ["voyageNumber"],
+      "private": false
+    }
+  },
+  "globalFinanceActions": ["take_loan", "repay_loan"],
+  "automaticEvents": [
+    "auction_resolved",
+    "placement_round_complete",
+    "roll_due",
+    "final_placement_complete",
+    "vacant",
+    "round_2_has_targets",
+    "movement_round_complete",
+    "round_3_plunder",
+    "round_3_complete",
+    "boarding_complete",
+    "routing_complete",
+    "settlement_complete",
+    "commodity_at_30"
+  ]
+}
+

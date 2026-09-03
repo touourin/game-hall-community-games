@@ -1,0 +1,534 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/manila/game-state.schema.json",
+  "title": "Manila authoritative game state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "ruleset",
+    "revision",
+    "lastEventId",
+    "options",
+    "stage",
+    "voyageNumber",
+    "turnOrder",
+    "harborMasterId",
+    "auction",
+    "marketValues",
+    "shareSupply",
+    "players",
+    "punts",
+    "docks",
+    "specials",
+    "placement",
+    "movement",
+    "pendingPirate",
+    "settlement",
+    "winnerPlayerIds"
+  ],
+  "properties": {
+    "version": { "const": "1.0.0" },
+    "ruleset": { "const": "zoch-2005-base" },
+    "revision": { "type": "integer", "minimum": 0 },
+    "lastEventId": { "type": "integer", "minimum": 0 },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pirateDisplacement"],
+      "properties": {
+        "pirateDisplacement": { "type": "boolean" }
+      }
+    },
+    "stage": { "$ref": "#/$defs/stage" },
+    "voyageNumber": { "type": "integer", "minimum": 0 },
+    "turnOrder": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/playerId" }
+    },
+    "harborMasterId": {
+      "oneOf": [
+        { "$ref": "#/$defs/playerId" },
+        { "type": "null" }
+      ]
+    },
+    "auction": { "$ref": "#/$defs/auction" },
+    "marketValues": { "$ref": "#/$defs/commodityValues" },
+    "shareSupply": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/shareId" }
+    },
+    "players": {
+      "type": "object",
+      "minProperties": 3,
+      "maxProperties": 5,
+      "additionalProperties": { "$ref": "#/$defs/playerLedger" }
+    },
+    "punts": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/punt" }
+    },
+    "docks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["port", "shipyard"],
+      "properties": {
+        "port": { "$ref": "#/$defs/dockGroup" },
+        "shipyard": { "$ref": "#/$defs/dockGroup" }
+      }
+    },
+    "specials": { "$ref": "#/$defs/specials" },
+    "placement": { "$ref": "#/$defs/placement" },
+    "movement": { "$ref": "#/$defs/movement" },
+    "pendingPirate": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/pendingPirate" }
+      ]
+    },
+    "settlement": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/settlement" }
+      ]
+    },
+    "winnerPlayerIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/playerId" }
+    }
+  },
+  "$defs": {
+    "stage": {
+      "enum": [
+        "setup",
+        "auction",
+        "harbor_share",
+        "harbor_load",
+        "harbor_launch",
+        "placement",
+        "pilot_small",
+        "pilot_large",
+        "roll",
+        "move_order",
+        "pirate_board",
+        "pirate_route",
+        "settlement",
+        "voyage_summary",
+        "finished"
+      ]
+    },
+    "playerId": {
+      "type": "string",
+      "pattern": "^p[1-5]$"
+    },
+    "shareId": {
+      "type": "string",
+      "pattern": "^share-(ginseng|nutmeg|silk|jade)-0[1-5]$"
+    },
+    "commodityId": {
+      "enum": ["ginseng", "nutmeg", "silk", "jade"]
+    },
+    "commodityValues": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ginseng", "nutmeg", "silk", "jade"],
+      "properties": {
+        "ginseng": { "enum": [0, 5, 10, 20, 30] },
+        "nutmeg": { "enum": [0, 5, 10, 20, 30] },
+        "silk": { "enum": [0, 5, 10, 20, 30] },
+        "jade": { "enum": [0, 5, 10, 20, 30] }
+      }
+    },
+    "auction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "openerId",
+        "currentPlayerId",
+        "leaderId",
+        "currentBid",
+        "activeBidderIds",
+        "passedPlayerIds"
+      ],
+      "properties": {
+        "openerId": {
+          "oneOf": [
+            { "$ref": "#/$defs/playerId" },
+            { "type": "null" }
+          ]
+        },
+        "currentPlayerId": {
+          "oneOf": [
+            { "$ref": "#/$defs/playerId" },
+            { "type": "null" }
+          ]
+        },
+        "leaderId": {
+          "oneOf": [
+            { "$ref": "#/$defs/playerId" },
+            { "type": "null" }
+          ]
+        },
+        "currentBid": { "type": "integer", "minimum": 0 },
+        "activeBidderIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/playerId" }
+        },
+        "passedPlayerIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/playerId" }
+        }
+      }
+    },
+    "playerLedger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "playerId",
+        "cash",
+        "shareIds",
+        "mortgagedShareIds",
+        "accomplicesAvailable",
+        "passedPlacement",
+        "forfeited",
+        "finalFortune"
+      ],
+      "properties": {
+        "playerId": { "$ref": "#/$defs/playerId" },
+        "cash": { "type": "integer", "minimum": 0 },
+        "shareIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/shareId" }
+        },
+        "mortgagedShareIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/shareId" }
+        },
+        "accomplicesAvailable": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "passedPlacement": { "type": "boolean" },
+        "forfeited": { "type": "boolean" },
+        "finalFortune": {
+          "type": ["integer", "null"]
+        }
+      }
+    },
+    "punt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "cargoId",
+        "laneId",
+        "position",
+        "status",
+        "occupants"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^punt-[1-3]$"
+        },
+        "cargoId": {
+          "oneOf": [
+            { "$ref": "#/$defs/commodityId" },
+            { "type": "null" }
+          ]
+        },
+        "laneId": {
+          "type": ["string", "null"],
+          "pattern": "^lane-[1-3]$"
+        },
+        "position": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 13
+        },
+        "status": {
+          "enum": ["ready", "sailing", "port", "shipyard", "plundered"]
+        },
+        "occupants": {
+          "type": "array",
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["playerId", "origin", "slotIndex"],
+            "properties": {
+              "playerId": { "$ref": "#/$defs/playerId" },
+              "origin": { "enum": ["placed", "pirate_boarded"] },
+              "slotIndex": { "type": "integer", "minimum": 0, "maximum": 3 }
+            }
+          }
+        }
+      }
+    },
+    "dockGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "slots"],
+      "properties": {
+        "kind": { "enum": ["port", "shipyard"] },
+        "slots": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "arrivalIndex",
+              "placementCost",
+              "payout",
+              "bettorPlayerId",
+              "puntId"
+            ],
+            "properties": {
+              "id": { "enum": ["A", "B", "C"] },
+              "arrivalIndex": { "type": "integer", "minimum": 1, "maximum": 3 },
+              "placementCost": { "enum": [2, 3, 4] },
+              "payout": { "enum": [6, 8, 15] },
+              "bettorPlayerId": {
+                "oneOf": [
+                  { "$ref": "#/$defs/playerId" },
+                  { "type": "null" }
+                ]
+              },
+              "puntId": {
+                "type": ["string", "null"],
+                "pattern": "^punt-[1-3]$"
+              }
+            }
+          }
+        }
+      }
+    },
+    "specials": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pirateBoat",
+        "smallPilotPlayerId",
+        "largePilotPlayerId",
+        "insurancePlayerId"
+      ],
+      "properties": {
+        "pirateBoat": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["playerId", "role"],
+            "properties": {
+              "playerId": { "$ref": "#/$defs/playerId" },
+              "role": { "enum": ["captain", "crew"] }
+            }
+          }
+        },
+        "smallPilotPlayerId": {
+          "oneOf": [
+            { "$ref": "#/$defs/playerId" },
+            { "type": "null" }
+          ]
+        },
+        "largePilotPlayerId": {
+          "oneOf": [
+            { "$ref": "#/$defs/playerId" },
+            { "type": "null" }
+          ]
+        },
+        "insurancePlayerId": {
+          "oneOf": [
+            { "$ref": "#/$defs/playerId" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "placement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roundIndex",
+        "totalRounds",
+        "currentPlayerId",
+        "completedPlayerIds"
+      ],
+      "properties": {
+        "roundIndex": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "totalRounds": { "enum": [3, 4] },
+        "currentPlayerId": {
+          "oneOf": [
+            { "$ref": "#/$defs/playerId" },
+            { "type": "null" }
+          ]
+        },
+        "completedPlayerIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/playerId" }
+        }
+      }
+    },
+    "movement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "roundIndex",
+        "dieResults",
+        "unresolvedPuntIds",
+        "resolvedOrder"
+      ],
+      "properties": {
+        "roundIndex": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "dieResults": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ginseng", "nutmeg", "silk", "jade"],
+          "properties": {
+            "ginseng": { "type": ["integer", "null"], "minimum": 1, "maximum": 6 },
+            "nutmeg": { "type": ["integer", "null"], "minimum": 1, "maximum": 6 },
+            "silk": { "type": ["integer", "null"], "minimum": 1, "maximum": 6 },
+            "jade": { "type": ["integer", "null"], "minimum": 1, "maximum": 6 }
+          }
+        },
+        "unresolvedPuntIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^punt-[1-3]$"
+          }
+        },
+        "resolvedOrder": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^punt-[1-3]$"
+          }
+        }
+      }
+    },
+    "pendingPirate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "currentActorId",
+        "captainId",
+        "candidatePuntIds",
+        "queuePuntIds"
+      ],
+      "properties": {
+        "kind": { "enum": ["boarding", "routing"] },
+        "currentActorId": {
+          "oneOf": [
+            { "$ref": "#/$defs/playerId" },
+            { "type": "null" }
+          ]
+        },
+        "captainId": {
+          "oneOf": [
+            { "$ref": "#/$defs/playerId" },
+            { "type": "null" }
+          ]
+        },
+        "candidatePuntIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^punt-[1-3]$"
+          }
+        },
+        "queuePuntIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^punt-[1-3]$"
+          }
+        }
+      }
+    },
+    "settlementEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entryId",
+        "from",
+        "to",
+        "amount",
+        "reason",
+        "puntId",
+        "slotId"
+      ],
+      "properties": {
+        "entryId": { "type": "string", "minLength": 1 },
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "amount": { "type": "integer", "minimum": 0 },
+        "reason": {
+          "enum": [
+            "cargo_profit",
+            "pirate_profit",
+            "port_payout",
+            "shipyard_repair",
+            "insurance_bank_coverage"
+          ]
+        },
+        "puntId": {
+          "type": ["string", "null"],
+          "pattern": "^punt-[1-3]$"
+        },
+        "slotId": {
+          "type": ["string", "null"],
+          "pattern": "^(port|shipyard)-[ABC]$"
+        }
+      }
+    },
+    "settlement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entries",
+        "deliveredCargoIds",
+        "marketAdvancedCargoIds",
+        "bankCoverage",
+        "finishReason"
+      ],
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/settlementEntry" }
+        },
+        "deliveredCargoIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/commodityId" }
+        },
+        "marketAdvancedCargoIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/commodityId" }
+        },
+        "bankCoverage": { "type": "integer", "minimum": 0 },
+        "finishReason": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
+

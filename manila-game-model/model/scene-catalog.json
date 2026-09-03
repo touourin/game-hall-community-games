@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameKey": "manila",
+  "layout": "immersive",
+  "viewerAnchor": "bottom-center",
+  "viewportPolicy": {
+    "mode": "browser-fill",
+    "reservedHostControls": ["leave-room", "room-controls"],
+    "desktopMinimumHeight": "max(760px, 100dvh - 112px)",
+    "mobileMinimumHeight": "max(760px, 100dvh - 64px)",
+    "pageLevelHorizontalOverflow": false,
+    "localHorizontalScrollZones": [
+      "player-rail",
+      "route-board",
+      "private-share-drawer"
+    ]
+  },
+  "stableZones": [
+    "player-rail",
+    "market",
+    "route-board",
+    "port",
+    "shipyard",
+    "special-island",
+    "private-share-drawer",
+    "action-panel"
+  ],
+  "scenes": [
+    {
+      "id": "setup.table",
+      "stage": "setup",
+      "title": "牌桌准备",
+      "purpose": "展示三条空航线、四种货物价值和 3-5 个玩家席位。",
+      "entry": ["房间尚未开局"],
+      "focusZones": ["player-rail", "route-board", "rule-summary"],
+      "actions": [],
+      "exit": "宿主开始游戏"
+    },
+    {
+      "id": "auction.bid",
+      "stage": "auction",
+      "title": "竞拍港务长",
+      "purpose": "公开当前价、领跑者和 Pass 状态，仅当前竞价者可加价或退出。",
+      "entry": ["新航行开始"],
+      "focusZones": ["auction-dial", "player-rail", "finance-panel"],
+      "actions": ["bid", "pass_auction", "take_loan", "repay_loan"],
+      "exit": "只剩一名活跃竞价者，或全员 Pass"
+    },
+    {
+      "id": "harbor.share",
+      "stage": "harbor_share",
+      "title": "港务长购买份额",
+      "purpose": "显示四种货物当前价值、最低购买价和公开供应量。",
+      "entry": ["拍卖结算完成"],
+      "focusZones": ["market", "share-supply", "finance-panel"],
+      "actions": ["buy_share", "skip_share", "take_loan", "repay_loan"],
+      "exit": "港务长购买一张或跳过"
+    },
+    {
+      "id": "harbor.load",
+      "stage": "harbor_load",
+      "title": "选择装船货物",
+      "purpose": "把四种货物中的三种绑定到三艘平底船。",
+      "entry": ["份额购买步骤完成"],
+      "focusZones": ["cargo-selector", "route-board"],
+      "actions": ["select_cargo"],
+      "exit": "三艘船获得三种不同货物"
+    },
+    {
+      "id": "harbor.launch",
+      "stage": "harbor_launch",
+      "title": "设置航线起点",
+      "purpose": "为三艘船选择不同航线和 0-5 起点，并持续显示总和必须为 9。",
+      "entry": ["装船完成"],
+      "focusZones": ["route-board", "start-sum-meter"],
+      "actions": ["set_start_positions"],
+      "exit": "航线唯一、范围合法且起点总和为 9"
+    },
+    {
+      "id": "placement.choose",
+      "stage": "placement",
+      "title": "部署助手",
+      "purpose": "高亮当前玩家的所有合法位置、实际成本和可能收益。",
+      "entry": ["进入任一部署轮且轮到观看者"],
+      "focusZones": ["route-board", "port", "shipyard", "special-island", "action-panel"],
+      "actions": [
+        "place_accomplice",
+        "pass_placement",
+        "take_loan",
+        "repay_loan"
+      ],
+      "exit": "当前玩家部署、Pass 或被自动跳过"
+    },
+    {
+      "id": "movement.roll",
+      "stage": "roll",
+      "title": "掷出货物骰",
+      "purpose": "港务长触发服务端掷骰，其他玩家查看三艘船与当前移动轮。",
+      "entry": ["调度到第 1、2 或 3 移动轮"],
+      "focusZones": ["dice-tray", "route-board", "harbor-master-badge"],
+      "actions": ["roll_dice"],
+      "exit": "服务端持久化所有仍航行船的骰点"
+    },
+    {
+      "id": "movement.order",
+      "stage": "move_order",
+      "title": "决定移动次序",
+      "purpose": "港务长在看到骰点后排列未结算船，次序决定港口槽位。",
+      "entry": ["骰点已经公开"],
+      "focusZones": ["dice-tray", "route-board", "move-order-queue"],
+      "actions": ["choose_move_order"],
+      "exit": "全部船按排列结算"
+    },
+    {
+      "id": "pirates.board",
+      "stage": "pirate_board",
+      "title": "海盗登船",
+      "purpose": "第二轮后由海盗船长开始，选择有空位的 13 格货船或留守。",
+      "entry": ["第二轮结束存在 13 格货船且海盗船有人"],
+      "focusZones": ["pirate-boat", "space-13-targets", "punt-slots"],
+      "actions": [
+        "pirate_board",
+        "pirate_stay",
+        "take_loan",
+        "repay_loan"
+      ],
+      "exit": "所有当时在海盗船上的海盗完成决定"
+    },
+    {
+      "id": "pilot.small",
+      "stage": "pilot_small",
+      "title": "小引航员行动",
+      "purpose": "选择一艘未抵港船向前或向后一格，或放弃。",
+      "entry": ["最后部署轮结束且小引航员位有人"],
+      "focusZones": ["pilot-small", "route-board", "delta-preview"],
+      "actions": ["pilot_move", "pilot_pass", "take_loan", "repay_loan"],
+      "exit": "小引航员行动或放弃"
+    },
+    {
+      "id": "pilot.large",
+      "stage": "pilot_large",
+      "title": "大引航员行动",
+      "purpose": "把最多两格影响分配给一艘或两艘未抵港船，或放弃。",
+      "entry": ["小引航员步骤完成"],
+      "focusZones": ["pilot-large", "route-board", "delta-preview"],
+      "actions": ["pilot_move", "pilot_pass", "take_loan", "repay_loan"],
+      "exit": "大引航员行动或放弃"
+    },
+    {
+      "id": "pirates.route",
+      "stage": "pirate_route",
+      "title": "海盗决定船只去向",
+      "purpose": "海盗船长逐艘把被劫船送往港口或船坞，并预览下一空槽。",
+      "entry": ["第三轮结束存在被劫船"],
+      "focusZones": ["plunder-queue", "port", "shipyard", "pirate-captain"],
+      "actions": [
+        "route_plundered_punt",
+        "take_loan",
+        "repay_loan"
+      ],
+      "exit": "所有被劫船都获得最终目的地"
+    },
+    {
+      "id": "voyage.summary",
+      "stage": "voyage_summary",
+      "title": "航行结算",
+      "purpose": "展示货船、海盗、港口、船坞、保险和黑市上涨的完整账目。",
+      "entry": ["结算完成且没有货物达到 30"],
+      "focusZones": ["settlement-ledger", "market", "player-rail", "finance-panel"],
+      "actions": ["next_voyage", "take_loan", "repay_loan"],
+      "exit": "开始下一航行"
+    },
+    {
+      "id": "game.finished",
+      "stage": "finished",
+      "title": "最终财富",
+      "purpose": "逐项展示现金、份额价值、未赎回抵押扣款、排名和共同赢家。",
+      "entry": ["黑市上涨后至少一种货物达到 30"],
+      "focusZones": ["final-ranking", "fortune-breakdown", "winner", "restart"],
+      "actions": [],
+      "exit": "宿主再来一局"
+    }
+  ]
+}
+

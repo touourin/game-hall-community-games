@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  width="1600" height="720" viewBox="0 0 1600 720"
+  data-model-version="1.0.0" role="img"
+  aria-labelledby="title description">
+  <title id="title">马尼拉份额卡原创模型板</title>
+  <desc id="description">四种份额卡正面、统一牌背和抵押状态。</desc>
+  <defs>
+    <pattern id="back-grid" width="22" height="22"
+      patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="22" height="22" fill="#213A3C"/>
+      <path d="M0 0 V22 M11 0 V22" stroke="#426164" stroke-width="3"/>
+    </pattern>
+    <style>
+      text {
+        font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+        fill: #263234;
+      }
+      .eyebrow { font-size: 18px; font-weight: 700; letter-spacing: 2px; fill: #B4862C; }
+      .title { font-size: 40px; font-weight: 800; }
+      .subtitle { font-size: 18px; fill: #607074; }
+      .card-title { font-size: 30px; font-weight: 800; }
+      .card-en { font-size: 15px; fill: #687579; }
+      .micro { font-size: 13px; font-weight: 700; letter-spacing: 1px; }
+      .note { font-size: 16px; fill: #D6E0DE; }
+      .state { font-size: 18px; font-weight: 800; fill: #F2E6C8; }
+    </style>
+  </defs>
+  <rect width="1600" height="720" fill="#16282A"/>
+  <rect x="28" y="28" width="1544" height="664" rx="28"
+        fill="#EEF0EA" stroke="#607D79" stroke-width="2"/>
+  <text x="60" y="82" class="eyebrow">GAME HALL · CARD MODEL v1.0.0</text>
+  <text x="60" y="132" class="title">马尼拉 · 货物份额卡</text>
+  <text x="60" y="170" class="subtitle">
+    规则身份由文字、代码与纹样共同表达；颜色不是唯一编码。
+  </text>
+  
+    <g transform="translate(60 215)" role="img"
+       aria-label="人参份额卡正面">
+      <rect width="180" height="260" rx="18" fill="#F4F0E7"
+            stroke="#D8CDBB" stroke-width="3"/>
+      <rect x="13" y="13" width="154" height="234" rx="12"
+            fill="#FBF8F1" stroke="#B4862C" stroke-width="3"/>
+      <text x="25" y="42" class="micro">GS · 货物份额</text>
+      <line x1="25" y1="53" x2="155" y2="53" stroke="#B4862C"
+            stroke-width="3"/>
+      <path d="M90 94 C68 110 72 139 54 158 M90 94 C111 111 105 142 125 158 M90 112 L90 168" fill="none" stroke="#B4862C" stroke-width="7" stroke-linecap="round"/>
+      <text x="90" y="200" class="card-title" text-anchor="middle">人参</text>
+      <text x="90" y="224" class="card-en" text-anchor="middle">Ginseng</text>
+      <text x="90" y="243" class="micro" text-anchor="middle">SHARE 01-05</text>
+    </g>
+    <g transform="translate(295 215)" role="img"
+       aria-label="肉豆蔻份额卡正面">
+      <rect width="180" height="260" rx="18" fill="#F4F0E7"
+            stroke="#D8CDBB" stroke-width="3"/>
+      <rect x="13" y="13" width="154" height="234" rx="12"
+            fill="#FBF8F1" stroke="#9A5C3A" stroke-width="3"/>
+      <text x="25" y="42" class="micro">NM · 货物份额</text>
+      <line x1="25" y1="53" x2="155" y2="53" stroke="#9A5C3A"
+            stroke-width="3"/>
+      <circle cx="65" cy="112" r="15" fill="none" stroke="#9A5C3A" stroke-width="6"/><circle cx="101" cy="101" r="17" fill="none" stroke="#9A5C3A" stroke-width="6"/><circle cx="125" cy="136" r="15" fill="none" stroke="#9A5C3A" stroke-width="6"/><circle cx="83" cy="149" r="18" fill="none" stroke="#9A5C3A" stroke-width="6"/>
+      <text x="90" y="200" class="card-title" text-anchor="middle">肉豆蔻</text>
+      <text x="90" y="224" class="card-en" text-anchor="middle">Nutmeg</text>
+      <text x="90" y="243" class="micro" text-anchor="middle">SHARE 01-05</text>
+    </g>
+    <g transform="translate(530 215)" role="img"
+       aria-label="丝绸份额卡正面">
+      <rect width="180" height="260" rx="18" fill="#F4F0E7"
+            stroke="#D8CDBB" stroke-width="3"/>
+      <rect x="13" y="13" width="154" height="234" rx="12"
+            fill="#FBF8F1" stroke="#456F9E" stroke-width="3"/>
+      <text x="25" y="42" class="micro">SK · 货物份额</text>
+      <line x1="25" y1="53" x2="155" y2="53" stroke="#456F9E"
+            stroke-width="3"/>
+      <path d="M45 104 C75 86 108 122 138 104" fill="none" stroke="#456F9E" stroke-width="7" stroke-linecap="round"/><path d="M45 128 C75 110 108 146 138 128" fill="none" stroke="#456F9E" stroke-width="7" stroke-linecap="round"/><path d="M45 152 C75 134 108 170 138 152" fill="none" stroke="#456F9E" stroke-width="7" stroke-linecap="round"/>
+      <text x="90" y="200" class="card-title" text-anchor="middle">丝绸</text>
+      <text x="90" y="224" class="card-en" text-anchor="middle">Silk</text>
+      <text x="90" y="243" class="micro" text-anchor="middle">SHARE 01-05</text>
+    </g>
+    <g transform="translate(765 215)" role="img"
+       aria-label="玉石份额卡正面">
+      <rect width="180" height="260" rx="18" fill="#F4F0E7"
+            stroke="#D8CDBB" stroke-width="3"/>
+      <rect x="13" y="13" width="154" height="234" rx="12"
+            fill="#FBF8F1" stroke="#3F806E" stroke-width="3"/>
+      <text x="25" y="42" class="micro">JD · 货物份额</text>
+      <line x1="25" y1="53" x2="155" y2="53" stroke="#3F806E"
+            stroke-width="3"/>
+      <polygon points="91,86 133,113 119,160 63,160 49,113" fill="none" stroke="#3F806E" stroke-width="7"/><path d="M49 113 L119 160 M133 113 L63 160 M91 86 L91 160" fill="none" stroke="#3F806E" stroke-width="4"/>
+      <text x="90" y="200" class="card-title" text-anchor="middle">玉石</text>
+      <text x="90" y="224" class="card-en" text-anchor="middle">Jade</text>
+      <text x="90" y="243" class="micro" text-anchor="middle">SHARE 01-05</text>
+    </g>
+  <g transform="translate(1010 215)" role="img" aria-label="统一份额牌背">
+    <rect width="180" height="260" rx="18" fill="#172728"
+          stroke="#D7BE81" stroke-width="3"/>
+    <rect x="13" y="13" width="154" height="234" rx="12"
+          fill="url(#back-grid)" stroke="#8DA7A3" stroke-width="2"/>
+    <path d="M45 132 H135 M90 87 V177" stroke="#D7BE81"
+          stroke-width="8" stroke-linecap="round"/>
+    <circle cx="90" cy="132" r="46" fill="none"
+            stroke="#D7BE81" stroke-width="4"/>
+    <text x="90" y="222" class="state" text-anchor="middle">私密份额</text>
+  </g>
+  <g transform="translate(1245 215)" role="img" aria-label="抵押份额状态">
+    <rect width="260" height="260" rx="18" fill="#F4F0E7"
+          stroke="#9A5C3A" stroke-width="3"/>
+    <rect x="18" y="18" width="224" height="224" rx="12"
+          fill="#FBF8F1" stroke="#D8CDBB" stroke-width="2"/>
+    <text x="130" y="66" class="card-title" text-anchor="middle">已抵押</text>
+    <text x="130" y="105" class="subtitle" text-anchor="middle">获得 12 比索</text>
+    <line x1="42" y1="128" x2="218" y2="128" stroke="#9A5C3A"
+          stroke-width="4"/>
+    <text x="130" y="171" class="card-title" text-anchor="middle">赎回 15</text>
+    <text x="130" y="207" class="subtitle" text-anchor="middle">仍计货物市值</text>
+    <text x="130" y="231" class="micro" text-anchor="middle">对手只看抵押数量</text>
+  </g>
+  <rect x="60" y="530" width="1445" height="108" rx="18" fill="#223A3C"/>
+  <text x="88" y="569" class="note">隐私：本人看牌面与实例 ID；对手和中立视角只看份额数与抵押数。</text>
+  <text x="88" y="603" class="note">版权边界：原创中性几何，不复刻官方 Logo、卡面插画、字体或扫描图。</text>
+</svg>

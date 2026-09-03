@@ -1,0 +1,301 @@
+{
+  "$schema": "./scene-catalog.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameKey": "ticket-to-ride-europe-base",
+  "layout": {
+    "desktop": {
+      "mode": "immersive",
+      "mapMinShare": 0.64,
+      "sidePanelMaxWidth": 420,
+      "privateHandPlacement": "bottom"
+    },
+    "mobile": {
+      "mapViewport": "pan-zoom",
+      "privateControls": "bottom-sheet",
+      "minimumTouchTarget": 44
+    }
+  },
+  "mapLayers": [
+    "terrain-layer",
+    "route-base-layer",
+    "route-owner-layer",
+    "city-layer",
+    "station-layer",
+    "interaction-layer",
+    "effect-layer"
+  ],
+  "scenes": [
+    {
+      "id": "setup.ticket-selection",
+      "phase": "setup_ticket_selection",
+      "title": "秘密选择初始任务",
+      "purpose": "每名玩家从一张长程与三张短程任务中至少保留两张。",
+      "entry": [
+        "本人收到四张私有候选",
+        "尚未提交初始选择"
+      ],
+      "actions": [
+        "keep_initial_tickets"
+      ],
+      "focusZones": [
+        "private-ticket-drawer",
+        "selection-counter",
+        "player-ready-strip"
+      ],
+      "privacy": "private",
+      "exit": "所有有效玩家提交后进入首个回合",
+      "transient": false
+    },
+    {
+      "id": "turn.choose-action",
+      "phase": "turn_idle",
+      "title": "选择本回合行动",
+      "purpose": "在抽车票、占轨、抽任务和建站四种行动中选择一个。",
+      "entry": [
+        "轮到当前玩家",
+        "不存在待决子流程"
+      ],
+      "actions": [
+        "draw_train_card",
+        "claim_route",
+        "draw_destination_tickets",
+        "build_station"
+      ],
+      "focusZones": [
+        "europe-map",
+        "train-market",
+        "turn-actions",
+        "self-hand"
+      ],
+      "privacy": "mixed",
+      "exit": "主行动完成或进入一个待决子流程",
+      "transient": false
+    },
+    {
+      "id": "draw.train-first",
+      "phase": "turn_idle",
+      "title": "抽取第一张车票",
+      "purpose": "从五张明牌或牌库顶选择第一张。",
+      "entry": [
+        "当前玩家在本地打开抽牌模式",
+        "尚未提交主行动"
+      ],
+      "actions": [
+        "draw_train_card"
+      ],
+      "focusZones": [
+        "train-market",
+        "train-deck",
+        "draw-rule-hint"
+      ],
+      "privacy": "public",
+      "exit": "拿公共彩虹后结束回合，否则可能进入第二次抽牌",
+      "transient": true
+    },
+    {
+      "id": "draw.train-second",
+      "phase": "train_draw_second",
+      "title": "抽取第二张车票",
+      "purpose": "选择第二张合法车票；公共彩虹不可作为第二张。",
+      "entry": [
+        "第一张未以公共彩虹结束回合",
+        "仍有可抽牌"
+      ],
+      "actions": [
+        "draw_train_card"
+      ],
+      "focusZones": [
+        "train-market",
+        "train-deck",
+        "locomotive-lock-hint"
+      ],
+      "privacy": "public",
+      "exit": "第二张结算后结束回合",
+      "transient": false
+    },
+    {
+      "id": "claim.route-select",
+      "phase": "turn_idle",
+      "title": "选择轨道与支付",
+      "purpose": "选择开放轨道，声明灰色支付颜色并提交具体手牌。",
+      "entry": [
+        "当前玩家在本地打开占轨模式"
+      ],
+      "actions": [
+        "claim_route"
+      ],
+      "focusZones": [
+        "claimable-routes",
+        "self-hand",
+        "payment-preview"
+      ],
+      "privacy": "mixed",
+      "exit": "普通或渡轮立即完成；隧道可能进入补付",
+      "transient": true
+    },
+    {
+      "id": "claim.tunnel-reveal",
+      "phase": "tunnel_payment",
+      "title": "揭示隧道风险",
+      "purpose": "表现服务端已固定的风险牌和额外费用。",
+      "entry": [
+        "最新事件为 tunnel_cards_revealed",
+        "本地尚未完成揭示表现"
+      ],
+      "actions": [],
+      "focusZones": [
+        "focused-tunnel",
+        "revealed-risk-cards",
+        "extra-cost-meter"
+      ],
+      "privacy": "public",
+      "exit": "动画完成后显示补付或放弃操作",
+      "transient": true
+    },
+    {
+      "id": "claim.tunnel-payment",
+      "phase": "tunnel_payment",
+      "title": "补付或放弃隧道",
+      "purpose": "隧道发起者支付额外同色/彩虹牌，或收回初始牌结束回合。",
+      "entry": [
+        "pendingTunnel.status 为 awaiting_payment"
+      ],
+      "actions": [
+        "pay_tunnel_extra",
+        "decline_tunnel"
+      ],
+      "focusZones": [
+        "locked-initial-payment",
+        "self-hand",
+        "tunnel-decision"
+      ],
+      "privacy": "mixed",
+      "exit": "成功占轨或放弃后结束回合",
+      "transient": false
+    },
+    {
+      "id": "draw.ticket-choice",
+      "phase": "ticket_choice",
+      "title": "选择新任务",
+      "purpose": "从最多三张私有候选中至少保留一张。",
+      "entry": [
+        "本人存在 pendingTicketChoice"
+      ],
+      "actions": [
+        "keep_destination_tickets"
+      ],
+      "focusZones": [
+        "private-ticket-drawer",
+        "keep-counter",
+        "commit-warning"
+      ],
+      "privacy": "private",
+      "exit": "保留牌入手，其余稳定置于任务牌库底部",
+      "transient": false
+    },
+    {
+      "id": "station.build",
+      "phase": "turn_idle",
+      "title": "建造火车站",
+      "purpose": "选择无站城市，并按本局第几个车站支付一至三张牌。",
+      "entry": [
+        "当前玩家在本地打开建站模式",
+        "仍有火车站"
+      ],
+      "actions": [
+        "build_station"
+      ],
+      "focusZones": [
+        "station-eligible-cities",
+        "self-hand",
+        "station-cost"
+      ],
+      "privacy": "mixed",
+      "exit": "车站落位并结束回合",
+      "transient": true
+    },
+    {
+      "id": "round.final-turns",
+      "phase": "turn_idle",
+      "title": "最后一轮",
+      "purpose": "持续显示触发者和尚未完成最终回合的玩家顺序。",
+      "entry": [
+        "finalRound 已触发",
+        "remainingPlayerIds 非空"
+      ],
+      "actions": [
+        "draw_train_card",
+        "claim_route",
+        "draw_destination_tickets",
+        "build_station"
+      ],
+      "focusZones": [
+        "final-round-banner",
+        "remaining-turn-order",
+        "turn-actions"
+      ],
+      "privacy": "public",
+      "exit": "所有剩余最终回合完成",
+      "transient": false
+    },
+    {
+      "id": "scoring.station-allocation",
+      "phase": "final_station_assignment",
+      "title": "选择火车站借线",
+      "purpose": "每位建站玩家为每座站选择至多一条相邻对手轨道。",
+      "entry": [
+        "最后一轮结束",
+        "本人仍有未确认站点分配"
+      ],
+      "actions": [
+        "assign_station_routes"
+      ],
+      "focusZones": [
+        "owned-stations",
+        "borrowable-routes",
+        "private-ticket-preview"
+      ],
+      "privacy": "private",
+      "exit": "所有有效玩家确认或超时自动分配",
+      "transient": false
+    },
+    {
+      "id": "scoring.breakdown",
+      "phase": "scoring",
+      "title": "终局计分",
+      "purpose": "展示线路、任务、未建站与最长路线的逐项结果。",
+      "entry": [
+        "站点分配全部完成"
+      ],
+      "actions": [],
+      "focusZones": [
+        "score-breakdown",
+        "revealed-tickets",
+        "longest-path-highlight"
+      ],
+      "privacy": "public",
+      "exit": "服务端生成最终排名",
+      "transient": true
+    },
+    {
+      "id": "game.finished",
+      "phase": "finished",
+      "title": "游戏结束",
+      "purpose": "展示并列安全的名次、胜者、同分依据与再来一局入口。",
+      "entry": [
+        "result 已生成"
+      ],
+      "actions": [],
+      "focusZones": [
+        "winners",
+        "ranking",
+        "score-breakdown",
+        "restart"
+      ],
+      "privacy": "public",
+      "exit": "宿主再来一局流程",
+      "transient": false
+    }
+  ]
+}

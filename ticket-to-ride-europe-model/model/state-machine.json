@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameKey": "ticket-to-ride-europe-base",
+  "initialPhase": "setup_ticket_selection",
+  "terminalPhase": "finished",
+  "phases": [
+    "setup_ticket_selection",
+    "turn_idle",
+    "train_draw_second",
+    "tunnel_payment",
+    "ticket_choice",
+    "final_station_assignment",
+    "scoring",
+    "finished"
+  ],
+  "transitions": [
+    {
+      "from": "setup_ticket_selection",
+      "action": "keep_initial_tickets",
+      "to": "turn_idle",
+      "guard": "all active players submitted"
+    },
+    {
+      "from": "turn_idle",
+      "action": "draw_train_card",
+      "to": "train_draw_second",
+      "guard": "first draw permits a second draw"
+    },
+    {
+      "from": "turn_idle",
+      "action": "draw_train_card",
+      "to": "turn_idle",
+      "guard": "face-up locomotive or no second card ends turn"
+    },
+    {
+      "from": "train_draw_second",
+      "action": "draw_train_card",
+      "to": "turn_idle",
+      "guard": "second card resolves and turn advances"
+    },
+    {
+      "from": "turn_idle",
+      "action": "claim_route",
+      "to": "turn_idle",
+      "guard": "standard/ferry or zero-extra tunnel resolves"
+    },
+    {
+      "from": "turn_idle",
+      "action": "claim_route",
+      "to": "tunnel_payment",
+      "guard": "tunnel reveals a positive extra cost"
+    },
+    {
+      "from": "tunnel_payment",
+      "action": "pay_tunnel_extra",
+      "to": "turn_idle",
+      "guard": "payment is legal; route is claimed and turn advances"
+    },
+    {
+      "from": "tunnel_payment",
+      "action": "decline_tunnel",
+      "to": "turn_idle",
+      "guard": "initial cards return and turn advances"
+    },
+    {
+      "from": "turn_idle",
+      "action": "draw_destination_tickets",
+      "to": "ticket_choice",
+      "guard": "at least one destination ticket is available"
+    },
+    {
+      "from": "ticket_choice",
+      "action": "keep_destination_tickets",
+      "to": "turn_idle",
+      "guard": "at least one offered ticket is kept"
+    },
+    {
+      "from": "turn_idle",
+      "action": "build_station",
+      "to": "turn_idle",
+      "guard": "city and payment are legal; turn advances"
+    },
+    {
+      "from": "turn_idle",
+      "action": "end_final_turn",
+      "to": "final_station_assignment",
+      "guard": "finalRound.remainingPlayerIds becomes empty"
+    },
+    {
+      "from": "final_station_assignment",
+      "action": "assign_station_routes",
+      "to": "scoring",
+      "guard": "all active players confirmed or were auto-assigned"
+    },
+    {
+      "from": "scoring",
+      "action": "calculate_result",
+      "to": "finished",
+      "guard": "score audit and ranking are complete"
+    }
+  ],
+  "globalGuards": [
+    "actor is active and authorized for the current phase",
+    "expectedRevision equals authoritative revision",
+    "payload references only catalog IDs and card instances that exist",
+    "a rejected transition is side-effect free"
+  ]
+}

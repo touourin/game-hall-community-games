@@ -1,0 +1,519 @@
+{
+  "$schema": "./card-catalog.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameKey": "ticket-to-ride-europe-base",
+  "trainCardTypes": [
+    {
+      "id": "train-purple",
+      "color": "purple",
+      "labelZhCN": "紫色车票",
+      "copies": 12,
+      "wild": false,
+      "visual": {
+        "accent": "#79589F",
+        "pattern": "dots",
+        "accessibilityCode": "PU"
+      }
+    },
+    {
+      "id": "train-blue",
+      "color": "blue",
+      "labelZhCN": "蓝色车票",
+      "copies": 12,
+      "wild": false,
+      "visual": {
+        "accent": "#3479B8",
+        "pattern": "horizontal",
+        "accessibilityCode": "BL"
+      }
+    },
+    {
+      "id": "train-orange",
+      "color": "orange",
+      "labelZhCN": "橙色车票",
+      "copies": 12,
+      "wild": false,
+      "visual": {
+        "accent": "#D47A2C",
+        "pattern": "diagonal",
+        "accessibilityCode": "OR"
+      }
+    },
+    {
+      "id": "train-white",
+      "color": "white",
+      "labelZhCN": "白色车票",
+      "copies": 12,
+      "wild": false,
+      "visual": {
+        "accent": "#EEECE4",
+        "pattern": "cross",
+        "accessibilityCode": "WH"
+      }
+    },
+    {
+      "id": "train-green",
+      "color": "green",
+      "labelZhCN": "绿色车票",
+      "copies": 12,
+      "wild": false,
+      "visual": {
+        "accent": "#4C8758",
+        "pattern": "diamonds",
+        "accessibilityCode": "GR"
+      }
+    },
+    {
+      "id": "train-yellow",
+      "color": "yellow",
+      "labelZhCN": "黄色车票",
+      "copies": 12,
+      "wild": false,
+      "visual": {
+        "accent": "#D0A92C",
+        "pattern": "waves",
+        "accessibilityCode": "YE"
+      }
+    },
+    {
+      "id": "train-black",
+      "color": "black",
+      "labelZhCN": "黑色车票",
+      "copies": 12,
+      "wild": false,
+      "visual": {
+        "accent": "#30343A",
+        "pattern": "grid",
+        "accessibilityCode": "BK"
+      }
+    },
+    {
+      "id": "train-red",
+      "color": "red",
+      "labelZhCN": "红色车票",
+      "copies": 12,
+      "wild": false,
+      "visual": {
+        "accent": "#B84C46",
+        "pattern": "triangles",
+        "accessibilityCode": "RD"
+      }
+    },
+    {
+      "id": "train-locomotive",
+      "color": "locomotive",
+      "labelZhCN": "彩虹车票",
+      "copies": 14,
+      "wild": true,
+      "visual": {
+        "accent": "#8A607F",
+        "pattern": "spectrum",
+        "accessibilityCode": "LO"
+      }
+    }
+  ],
+  "destinationTickets": [
+    {
+      "id": "ticket-long-001",
+      "category": "long",
+      "fromCityId": "brest",
+      "toCityId": "petrograd",
+      "points": 20,
+      "labelZhCN": "布雷斯特 - 彼得格勒"
+    },
+    {
+      "id": "ticket-long-002",
+      "category": "long",
+      "fromCityId": "lisboa",
+      "toCityId": "danzig",
+      "points": 20,
+      "labelZhCN": "里斯本 - 但泽"
+    },
+    {
+      "id": "ticket-long-003",
+      "category": "long",
+      "fromCityId": "palermo",
+      "toCityId": "moskva",
+      "points": 20,
+      "labelZhCN": "巴勒莫 - 莫斯科"
+    },
+    {
+      "id": "ticket-long-004",
+      "category": "long",
+      "fromCityId": "cadiz",
+      "toCityId": "stockholm",
+      "points": 21,
+      "labelZhCN": "加的斯 - 斯德哥尔摩"
+    },
+    {
+      "id": "ticket-long-005",
+      "category": "long",
+      "fromCityId": "edinburgh",
+      "toCityId": "athina",
+      "points": 21,
+      "labelZhCN": "爱丁堡 - 雅典"
+    },
+    {
+      "id": "ticket-long-006",
+      "category": "long",
+      "fromCityId": "kobenhavn",
+      "toCityId": "erzurum",
+      "points": 21,
+      "labelZhCN": "哥本哈根 - 埃尔祖鲁姆"
+    },
+    {
+      "id": "ticket-regular-001",
+      "category": "regular",
+      "fromCityId": "athina",
+      "toCityId": "angora",
+      "points": 5,
+      "labelZhCN": "雅典 - 安哥拉"
+    },
+    {
+      "id": "ticket-regular-002",
+      "category": "regular",
+      "fromCityId": "budapest",
+      "toCityId": "sofia",
+      "points": 5,
+      "labelZhCN": "布达佩斯 - 索非亚"
+    },
+    {
+      "id": "ticket-regular-003",
+      "category": "regular",
+      "fromCityId": "frankfurt",
+      "toCityId": "kobenhavn",
+      "points": 5,
+      "labelZhCN": "法兰克福 - 哥本哈根"
+    },
+    {
+      "id": "ticket-regular-004",
+      "category": "regular",
+      "fromCityId": "rostov",
+      "toCityId": "erzurum",
+      "points": 5,
+      "labelZhCN": "罗斯托夫 - 埃尔祖鲁姆"
+    },
+    {
+      "id": "ticket-regular-005",
+      "category": "regular",
+      "fromCityId": "sofia",
+      "toCityId": "smyrna",
+      "points": 5,
+      "labelZhCN": "索非亚 - 士麦那"
+    },
+    {
+      "id": "ticket-regular-006",
+      "category": "regular",
+      "fromCityId": "kyiv",
+      "toCityId": "petrograd",
+      "points": 6,
+      "labelZhCN": "基辅 - 彼得格勒"
+    },
+    {
+      "id": "ticket-regular-007",
+      "category": "regular",
+      "fromCityId": "warszawa",
+      "toCityId": "smolensk",
+      "points": 6,
+      "labelZhCN": "华沙 - 斯摩棱斯克"
+    },
+    {
+      "id": "ticket-regular-008",
+      "category": "regular",
+      "fromCityId": "zagrab",
+      "toCityId": "brindisi",
+      "points": 6,
+      "labelZhCN": "萨格勒布 - 布林迪西"
+    },
+    {
+      "id": "ticket-regular-009",
+      "category": "regular",
+      "fromCityId": "zurich",
+      "toCityId": "brindisi",
+      "points": 6,
+      "labelZhCN": "苏黎世 - 布林迪西"
+    },
+    {
+      "id": "ticket-regular-010",
+      "category": "regular",
+      "fromCityId": "zurich",
+      "toCityId": "budapest",
+      "points": 6,
+      "labelZhCN": "苏黎世 - 布达佩斯"
+    },
+    {
+      "id": "ticket-regular-011",
+      "category": "regular",
+      "fromCityId": "amsterdam",
+      "toCityId": "pamplona",
+      "points": 7,
+      "labelZhCN": "阿姆斯特丹 - 潘普洛纳"
+    },
+    {
+      "id": "ticket-regular-012",
+      "category": "regular",
+      "fromCityId": "brest",
+      "toCityId": "marseille",
+      "points": 7,
+      "labelZhCN": "布雷斯特 - 马赛"
+    },
+    {
+      "id": "ticket-regular-013",
+      "category": "regular",
+      "fromCityId": "edinburgh",
+      "toCityId": "paris",
+      "points": 7,
+      "labelZhCN": "爱丁堡 - 巴黎"
+    },
+    {
+      "id": "ticket-regular-014",
+      "category": "regular",
+      "fromCityId": "london",
+      "toCityId": "berlin",
+      "points": 7,
+      "labelZhCN": "伦敦 - 柏林"
+    },
+    {
+      "id": "ticket-regular-015",
+      "category": "regular",
+      "fromCityId": "paris",
+      "toCityId": "zagrab",
+      "points": 7,
+      "labelZhCN": "巴黎 - 萨格勒布"
+    },
+    {
+      "id": "ticket-regular-016",
+      "category": "regular",
+      "fromCityId": "barcelona",
+      "toCityId": "bruxelles",
+      "points": 8,
+      "labelZhCN": "巴塞罗那 - 布鲁塞尔"
+    },
+    {
+      "id": "ticket-regular-017",
+      "category": "regular",
+      "fromCityId": "barcelona",
+      "toCityId": "munchen",
+      "points": 8,
+      "labelZhCN": "巴塞罗那 - 慕尼黑"
+    },
+    {
+      "id": "ticket-regular-018",
+      "category": "regular",
+      "fromCityId": "berlin",
+      "toCityId": "bucuresti",
+      "points": 8,
+      "labelZhCN": "柏林 - 布加勒斯特"
+    },
+    {
+      "id": "ticket-regular-019",
+      "category": "regular",
+      "fromCityId": "brest",
+      "toCityId": "venezia",
+      "points": 8,
+      "labelZhCN": "布雷斯特 - 威尼斯"
+    },
+    {
+      "id": "ticket-regular-020",
+      "category": "regular",
+      "fromCityId": "kyiv",
+      "toCityId": "sochi",
+      "points": 8,
+      "labelZhCN": "基辅 - 索契"
+    },
+    {
+      "id": "ticket-regular-021",
+      "category": "regular",
+      "fromCityId": "madrid",
+      "toCityId": "dieppe",
+      "points": 8,
+      "labelZhCN": "马德里 - 迪耶普"
+    },
+    {
+      "id": "ticket-regular-022",
+      "category": "regular",
+      "fromCityId": "madrid",
+      "toCityId": "zurich",
+      "points": 8,
+      "labelZhCN": "马德里 - 苏黎世"
+    },
+    {
+      "id": "ticket-regular-023",
+      "category": "regular",
+      "fromCityId": "marseille",
+      "toCityId": "essen",
+      "points": 8,
+      "labelZhCN": "马赛 - 埃森"
+    },
+    {
+      "id": "ticket-regular-024",
+      "category": "regular",
+      "fromCityId": "palermo",
+      "toCityId": "constantinople",
+      "points": 8,
+      "labelZhCN": "巴勒莫 - 君士坦丁堡"
+    },
+    {
+      "id": "ticket-regular-025",
+      "category": "regular",
+      "fromCityId": "paris",
+      "toCityId": "wien",
+      "points": 8,
+      "labelZhCN": "巴黎 - 维也纳"
+    },
+    {
+      "id": "ticket-regular-026",
+      "category": "regular",
+      "fromCityId": "roma",
+      "toCityId": "smyrna",
+      "points": 8,
+      "labelZhCN": "罗马 - 士麦那"
+    },
+    {
+      "id": "ticket-regular-027",
+      "category": "regular",
+      "fromCityId": "sarajevo",
+      "toCityId": "sevastopol",
+      "points": 8,
+      "labelZhCN": "萨拉热窝 - 塞瓦斯托波尔"
+    },
+    {
+      "id": "ticket-regular-028",
+      "category": "regular",
+      "fromCityId": "smolensk",
+      "toCityId": "rostov",
+      "points": 8,
+      "labelZhCN": "斯摩棱斯克 - 罗斯托夫"
+    },
+    {
+      "id": "ticket-regular-029",
+      "category": "regular",
+      "fromCityId": "berlin",
+      "toCityId": "roma",
+      "points": 9,
+      "labelZhCN": "柏林 - 罗马"
+    },
+    {
+      "id": "ticket-regular-030",
+      "category": "regular",
+      "fromCityId": "bruxelles",
+      "toCityId": "danzig",
+      "points": 9,
+      "labelZhCN": "布鲁塞尔 - 但泽"
+    },
+    {
+      "id": "ticket-regular-031",
+      "category": "regular",
+      "fromCityId": "angora",
+      "toCityId": "kharkiv",
+      "points": 10,
+      "labelZhCN": "安哥拉 - 哈尔科夫"
+    },
+    {
+      "id": "ticket-regular-032",
+      "category": "regular",
+      "fromCityId": "essen",
+      "toCityId": "kyiv",
+      "points": 10,
+      "labelZhCN": "埃森 - 基辅"
+    },
+    {
+      "id": "ticket-regular-033",
+      "category": "regular",
+      "fromCityId": "london",
+      "toCityId": "wien",
+      "points": 10,
+      "labelZhCN": "伦敦 - 维也纳"
+    },
+    {
+      "id": "ticket-regular-034",
+      "category": "regular",
+      "fromCityId": "riga",
+      "toCityId": "bucuresti",
+      "points": 10,
+      "labelZhCN": "里加 - 布加勒斯特"
+    },
+    {
+      "id": "ticket-regular-035",
+      "category": "regular",
+      "fromCityId": "venezia",
+      "toCityId": "constantinople",
+      "points": 10,
+      "labelZhCN": "威尼斯 - 君士坦丁堡"
+    },
+    {
+      "id": "ticket-regular-036",
+      "category": "regular",
+      "fromCityId": "athina",
+      "toCityId": "wilno",
+      "points": 11,
+      "labelZhCN": "雅典 - 维尔诺"
+    },
+    {
+      "id": "ticket-regular-037",
+      "category": "regular",
+      "fromCityId": "stockholm",
+      "toCityId": "wien",
+      "points": 11,
+      "labelZhCN": "斯德哥尔摩 - 维也纳"
+    },
+    {
+      "id": "ticket-regular-038",
+      "category": "regular",
+      "fromCityId": "amsterdam",
+      "toCityId": "wilno",
+      "points": 12,
+      "labelZhCN": "阿姆斯特丹 - 维尔诺"
+    },
+    {
+      "id": "ticket-regular-039",
+      "category": "regular",
+      "fromCityId": "berlin",
+      "toCityId": "moskva",
+      "points": 12,
+      "labelZhCN": "柏林 - 莫斯科"
+    },
+    {
+      "id": "ticket-regular-040",
+      "category": "regular",
+      "fromCityId": "frankfurt",
+      "toCityId": "smolensk",
+      "points": 13,
+      "labelZhCN": "法兰克福 - 斯摩棱斯克"
+    }
+  ],
+  "bonusCards": [
+    {
+      "id": "bonus-european-express",
+      "labelZhCN": "欧洲快车",
+      "points": 10,
+      "condition": "longest-continuous-path",
+      "sharedOnTie": true
+    }
+  ],
+  "visualModel": {
+    "trainCard": {
+      "width": 440,
+      "height": 680,
+      "cornerRadius": 28,
+      "safeInset": 36,
+      "sharedBackId": "train-card-back"
+    },
+    "destinationTicket": {
+      "width": 680,
+      "height": 440,
+      "cornerRadius": 28,
+      "safeInset": 36,
+      "sharedBackId": "destination-ticket-back"
+    }
+  },
+  "summary": {
+    "trainCardCount": 110,
+    "trainTypeCount": 9,
+    "regularDestinationTicketCount": 40,
+    "longDestinationTicketCount": 6,
+    "destinationTicketCount": 46
+  },
+  "copyrightBoundary": "Facts and original neutral visual tokens only; official card illustrations, logos, typography, and printable layouts are excluded."
+}

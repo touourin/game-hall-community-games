@@ -1,0 +1,141 @@
+{
+  "$schema": "../model/view-state.schema.json",
+  "schemaVersion": 1,
+  "gameKey": "ticket-to-ride-europe-base",
+  "viewer": {
+    "mode": "player",
+    "playerId": "p1"
+  },
+  "phase": "turn_idle",
+  "revision": 19,
+  "currentPlayerId": "p1",
+  "players": [
+    {
+      "id": "p1",
+      "seatIndex": 0,
+      "status": "active",
+      "score": 16,
+      "trainsRemaining": 35,
+      "stationsRemaining": 3,
+      "trainHandCount": 3,
+      "destinationTicketCount": 2,
+      "initialTicketChoiceSubmitted": true,
+      "finalStationAssignmentSubmitted": false
+    },
+    {
+      "id": "p2",
+      "seatIndex": 1,
+      "status": "active",
+      "score": 9,
+      "trainsRemaining": 40,
+      "stationsRemaining": 2,
+      "trainHandCount": 2,
+      "destinationTicketCount": 2,
+      "initialTicketChoiceSubmitted": true,
+      "finalStationAssignmentSubmitted": false
+    }
+  ],
+  "market": [
+    {
+      "instanceId": "train-red-07",
+      "typeId": "train-red"
+    },
+    {
+      "instanceId": "train-black-11",
+      "typeId": "train-black"
+    },
+    {
+      "instanceId": "train-blue-03",
+      "typeId": "train-blue"
+    },
+    {
+      "instanceId": "train-yellow-02",
+      "typeId": "train-yellow"
+    },
+    {
+      "instanceId": "train-locomotive-05",
+      "typeId": "train-locomotive"
+    }
+  ],
+  "trainDeckCount": 61,
+  "trainDiscardCount": 14,
+  "destinationDeckCount": 22,
+  "board": {
+    "claimedRoutes": [
+      {
+        "routeId": "route-bruxelles-paris-a",
+        "ownerPlayerId": "p1"
+      },
+      {
+        "routeId": "route-bruxelles-frankfurt",
+        "ownerPlayerId": "p2"
+      },
+      {
+        "routeId": "route-paris-zurich",
+        "ownerPlayerId": "p1"
+      }
+    ],
+    "stationPlacements": [
+      {
+        "cityId": "bruxelles",
+        "ownerPlayerId": "p2"
+      }
+    ],
+    "claimableRouteIds": [
+      "route-amsterdam-bruxelles",
+      "route-bruxelles-paris-b",
+      "route-frankfurt-paris-a"
+    ]
+  },
+  "self": {
+    "playerId": "p1",
+    "trainHand": [
+      {
+        "instanceId": "train-green-04",
+        "typeId": "train-green"
+      },
+      {
+        "instanceId": "train-green-05",
+        "typeId": "train-green"
+      },
+      {
+        "instanceId": "train-locomotive-03",
+        "typeId": "train-locomotive"
+      }
+    ],
+    "destinationTickets": [
+      {
+        "ticketId": "ticket-regular-011",
+        "fromCityId": "amsterdam",
+        "toCityId": "pamplona",
+        "points": 7,
+        "category": "regular",
+        "completionPreview": false
+      },
+      {
+        "ticketId": "ticket-regular-021",
+        "fromCityId": "paris",
+        "toCityId": "wien",
+        "points": 8,
+        "category": "regular",
+        "completionPreview": false
+      }
+    ],
+    "pendingTicketChoice": null,
+    "pendingTunnelPayment": null
+  },
+  "publicPendingTunnel": null,
+  "finalRound": null,
+  "actions": [
+    "draw_train_card",
+    "claim_route",
+    "draw_destination_tickets",
+    "build_station"
+  ],
+  "latestEvent": {
+    "sequence": 28,
+    "type": "route_claimed",
+    "publicMessage": "玩家 1 占用了巴黎与苏黎世之间的轨道。"
+  },
+  "result": null
+}

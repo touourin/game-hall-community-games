@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/ticket-to-ride-europe/board-map.schema.json",
+  "title": "Ticket to Ride Europe board map",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "modelVersion",
+    "gameKey",
+    "coordinateSystem",
+    "routeColors",
+    "routeKinds",
+    "routeScoring",
+    "cities",
+    "routes",
+    "summary",
+    "copyrightBoundary"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameKey": { "const": "ticket-to-ride-europe-base" },
+    "coordinateSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "width", "height", "origin", "units"],
+      "properties": {
+        "kind": { "const": "schematic" },
+        "width": { "const": 1360 },
+        "height": { "const": 880 },
+        "origin": { "const": "top-left" },
+        "units": { "const": "logical-px" }
+      }
+    },
+    "routeColors": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/routeColor" }
+    },
+    "routeKinds": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/routeKind" }
+    },
+    "routeScoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["1", "2", "3", "4", "6", "8"],
+      "properties": {
+        "1": { "const": 1 },
+        "2": { "const": 2 },
+        "3": { "const": 4 },
+        "4": { "const": 7 },
+        "6": { "const": 15 },
+        "8": { "const": 21 }
+      }
+    },
+    "cities": {
+      "type": "array",
+      "minItems": 47,
+      "maxItems": 47,
+      "items": { "$ref": "#/$defs/city" }
+    },
+    "routes": {
+      "type": "array",
+      "minItems": 101,
+      "maxItems": 101,
+      "items": { "$ref": "#/$defs/route" }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cityCount",
+        "routeCount",
+        "cityPairCount",
+        "doubleRoutePairCount",
+        "routeKindCounts",
+        "totalTrackSpaces"
+      ],
+      "properties": {
+        "cityCount": { "const": 47 },
+        "routeCount": { "const": 101 },
+        "cityPairCount": { "const": 90 },
+        "doubleRoutePairCount": { "const": 11 },
+        "routeKindCounts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["standard", "tunnel", "ferry"],
+          "properties": {
+            "standard": { "const": 70 },
+            "tunnel": { "const": 18 },
+            "ferry": { "const": 13 }
+          }
+        },
+        "totalTrackSpaces": { "const": 300 }
+      }
+    },
+    "copyrightBoundary": { "type": "string", "minLength": 20 }
+  },
+  "$defs": {
+    "identifier": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "routeColor": {
+      "enum": ["purple", "blue", "orange", "white", "green", "yellow", "black", "red", "gray"]
+    },
+    "routeKind": { "enum": ["standard", "tunnel", "ferry"] },
+    "city": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "boardLabel", "labelZhCN", "modernName", "position"],
+      "properties": {
+        "id": { "$ref": "#/$defs/identifier" },
+        "boardLabel": { "type": "string", "minLength": 2 },
+        "labelZhCN": { "type": "string", "minLength": 1 },
+        "modernName": { "type": "string", "minLength": 2 },
+        "position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["x", "y"],
+          "properties": {
+            "x": { "type": "integer", "minimum": 0, "maximum": 1360 },
+            "y": { "type": "integer", "minimum": 0, "maximum": 880 }
+          }
+        }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "fromCityId",
+        "toCityId",
+        "length",
+        "points",
+        "color",
+        "kind",
+        "locomotivesRequired",
+        "parallelGroupId",
+        "trackIndex"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^route-[a-z0-9-]+$" },
+        "fromCityId": { "$ref": "#/$defs/identifier" },
+        "toCityId": { "$ref": "#/$defs/identifier" },
+        "length": { "enum": [1, 2, 3, 4, 6, 8] },
+        "points": { "enum": [1, 2, 4, 7, 15, 21] },
+        "color": { "$ref": "#/$defs/routeColor" },
+        "kind": { "$ref": "#/$defs/routeKind" },
+        "locomotivesRequired": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "parallelGroupId": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string", "pattern": "^parallel-[a-z0-9-]+$" }
+          ]
+        },
+        "trackIndex": { "type": "integer", "minimum": 0, "maximum": 1 }
+      }
+    }
+  }
+}

@@ -24,8 +24,8 @@ from .state import (
 )
 
 
-TICK_RATE = 40
-SNAPSHOT_RATE = 20
+TICK_RATE = 60
+SNAPSHOT_RATE = 30
 COUNTDOWN_TICKS = 3 * TICK_RATE
 ROUND_TICKS = 90 * TICK_RATE
 BOMB_FUSE_TICKS = 2 * TICK_RATE
@@ -43,11 +43,14 @@ CRATE_DROP_CHANCE = 0.38
 COLLAPSE_INTERVAL_TICKS = round(0.15 * TICK_RATE)
 BOMB_MOVE_INTERVAL_TICKS = max(1, round(0.1 * TICK_RATE))
 POSITION_SCALE = 1_000
+PLAYER_HITBOX_RADIUS = 300
+SOLID_HALF_EXTENT = 480
+BOMB_HITBOX_RADIUS = 340
 # These retain the original 5 / 6.25 / 7.69 / 10 cells-per-second speeds at
 # the higher simulation rate.  A movement tick now advances only a fraction
 # of a tile rather than committing an entire grid step.
-MOVE_INTERVAL_TICKS = (8.0, 6.4, 5.2, 4.0)
-ICE_MOVE_PENALTY_TICKS = 4.0
+MOVE_INTERVAL_TICKS = (12.0, 9.6, 7.8, 6.0)
+ICE_MOVE_PENALTY_TICKS = 6.0
 
 INPUT_UP = 1
 INPUT_DOWN = 2
@@ -662,6 +665,7 @@ class BombPeopleEngine:
             actor.queued_move_x = 0
             actor.queued_move_y = 0
             if direction == (0, 0):
+                actor.move_fraction = 0.0
                 actor.move_cooldown = 0.0
                 continue
             dx, dy = direction
@@ -679,35 +683,49 @@ class BombPeopleEngine:
         dx: int,
         dy: int,
     ) -> bool:
-        """Advance one sub-cell quantum while remaining on the map grid lanes."""
+        """Advance one continuous sub-cell quantum using a physical hitbox."""
         if not hasattr(actor, "offset_x"):
             actor.offset_x = 0
         if not hasattr(actor, "offset_y"):
             actor.offset_y = 0
-        remaining = max(
-            1,
-            round(POSITION_SCALE / self._move_interval_ticks(state, actor)),
+        if not hasattr(actor, "move_fraction"):
+            actor.move_fraction = 0.0
+        exact_distance = (
+            POSITION_SCALE / self._move_interval_ticks(state, actor)
+            + actor.move_fraction
         )
-        moved = False
+        remaining = max(1, int(exact_distance + 1e-9))
+        actor.move_fraction = exact_distance - remaining
 
-        # A perpendicular turn first recentres the actor on the current lane.
-        # This keeps cornering predictable without ever snapping the sprite.
-        if dx and actor.offset_y:
-            correction = min(abs(actor.offset_y), remaining)
-            actor.offset_y -= (1 if actor.offset_y > 0 else -1) * correction
-            remaining -= correction
-            moved = correction > 0
-        elif dy and actor.offset_x:
-            correction = min(abs(actor.offset_x), remaining)
-            actor.offset_x -= (1 if actor.offset_x > 0 else -1) * correction
-            remaining -= correction
-            moved = correction > 0
-
-        if remaining <= 0:
-            return moved
+        # Move in the requested direction first. At a tight corner, gently
+        # slide toward the current rule-cell centre only when the desired axis
+        # is physically blocked. This keeps direction changes continuous.
         if dx:
-            return self._advance_player_axis(state, actor, dx, remaining, True) or moved
-        return self._advance_player_axis(state, actor, dy, remaining, False) or moved
+            moved = self._advance_player_axis(state, actor, dx, remaining, True)
+            if moved or not actor.offset_y:
+                return moved > 0
+            correction = min(abs(actor.offset_y), remaining)
+            direction = -1 if actor.offset_y > 0 else 1
+            return self._advance_player_axis(
+                state,
+                actor,
+                direction,
+                correction,
+                False,
+            ) > 0
+
+        moved = self._advance_player_axis(state, actor, dy, remaining, False)
+        if moved or not actor.offset_x:
+            return moved > 0
+        correction = min(abs(actor.offset_x), remaining)
+        direction = -1 if actor.offset_x > 0 else 1
+        return self._advance_player_axis(
+            state,
+            actor,
+            direction,
+            correction,
+            True,
+        ) > 0
 
     def _advance_player_axis(
         self,
@@ -716,71 +734,225 @@ class BombPeopleEngine:
         direction: int,
         distance: int,
         horizontal: bool,
-    ) -> bool:
-        offset = actor.offset_x if horizontal else actor.offset_y
-        # Moving against the offset returns to this cell's centre. Moving with
-        # it enters the adjacent cell and therefore needs collision checks.
-        moving_toward_center = direction * offset < 0
-        if not moving_toward_center:
-            target_x = actor.x + (direction if horizontal else 0)
-            target_y = actor.y + (0 if horizontal else direction)
-            if not self._prepare_player_destination(
+    ) -> int:
+        if distance <= 0:
+            return 0
+        start_x, start_y = self._player_world_position(actor)
+        candidate_x = start_x + (direction * distance if horizontal else 0)
+        candidate_y = start_y + (0 if horizontal else direction * distance)
+        bomb = self._contacting_bomb(
+            state,
+            actor,
+            start_x,
+            start_y,
+            candidate_x,
+            candidate_y,
+        )
+        if bomb is not None and actor.can_kick:
+            self._kick_bomb(
                 state,
+                bomb,
                 actor,
-                target_x,
-                target_y,
                 direction if horizontal else 0,
                 0 if horizontal else direction,
-            ):
-                return False
+            )
 
-        next_offset = offset + direction * distance
-        if next_offset >= POSITION_SCALE // 2:
-            if horizontal:
-                actor.x += 1
-            else:
-                actor.y += 1
-            next_offset -= POSITION_SCALE
-        elif next_offset <= -(POSITION_SCALE // 2):
-            if horizontal:
-                actor.x -= 1
-            else:
-                actor.y -= 1
-            next_offset += POSITION_SCALE
+        allowed = self._maximum_open_distance(
+            state,
+            actor,
+            start_x,
+            start_y,
+            direction,
+            distance,
+            horizontal,
+        )
+        if allowed <= 0:
+            return 0
+        world_x = start_x + (direction * allowed if horizontal else 0)
+        world_y = start_y + (0 if horizontal else direction * allowed)
+        self._set_player_world_position(actor, world_x, world_y)
+        return allowed
 
-        if horizontal:
-            actor.offset_x = next_offset
-        else:
-            actor.offset_y = next_offset
-        return True
-
-    def _prepare_player_destination(
+    def _maximum_open_distance(
         self,
         state: BombPeopleState,
         actor: PlayerState,
-        target_x: int,
-        target_y: int,
-        dx: int,
-        dy: int,
+        start_x: int,
+        start_y: int,
+        direction: int,
+        distance: int,
+        horizontal: bool,
+    ) -> int:
+        def position_open(candidate_distance: int) -> bool:
+            world_x = start_x + (
+                direction * candidate_distance if horizontal else 0
+            )
+            world_y = start_y + (
+                0 if horizontal else direction * candidate_distance
+            )
+            return self._player_position_open(
+                state,
+                actor,
+                start_x,
+                start_y,
+                world_x,
+                world_y,
+            )
+
+        if position_open(distance):
+            return distance
+        low = 0
+        high = distance - 1
+        while low < high:
+            middle = (low + high + 1) // 2
+            if position_open(middle):
+                low = middle
+            else:
+                high = middle - 1
+        return low if position_open(low) else 0
+
+    def _player_position_open(
+        self,
+        state: BombPeopleState,
+        actor: PlayerState,
+        start_x: int,
+        start_y: int,
+        world_x: int,
+        world_y: int,
     ) -> bool:
-        if not _inside(target_x, target_y):
-            return False
-        cell = state.board[target_y][target_x]
-        if cell in {CELL_HARD, CELL_STONE}:
-            return False
-        if cell == CELL_SOFT and not actor.has_ghost:
+        maximum = (BOARD_SIZE - 1) * POSITION_SCALE
+        if not 0 <= world_x <= maximum or not 0 <= world_y <= maximum:
             return False
 
-        bomb = self._bomb_at(state, target_x, target_y)
-        if bomb is not None:
-            if not actor.can_kick or not self._kick_bomb(state, bomb, actor, dx, dy):
+        base_x = world_x // POSITION_SCALE
+        base_y = world_y // POSITION_SCALE
+        contact_extent = PLAYER_HITBOX_RADIUS + SOLID_HALF_EXTENT
+        for cell_y in range(max(0, base_y - 1), min(BOARD_SIZE, base_y + 3)):
+            for cell_x in range(max(0, base_x - 1), min(BOARD_SIZE, base_x + 3)):
+                cell = state.board[cell_y][cell_x]
+                if cell == CELL_FLOOR or (cell == CELL_SOFT and actor.has_ghost):
+                    continue
+                if (
+                    abs(world_x - cell_x * POSITION_SCALE) < contact_extent
+                    and abs(world_y - cell_y * POSITION_SCALE) < contact_extent
+                ):
+                    return False
+
+        for bomb in state.bombs.values():
+            if bomb.carrier_id is not None:
+                continue
+            if self._circle_blocks_motion(
+                start_x,
+                start_y,
+                world_x,
+                world_y,
+                bomb.x * POSITION_SCALE,
+                bomb.y * POSITION_SCALE,
+                PLAYER_HITBOX_RADIUS + BOMB_HITBOX_RADIUS,
+            ):
                 return False
-        return not any(
-            other.alive
-            and other.player_id != actor.player_id
-            and (other.x, other.y) == (target_x, target_y)
-            for other in state.players.values()
+
+        player_contact = PLAYER_HITBOX_RADIUS * 2
+        for other in state.players.values():
+            if not other.alive or other.player_id == actor.player_id:
+                continue
+            other_x, other_y = self._player_world_position(other)
+            if self._circle_blocks_motion(
+                start_x,
+                start_y,
+                world_x,
+                world_y,
+                other_x,
+                other_y,
+                player_contact,
+            ):
+                return False
+        return True
+
+    def _contacting_bomb(
+        self,
+        state: BombPeopleState,
+        actor: PlayerState,
+        start_x: int,
+        start_y: int,
+        world_x: int,
+        world_y: int,
+    ) -> BombState | None:
+        contact = PLAYER_HITBOX_RADIUS + BOMB_HITBOX_RADIUS
+        return next(
+            (
+                bomb
+                for bomb in sorted(state.bombs.values(), key=lambda item: item.bomb_id)
+                if bomb.carrier_id is None
+                and self._circle_blocks_motion(
+                    start_x,
+                    start_y,
+                    world_x,
+                    world_y,
+                    bomb.x * POSITION_SCALE,
+                    bomb.y * POSITION_SCALE,
+                    contact,
+                )
+            ),
+            None,
         )
+
+    @staticmethod
+    def _circle_blocks_motion(
+        start_x: int,
+        start_y: int,
+        world_x: int,
+        world_y: int,
+        obstacle_x: int,
+        obstacle_y: int,
+        contact: int,
+    ) -> bool:
+        candidate_distance = (
+            (world_x - obstacle_x) ** 2
+            + (world_y - obstacle_y) ** 2
+        )
+        contact_squared = contact ** 2
+        if candidate_distance >= contact_squared:
+            return False
+        start_distance = (
+            (start_x - obstacle_x) ** 2
+            + (start_y - obstacle_y) ** 2
+        )
+        return not (
+            start_distance < contact_squared
+            and candidate_distance >= start_distance
+        )
+
+    @staticmethod
+    def _player_world_position(actor: PlayerState) -> tuple[int, int]:
+        return (
+            actor.x * POSITION_SCALE + getattr(actor, "offset_x", 0),
+            actor.y * POSITION_SCALE + getattr(actor, "offset_y", 0),
+        )
+
+    @staticmethod
+    def _set_player_world_position(
+        actor: PlayerState,
+        world_x: int,
+        world_y: int,
+    ) -> None:
+        half = POSITION_SCALE // 2
+        offset_x = world_x - actor.x * POSITION_SCALE
+        offset_y = world_y - actor.y * POSITION_SCALE
+        while offset_x > half:
+            actor.x += 1
+            offset_x -= POSITION_SCALE
+        while offset_x < -half:
+            actor.x -= 1
+            offset_x += POSITION_SCALE
+        while offset_y > half:
+            actor.y += 1
+            offset_y -= POSITION_SCALE
+        while offset_y < -half:
+            actor.y -= 1
+            offset_y += POSITION_SCALE
+        actor.offset_x = offset_x
+        actor.offset_y = offset_y
 
     @staticmethod
     def _move_interval_ticks(
@@ -931,8 +1103,15 @@ class BombPeopleEngine:
             for bomb in state.bombs.values()
         ):
             return False
+        target_x = x * POSITION_SCALE
+        target_y = y * POSITION_SCALE
+        contact_squared = (PLAYER_HITBOX_RADIUS + BOMB_HITBOX_RADIUS) ** 2
         return not any(
-            actor.alive and (actor.x, actor.y) == (x, y)
+            actor.alive
+            and (
+                (BombPeopleEngine._player_world_position(actor)[0] - target_x) ** 2
+                + (BombPeopleEngine._player_world_position(actor)[1] - target_y) ** 2
+            ) < contact_squared
             for actor in state.players.values()
         )
 
@@ -1390,6 +1569,9 @@ class BombPeopleEngine:
             "tick": state.tick,
             "tickRate": TICK_RATE,
             "snapshotRate": SNAPSHOT_RATE,
+            "playerHitboxRadius": PLAYER_HITBOX_RADIUS / POSITION_SCALE,
+            "solidHalfExtent": SOLID_HALF_EXTENT / POSITION_SCALE,
+            "bombHitboxRadius": BOMB_HITBOX_RADIUS / POSITION_SCALE,
             "stage": state.stage,
             "stageTicksRemaining": state.stage_ticks_remaining,
             "roundTicksRemaining": state.round_ticks_remaining,
@@ -1510,6 +1692,19 @@ class BombPeopleEngine:
         record = state.session_records.get(actor.player_id, SessionRecord())
         direction = self._movement_direction(actor)
         queued_direction = (actor.queued_move_x, actor.queued_move_y)
+        movement_speed = TICK_RATE / self._move_interval_ticks(state, actor)
+        recently_moved = (
+            state.tick - actor.last_move_tick
+            <= max(1, round(TICK_RATE / SNAPSHOT_RATE))
+        )
+        moving = bool(
+            actor.alive
+            and not state.frozen
+            and (
+                queued_direction != (0, 0)
+                or (direction != (0, 0) and recently_moved)
+            )
+        )
         win_rate = (
             round(record.championships * 100 / record.matches, 1)
             if record.matches
@@ -1533,16 +1728,11 @@ class BombPeopleEngine:
             "cellY": actor.y,
             "facingX": actor.facing_x,
             "facingY": actor.facing_y,
-            "moving": bool(
-                actor.alive
-                and not state.frozen
-                and (direction != (0, 0) or queued_direction != (0, 0))
-            ),
+            "moving": moving,
             "moveIntervalTicks": self._move_interval_ticks(state, actor),
-            "movementSpeed": round(
-                TICK_RATE / self._move_interval_ticks(state, actor),
-                3,
-            ),
+            "movementSpeed": round(movement_speed, 3),
+            "velocityX": round(actor.facing_x * movement_speed, 3) if moving else 0,
+            "velocityY": round(actor.facing_y * movement_speed, 3) if moving else 0,
             "carriedBombId": actor.carried_bomb_id,
             "alive": actor.alive,
             "eliminatedBy": actor.eliminated_by,

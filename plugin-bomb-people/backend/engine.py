@@ -24,15 +24,15 @@ from .state import (
 )
 
 
-TICK_RATE = 20
-SNAPSHOT_RATE = 10
+TICK_RATE = 40
+SNAPSHOT_RATE = 20
 COUNTDOWN_TICKS = 3 * TICK_RATE
 ROUND_TICKS = 90 * TICK_RATE
 BOMB_FUSE_TICKS = 2 * TICK_RATE
-FLAME_TICKS = 7
-ACTION_EFFECT_TICKS = 10
-BOMB_PLACE_EFFECT_TICKS = 7
-EXPLOSION_EFFECT_TICKS = 9
+FLAME_TICKS = round(0.35 * TICK_RATE)
+ACTION_EFFECT_TICKS = round(0.5 * TICK_RATE)
+BOMB_PLACE_EFFECT_TICKS = round(0.35 * TICK_RATE)
+EXPLOSION_EFFECT_TICKS = round(0.45 * TICK_RATE)
 SHIELD_GRACE_TICKS = TICK_RATE
 CURSE_TICKS = 5 * TICK_RATE
 STAR_TICKS = 5 * TICK_RATE
@@ -40,8 +40,14 @@ ICE_TICKS = 3 * TICK_RATE
 ITEM_REFRESH_TICKS = 10 * TICK_RATE
 ITEM_REFRESH_CHANCE = 0.24
 CRATE_DROP_CHANCE = 0.38
-COLLAPSE_INTERVAL_TICKS = 3
-MOVE_INTERVAL_TICKS = (4.0, 3.2, 2.6, 2.0)
+COLLAPSE_INTERVAL_TICKS = round(0.15 * TICK_RATE)
+BOMB_MOVE_INTERVAL_TICKS = max(1, round(0.1 * TICK_RATE))
+POSITION_SCALE = 1_000
+# These retain the original 5 / 6.25 / 7.69 / 10 cells-per-second speeds at
+# the higher simulation rate.  A movement tick now advances only a fraction
+# of a tile rather than committing an entire grid step.
+MOVE_INTERVAL_TICKS = (8.0, 6.4, 5.2, 4.0)
+ICE_MOVE_PENALTY_TICKS = 4.0
 
 INPUT_UP = 1
 INPUT_DOWN = 2
@@ -271,10 +277,9 @@ class BombPeopleEngine:
         ):
             if pressed & bit:
                 actor.facing_x, actor.facing_y = direction
-                # Preserve one grid step when a short tap is pressed and
-                # released between two server ticks.  Only the latest tap is
-                # queued, so keyboard repeat or latency can never build a
-                # long movement backlog.
+                # Preserve one simulation quantum when a short tap is pressed
+                # and released between server ticks.  This avoids losing the
+                # input without turning a millisecond tap into a whole tile.
                 actor.queued_move_x, actor.queued_move_y = direction
         return True
 
@@ -649,16 +654,11 @@ class BombPeopleEngine:
         for actor in sorted(state.players.values(), key=lambda item: (item.seat, item.player_id)):
             if not actor.alive:
                 continue
-            if actor.move_cooldown > 0:
-                actor.move_cooldown -= 1
-                if actor.move_cooldown > 0:
-                    continue
             direction = self._movement_direction(actor)
             if direction == (0, 0):
                 direction = (actor.queued_move_x, actor.queued_move_y)
-            # A queued tap is consumed once, whether or not its destination is
-            # currently passable.  This prevents taps from accumulating and
-            # firing much later after an obstacle disappears.
+            # A queued tap is consumed once, whether or not movement succeeds,
+            # so taps can never accumulate into delayed movement.
             actor.queued_move_x = 0
             actor.queued_move_y = 0
             if direction == (0, 0):
@@ -666,30 +666,121 @@ class BombPeopleEngine:
                 continue
             dx, dy = direction
             actor.facing_x, actor.facing_y = dx, dy
-            target_x, target_y = actor.x + dx, actor.y + dy
-            if not _inside(target_x, target_y):
+            actor.move_cooldown = 0.0
+            if not self._advance_player_position(state, actor, dx, dy):
                 continue
-            cell = state.board[target_y][target_x]
-            if cell in {CELL_HARD, CELL_STONE}:
-                continue
-            if cell == CELL_SOFT and not actor.has_ghost:
-                continue
-
-            bomb = self._bomb_at(state, target_x, target_y)
-            if bomb is not None:
-                if not actor.can_kick or not self._kick_bomb(state, bomb, actor, dx, dy):
-                    continue
-            if any(
-                other.alive
-                and other.player_id != actor.player_id
-                and (other.x, other.y) == (target_x, target_y)
-                for other in state.players.values()
-            ):
-                continue
-            actor.x, actor.y = target_x, target_y
             actor.last_move_tick = state.tick
-            actor.move_cooldown += self._move_interval_ticks(state, actor)
             self._collect_at(room, state, actor, actor.x, actor.y)
+
+    def _advance_player_position(
+        self,
+        state: BombPeopleState,
+        actor: PlayerState,
+        dx: int,
+        dy: int,
+    ) -> bool:
+        """Advance one sub-cell quantum while remaining on the map grid lanes."""
+        if not hasattr(actor, "offset_x"):
+            actor.offset_x = 0
+        if not hasattr(actor, "offset_y"):
+            actor.offset_y = 0
+        remaining = max(
+            1,
+            round(POSITION_SCALE / self._move_interval_ticks(state, actor)),
+        )
+        moved = False
+
+        # A perpendicular turn first recentres the actor on the current lane.
+        # This keeps cornering predictable without ever snapping the sprite.
+        if dx and actor.offset_y:
+            correction = min(abs(actor.offset_y), remaining)
+            actor.offset_y -= (1 if actor.offset_y > 0 else -1) * correction
+            remaining -= correction
+            moved = correction > 0
+        elif dy and actor.offset_x:
+            correction = min(abs(actor.offset_x), remaining)
+            actor.offset_x -= (1 if actor.offset_x > 0 else -1) * correction
+            remaining -= correction
+            moved = correction > 0
+
+        if remaining <= 0:
+            return moved
+        if dx:
+            return self._advance_player_axis(state, actor, dx, remaining, True) or moved
+        return self._advance_player_axis(state, actor, dy, remaining, False) or moved
+
+    def _advance_player_axis(
+        self,
+        state: BombPeopleState,
+        actor: PlayerState,
+        direction: int,
+        distance: int,
+        horizontal: bool,
+    ) -> bool:
+        offset = actor.offset_x if horizontal else actor.offset_y
+        # Moving against the offset returns to this cell's centre. Moving with
+        # it enters the adjacent cell and therefore needs collision checks.
+        moving_toward_center = direction * offset < 0
+        if not moving_toward_center:
+            target_x = actor.x + (direction if horizontal else 0)
+            target_y = actor.y + (0 if horizontal else direction)
+            if not self._prepare_player_destination(
+                state,
+                actor,
+                target_x,
+                target_y,
+                direction if horizontal else 0,
+                0 if horizontal else direction,
+            ):
+                return False
+
+        next_offset = offset + direction * distance
+        if next_offset >= POSITION_SCALE // 2:
+            if horizontal:
+                actor.x += 1
+            else:
+                actor.y += 1
+            next_offset -= POSITION_SCALE
+        elif next_offset <= -(POSITION_SCALE // 2):
+            if horizontal:
+                actor.x -= 1
+            else:
+                actor.y -= 1
+            next_offset += POSITION_SCALE
+
+        if horizontal:
+            actor.offset_x = next_offset
+        else:
+            actor.offset_y = next_offset
+        return True
+
+    def _prepare_player_destination(
+        self,
+        state: BombPeopleState,
+        actor: PlayerState,
+        target_x: int,
+        target_y: int,
+        dx: int,
+        dy: int,
+    ) -> bool:
+        if not _inside(target_x, target_y):
+            return False
+        cell = state.board[target_y][target_x]
+        if cell in {CELL_HARD, CELL_STONE}:
+            return False
+        if cell == CELL_SOFT and not actor.has_ghost:
+            return False
+
+        bomb = self._bomb_at(state, target_x, target_y)
+        if bomb is not None:
+            if not actor.can_kick or not self._kick_bomb(state, bomb, actor, dx, dy):
+                return False
+        return not any(
+            other.alive
+            and other.player_id != actor.player_id
+            and (other.x, other.y) == (target_x, target_y)
+            for other in state.players.values()
+        )
 
     @staticmethod
     def _move_interval_ticks(
@@ -699,7 +790,7 @@ class BombPeopleEngine:
         level = min(max(actor.speed_level, 0), len(MOVE_INTERVAL_TICKS) - 1)
         interval = MOVE_INTERVAL_TICKS[level]
         if (actor.x, actor.y) in state.ice_tiles:
-            interval += 2.0
+            interval += ICE_MOVE_PENALTY_TICKS
         return interval
 
     @staticmethod
@@ -782,7 +873,7 @@ class BombPeopleEngine:
             self._stop_bomb(bomb)
             return False
         bomb.x, bomb.y = x, y
-        bomb.motion_delay = 1
+        bomb.motion_delay = BOMB_MOVE_INTERVAL_TICKS - 1
         if bomb.travel_left > 0:
             bomb.travel_left -= 1
             if bomb.travel_left == 0:
@@ -1126,6 +1217,14 @@ class BombPeopleEngine:
         other = self.rng.choice(candidates)
         actor.x, other.x = other.x, actor.x
         actor.y, other.y = other.y, actor.y
+        actor.offset_x, other.offset_x = (
+            getattr(other, "offset_x", 0),
+            getattr(actor, "offset_x", 0),
+        )
+        actor.offset_y, other.offset_y = (
+            getattr(other, "offset_y", 0),
+            getattr(actor, "offset_y", 0),
+        )
 
     def _maybe_drop_item(
         self,
@@ -1290,6 +1389,7 @@ class BombPeopleEngine:
             "boardSize": BOARD_SIZE,
             "tick": state.tick,
             "tickRate": TICK_RATE,
+            "snapshotRate": SNAPSHOT_RATE,
             "stage": state.stage,
             "stageTicksRemaining": state.stage_ticks_remaining,
             "roundTicksRemaining": state.round_ticks_remaining,
@@ -1421,8 +1521,16 @@ class BombPeopleEngine:
             "seat": actor.seat,
             "color": PLAYER_COLORS[actor.seat % len(PLAYER_COLORS)],
             "character": actor.seat % len(PLAYER_COLORS),
-            "x": actor.x,
-            "y": actor.y,
+            "x": round(
+                actor.x + getattr(actor, "offset_x", 0) / POSITION_SCALE,
+                3,
+            ),
+            "y": round(
+                actor.y + getattr(actor, "offset_y", 0) / POSITION_SCALE,
+                3,
+            ),
+            "cellX": actor.x,
+            "cellY": actor.y,
             "facingX": actor.facing_x,
             "facingY": actor.facing_y,
             "moving": bool(
@@ -1431,6 +1539,10 @@ class BombPeopleEngine:
                 and (direction != (0, 0) or queued_direction != (0, 0))
             ),
             "moveIntervalTicks": self._move_interval_ticks(state, actor),
+            "movementSpeed": round(
+                TICK_RATE / self._move_interval_ticks(state, actor),
+                3,
+            ),
             "carriedBombId": actor.carried_bomb_id,
             "alive": actor.alive,
             "eliminatedBy": actor.eliminated_by,

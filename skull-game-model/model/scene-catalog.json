@@ -6,7 +6,7 @@
       "id": "setup.table",
       "phase": "round_setup",
       "title": "牌桌准备",
-      "purpose": "展示座位、规则选项和空白玩家垫，等待宿主完成开局。",
+      "purpose": "展示座位、规则选项和空白玩家垫，开局时由服务端随机抽取第一轮首家。",
       "entry": ["房间达到 3-6 名有效玩家", "宿主 phase 为 playing"],
       "actions": [],
       "focusZones": ["seat-ring", "rule-summary", "shared-supply"],
@@ -46,20 +46,20 @@
       "id": "challenge.reveal-own",
       "phase": "reveal",
       "title": "翻开自己的牌",
-      "purpose": "强制挑战者优先从自己的顶部暗牌逐枚翻开。",
+      "purpose": "强制挑战者优先从自己的顶部暗牌逐枚翻开，并向全员公示每次花/骷髅结果。",
       "entry": ["挑战开始", "挑战者自己的牌堆仍有暗牌", "尚未达到目标"],
       "actions": ["reveal_disc"],
-      "focusZones": ["challenger-stack", "challenge-progress"],
+      "focusZones": ["challenger-stack", "challenge-progress", "public-reveal-feed"],
       "exit": "达到叫价、翻到骷髅，或自己的暗牌已经翻完"
     },
     {
       "id": "challenge.reveal-others",
       "phase": "reveal",
       "title": "选择其他牌堆",
-      "purpose": "自己的暗牌处理完后，从任一对手的顶部暗牌继续挑战。",
+      "purpose": "自己的暗牌处理完后，从任一对手的顶部暗牌继续挑战，并向全员公示每次花/骷髅结果。",
       "entry": ["挑战者自己的牌堆没有暗牌", "尚未达到目标"],
       "actions": ["reveal_disc"],
-      "focusZones": ["legal-opponent-stacks", "challenge-progress"],
+      "focusZones": ["legal-opponent-stacks", "challenge-progress", "public-reveal-feed"],
       "exit": "达到叫价或翻到骷髅"
     },
     {

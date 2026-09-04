@@ -98,5 +98,6 @@
     "penaltySlots": []
   },
   "actions": ["raise_bid", "pass_bid"],
+  "publicReveals": [],
   "result": null
 }

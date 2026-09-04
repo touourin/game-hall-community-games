@@ -35,13 +35,10 @@ export interface BombPlayer {
   character: number
   x: number
   y: number
-  cellX?: number
-  cellY?: number
   facingX: number
   facingY: number
   moving: boolean
   moveIntervalTicks?: number
-  movementSpeed?: number
   carriedBombId: number | null
   alive: boolean
   eliminatedBy: string | null
@@ -62,8 +59,8 @@ export interface BombLocalPlayerVisual {
   facingX: number
   facingY: number
   moving: boolean
+  released: boolean
   predicted: boolean
-  transitionMs: number
 }
 
 export interface BombObject {
@@ -146,7 +143,6 @@ export interface BombGame {
   boardSize: number
   tick: number
   tickRate: number
-  snapshotRate?: number
   stage: BombStage
   stageTicksRemaining: number
   roundTicksRemaining: number

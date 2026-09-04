@@ -79,8 +79,7 @@ function localMovementDirection(player: BombPlayer): [number, number] {
 
 function playerStyle(player: BombPlayer) {
   const size = 100 / props.game.boardSize
-  const secondsPerCell = [0.2, 0.16, 0.13, 0.1][player.equipment.speedLevel] ?? 0.2
-  const fallbackInterval = Math.max(1, props.game.tickRate * secondsPerCell)
+  const fallbackInterval = Math.max(2, 4 - player.equipment.speedLevel * 0.65)
   const intervalTicks = player.moveIntervalTicks ?? fallbackInterval
   const visual = player.id === props.selfId ? props.selfVisual : null
   const [maskX, maskY] = localMovementDirection(player)
@@ -90,28 +89,25 @@ function playerStyle(player: BombPlayer) {
   const displayX = visual?.x ?? player.x
   const displayY = visual?.y ?? player.y
   const visuallyMoving = player.id === props.selfId ? locallyMoving : player.moving
-  const moveDurationMs = visual?.transitionMs
-    ?? Math.max(16, Math.round(1_000 / Math.max(1, props.game.snapshotRate ?? 20)))
-  const strideDurationMs = Math.max(
-    80,
-    Math.round(intervalTicks * 1_000 / Math.max(1, props.game.tickRate)),
-  )
-  const displayXPercent = Math.round(displayX * 100_000) / 1_000
-  const displayYPercent = Math.round(displayY * 100_000) / 1_000
+  const moveDurationMs = visual?.released
+    ? 0
+    : visuallyMoving
+    ? Math.max(90, Math.round(intervalTicks * 1_000 / Math.max(1, props.game.tickRate)))
+    : 70
   const action = latestActionByPlayer.value.get(player.id)
   return {
     left: '0',
     top: '0',
     width: `${size}%`,
     height: `${size}%`,
-    transform: `translate3d(${displayXPercent}%, ${displayYPercent}%, 0)`,
+    transform: `translate3d(${displayX * 100}%, ${displayY * 100}%, 0)`,
     '--player-color': player.color,
     '--face-scale': facingX < 0 ? -1 : 1,
     '--travel-lean': `${facingX * 4}deg`,
     '--counter-lean': `${facingX * -1.6}deg`,
     '--move-duration': `${moveDurationMs}ms`,
-    '--walk-step-duration': `${strideDurationMs}ms`,
-    '--walk-body-duration': `${Math.max(70, Math.round(strideDurationMs * 0.62))}ms`,
+    '--walk-step-duration': `${Math.max(90, moveDurationMs)}ms`,
+    '--walk-body-duration': `${Math.max(70, Math.round(moveDurationMs * 0.62))}ms`,
     '--pickup-x': `${(action?.directionX ?? facingX) * 88}%`,
     '--pickup-near-x': `${(action?.directionX ?? facingX) * 23}%`,
     '--pickup-y': `${112 + (action?.directionY ?? facingY) * 30}%`,
@@ -135,6 +131,7 @@ function playerAnimationClass(player: BombPlayer) {
   return {
     walking: visuallyMoving && player.alive,
     'local-input': player.id === props.selfId && locallyMoving,
+    'input-released': player.id === props.selfId && Boolean(visual?.released),
     'locally-predicted': player.id === props.selfId && Boolean(visual?.predicted),
     carrying: carriedBombsByPlayer.value.has(player.id),
     'facing-up': facingY < 0,
@@ -407,6 +404,7 @@ function fuseText(ticks: number) {
 .airborne-bomb i { position: absolute; width: 15%; height: 15%; right: -5%; top: -16%; border-radius: 50%; background: #fff5aa; box-shadow: 0 0 7px 2px #ff7818; }
 .throw-shadow { position: absolute; width: 72%; height: 22%; border-radius: 50%; background: #0009; filter: blur(2px); animation: throw-shadow .5s ease-in-out both; }
 .player-piece { position: absolute; z-index: 22; pointer-events: none; transition: transform var(--move-duration, 180ms) linear; will-change: transform; backface-visibility: hidden; }
+.player-piece.self.input-released { transition: none; }
 .player-visual { position: absolute; left: 50%; top: 50%; width: 170%; height: 195%; transform: translate(-50%, -58%); }
 .player-avatar { position: absolute; inset: 0; display: block; transform: scaleX(var(--face-scale)); transform-origin: 50% 76%; }
 .player-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }

@@ -26,11 +26,6 @@ class PlayerState:
     last_input_sequence: int = -1
     queued_move_x: int = 0
     queued_move_y: int = 0
-    # Authoritative sub-cell position, expressed in thousandths of a tile
-    # relative to (x, y).  Keeping the rule cell separate preserves the
-    # grid-based bomb/map rules while allowing a player to stop between cells.
-    offset_x: int = 0
-    offset_y: int = 0
     move_cooldown: float = 0.0
     last_move_tick: int = -10_000
     bomb_requested: bool = False

@@ -38,19 +38,15 @@ const joystickX = ref(0)
 const joystickY = ref(0)
 const joystickActive = ref(false)
 const localPlayerVisual = ref<BombLocalPlayerVisual | null>(null)
-const SNAPSHOT_CLOCK_MS = 50
-const BACKUP_CLOCK_STALE_MS = 180
-const RELEASE_RETRY_DELAYS_MS = [60] as const
-const SUBCELL_POSITION_SCALE = 1_000
-const POSITION_EPSILON = 0.0005
+const SNAPSHOT_CLOCK_MS = 100
+const BACKUP_CLOCK_STALE_MS = 320
+const RELEASE_RETRY_DELAYS_MS = [75] as const
 
 interface PendingMovePrediction {
   fromX: number
   fromY: number
   targetX: number
   targetY: number
-  directionX: number
-  directionY: number
   expiresTick: number
 }
 
@@ -196,46 +192,20 @@ function movementDirection(mask: number, actor = selfActor.value): [number, numb
   return [horizontal, 0]
 }
 
-function newlyPressedDirection(previousMask: number, nextMask: number): [number, number] | null {
-  const pressed = (nextMask & ~previousMask) & DIRECTION_MASK
-  if (pressed & 1) return [0, -1]
-  if (pressed & 2) return [0, 1]
-  if (pressed & 4) return [-1, 0]
-  if (pressed & 8) return [1, 0]
-  return null
-}
-
 function movementIntervalTicks(actor: BombPlayer) {
-  const secondsPerCell = [0.2, 0.16, 0.13, 0.1][actor.equipment.speedLevel] ?? 0.2
-  return actor.moveIntervalTicks ?? Math.max(1, game.value.tickRate * secondsPerCell)
+  return actor.moveIntervalTicks ?? Math.max(2, 4 - actor.equipment.speedLevel * 0.65)
 }
 
-function authorityTransitionMs() {
-  return Math.max(16, Math.round(1_000 / Math.max(1, game.value.snapshotRate ?? 20)))
-}
-
-function visualFromActor(
-  actor: BombPlayer,
-  moving = false,
-  transitionMs = authorityTransitionMs(),
-): BombLocalPlayerVisual {
+function visualFromActor(actor: BombPlayer, moving = false, released = true): BombLocalPlayerVisual {
   return {
     x: actor.x,
     y: actor.y,
     facingX: actor.facingX,
     facingY: actor.facingY,
     moving,
+    released,
     predicted: false,
-    transitionMs,
   }
-}
-
-function playerCellX(player: BombPlayer) {
-  return player.cellX ?? Math.floor(player.x + 0.5)
-}
-
-function playerCellY(player: BombPlayer) {
-  return player.cellY ?? Math.floor(player.y + 0.5)
 }
 
 function canPredictCell(actor: BombPlayer, x: number, y: number) {
@@ -245,59 +215,8 @@ function canPredictCell(actor: BombPlayer, x: number, y: number) {
   if (cell === 2 && !actor.equipment.ghost) return false
   if (game.value.bombs.some(bomb => !bomb.carriedBy && bomb.x === x && bomb.y === y)) return false
   return !game.value.players.some(player => (
-    player.id !== actor.id
-    && player.alive
-    && playerCellX(player) === x
-    && playerCellY(player) === y
+    player.id !== actor.id && player.alive && player.x === x && player.y === y
   ))
-}
-
-function predictedPosition(
-  actor: BombPlayer,
-  visual: BombLocalPlayerVisual,
-  dx: number,
-  dy: number,
-): [number, number] {
-  let x = visual.x
-  let y = visual.y
-  // Use the same fixed-point quantum as the authoritative simulation so the
-  // first prediction reconciles exactly instead of making a tiny correction.
-  let remaining = Math.max(
-    1,
-    Math.round(SUBCELL_POSITION_SCALE / movementIntervalTicks(actor)),
-  ) / SUBCELL_POSITION_SCALE
-  const cellX = actor.cellX ?? Math.floor(actor.x + 0.5)
-  const cellY = actor.cellY ?? Math.floor(actor.y + 0.5)
-
-  // Match the server's lane correction: a perpendicular turn glides back to
-  // the current cell centre before starting down the new corridor.
-  if (dx && Math.abs(y - cellY) > POSITION_EPSILON) {
-    const correction = Math.min(Math.abs(y - cellY), remaining)
-    y -= Math.sign(y - cellY) * correction
-    remaining -= correction
-  } else if (dy && Math.abs(x - cellX) > POSITION_EPSILON) {
-    const correction = Math.min(Math.abs(x - cellX), remaining)
-    x -= Math.sign(x - cellX) * correction
-    remaining -= correction
-  }
-
-  if (remaining > POSITION_EPSILON) {
-    const offset = dx ? x - cellX : y - cellY
-    const direction = dx || dy
-    const movingTowardCenter = direction * offset < -POSITION_EPSILON
-    const targetX = cellX + (dx || 0)
-    const targetY = cellY + (dy || 0)
-    if (movingTowardCenter || canPredictCell(actor, targetX, targetY)) {
-      x += dx * remaining
-      y += dy * remaining
-    }
-  }
-
-  const maximum = game.value.boardSize - 1
-  return [
-    Math.round(Math.min(maximum, Math.max(0, x)) * 10_000) / 10_000,
-    Math.round(Math.min(maximum, Math.max(0, y)) * 10_000) / 10_000,
-  ]
 }
 
 function predictLocalMove() {
@@ -306,33 +225,30 @@ function predictLocalMove() {
   const [dx, dy] = movementDirection(combinedMask(), actor)
   if (!dx && !dy) return
 
-  const visual = localPlayerVisual.value ?? visualFromActor(actor, true)
-  const [targetX, targetY] = predictedPosition(actor, visual, dx, dy)
-  if (
-    Math.abs(targetX - visual.x) <= POSITION_EPSILON
-    && Math.abs(targetY - visual.y) <= POSITION_EPSILON
-  ) {
+  const visual = localPlayerVisual.value ?? visualFromActor(actor, true, false)
+  if (visual.x !== actor.x || visual.y !== actor.y) return
+
+  const targetX = actor.x + dx
+  const targetY = actor.y + dy
+  if (!canPredictCell(actor, targetX, targetY)) {
     localPlayerVisual.value = {
       ...visual,
       facingX: dx,
       facingY: dy,
       moving: true,
+      released: false,
       predicted: false,
     }
     return
   }
 
+  const intervalTicks = movementIntervalTicks(actor)
   pendingMovePrediction = {
     fromX: actor.x,
     fromY: actor.y,
     targetX,
     targetY,
-    directionX: dx,
-    directionY: dy,
-    expiresTick: game.value.tick + Math.max(
-      3,
-      Math.ceil(game.value.tickRate / Math.max(1, game.value.snapshotRate ?? 20)) + 2,
-    ),
+    expiresTick: game.value.tick + Math.ceil(intervalTicks) + 2,
   }
   localPlayerVisual.value = {
     x: targetX,
@@ -340,8 +256,8 @@ function predictLocalMove() {
     facingX: dx,
     facingY: dy,
     moving: true,
+    released: false,
     predicted: true,
-    transitionMs: Math.max(16, Math.round(1_000 / Math.max(1, game.value.tickRate))),
   }
 }
 
@@ -360,7 +276,7 @@ function reconcileLocalVisual(force = false) {
     const [dx, dy] = movementDirection(combinedMask(), actor)
     const moving = Boolean(dx || dy) && canControl.value
     localPlayerVisual.value = {
-      ...visualFromActor(actor, moving, 0),
+      ...visualFromActor(actor, moving, !moving),
       facingX: moving ? dx : actor.facingX,
       facingY: moving ? dy : actor.facingY,
     }
@@ -371,10 +287,7 @@ function reconcileLocalVisual(force = false) {
   const moving = Boolean(dx || dy) && canControl.value
   const pending = pendingMovePrediction
   if (pending) {
-    if (
-      Math.abs(actor.x - pending.targetX) <= POSITION_EPSILON
-      && Math.abs(actor.y - pending.targetY) <= POSITION_EPSILON
-    ) {
+    if (actor.x === pending.targetX && actor.y === pending.targetY) {
       pendingMovePrediction = null
       localPlayerVisual.value = {
         x: actor.x,
@@ -382,20 +295,17 @@ function reconcileLocalVisual(force = false) {
         facingX: moving ? dx : actor.facingX,
         facingY: moving ? dy : actor.facingY,
         moving,
+        released: !moving,
         predicted: false,
-        transitionMs: authorityTransitionMs(),
       }
       return
     }
 
-    const leftOrigin = (
-      Math.abs(actor.x - pending.fromX) > POSITION_EPSILON
-      || Math.abs(actor.y - pending.fromY) > POSITION_EPSILON
-    )
+    const leftOrigin = actor.x !== pending.fromX || actor.y !== pending.fromY
     if (leftOrigin || game.value.tick > pending.expiresTick) {
       pendingMovePrediction = null
       localPlayerVisual.value = {
-        ...visualFromActor(actor, moving),
+        ...visualFromActor(actor, moving, !moving),
         facingX: moving ? dx : actor.facingX,
         facingY: moving ? dy : actor.facingY,
       }
@@ -407,12 +317,13 @@ function reconcileLocalVisual(force = false) {
       facingX: moving ? dx : localPlayerVisual.value.facingX,
       facingY: moving ? dy : localPlayerVisual.value.facingY,
       moving,
+      released: !moving,
     }
     return
   }
 
   localPlayerVisual.value = {
-    ...visualFromActor(actor, moving),
+    ...visualFromActor(actor, moving, !moving),
     facingX: moving ? dx : actor.facingX,
     facingY: moving ? dy : actor.facingY,
   }
@@ -425,13 +336,13 @@ function updateLocalDirection(previousMask: number, nextMask: number) {
   const actor = selfActor.value
   if (!actor) return
   if (!localPlayerVisual.value) localPlayerVisual.value = visualFromActor(actor)
-  const [dx, dy] = newlyPressedDirection(previousMask, nextMask)
-    ?? movementDirection(nextMask, actor)
+  const [dx, dy] = movementDirection(nextMask, actor)
   const moving = Boolean(dx || dy) && canControl.value
   if (!moving) {
     localPlayerVisual.value = {
       ...localPlayerVisual.value,
       moving: false,
+      released: true,
     }
     return
   }
@@ -441,20 +352,10 @@ function updateLocalDirection(previousMask: number, nextMask: number) {
     facingX: dx,
     facingY: dy,
     moving: true,
+    released: false,
   }
-  if (
-    pendingMovePrediction?.directionX === dx
-    && pendingMovePrediction.directionY === dy
-  ) {
-    // Repeated taps can arrive faster than an authoritative frame. Keep the
-    // first quantum visible, but never stack unconfirmed motion client-side.
-    return
-  }
-  // A direction change supersedes the previous tiny prediction immediately.
-  // Starting from the current visual point prevents rapid alternation from
-  // snapping back to the last server cell.
-  pendingMovePrediction = null
-  predictLocalMove()
+  const freshPress = previousDirection === 0
+  if (freshPress) predictLocalMove()
 }
 
 function unlockSound() {
@@ -860,7 +761,7 @@ onBeforeUnmount(() => {
       <div class="rulebook">
         <section><h3>目标与时间</h3><p>支持 2–8 人。每张地图固定为 20×20 格；一个方块只占一格。最后生还者夺冠。开局倒计时后对抗 90 秒，随后从左上角起沿外圈顺时针放置落石，再一圈圈向中心收缩。爆炸和落石都能淘汰玩家。</p></section>
         <section><h3>炸弹与通用交互</h3><p>普通炸弹放下后最多 2 秒爆炸，火焰按十字方向传播，固定石块和落石会阻挡，可破坏箱墙被摧毁后有 38% 概率掉落道具。幽灵相位获得后本局永久生效，可穿箱墙并在墙内放雷；墙内炸弹爆炸时会同时摧毁所在箱墙，但幽灵不能穿固定石块或决胜落石。火焰和连锁引线只会引爆普通炸弹；遥控定时炸弹只响应所有者的 C 键。</p></section>
-        <section><h3>电脑键盘与手机触屏</h3><ul><li><kbd>W A S D</kbd> 或方向键：连续移动，松键可以停在两格之间，快速换向会平滑转弯。</li><li><kbd>Space</kbd>：先放普通炸弹；普通容量已满且拥有遥控定时炸弹时，再部署一枚不占普通容量的遥控雷。</li><li><kbd>C</kbd>：引爆自己的遥控定时炸弹；引爆后额外槽永久保留，可再次部署。</li><li><kbd>Z</kbd>：用拳击手套即时把面前炸弹打出三格。</li><li><kbd>X</kbd>：第一次拿起面前炸弹，之后可继续移动；第二次按当前朝向把手中炸弹越过障碍投到前方最多四格。若没有可用落点则继续抱着。</li><li>抱雷会占用双手，不能放雷、遥控引爆或使用拳套；普通炸弹被拿起时冻结剩余引信，成功投出，或因退出、阵亡、失去手套而落地后，才继续倒计时。</li><li>脚踢雷无需单独按键，朝炸弹移动即可让它持续滚动。</li><li>手机端拖动左侧摇杆移动，右手点击拳击、放雷、遥控引爆和拿雷/投雷按钮。</li></ul></section>
+        <section><h3>电脑键盘与手机触屏</h3><ul><li><kbd>W A S D</kbd> 或方向键：逐格移动。</li><li><kbd>Space</kbd>：先放普通炸弹；普通容量已满且拥有遥控定时炸弹时，再部署一枚不占普通容量的遥控雷。</li><li><kbd>C</kbd>：引爆自己的遥控定时炸弹；引爆后额外槽永久保留，可再次部署。</li><li><kbd>Z</kbd>：用拳击手套即时把面前炸弹打出三格。</li><li><kbd>X</kbd>：第一次拿起面前炸弹，之后可继续移动；第二次按当前朝向把手中炸弹越过障碍投到前方最多四格。若没有可用落点则继续抱着。</li><li>抱雷会占用双手，不能放雷、遥控引爆或使用拳套；普通炸弹被拿起时冻结剩余引信，成功投出，或因退出、阵亡、失去手套而落地后，才继续倒计时。</li><li>脚踢雷无需单独按键，朝炸弹移动即可让它持续滚动。</li><li>手机端拖动左侧摇杆移动，右手点击拳击、放雷、遥控引爆和拿雷/投雷按钮。</li></ul></section>
         <section><h3>道具</h3><div class="rules-items"><article v-for="(label, key) in game.itemLabels" :key="key"><img :src="ITEM_ART[key]" :alt="label" /><strong>{{ label }}</strong></article></div><p>道具自动拾取。落地道具没有消失倒计时，也不会被爆炸清除，会保留到被拾取、所在格被决胜落石覆盖或本局结束。骷髅诅咒会立即清空其他装备，并使玩家 5 秒不能放炸弹；地图还会每 10 秒进行一次 24% 的随机装备刷新判定。</p></section>
         <section><h3>地图类型</h3><p>云顶激斗场、风暴船坞等激斗图让玩家近距离出生并自带装备；丛林金字塔、发条铸造厂和水晶裂隙使用高密箱墙或分区固定墙，给予玩家更安全的发展期。其他地图在障碍密度和开阔程度之间变化。</p></section>
         <section><h3>随机地图与战绩</h3><p>每次新一局开始时，服务端从全部地图中随机抽取，并排除上一局地图以避免连续重复。每名玩家记录本局击杀、房间累计击杀、夺冠数和胜率；结算后还会把胜负及击杀明细写入大厅战绩。</p></section>

@@ -141,7 +141,7 @@ afterEach(() => {
 describe('Bomb People arena', () => {
   it('renders the full 20×20 board with distinct hard, soft, bomb, item and flame layers', () => {
     const wrapper = render()
-    expect(wrapper.findAll('.tile')).toHaveLength(400)
+    expect(wrapper.findAll('.tile')).toHaveLength(2)
     expect(wrapper.findAll('.tile.hard')).toHaveLength(1)
     expect(wrapper.findAll('.tile.soft')).toHaveLength(1)
     expect(wrapper.findAll('.bomb')).toHaveLength(1)
@@ -190,11 +190,15 @@ describe('Bomb People arena', () => {
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyD', cancelable: true }))
     await flushPromises()
     expect(self.classes()).toEqual(expect.arrayContaining(['walking', 'local-input']))
+    expect(self.classes()).toContain('locally-predicted')
+    expect(self.attributes('style')).toContain('transform: translate3d(200%, 100%, 0)')
 
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyD', cancelable: true }))
     await flushPromises()
     expect(self.classes()).not.toContain('local-input')
     expect(self.classes()).not.toContain('walking')
+    expect(self.classes()).toContain('input-released')
+    expect(self.attributes('style')).toContain('transform: translate3d(200%, 100%, 0)')
 
     await vi.advanceTimersByTimeAsync(120)
     const inputPayloads = mocks.rapidAction.mock.calls
@@ -204,8 +208,34 @@ describe('Bomb People arena', () => {
       { sequence: 1, inputMask: 8 },
       { sequence: 2, inputMask: 0 },
       { sequence: 3, inputMask: 0 },
-      { sequence: 4, inputMask: 0 },
     ])
+    wrapper.unmount()
+  })
+
+  it('never predicts more than one server-unconfirmed grid step', async () => {
+    const wrapper = render()
+    const self = wrapper.get('.player-piece.self')
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyD', cancelable: true }))
+    await flushPromises()
+    await vi.advanceTimersByTimeAsync(1_000)
+
+    expect(self.classes()).toContain('locally-predicted')
+    expect(self.attributes('style')).toContain('transform: translate3d(200%, 100%, 0)')
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyD', cancelable: true }))
+    wrapper.unmount()
+  })
+
+  it('does not predict through a blocked board cell', async () => {
+    const wrapper = render()
+    const self = wrapper.get('.player-piece.self')
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', cancelable: true }))
+    await flushPromises()
+
+    expect(self.classes()).not.toContain('locally-predicted')
+    expect(self.attributes('style')).toContain('transform: translate3d(100%, 100%, 0)')
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyW', cancelable: true }))
     wrapper.unmount()
   })
 
@@ -223,7 +253,7 @@ describe('Bomb People arena', () => {
   it('renders articulated walking and synchronized bomb action effects', () => {
     const data = snapshot()
     const game = data.game as unknown as BombGame
-    game.players[0]!.moving = true
+    game.players[1]!.moving = true
     const third = player('p2', 2, '黄队')
     third.x = 10
     third.y = 10
@@ -253,14 +283,14 @@ describe('Bomb People arena', () => {
   it('interpolates authoritative grid steps with compositor movement at the real speed', async () => {
     const data = snapshot()
     const game = data.game as unknown as BombGame
-    const actor = game.players[0]!
+    const actor = game.players[1]!
     actor.x = 4
     actor.y = 6
     actor.moving = true
     actor.moveIntervalTicks = 4
     const wrapper = render(data)
 
-    const piece = wrapper.get('.player-piece.self')
+    const piece = wrapper.get('.player-piece:not(.self)')
     expect(piece.attributes('style')).toContain('transform: translate3d(400%, 600%, 0)')
     expect(piece.attributes('style')).toContain('--move-duration: 200ms')
     expect(piece.attributes('style')).toContain('--walk-step-duration: 200ms')
@@ -294,6 +324,8 @@ describe('Bomb People arena', () => {
     ]
 
     const wrapper = render(data)
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyD', cancelable: true }))
+    await flushPromises()
     expect(wrapper.get('.player-piece.self').classes()).toEqual(expect.arrayContaining([
       'walking', 'carrying', 'action-pickup',
     ]))
@@ -324,6 +356,7 @@ describe('Bomb People arena', () => {
     expect(wrapper.find('.player-piece.self.action-throw').exists()).toBe(true)
     expect(wrapper.find('.throw-effect').exists()).toBe(true)
     expect(wrapper.get('button[aria-label="拿起面前炸弹"]').text()).toContain('拿抱雷')
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyD', cancelable: true }))
     wrapper.unmount()
   })
 
@@ -410,19 +443,19 @@ describe('Bomb People arena', () => {
     wrapper.unmount()
   })
 
-  it('uses one elected player as a 20 Hz snapshot clock', async () => {
+  it('uses one elected player as a 10 Hz snapshot clock', async () => {
     const data = snapshot()
     const game = data.game as unknown as BombGame
     game.clockLeaderId = 'p0'
     const wrapper = render(data)
-    await vi.advanceTimersByTimeAsync(50)
+    await vi.advanceTimersByTimeAsync(100)
     expect(mocks.rapidAction).toHaveBeenCalledWith('heartbeat', { sequence: 1 })
     wrapper.unmount()
   })
 
   it('lets another player refresh the room when the elected clock stalls', async () => {
     const wrapper = render()
-    await vi.advanceTimersByTimeAsync(200)
+    await vi.advanceTimersByTimeAsync(400)
     expect(mocks.rapidAction).toHaveBeenCalledWith('heartbeat', { sequence: 1 })
     wrapper.unmount()
   })
@@ -439,12 +472,12 @@ describe('Bomb People arena', () => {
     game.clockLeaderId = 'p0'
     const wrapper = render(data)
 
-    await vi.advanceTimersByTimeAsync(200)
+    await vi.advanceTimersByTimeAsync(400)
     expect(mocks.rapidAction.mock.calls.filter(([action]) => action === 'heartbeat')).toHaveLength(1)
 
     resolveHeartbeat?.(true)
     await flushPromises()
-    await vi.advanceTimersByTimeAsync(50)
+    await vi.advanceTimersByTimeAsync(100)
     expect(mocks.rapidAction.mock.calls.filter(([action]) => action === 'heartbeat')).toHaveLength(2)
     wrapper.unmount()
   })
@@ -489,7 +522,7 @@ describe('Bomb People arena', () => {
     const wrapper = render(data)
     expect(wrapper.text()).toContain('落石决胜')
     expect(wrapper.text()).toContain('落石 8/400')
-    expect(wrapper.findAll('.tile.danger')).toHaveLength(2)
+    expect(wrapper.findAll('.danger-tile')).toHaveLength(2)
     wrapper.unmount()
   })
 })

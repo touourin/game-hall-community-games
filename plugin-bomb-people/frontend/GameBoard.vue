@@ -1,19 +1,28 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { ITEM_ART, MAP_ART, PLAYER_ART } from './catalog'
-import type { BombEffect, BombGame, BombObject, BombPlayer } from './types'
+import type { BombEffect, BombGame, BombLocalPlayerVisual, BombObject, BombPlayer } from './types'
 
 const props = defineProps<{
   game: BombGame
   selfId: string
   selfInputMask?: number
+  selfVisual?: BombLocalPlayerVisual | null
 }>()
 
-const flatCells = computed(() => props.game.board.flatMap((row, y) => (
-  row.map((value, x) => ({ x, y, value, key: `${x}:${y}` }))
-)))
+const boardSignature = computed(() => props.game.board.map(row => row.join('')).join('|'))
+const dangerSignature = computed(() => props.game.dangerCells.map(([x, y]) => `${x}:${y}`).join('|'))
+const obstacleCells = computed(() => {
+  void boardSignature.value
+  return props.game.board.flatMap((row, y) => row.flatMap((value, x) => (
+    value ? [{ x, y, value, key: `${x}:${y}` }] : []
+  )))
+})
+const dangerCells = computed(() => {
+  void dangerSignature.value
+  return props.game.dangerCells.map(([x, y]) => ({ x, y, key: `${x}:${y}` }))
+})
 
-const dangerSet = computed(() => new Set(props.game.dangerCells.map(([x, y]) => `${x}:${y}`)))
 const background = computed(() => MAP_ART[props.game.selectedMap] ?? MAP_ART.magma_crucible)
 const effects = computed(() => props.game.effects ?? [])
 const carriedBombsByPlayer = computed(() => new Map(
@@ -48,6 +57,13 @@ function objectStyle(x: number, y: number, z = 10) {
   }
 }
 
+function gridCellStyle(x: number, y: number) {
+  return {
+    gridColumnStart: x + 1,
+    gridRowStart: y + 1,
+  }
+}
+
 function localMovementDirection(player: BombPlayer): [number, number] {
   if (player.id !== props.selfId) return [0, 0]
   const mask = props.selfInputMask ?? 0
@@ -65,11 +81,17 @@ function playerStyle(player: BombPlayer) {
   const size = 100 / props.game.boardSize
   const fallbackInterval = Math.max(2, 4 - player.equipment.speedLevel * 0.65)
   const intervalTicks = player.moveIntervalTicks ?? fallbackInterval
-  const [localX, localY] = localMovementDirection(player)
-  const locallyMoving = Boolean(localX || localY)
-  const facingX = locallyMoving ? localX : player.facingX
-  const facingY = locallyMoving ? localY : player.facingY
-  const moveDurationMs = player.moving || locallyMoving
+  const visual = player.id === props.selfId ? props.selfVisual : null
+  const [maskX, maskY] = localMovementDirection(player)
+  const locallyMoving = visual?.moving ?? Boolean(maskX || maskY)
+  const facingX = visual?.facingX ?? (locallyMoving ? maskX : player.facingX)
+  const facingY = visual?.facingY ?? (locallyMoving ? maskY : player.facingY)
+  const displayX = visual?.x ?? player.x
+  const displayY = visual?.y ?? player.y
+  const visuallyMoving = player.id === props.selfId ? locallyMoving : player.moving
+  const moveDurationMs = visual?.released
+    ? 0
+    : visuallyMoving
     ? Math.max(90, Math.round(intervalTicks * 1_000 / Math.max(1, props.game.tickRate)))
     : 70
   const action = latestActionByPlayer.value.get(player.id)
@@ -78,7 +100,7 @@ function playerStyle(player: BombPlayer) {
     top: '0',
     width: `${size}%`,
     height: `${size}%`,
-    transform: `translate3d(${player.x * 100}%, ${player.y * 100}%, 0)`,
+    transform: `translate3d(${displayX * 100}%, ${displayY * 100}%, 0)`,
     '--player-color': player.color,
     '--face-scale': facingX < 0 ? -1 : 1,
     '--travel-lean': `${facingX * 4}deg`,
@@ -102,11 +124,15 @@ function bombStyle(bomb: BombObject) {
 function playerAnimationClass(player: BombPlayer) {
   const action = latestActionByPlayer.value.get(player.id)
   const [localX, localY] = localMovementDirection(player)
-  const locallyMoving = Boolean(localX || localY)
-  const facingY = locallyMoving ? localY : player.facingY
+  const visual = player.id === props.selfId ? props.selfVisual : null
+  const locallyMoving = visual?.moving ?? Boolean(localX || localY)
+  const facingY = visual?.facingY ?? (locallyMoving ? localY : player.facingY)
+  const visuallyMoving = player.id === props.selfId ? locallyMoving : player.moving
   return {
-    walking: (player.moving || locallyMoving) && player.alive,
-    'local-input': locallyMoving,
+    walking: visuallyMoving && player.alive,
+    'local-input': player.id === props.selfId && locallyMoving,
+    'input-released': player.id === props.selfId && Boolean(visual?.released),
+    'locally-predicted': player.id === props.selfId && Boolean(visual?.predicted),
     carrying: carriedBombsByPlayer.value.has(player.id),
     'facing-up': facingY < 0,
     'facing-down': facingY > 0,
@@ -181,12 +207,22 @@ function fuseText(ticks: number) {
       <img class="map-art" :src="background" :alt="`${game.currentMap.name}地图背景`" draggable="false" />
       <div class="floor-grid" aria-hidden="true" />
 
-      <div class="tile-grid" aria-hidden="true">
+      <div v-memo="[boardSignature]" class="tile-grid" aria-hidden="true">
         <div
-          v-for="cell in flatCells"
+          v-for="cell in obstacleCells"
           :key="cell.key"
           class="tile"
-          :class="[tileClass(cell.value), { danger: dangerSet.has(cell.key) }]"
+          :class="tileClass(cell.value)"
+          :style="gridCellStyle(cell.x, cell.y)"
+        />
+      </div>
+
+      <div v-memo="[dangerSignature]" class="danger-grid" aria-hidden="true">
+        <div
+          v-for="cell in dangerCells"
+          :key="cell.key"
+          class="danger-tile"
+          :style="gridCellStyle(cell.x, cell.y)"
         />
       </div>
 
@@ -318,7 +354,9 @@ function fuseText(ticks: number) {
 .arena-board:focus-visible { border-color: #f8c45b; box-shadow: 0 0 0 3px #f8c45b55, 0 24px 70px #0009; }
 .map-art { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; opacity: .34; filter: saturate(.88) contrast(1.08) brightness(.75); }
 .floor-grid { position: absolute; inset: 0; z-index: 1; background-image: linear-gradient(#aab3b41f 1px, transparent 1px), linear-gradient(90deg, #aab3b41f 1px, transparent 1px); background-size: 5% 5%; box-shadow: inset 0 0 80px #000a; }
-.tile-grid { position: absolute; inset: 0; z-index: 4; display: grid; grid-template-columns: repeat(20, 1fr); grid-template-rows: repeat(20, 1fr); pointer-events: none; }
+.tile-grid, .danger-grid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(20, 1fr); grid-template-rows: repeat(20, 1fr); pointer-events: none; }
+.tile-grid { z-index: 4; }
+.danger-grid { z-index: 5; }
 .tile { position: relative; min-width: 0; min-height: 0; }
 .tile.hard::before, .tile.soft::before, .tile.stone::before { content: ''; position: absolute; inset: 4%; border-radius: 19%; }
 .tile.hard::before { background: linear-gradient(145deg, #8b9497 0 16%, #464f53 17% 58%, #22292d 59% 100%); border: 1px solid #b3bec0; box-shadow: inset 2px 2px 2px #e7eeee55, inset -3px -3px 4px #05070899, 0 2px 3px #000a; }
@@ -326,7 +364,8 @@ function fuseText(ticks: number) {
 .tile.soft::before { background: linear-gradient(135deg, transparent 42%, #5d3012 43% 53%, transparent 54%), linear-gradient(45deg, transparent 42%, #6b3815 43% 53%, transparent 54%), linear-gradient(#dc8a34, #94501c); border: 1px solid #ffbd66; box-shadow: inset 2px 2px #ffd09155, inset -3px -3px #4a220d88, 0 2px 3px #000a; }
 .tile.soft::after { content: ''; position: absolute; inset: 12%; border: 1px solid #663210bb; border-radius: 10%; }
 .tile.stone::before { background: radial-gradient(circle at 32% 25%, #899095 0 12%, transparent 13%), linear-gradient(145deg, #4d5358, #15191c 64%); border: 2px solid #0b0d0f; box-shadow: inset 2px 2px #aab0b055, 0 3px 5px #000c; clip-path: polygon(11% 20%, 29% 4%, 57% 8%, 85% 27%, 95% 59%, 76% 91%, 33% 96%, 5% 70%); }
-.tile.danger:not(.stone)::after { content: ''; position: absolute; inset: 7%; border: 2px solid #ff4747; border-radius: 24%; box-shadow: 0 0 8px #ff3b30; animation: danger-pulse .42s infinite alternate; }
+.danger-tile { position: relative; min-width: 0; min-height: 0; }
+.danger-tile::after { content: ''; position: absolute; inset: 7%; border: 2px solid #ff4747; border-radius: 24%; box-shadow: 0 0 8px #ff3b30; animation: danger-pulse .42s infinite alternate; }
 .board-object { position: absolute; pointer-events: none; display: grid; place-items: center; }
 .item { padding: .25%; filter: drop-shadow(0 1px 2px #000) drop-shadow(0 0 4px #fff8); animation: item-bob .85s ease-in-out infinite alternate; }
 .item img { width: 88%; height: 88%; object-fit: contain; }
@@ -364,7 +403,8 @@ function fuseText(ticks: number) {
 .airborne-bomb::before { content: ''; position: absolute; width: 34%; height: 24%; left: 54%; top: -13%; border: 3px solid #b88643; border-bottom: 0; border-radius: 50% 50% 0 0; transform: rotate(35deg); }
 .airborne-bomb i { position: absolute; width: 15%; height: 15%; right: -5%; top: -16%; border-radius: 50%; background: #fff5aa; box-shadow: 0 0 7px 2px #ff7818; }
 .throw-shadow { position: absolute; width: 72%; height: 22%; border-radius: 50%; background: #0009; filter: blur(2px); animation: throw-shadow .5s ease-in-out both; }
-.player-piece { position: absolute; z-index: 22; pointer-events: none; filter: drop-shadow(0 4px 3px #000b); transition: transform var(--move-duration, 180ms) linear; will-change: transform; backface-visibility: hidden; }
+.player-piece { position: absolute; z-index: 22; pointer-events: none; transition: transform var(--move-duration, 180ms) linear; will-change: transform; backface-visibility: hidden; }
+.player-piece.self.input-released { transition: none; }
 .player-visual { position: absolute; left: 50%; top: 50%; width: 170%; height: 195%; transform: translate(-50%, -58%); }
 .player-avatar { position: absolute; inset: 0; display: block; transform: scaleX(var(--face-scale)); transform-origin: 50% 76%; }
 .player-layer { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
@@ -407,7 +447,7 @@ function fuseText(ticks: number) {
 .player-piece.action-throw .player-avatar { animation: throw-player .5s cubic-bezier(.2, .7, .2, 1) both; }
 .player-piece.action-throw .player-torso { animation: throw-body .5s cubic-bezier(.2, .72, .2, 1) both; }
 .player-piece.facing-up .player-avatar { filter: brightness(.88) saturate(.92); }
-.player-piece.self { filter: drop-shadow(0 0 5px var(--player-color)) drop-shadow(0 4px 3px #000); }
+.player-piece.self .player-ground-shadow { box-shadow: 0 0 7px 2px var(--player-color); }
 .player-piece.eliminated { opacity: .25; filter: grayscale(1); }
 .player-piece.cursed { filter: drop-shadow(0 0 6px #93ff35) hue-rotate(35deg); }
 .player-piece.invincible { animation: invincible .24s infinite alternate; }
@@ -457,5 +497,5 @@ function fuseText(ticks: number) {
 @keyframes throw-arm { 0% { opacity: 0; transform: scaleX(var(--arm-face)) rotate(-76deg) translateX(-8%); } 16% { opacity: 1; transform: scaleX(var(--arm-face)) rotate(-64deg) translateX(-4%); } 46% { opacity: 1; transform: scaleX(var(--arm-face)) rotate(20deg) translateX(12%); } 78% { opacity: .72; transform: scaleX(var(--arm-face)) rotate(48deg) translateX(6%); } 100% { opacity: 0; transform: scaleX(var(--arm-face)) rotate(36deg); } }
 @keyframes invincible { to { filter: drop-shadow(0 0 9px #fff) drop-shadow(0 0 12px #ffd53d); } }
 @media (hover: none) and (pointer: coarse) { .arena-frame { height: 100%; align-items: start; }.arena-board { width: min(100%, calc(100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom))); max-height: calc(100dvh - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); border-radius: 10px; border-width: 2px; touch-action: none; } }
-@media (prefers-reduced-motion: reduce) { .item, .bomb, .bomb-body, .flame, .flame span, .player-piece, .player-piece *, .player-visual::before, .place-effect *, .explosion-effect *, .action-impact *, .throw-effect *, .tile.danger::after { animation: none !important; transition: none; } }
+@media (prefers-reduced-motion: reduce) { .item, .bomb, .bomb-body, .flame, .flame span, .player-piece, .player-piece *, .player-visual::before, .place-effect *, .explosion-effect *, .action-impact *, .throw-effect *, .danger-tile::after { animation: none !important; transition: none; } }
 </style>

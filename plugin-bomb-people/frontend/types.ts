@@ -42,6 +42,8 @@ export interface BombPlayer {
   moving: boolean
   moveIntervalTicks?: number
   movementSpeed?: number
+  velocityX?: number
+  velocityY?: number
   carriedBombId: number | null
   alive: boolean
   eliminatedBy: string | null
@@ -147,6 +149,9 @@ export interface BombGame {
   tick: number
   tickRate: number
   snapshotRate?: number
+  playerHitboxRadius?: number
+  solidHalfExtent?: number
+  bombHitboxRadius?: number
   stage: BombStage
   stageTicksRemaining: number
   roundTicksRemaining: number

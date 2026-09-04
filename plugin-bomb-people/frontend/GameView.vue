@@ -21,6 +21,7 @@ import {
 } from '@game-hall/plugin-sdk'
 import GameBoard from './GameBoard.vue'
 import { ITEM_ART, MAP_ART, PLAYER_ART } from './catalog'
+import { advanceContinuousPosition, movementSpeed } from './movement'
 import { createBombPeopleSound } from './sound'
 import type { BombGame, BombLocalPlayerVisual, BombMap, BombPlayer } from './types'
 
@@ -38,21 +39,14 @@ const joystickX = ref(0)
 const joystickY = ref(0)
 const joystickActive = ref(false)
 const localPlayerVisual = ref<BombLocalPlayerVisual | null>(null)
-const SNAPSHOT_CLOCK_MS = 50
-const BACKUP_CLOCK_STALE_MS = 180
-const RELEASE_RETRY_DELAYS_MS = [60] as const
-const SUBCELL_POSITION_SCALE = 1_000
+const SNAPSHOT_CLOCK_MS = 33
+const BACKUP_CLOCK_STALE_MS = 140
+const RELEASE_RETRY_DELAYS_MS = [45] as const
 const POSITION_EPSILON = 0.0005
-
-interface PendingMovePrediction {
-  fromX: number
-  fromY: number
-  targetX: number
-  targetY: number
-  directionX: number
-  directionY: number
-  expiresTick: number
-}
+const MAX_ANIMATION_FRAME_SECONDS = 0.05
+const AUTHORITY_SOFT_LIMIT = 0.75
+const AUTHORITY_TELEPORT_LIMIT = 2.5
+const REST_CORRECTION_RATE = 22
 
 let inputSequence = 0
 let heartbeatSequence = 0
@@ -61,7 +55,11 @@ let heartbeatInFlight = false
 let lastSnapshotAt = performance.now()
 let disposed = false
 let predictionRound = props.snapshot.roundNumber
-let pendingMovePrediction: PendingMovePrediction | null = null
+let animationFrameId: number | null = null
+let lastAnimationFrameAt = performance.now()
+let impulseStartedAt = 0
+let minimumMoveUntil = 0
+let impulseDirection: [number, number] = [0, 0]
 let joystickPointerId: number | null = null
 let soundEffectsInitialized = false
 let soundRound = props.snapshot.roundNumber
@@ -205,19 +203,9 @@ function newlyPressedDirection(previousMask: number, nextMask: number): [number,
   return null
 }
 
-function movementIntervalTicks(actor: BombPlayer) {
-  const secondsPerCell = [0.2, 0.16, 0.13, 0.1][actor.equipment.speedLevel] ?? 0.2
-  return actor.moveIntervalTicks ?? Math.max(1, game.value.tickRate * secondsPerCell)
-}
-
-function authorityTransitionMs() {
-  return Math.max(16, Math.round(1_000 / Math.max(1, game.value.snapshotRate ?? 20)))
-}
-
 function visualFromActor(
   actor: BombPlayer,
   moving = false,
-  transitionMs = authorityTransitionMs(),
 ): BombLocalPlayerVisual {
   return {
     x: actor.x,
@@ -226,129 +214,13 @@ function visualFromActor(
     facingY: actor.facingY,
     moving,
     predicted: false,
-    transitionMs,
-  }
-}
-
-function playerCellX(player: BombPlayer) {
-  return player.cellX ?? Math.floor(player.x + 0.5)
-}
-
-function playerCellY(player: BombPlayer) {
-  return player.cellY ?? Math.floor(player.y + 0.5)
-}
-
-function canPredictCell(actor: BombPlayer, x: number, y: number) {
-  if (x < 0 || y < 0 || x >= game.value.boardSize || y >= game.value.boardSize) return false
-  const cell = game.value.board[y]?.[x]
-  if (cell == null || cell === 1 || cell === 3) return false
-  if (cell === 2 && !actor.equipment.ghost) return false
-  if (game.value.bombs.some(bomb => !bomb.carriedBy && bomb.x === x && bomb.y === y)) return false
-  return !game.value.players.some(player => (
-    player.id !== actor.id
-    && player.alive
-    && playerCellX(player) === x
-    && playerCellY(player) === y
-  ))
-}
-
-function predictedPosition(
-  actor: BombPlayer,
-  visual: BombLocalPlayerVisual,
-  dx: number,
-  dy: number,
-): [number, number] {
-  let x = visual.x
-  let y = visual.y
-  // Use the same fixed-point quantum as the authoritative simulation so the
-  // first prediction reconciles exactly instead of making a tiny correction.
-  let remaining = Math.max(
-    1,
-    Math.round(SUBCELL_POSITION_SCALE / movementIntervalTicks(actor)),
-  ) / SUBCELL_POSITION_SCALE
-  const cellX = actor.cellX ?? Math.floor(actor.x + 0.5)
-  const cellY = actor.cellY ?? Math.floor(actor.y + 0.5)
-
-  // Match the server's lane correction: a perpendicular turn glides back to
-  // the current cell centre before starting down the new corridor.
-  if (dx && Math.abs(y - cellY) > POSITION_EPSILON) {
-    const correction = Math.min(Math.abs(y - cellY), remaining)
-    y -= Math.sign(y - cellY) * correction
-    remaining -= correction
-  } else if (dy && Math.abs(x - cellX) > POSITION_EPSILON) {
-    const correction = Math.min(Math.abs(x - cellX), remaining)
-    x -= Math.sign(x - cellX) * correction
-    remaining -= correction
-  }
-
-  if (remaining > POSITION_EPSILON) {
-    const offset = dx ? x - cellX : y - cellY
-    const direction = dx || dy
-    const movingTowardCenter = direction * offset < -POSITION_EPSILON
-    const targetX = cellX + (dx || 0)
-    const targetY = cellY + (dy || 0)
-    if (movingTowardCenter || canPredictCell(actor, targetX, targetY)) {
-      x += dx * remaining
-      y += dy * remaining
-    }
-  }
-
-  const maximum = game.value.boardSize - 1
-  return [
-    Math.round(Math.min(maximum, Math.max(0, x)) * 10_000) / 10_000,
-    Math.round(Math.min(maximum, Math.max(0, y)) * 10_000) / 10_000,
-  ]
-}
-
-function predictLocalMove() {
-  const actor = selfActor.value
-  if (disposed || !actor || !canControl.value || pendingMovePrediction) return
-  const [dx, dy] = movementDirection(combinedMask(), actor)
-  if (!dx && !dy) return
-
-  const visual = localPlayerVisual.value ?? visualFromActor(actor, true)
-  const [targetX, targetY] = predictedPosition(actor, visual, dx, dy)
-  if (
-    Math.abs(targetX - visual.x) <= POSITION_EPSILON
-    && Math.abs(targetY - visual.y) <= POSITION_EPSILON
-  ) {
-    localPlayerVisual.value = {
-      ...visual,
-      facingX: dx,
-      facingY: dy,
-      moving: true,
-      predicted: false,
-    }
-    return
-  }
-
-  pendingMovePrediction = {
-    fromX: actor.x,
-    fromY: actor.y,
-    targetX,
-    targetY,
-    directionX: dx,
-    directionY: dy,
-    expiresTick: game.value.tick + Math.max(
-      3,
-      Math.ceil(game.value.tickRate / Math.max(1, game.value.snapshotRate ?? 20)) + 2,
-    ),
-  }
-  localPlayerVisual.value = {
-    x: targetX,
-    y: targetY,
-    facingX: dx,
-    facingY: dy,
-    moving: true,
-    predicted: true,
-    transitionMs: Math.max(16, Math.round(1_000 / Math.max(1, game.value.tickRate))),
+    transitionMs: 0,
   }
 }
 
 function reconcileLocalVisual(force = false) {
   const actor = selfActor.value
   if (!actor) {
-    pendingMovePrediction = null
     localPlayerVisual.value = null
     return
   }
@@ -356,66 +228,130 @@ function reconcileLocalVisual(force = false) {
   const roundChanged = predictionRound !== props.snapshot.roundNumber
   if (force || roundChanged || !localPlayerVisual.value) {
     predictionRound = props.snapshot.roundNumber
-    pendingMovePrediction = null
+    impulseStartedAt = 0
+    minimumMoveUntil = 0
+    impulseDirection = [0, 0]
     const [dx, dy] = movementDirection(combinedMask(), actor)
     const moving = Boolean(dx || dy) && canControl.value
     localPlayerVisual.value = {
-      ...visualFromActor(actor, moving, 0),
+      ...visualFromActor(actor, moving),
       facingX: moving ? dx : actor.facingX,
       facingY: moving ? dy : actor.facingY,
     }
     return
   }
 
-  const [dx, dy] = movementDirection(combinedMask(), actor)
-  const moving = Boolean(dx || dy) && canControl.value
-  const pending = pendingMovePrediction
-  if (pending) {
-    if (
-      Math.abs(actor.x - pending.targetX) <= POSITION_EPSILON
-      && Math.abs(actor.y - pending.targetY) <= POSITION_EPSILON
-    ) {
-      pendingMovePrediction = null
-      localPlayerVisual.value = {
-        x: actor.x,
-        y: actor.y,
-        facingX: moving ? dx : actor.facingX,
-        facingY: moving ? dy : actor.facingY,
-        moving,
-        predicted: false,
-        transitionMs: authorityTransitionMs(),
-      }
-      return
-    }
-
-    const leftOrigin = (
-      Math.abs(actor.x - pending.fromX) > POSITION_EPSILON
-      || Math.abs(actor.y - pending.fromY) > POSITION_EPSILON
-    )
-    if (leftOrigin || game.value.tick > pending.expiresTick) {
-      pendingMovePrediction = null
-      localPlayerVisual.value = {
-        ...visualFromActor(actor, moving),
-        facingX: moving ? dx : actor.facingX,
-        facingY: moving ? dy : actor.facingY,
-      }
-      return
-    }
-
-    localPlayerVisual.value = {
-      ...localPlayerVisual.value,
-      facingX: moving ? dx : localPlayerVisual.value.facingX,
-      facingY: moving ? dy : localPlayerVisual.value.facingY,
-      moving,
-    }
+  const visual = localPlayerVisual.value
+  const authorityError = Math.hypot(actor.x - visual.x, actor.y - visual.y)
+  if (
+    game.value.selfInputSequence >= inputSequence
+    && authorityError > AUTHORITY_TELEPORT_LIMIT
+  ) {
+    localPlayerVisual.value = visualFromActor(actor)
     return
   }
 
+  // Snapshots only update the reconciliation target. Position is advanced on
+  // every animation frame below, so a 30 Hz network clock can never create a
+  // visible staircase on a 60/120/144 Hz display.
   localPlayerVisual.value = {
-    ...visualFromActor(actor, moving),
-    facingX: moving ? dx : actor.facingX,
-    facingY: moving ? dy : actor.facingY,
+    ...visual,
+    predicted: authorityError > POSITION_EPSILON,
   }
+}
+
+function animateLocalPlayer(timestamp: number) {
+  const frameStartedAt = lastAnimationFrameAt
+  const elapsedSeconds = Math.min(
+    MAX_ANIMATION_FRAME_SECONDS,
+    Math.max(0, timestamp - frameStartedAt) / 1_000,
+  )
+  lastAnimationFrameAt = timestamp
+
+  const actor = selfActor.value
+  if (actor && localPlayerVisual.value) {
+    const previous = localPlayerVisual.value
+    const heldDirection = canControl.value
+      ? movementDirection(combinedMask(), actor)
+      : [0, 0] as [number, number]
+    let [dx, dy] = heldDirection
+    let movementSeconds = elapsedSeconds
+
+    if (!dx && !dy) {
+      const impulseEnd = Math.min(timestamp, minimumMoveUntil)
+      const impulseStart = Math.max(frameStartedAt, impulseStartedAt)
+      if (canControl.value && impulseEnd > impulseStart) {
+        ;[dx, dy] = impulseDirection
+        movementSeconds = Math.min(
+          MAX_ANIMATION_FRAME_SECONDS,
+          (impulseEnd - impulseStart) / 1_000,
+        )
+      } else {
+        movementSeconds = 0
+      }
+    }
+    if (timestamp >= minimumMoveUntil && !heldDirection[0] && !heldDirection[1]) {
+      impulseStartedAt = 0
+      minimumMoveUntil = 0
+      impulseDirection = [0, 0]
+    }
+
+    let x = previous.x
+    let y = previous.y
+    const speed = movementSpeed(game.value, actor)
+    if ((dx || dy) && movementSeconds > 0) {
+      const advanced = advanceContinuousPosition(
+        game.value,
+        actor,
+        x,
+        y,
+        dx,
+        dy,
+        speed * movementSeconds,
+      )
+      x = advanced.x
+      y = advanced.y
+    }
+
+    let authorityError = Math.hypot(actor.x - x, actor.y - y)
+    const authorityAcknowledged = game.value.selfInputSequence >= inputSequence
+    if (authorityAcknowledged && authorityError > AUTHORITY_TELEPORT_LIMIT) {
+      x = actor.x
+      y = actor.y
+      authorityError = 0
+    } else if (authorityAcknowledged && authorityError > POSITION_EPSILON) {
+      let correction = 0
+      if (dx || dy) {
+        const excess = Math.max(0, authorityError - AUTHORITY_SOFT_LIMIT)
+        correction = Math.min(excess, speed * elapsedSeconds * 0.45)
+      } else {
+        const blend = 1 - Math.exp(-REST_CORRECTION_RATE * elapsedSeconds)
+        correction = Math.min(authorityError, authorityError * blend)
+      }
+      if (correction > 0) {
+        x += (actor.x - x) / authorityError * correction
+        y += (actor.y - y) / authorityError * correction
+      }
+    }
+
+    if (!(dx || dy)) {
+      if (Math.abs(actor.x - x) <= POSITION_EPSILON) x = actor.x
+      if (Math.abs(actor.y - y) <= POSITION_EPSILON) y = actor.y
+    }
+    const moved = Math.hypot(x - previous.x, y - previous.y) > POSITION_EPSILON
+    const remainingError = Math.hypot(actor.x - x, actor.y - y)
+    localPlayerVisual.value = {
+      x: Math.round(x * 1_000_000) / 1_000_000,
+      y: Math.round(y * 1_000_000) / 1_000_000,
+      facingX: dx || dy ? dx : previous.facingX,
+      facingY: dx || dy ? dy : previous.facingY,
+      moving: moved,
+      predicted: remainingError > POSITION_EPSILON,
+      transitionMs: 0,
+    }
+  }
+
+  if (!disposed) animationFrameId = window.requestAnimationFrame(animateLocalPlayer)
 }
 
 function updateLocalDirection(previousMask: number, nextMask: number) {
@@ -425,13 +361,19 @@ function updateLocalDirection(previousMask: number, nextMask: number) {
   const actor = selfActor.value
   if (!actor) return
   if (!localPlayerVisual.value) localPlayerVisual.value = visualFromActor(actor)
-  const [dx, dy] = newlyPressedDirection(previousMask, nextMask)
-    ?? movementDirection(nextMask, actor)
+  const pressedDirection = newlyPressedDirection(previousMask, nextMask)
+  if (pressedDirection) {
+    const now = performance.now()
+    impulseStartedAt = now
+    minimumMoveUntil = now + 1_000 / Math.max(1, game.value.tickRate)
+    impulseDirection = pressedDirection
+  }
+  const [dx, dy] = pressedDirection ?? movementDirection(nextMask, actor)
   const moving = Boolean(dx || dy) && canControl.value
   if (!moving) {
     localPlayerVisual.value = {
       ...localPlayerVisual.value,
-      moving: false,
+      moving: performance.now() < minimumMoveUntil,
     }
     return
   }
@@ -442,19 +384,6 @@ function updateLocalDirection(previousMask: number, nextMask: number) {
     facingY: dy,
     moving: true,
   }
-  if (
-    pendingMovePrediction?.directionX === dx
-    && pendingMovePrediction.directionY === dy
-  ) {
-    // Repeated taps can arrive faster than an authoritative frame. Keep the
-    // first quantum visible, but never stack unconfirmed motion client-side.
-    return
-  }
-  // A direction change supersedes the previous tiny prediction immediately.
-  // Starting from the current visual point prevents rapid alternation from
-  // snapping back to the last server cell.
-  pendingMovePrediction = null
-  predictLocalMove()
 }
 
 function unlockSound() {
@@ -607,6 +536,9 @@ function clearInput(notify = true) {
   joystickActive.value = false
   joystickX.value = 0
   joystickY.value = 0
+  impulseStartedAt = 0
+  minimumMoveUntil = 0
+  impulseDirection = [0, 0]
   updateLocalDirection(previous, 0)
   if (notify && hadInput && props.snapshot.phase === 'playing' && !isSpectator.value) {
     sendInput(0, true)
@@ -678,6 +610,8 @@ watch(() => game.value.effects ?? [], nextEffects => {
 
 onMounted(() => {
   inputSequence = Math.max(0, game.value.selfInputSequence)
+  lastAnimationFrameAt = performance.now()
+  animationFrameId = window.requestAnimationFrame(animateLocalPlayer)
   window.addEventListener('keydown', keydown, { passive: false })
   window.addEventListener('keyup', keyup, { passive: false })
   window.addEventListener('pointerdown', unlockSound, { passive: true, once: true })
@@ -690,6 +624,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   clearInput(true)
   disposed = true
+  if (animationFrameId !== null) window.cancelAnimationFrame(animationFrameId)
   window.removeEventListener('keydown', keydown)
   window.removeEventListener('keyup', keyup)
   window.removeEventListener('pointerdown', unlockSound)

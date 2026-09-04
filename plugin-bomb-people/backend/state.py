@@ -31,6 +31,7 @@ class PlayerState:
     # grid-based bomb/map rules while allowing a player to stop between cells.
     offset_x: int = 0
     offset_y: int = 0
+    move_fraction: float = 0.0
     move_cooldown: float = 0.0
     last_move_tick: int = -10_000
     bomb_requested: bool = False

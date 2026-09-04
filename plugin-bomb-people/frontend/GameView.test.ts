@@ -48,7 +48,7 @@ function player(id: string, seat: number, name: string): BombPlayer {
   return {
     id, seat, name, color: seat ? '#4f8cff' : '#ff5a55', character: seat,
     x: seat ? 18 : 1, y: seat ? 18 : 1, facingX: 0, facingY: 1, moving: false,
-    moveIntervalTicks: seat ? 8 : 5.2,
+    moveIntervalTicks: seat ? 12 : 7.8,
     movementSpeed: seat ? 5 : 7.692,
     carriedBombId: null,
     alive: true, eliminatedBy: null, eliminationReason: null, kills: seat ? 1 : 3,
@@ -72,14 +72,15 @@ function snapshot(phase: ArcadeSnapshot['phase'] = 'playing'): ArcadeSnapshot {
   board[0]![0] = 1
   board[0]![1] = 2
   const game: BombGame = {
-    boardSize: 20, tick: 100, tickRate: 40, snapshotRate: 20,
+    boardSize: 20, tick: 100, tickRate: 60, snapshotRate: 30,
+    playerHitboxRadius: 0.3, solidHalfExtent: 0.48, bombHitboxRadius: 0.34,
     stage: phase === 'lobby' ? 'lobby' : phase === 'finished' ? 'finished' : 'active',
     stageTicksRemaining: 0, roundTicksRemaining: 1_200,
     collapsePlaced: 0, collapseTotal: 400, dangerCells: [],
     selectedMap: 'magma_crucible', currentMap: maps[0]!, mapCatalog: maps,
     mapRotation: 'random_no_repeat', mapProposal: null, canProposeMap: false, canVoteMap: false,
     board, players: phase === 'lobby' ? [] : [player('p0', 0, '红队'), player('p1', 1, '蓝队')],
-    bombs: [{ id: 1, ownerId: 'p0', creditPlayerId: 'p0', x: 3, y: 3, fuseTicks: 60, maxFuseTicks: 80, moving: false, motionX: 0, motionY: 0, carriedBy: null, remote: false }],
+    bombs: [{ id: 1, ownerId: 'p0', creditPlayerId: 'p0', x: 3, y: 3, fuseTicks: 90, maxFuseTicks: 120, moving: false, motionX: 0, motionY: 0, carriedBy: null, remote: false }],
     items: [{ id: 1, kind: 'speed', x: 4, y: 4 }],
     flames: [{ x: 5, y: 5, remainingTicks: 4 }], iceTiles: [], events: [], effects: [],
     winnerId: null, clockLeaderId: 'p1', frozen: false, selfInputSequence: 0,
@@ -112,6 +113,14 @@ function render(data = snapshot()) {
     attachTo: document.body,
     global: { plugins: [createPinia()], stubs: { Teleport: true } },
   })
+}
+
+function playerPosition(piece: ReturnType<ReturnType<typeof render>['get']>): [number, number] {
+  const transform = piece.attributes('style').match(
+    /translate3d\((-?[\d.]+)%,\s*(-?[\d.]+)%,\s*0\)/,
+  )
+  if (!transform) throw new Error('player transform is missing')
+  return [Number(transform[1]) / 100, Number(transform[2]) / 100]
 }
 
 function pointerEvent(type: string, pointerId: number, clientX = 0, clientY = 0) {
@@ -184,27 +193,34 @@ describe('Bomb People arena', () => {
     wrapper.unmount()
   })
 
-  it('starts with one smooth sub-cell prediction and never snaps on release', async () => {
+  it('advances held movement on every display frame at a uniform speed', async () => {
     const wrapper = render()
     const self = wrapper.get('.player-piece.self')
 
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyD', cancelable: true }))
-    await flushPromises()
-    expect(self.classes()).toEqual(expect.arrayContaining(['walking', 'local-input']))
-    expect(self.classes()).toContain('locally-predicted')
-    expect(self.attributes('style')).toContain('transform: translate3d(119.2%, 100%, 0)')
-    expect(self.attributes('style')).toContain('--move-duration: 25ms')
-    expect(self.attributes('style')).not.toContain('translate3d(200%')
+    const samples = [playerPosition(self)[0]]
+    for (let frame = 0; frame < 8; frame += 1) {
+      await vi.advanceTimersByTimeAsync(17)
+      samples.push(playerPosition(self)[0])
+    }
+
+    const deltas = samples.slice(1).map((value, index) => value - samples[index]!)
+    expect(self.classes()).toEqual(expect.arrayContaining([
+      'walking', 'local-input', 'locally-predicted',
+    ]))
+    expect(deltas.every(delta => delta > 0.08 && delta < 0.18)).toBe(true)
+    expect(Math.max(...deltas) - Math.min(...deltas)).toBeLessThan(0.02)
+    expect(samples.at(-1)! - samples[0]!).toBeGreaterThan(0.9)
+    expect(self.attributes('style')).toContain('--move-duration: 0ms')
 
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyD', cancelable: true }))
-    await flushPromises()
+    const releasedAt = playerPosition(self)[0]
+    await vi.advanceTimersByTimeAsync(34)
     expect(self.classes()).not.toContain('local-input')
     expect(self.classes()).not.toContain('walking')
-    expect(self.classes()).not.toContain('input-released')
-    expect(self.attributes('style')).toContain('transform: translate3d(119.2%, 100%, 0)')
-    expect(self.attributes('style')).toContain('--move-duration: 25ms')
+    expect(playerPosition(self)[0]).toBeCloseTo(releasedAt, 4)
 
-    await vi.advanceTimersByTimeAsync(120)
+    await vi.advanceTimersByTimeAsync(90)
     const inputPayloads = mocks.rapidAction.mock.calls
       .filter(([action]) => action === 'input')
       .map(([, payload]) => payload)
@@ -216,52 +232,70 @@ describe('Bomb People arena', () => {
     wrapper.unmount()
   })
 
-  it('never predicts more than one server-unconfirmed simulation quantum', async () => {
+  it('renders a very short tap as one gradual 60 Hz quantum without stacking taps', async () => {
     const wrapper = render()
     const self = wrapper.get('.player-piece.self')
 
     for (let index = 0; index < 8; index += 1) {
       window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyD', cancelable: true }))
       window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyD', cancelable: true }))
-      await flushPromises()
     }
 
+    expect(playerPosition(self)[0]).toBe(1)
+    await vi.advanceTimersByTimeAsync(17)
+    const firstFrame = playerPosition(self)[0]
+    await vi.advanceTimersByTimeAsync(17)
+    const completedTap = playerPosition(self)[0]
+    await vi.advanceTimersByTimeAsync(50)
+
     expect(self.classes()).toContain('locally-predicted')
-    expect(self.attributes('style')).toContain('transform: translate3d(119.2%, 100%, 0)')
-    expect(self.attributes('style')).not.toContain('translate3d(200%')
+    expect(firstFrame).toBeGreaterThan(1.08)
+    expect(firstFrame).toBeLessThan(1.13)
+    expect(completedTap).toBeCloseTo(1 + 7.692 / 60, 3)
+    expect(playerPosition(self)[0]).toBeCloseTo(completedTap, 4)
+    expect(completedTap).toBeLessThan(1.2)
     wrapper.unmount()
   })
 
-  it('handles overlapping rapid direction changes without jumping a cell', async () => {
+  it('changes direction from the exact in-between position without recentering', async () => {
     const wrapper = render()
     const self = wrapper.get('.player-piece.self')
 
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyD', cancelable: true }))
-    await flushPromises()
-    expect(self.attributes('style')).toContain('translate3d(119.2%, 100%, 0)')
+    await vi.advanceTimersByTimeAsync(34)
+    const beforeTurn = playerPosition(self)
+    expect(beforeTurn[0]).toBeGreaterThan(1.2)
+    expect(beforeTurn[1]).toBe(1)
 
     // Players commonly press the new direction just before releasing the old
-    // key. The newly pressed key must win immediately and recenter smoothly.
+    // key. The newly pressed key must win immediately from the exact position.
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', cancelable: true }))
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(17)
+    const turned = playerPosition(self)
     expect(self.classes()).toContain('facing-up')
-    expect(self.attributes('style')).toContain('translate3d(100%, 100%, 0)')
-    expect(self.attributes('style')).not.toContain('translate3d(100%, 0%')
+    expect(turned[0]).toBeCloseTo(beforeTurn[0], 3)
+    expect(turned[1]).toBeLessThan(beforeTurn[1])
+    expect(beforeTurn[1] - turned[1]).toBeLessThan(0.18)
 
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyD', cancelable: true }))
+    await vi.advanceTimersByTimeAsync(17)
+    const continued = playerPosition(self)
+    expect(continued[0]).toBeCloseTo(beforeTurn[0], 3)
+    expect(continued[1]).toBeLessThan(turned[1])
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyW', cancelable: true }))
     wrapper.unmount()
   })
 
-  it('does not predict through a blocked board cell', async () => {
+  it('stops continuously at a solid edge instead of snapping to a cell centre', async () => {
     const wrapper = render()
     const self = wrapper.get('.player-piece.self')
 
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', cancelable: true }))
-    await flushPromises()
+    await vi.advanceTimersByTimeAsync(100)
 
-    expect(self.classes()).not.toContain('locally-predicted')
-    expect(self.attributes('style')).toContain('transform: translate3d(100%, 100%, 0)')
+    expect(playerPosition(self)).toEqual([1, 0.78])
+    expect(self.classes()).toContain('locally-predicted')
+    expect(self.classes()).not.toContain('walking')
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyW', cancelable: true }))
     wrapper.unmount()
   })
@@ -295,6 +329,7 @@ describe('Bomb People arena', () => {
 
     const wrapper = render(data)
     expect(wrapper.findAll('.player-piece.walking .player-leg')).toHaveLength(2)
+    expect(wrapper.findAll('.player-piece.walking .player-arm')).toHaveLength(2)
     expect(wrapper.find('.player-piece.action-punch').exists()).toBe(true)
     expect(wrapper.find('.player-piece.action-kick').exists()).toBe(true)
     expect(wrapper.find('.player-piece.action-throw').exists()).toBe(true)
@@ -314,12 +349,12 @@ describe('Bomb People arena', () => {
     actor.x = 4
     actor.y = 6
     actor.moving = true
-    actor.moveIntervalTicks = 8
+    actor.moveIntervalTicks = 12
     const wrapper = render(data)
 
     const piece = wrapper.get('.player-piece:not(.self)')
     expect(piece.attributes('style')).toContain('transform: translate3d(400%, 600%, 0)')
-    expect(piece.attributes('style')).toContain('--move-duration: 50ms')
+    expect(piece.attributes('style')).toContain('--move-duration: 42ms')
     expect(piece.attributes('style')).toContain('--walk-step-duration: 200ms')
     expect(piece.find('.player-visual').exists()).toBe(true)
 
@@ -470,12 +505,12 @@ describe('Bomb People arena', () => {
     wrapper.unmount()
   })
 
-  it('uses one elected player as a 20 Hz snapshot clock', async () => {
+  it('uses one elected player as a 30 Hz snapshot clock', async () => {
     const data = snapshot()
     const game = data.game as unknown as BombGame
     game.clockLeaderId = 'p0'
     const wrapper = render(data)
-    await vi.advanceTimersByTimeAsync(50)
+    await vi.advanceTimersByTimeAsync(34)
     expect(mocks.rapidAction).toHaveBeenCalledWith('heartbeat', { sequence: 1 })
     wrapper.unmount()
   })

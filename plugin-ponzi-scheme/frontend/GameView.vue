@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import type { ArcadeSnapshot } from '@game-hall/plugin-sdk'
 import { usePluginGameActions } from '@game-hall/plugin-sdk'
 import type {
@@ -18,6 +18,8 @@ const selectedIndustry = ref<IndustryId | null>(null)
 const selectedTarget = ref<string | null>(null)
 const selectedTradeIndustry = ref<IndustryId | null>(null)
 const offer = ref(0)
+const showRulebook = ref(false)
+const rulebookDialog = ref<HTMLElement | null>(null)
 
 type MotionKind = 'fund' | 'envelope' | 'transfer' | 'luxury' | 'market' | 'crash' | 'industry' | 'cash' | 'wheel' | 'bankruptcy' | 'marker'
 type MotionCue = { seq: number, kind: MotionKind, message: string }
@@ -142,6 +144,15 @@ function wheelCards(ledger: LedgerView | undefined, dueIn: number) {
   return ledger?.funds.filter(card => card.dueIn === dueIn) ?? []
 }
 
+function openRulebook() {
+  showRulebook.value = true
+  void nextTick(() => rulebookDialog.value?.focus())
+}
+
+function closeRulebook() {
+  showRulebook.value = false
+}
+
 function queueMotion(event: GameEventView) {
   const kind = eventMotions[event.type]
   if (!kind) return
@@ -247,11 +258,91 @@ onBeforeUnmount(() => {
         <strong>{{ statusTitle }}</strong>
         <span>{{ statusDetail }}</span>
       </div>
-      <div class="starter-chip">
-        <span>起始玩家</span>
-        <b>{{ starterPlayer?.name ?? '—' }}</b>
+      <div class="header-tools">
+        <div class="starter-chip">
+          <span>起始玩家</span>
+          <b>{{ starterPlayer?.name ?? '—' }}</b>
+        </div>
+        <button
+          type="button"
+          class="rulebook-button"
+          aria-haspopup="dialog"
+          :aria-expanded="showRulebook"
+          @click="openRulebook"
+        >
+          <span aria-hidden="true">▤</span>
+          <b>说明书</b>
+        </button>
       </div>
     </header>
+
+    <div
+      v-if="showRulebook"
+      class="rulebook-overlay"
+      @click.self="closeRulebook"
+      @keydown.esc.stop="closeRulebook"
+    >
+      <section
+        ref="rulebookDialog"
+        class="rulebook-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ponzi-rulebook-title"
+        tabindex="-1"
+      >
+        <header>
+          <div>
+            <span>PLAYER HANDBOOK · BRIGHT EYE STANDARD</span>
+            <h2 id="ponzi-rulebook-title">庞氏骗局说明书</h2>
+          </div>
+          <button type="button" aria-label="关闭说明书" @click="closeRulebook">×</button>
+        </header>
+        <div class="rulebook-content">
+          <div class="rulebook-facts" aria-label="游戏概要">
+            <span><b>人数</b>3–5 人</span>
+            <span><b>目标</b>撑到骗局崩解并取得最高资本分</span>
+            <span><b>保密</b>现金与暗盘报价</span>
+          </div>
+
+          <div class="rulebook-columns">
+            <ol class="rulebook-phases">
+              <li>
+                <b>募集资金</b>
+                <p>选择一个产业并取得一枚产业牌。该产业的第 1／2／3 枚必须分别搭配市场第 1／2／3 排的资金牌；现金只到账一次，利息会循环到期。</p>
+              </li>
+              <li>
+                <b>暗盘交易</b>
+                <p>首轮跳过。之后可放弃、购买一件奢侈品，或向拥有共同产业的玩家秘密报价。收件人必须选择收钱卖出一枚，或支付同额现金反向买入一枚；报价可以是 0。</p>
+              </li>
+              <li>
+                <b>传递标记</b>
+                <p>起始玩家标记顺时针传递。新起始玩家移除一张市场资金牌，再把市场补回九张。</p>
+              </li>
+              <li>
+                <b>检查熊市</b>
+                <p>熊市牌达到玩家人数时崩盘：重洗熊市牌，每人退回自己数量最多产业中的一枚；并列时任选。本轮时间轮推进两格，否则推进一格。</p>
+              </li>
+              <li>
+                <b>转轮付息</b>
+                <p>合计所有到达或越过箭头的利息并一次付清。现金恰好付至 0 仍可存活；少一元也会立即破产并触发终局。</p>
+              </li>
+            </ol>
+
+            <aside class="rulebook-scoring">
+              <h3>终局计分</h3>
+              <p>破产玩家不参与计分。存活玩家分别计算每种产业：</p>
+              <div class="score-track"><span>数量</span><b>0</b><b>1</b><b>2</b><b>3</b><b>4</b><b>5</b></div>
+              <div class="score-track"><span>分数</span><b>0</b><b>1</b><b>3</b><b>6</b><b>10</b><b>15</b></div>
+              <p>产业分相加后，再加入奢侈品分。总分相同则比较各自金额最高的单张资金牌；仍相同则并列获胜。所有人同时破产时无人获胜。</p>
+              <div class="rulebook-callout">
+                <b>公开与保密</b>
+                <span>产业、资金牌、周期和利息公开；游戏进行中，挡板后的现金只对本人可见，暗盘价格只对交易双方可见。</span>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <section class="scene-grid">
       <section class="funding-board" :class="{ 'market-shift': motion?.kind === 'market' || motion?.kind === 'fund' }" aria-label="资金市场">
@@ -527,7 +618,12 @@ onBeforeUnmount(() => {
               :key="fund.id"
               :class="{ bear: fund.isBear, due: fund.dueIn === 1 }"
               :title="`贷款 ${fund.amount} / 利息 ${fund.interest} / ${fund.dueIn} 轮后到期`"
-            >{{ fund.amount }}<small>{{ fund.dueIn }}</small></i>
+            >
+              <span class="fund-amount">{{ fund.amount }}</span>
+              <small class="fund-due-rounds" :aria-label="`${fund.dueIn} 轮后还款`">
+                <b>{{ fund.dueIn }}</b><span>轮</span>
+              </small>
+            </i>
             <em v-if="ledger.funds.length > 8">+{{ ledger.funds.length - 8 }}</em>
           </div>
           <footer>
@@ -654,9 +750,43 @@ h2 { font: 700 20px/1.2 Georgia, "Noto Serif SC", serif; }
 .status-copy { display: flex; flex-direction: column; gap: 5px; padding-left: 20px; border-left: 1px solid #d9c59844; }
 .status-copy strong { font-size: 16px; }
 .status-copy span { color: #c8c8bc; font-size: 12px; }
+.header-tools { display: flex; align-items: stretch; justify-content: flex-end; gap: 8px; }
 .starter-chip { display: flex; flex-direction: column; min-width: 116px; padding: 10px 14px; text-align: center; background: #d6c393; color: #2c2a24; clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
 .starter-chip span { font-size: 10px; letter-spacing: .12em; }
 .starter-chip b { font-size: 14px; }
+.rulebook-button { display: grid; grid-template-columns: auto auto; place-items: center; gap: 6px; min-width: 94px; padding: 8px 12px; color: #f2e6cb; background: #ffffff0a; border: 1px solid #c9aa6877; border-radius: 3px; cursor: pointer; }
+.rulebook-button:hover, .rulebook-button:focus-visible { color: #1d2928; background: #d7c393; outline: 2px solid #f2dca7; outline-offset: 2px; }
+.rulebook-button span { color: #d8b96e; font-size: 20px; line-height: 1; }
+.rulebook-button:hover span, .rulebook-button:focus-visible span { color: #704c25; }
+.rulebook-button b { font-size: 12px; letter-spacing: .08em; }
+
+.rulebook-overlay { position: fixed; z-index: 80; inset: 0; display: grid; place-items: center; padding: clamp(12px, 3vw, 40px); background: #06110edb; backdrop-filter: blur(5px); }
+.rulebook-dialog { width: min(920px, 96vw); max-height: min(900px, 92dvh); display: flex; flex-direction: column; overflow: hidden; color: #2b271f; background: #e5d8ba; border: 5px double #9d804a; border-radius: 4px; box-shadow: 0 26px 80px #000c; }
+.rulebook-dialog:focus { outline: none; }
+.rulebook-dialog > header { flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 22px; color: #f2e5c8; background: linear-gradient(110deg, #182b2c, #263f41); border-bottom: 1px solid #b99658; }
+.rulebook-dialog > header span { color: #c9aa68; font: 700 9px/1.2 ui-monospace, monospace; letter-spacing: .15em; }
+.rulebook-dialog > header h2 { margin-top: 5px; font-size: 25px; }
+.rulebook-dialog > header button { flex: 0 0 auto; width: 38px; height: 38px; color: #eadbbd; background: #ffffff0a; border: 1px solid #c9aa6877; border-radius: 50%; cursor: pointer; font-size: 26px; line-height: 1; }
+.rulebook-dialog > header button:hover, .rulebook-dialog > header button:focus-visible { color: #263635; background: #dbc99f; outline: 2px solid #f4dda6; }
+.rulebook-content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 18px 22px 24px; background: linear-gradient(#ebdfc5ee, #d4c19bee), repeating-linear-gradient(90deg, transparent 0 23px, #44331d0d 24px); }
+.rulebook-facts { display: grid; grid-template-columns: .55fr 1.6fr 1fr; gap: 8px; margin-bottom: 17px; }
+.rulebook-facts span { padding: 8px 10px; background: #263b3a; color: #eee3ca; font-size: 11px; }
+.rulebook-facts b { display: block; margin-bottom: 2px; color: #cdb06d; font-size: 8px; letter-spacing: .14em; }
+.rulebook-columns { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(250px, .8fr); gap: 18px; }
+.rulebook-phases { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; counter-reset: rule-phase; }
+.rulebook-phases li { position: relative; min-height: 66px; padding: 11px 12px 11px 48px; background: #f4ead6aa; border-left: 3px solid #876d3f; counter-increment: rule-phase; }
+.rulebook-phases li::before { content: counter(rule-phase); position: absolute; left: 12px; top: 12px; display: grid; place-items: center; width: 25px; height: 25px; color: #f3e7cc; background: #243a39; border-radius: 50%; font: 800 11px/1 Georgia, serif; }
+.rulebook-phases b { color: #3f382a; font-size: 13px; }
+.rulebook-phases p, .rulebook-scoring p { margin-top: 4px; color: #5e5545; font-size: 11px; line-height: 1.55; }
+.rulebook-scoring { align-self: start; padding: 15px; color: #ede2ca; background: #203233; border-top: 4px solid #b58b43; }
+.rulebook-scoring h3 { margin: 0 0 8px; color: #e6cb8a; font: 700 18px/1.2 Georgia, "Noto Serif SC", serif; }
+.rulebook-scoring p { color: #cbc5b6; }
+.score-track { display: grid; grid-template-columns: 42px repeat(6, 1fr); gap: 2px; margin-top: 8px; text-align: center; }
+.score-track span, .score-track b { display: grid; place-items: center; min-height: 25px; background: #ffffff0b; font-size: 9px; }
+.score-track span { color: #cbb174; }
+.rulebook-callout { display: grid; gap: 4px; margin-top: 13px; padding: 10px; color: #30291f; background: #d9c69b; border: 1px solid #f0ddb0; }
+.rulebook-callout b { font-size: 11px; }
+.rulebook-callout span { font-size: 10px; line-height: 1.5; }
 
 .scene-grid { display: grid; grid-template-columns: minmax(0, 1fr) clamp(310px, 23vw, 380px); gap: 16px; margin-top: 16px; }
 .funding-board { padding: 18px; background: linear-gradient(#e8dcc1f5, #cbbb9bf5), repeating-linear-gradient(90deg, transparent 0 23px, #44331d12 24px); border: 4px double #725e3d; border-radius: 6px; }
@@ -774,10 +904,13 @@ h2 { font: 700 20px/1.2 Georgia, "Noto Serif SC", serif; }
 .tile-piles { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin: 10px 0; }
 .tile-piles span { display: flex; align-items: center; gap: 4px; padding: 4px; background: #fff7e9aa; font-size: 9px; }
 .tile-piles i { width: 5px; height: 14px; background: var(--industry); }
-.fund-stack { display: flex; min-height: 38px; align-items: end; gap: 3px; overflow: hidden; }
-.fund-stack > i { position: relative; display: grid; place-items: center; width: 27px; height: 37px; color: #242620; background: #f0e8d7; border: 1px solid #77705f; border-radius: 2px; font: 700 10px/1 Georgia, serif; font-style: normal; }
+.fund-stack { display: flex; flex-wrap: wrap; min-height: 48px; align-items: end; align-content: end; gap: 4px; overflow: visible; }
+.fund-stack > i { position: relative; display: flex; align-items: flex-start; justify-content: center; width: 34px; height: 46px; box-sizing: border-box; padding-top: 8px; color: #242620; background: #f0e8d7; border: 1px solid #77705f; border-radius: 2px; font: 700 13px/1 Georgia, serif; font-style: normal; }
 .fund-stack > i.bear { color: #f0dfc1; background: #593a36; }.fund-stack > i.due { outline: 2px solid #b04135; }
-.fund-stack > i small { position: absolute; right: 2px; bottom: 2px; font-size: 6px; }
+.fund-due-rounds { position: absolute; right: 2px; bottom: 2px; display: flex; min-width: 24px; height: 19px; box-sizing: border-box; align-items: baseline; justify-content: center; gap: 1px; padding: 2px 3px; color: #f5e8cc; background: #263c3b; border: 1px solid #aa8c55; border-radius: 2px; box-shadow: 0 1px 2px #0005; }
+.fund-due-rounds b { font: 900 14px/1 Georgia, serif; }
+.fund-due-rounds span { font: 800 7px/1 "Microsoft YaHei", sans-serif; }
+.fund-stack > i.bear .fund-due-rounds { color: #2b2720; background: #d2b66e; border-color: #f0d99c; }
 .empty-funds { align-self: center; color: #7d7566; font-size: 9px; }
 .player-ledger footer { margin-top: 9px; padding-top: 7px; border-top: 1px solid #6a5e4938; font-size: 8px; }
 .bankrupt-stamp { position: absolute; inset: 38% 12%; display: grid; place-items: center; color: #9a362f; border: 4px double #9a362f; font: 900 18px/1 ui-monospace; transform: rotate(-12deg); background: #e2d5baaa; animation: ledger-stamp .5s cubic-bezier(.2, .9, .25, 1.3) both; }
@@ -824,6 +957,11 @@ h2 { font: 700 20px/1.2 Georgia, "Noto Serif SC", serif; }
 @media (max-width: 680px) {
   .ponzi-table { padding: 8px; }
   .table-header { grid-template-columns: 1fr auto; gap: 12px; }
+  .header-tools { gap: 5px; }
+  .starter-chip { min-width: 92px; padding: 8px 9px; }
+  .rulebook-button { min-width: 42px; grid-template-columns: 1fr; gap: 1px; padding: 5px 7px; }
+  .rulebook-button span { font-size: 17px; }
+  .rulebook-button b { font-size: 9px; }
   .status-copy { grid-column: 1 / -1; grid-row: 2; padding: 10px 0 0; border: 0; border-top: 1px solid #d9c59844; }
   .market-row { grid-template-columns: repeat(3, 1fr); }
   .row-key { grid-column: 1 / -1; border-right: 0; border-bottom: 1px solid #5b4b2a66; }
@@ -835,6 +973,13 @@ h2 { font: 700 20px/1.2 Georgia, "Noto Serif SC", serif; }
   .settlement-panel > header { grid-template-columns: 1fr; gap: 7px; }
   .settlement-panel > header p { justify-self: start; text-align: left; }
   .motion-envelope { left: 64%; }
+  .rulebook-overlay { padding: 6px; }
+  .rulebook-dialog { width: 100%; max-height: 96dvh; }
+  .rulebook-dialog > header { padding: 13px 14px; }
+  .rulebook-dialog > header h2 { font-size: 21px; }
+  .rulebook-content { padding: 12px; }
+  .rulebook-facts, .rulebook-columns { grid-template-columns: 1fr; }
+  .rulebook-facts { gap: 4px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

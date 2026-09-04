@@ -46,6 +46,7 @@ export interface SkullPlayerView {
 export interface SkullHistoryEntry {
   type: string
   message: string
+  eventId?: string
   playerId?: string
   ownerId?: string
   chooserId?: string
@@ -53,6 +54,17 @@ export interface SkullHistoryEntry {
   wins?: number
   kind?: DiscKind
   round?: number
+  index?: number
+}
+
+export interface SkullPublicReveal {
+  eventId: string
+  round: number
+  index: number
+  challengerId: string
+  ownerId: string
+  kind: Exclude<DiscKind, 'unknown'>
+  message: string
 }
 
 export interface SkullGameView {
@@ -101,6 +113,7 @@ export interface SkullGameView {
     kind: 'flower' | 'skull'
     message: string
   } | null
+  publicReveals: SkullPublicReveal[]
   history: SkullHistoryEntry[]
   stats: {
     roundsPlayed: number

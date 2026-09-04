@@ -16,6 +16,7 @@
     "sharedDiscs",
     "round",
     "actions",
+    "publicReveals",
     "result"
   ],
   "properties": {
@@ -67,6 +68,11 @@
         ]
       }
     },
+    "publicReveals": {
+      "description": "最近一次挑战中按顺序公开的翻牌结果，对所有视角完全一致。",
+      "type": "array",
+      "items": { "$ref": "#/$defs/publicReveal" }
+    },
     "result": {
       "type": ["object", "null"],
       "additionalProperties": false,
@@ -87,6 +93,31 @@
     }
   },
   "$defs": {
+    "publicReveal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eventId",
+        "round",
+        "index",
+        "challengerId",
+        "ownerId",
+        "kind",
+        "message"
+      ],
+      "properties": {
+        "eventId": { "type": "string", "pattern": "^reveal-[0-9]+-[0-9]+$" },
+        "round": { "type": "integer", "minimum": 1 },
+        "index": { "type": "integer", "minimum": 1 },
+        "challengerId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "kind": {
+          "type": "string",
+          "enum": ["flower", "skull", "last_chance_flower"]
+        },
+        "message": { "type": "string", "minLength": 1 }
+      }
+    },
     "viewer": {
       "type": "object",
       "additionalProperties": false,

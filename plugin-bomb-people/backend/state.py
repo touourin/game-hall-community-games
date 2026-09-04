@@ -24,6 +24,8 @@ class PlayerState:
     facing_y: int = 1
     input_mask: int = 0
     last_input_sequence: int = -1
+    queued_move_x: int = 0
+    queued_move_y: int = 0
     move_cooldown: float = 0.0
     last_move_tick: int = -10_000
     bomb_requested: bool = False

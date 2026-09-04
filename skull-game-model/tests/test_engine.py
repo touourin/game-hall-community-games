@@ -13,13 +13,28 @@ from backend.app.games.plugins import discover_game_plugins
 PLUGIN_ROOT = Path(__file__).resolve().parents[2]
 
 
-def engine():
+class FirstChoiceRandom(random.Random):
+    def choice(self, sequence):
+        return sequence[0]
+
+
+class LastChoiceRandom(random.Random):
+    def __init__(self) -> None:
+        super().__init__(20260831)
+        self.choice_calls = 0
+
+    def choice(self, sequence):
+        self.choice_calls += 1
+        return sequence[-1]
+
+
+def engine(rng=None):
     game = next(
         plugin.engine
         for plugin in discover_game_plugins(PLUGIN_ROOT)
         if plugin.engine.key == "plugin-skull"
     )
-    game.rng = random.Random(20260831)
+    game.rng = rng or FirstChoiceRandom(20260831)
     return game
 
 
@@ -36,8 +51,8 @@ def room_players(count: int) -> list[ArcadePlayer]:
     ]
 
 
-def started_room(count: int = 3, *, last_chance: bool = True):
-    game = engine()
+def started_room(count: int = 3, *, last_chance: bool = True, rng=None):
+    game = engine(rng)
     players = room_players(count)
     room = ArcadeRoom(
         "SKUL",
@@ -124,6 +139,31 @@ def test_start_builds_one_unique_four_disc_set_per_player(count: int) -> None:
         assert [disc.kind for disc in held].count("flower") == 3
         assert [disc.kind for disc in held].count("skull") == 1
         assert len({disc.id for disc in held}) == 4
+
+
+def test_only_the_opening_round_is_random_and_later_order_stays_unchanged() -> None:
+    rng = LastChoiceRandom()
+    game, room, players = started_room(rng=rng)
+    opening_player = players[-1]
+
+    # The room still asks for the host, proving the game rule now forces a random
+    # first-round opener rather than honoring a host-first room preference.
+    assert room.options["firstPlayer"] == "host"
+    assert room.state.round.first_player_id == opening_player.id
+    assert room.state.turn_order == [opening_player.id, players[0].id, players[1].id]
+    assert rng.choice_calls == 1
+
+    commit_round(game, room, players)
+    game.act(room, opening_player, "open_bid", {"count": 1})
+    while room.state.phase == "bidding":
+        actor_id = room.state.round.current_player_id
+        assert actor_id is not None
+        game.act(room, room.player(actor_id), "pass_bid", {})
+    game.act(room, opening_player, "reveal_disc", {"ownerId": opening_player.id})
+
+    assert room.state.round.number == 2
+    assert room.state.round.first_player_id == opening_player.id
+    assert rng.choice_calls == 1
 
 
 @pytest.mark.parametrize("count", (2, 7))
@@ -407,6 +447,69 @@ def test_challenger_must_reveal_own_stack_before_an_opponent() -> None:
     game.act(room, players[0], "reveal_disc", {"ownerId": players[1].id})
     assert room.state.players[players[0].id].challenge_wins == 1
     assert room.state.phase == "round_setup"
+
+
+def test_reveal_sequence_and_flower_or_skull_result_are_public_to_every_player() -> None:
+    game, room, players = started_room()
+    commit_round(game, room, players)
+    make_player_one_challenger(game, room, players, bid=2)
+
+    # A successful final flower normally advances to the next round immediately.
+    # Both ordered events, including that final flower, must survive the transition
+    # so no observer misses the visible reveal process.
+    game.act(room, players[0], "reveal_disc", {"ownerId": players[0].id})
+    assert room.state.phase == "reveal"
+    game.act(room, players[0], "reveal_disc", {"ownerId": players[1].id})
+    assert room.state.phase == "round_setup"
+    for viewer in players:
+        public_reveals = game.view(room, viewer)["publicReveals"]
+        assert public_reveals == [
+            {
+                "eventId": "reveal-1-1",
+                "round": 1,
+                "index": 1,
+                "challengerId": players[0].id,
+                "ownerId": players[0].id,
+                "kind": "flower",
+                "message": "玩家1 翻开 玩家1 的牌堆顶部：花牌",
+            },
+            {
+                "eventId": "reveal-1-2",
+                "round": 1,
+                "index": 2,
+                "challengerId": players[0].id,
+                "ownerId": players[1].id,
+                "kind": "flower",
+                "message": "玩家1 翻开 玩家2 的牌堆顶部：花牌",
+            },
+        ]
+
+    commit_round(
+        game,
+        room,
+        players,
+        {players[0].id: "skull"},
+    )
+    make_player_one_challenger(game, room, players)
+    game.act(room, players[0], "reveal_disc", {"ownerId": players[0].id})
+    assert room.state.phase == "penalty"
+
+    expected = [{
+        "eventId": "reveal-2-1",
+        "round": 2,
+        "index": 1,
+        "challengerId": players[0].id,
+        "ownerId": players[0].id,
+        "kind": "skull",
+        "message": "玩家1 翻开 玩家1 的牌堆顶部：骷髅牌",
+    }]
+    for viewer in players:
+        view = game.view(room, viewer)
+        assert view["publicReveals"] == expected
+        owner = next(item for item in view["players"] if item["id"] == players[0].id)
+        assert owner["stack"][-1]["faceUp"] is True
+        assert owner["stack"][-1]["kind"] == "skull"
+        assert owner["stack"][-1]["knowledge"] == "public"
 
 
 def test_own_skull_uses_private_known_penalty_and_keeps_result_secret() -> None:

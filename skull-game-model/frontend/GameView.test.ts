@@ -99,6 +99,7 @@ function game(overrides: Partial<SkullGameView> = {}): SkullGameView {
     minimumBid: 1,
     maximumBid: 6,
     lastPrivatePenalty: null,
+    publicReveals: [],
     history: [
       { type: 'round_start', message: '第 1 轮开始，玩家2 为首家' },
       { type: 'game_start', message: '六名玩家围桌入座' },
@@ -322,6 +323,90 @@ describe('skull immersive game view', () => {
     const wrapper = mount(GameView, { props: { snapshot: snapshot(lastChance) } })
 
     expect(wrapper.get('.last-chance-face').text()).toContain('安全花牌')
+    wrapper.unmount()
+  })
+
+  it('shows every player remaining card total with the hand and table breakdown', () => {
+    const countedPlayers = players().map((player, index) => {
+      const personalDiscCount = Math.max(0, 4 - index)
+      return {
+        ...player,
+        handCount: Math.max(0, personalDiscCount - 1),
+        stack: personalDiscCount > 0 ? player.stack : [],
+        removedCount: 4 - personalDiscCount,
+        personalDiscCount,
+      }
+    })
+    const wrapper = mount(GameView, {
+      props: { snapshot: snapshot(game({ players: countedPlayers })) },
+    })
+
+    const counters = wrapper.findAll('.seat-counters')
+    expect(counters).toHaveLength(6)
+    expect(wrapper.get('[data-player-id="p1"] .seat-card-total').text()).toBe('剩余 4 张')
+    expect(wrapper.get('[data-player-id="p2"] .seat-card-total').text()).toBe('剩余 3 张')
+    expect(wrapper.get('[data-player-id="p2"] .seat-card-detail').text()).toBe('手持 2 · 已叠 1 · 失去 1')
+    expect(wrapper.get('[data-player-id="p6"] .seat-card-total').text()).toBe('剩余 0 张')
+    wrapper.unmount()
+  })
+
+  it('shows the ordered public reveal process with flower and skull results', () => {
+    const revealPlayers = players().map((player, index) => index === 1
+      ? {
+          ...player,
+          stack: [{
+            id: 'opaque-p2-stack-0',
+            kind: 'skull' as const,
+            origin: 'personal' as const,
+            faceUp: true,
+            knowledge: 'public' as const,
+          }],
+        }
+      : player)
+    const revealed = game({
+      phase: 'penalty',
+      sceneId: 'penalty.blind-pick',
+      players: revealPlayers,
+      publicReveals: [
+        {
+          eventId: 'reveal-2-1',
+          round: 2,
+          index: 1,
+          challengerId: 'p1',
+          ownerId: 'p1',
+          kind: 'flower',
+          message: '玩家1 翻开 玩家1 的牌堆顶部：花牌',
+        },
+        {
+          eventId: 'reveal-2-2',
+          round: 2,
+          index: 2,
+          challengerId: 'p1',
+          ownerId: 'p2',
+          kind: 'skull',
+          message: '玩家1 翻开 玩家2 的牌堆顶部：骷髅牌',
+        },
+      ],
+      round: {
+        challengerId: 'p1',
+        currentPlayerId: 'p2',
+        targetBid: 2,
+        revealedCount: 2,
+        failed: true,
+        skullOwnerId: 'p2',
+      } as SkullGameView['round'],
+    })
+    const wrapper = mount(GameView, { props: { snapshot: snapshot(revealed) } })
+
+    const broadcast = wrapper.get('.reveal-broadcast')
+    expect(broadcast.attributes('aria-label')).toBe('全员可见的翻牌过程')
+    expect(broadcast.text()).toContain('第 2 轮翻牌公示')
+    expect(broadcast.text()).toContain('花牌')
+    expect(broadcast.text()).toContain('骷髅牌')
+    expect(broadcast.text()).toContain('玩家2 的牌')
+    expect(broadcast.findAll('li')).toHaveLength(2)
+    expect(broadcast.findAll('li')[1]?.classes()).toContain('latest')
+    expect(wrapper.get('[data-player-id="p2"] .table-disc').classes()).toContain('revealed')
     wrapper.unmount()
   })
 

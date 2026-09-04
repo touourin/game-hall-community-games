@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "splendor",
+  "initialState": "waiting",
+  "stableStates": {
+    "waiting": {
+      "descriptionZh": "房间等待 2-4 名玩家并由宿主开始游戏。",
+      "actor": "host-platform"
+    },
+    "turn_action": {
+      "descriptionZh": "当前玩家必须执行且只能执行一项主要行动。",
+      "actor": "active-player"
+    },
+    "return_tokens": {
+      "descriptionZh": "主要行动已原子提交，但当前玩家持有超过 10 枚棋子，必须归还超额数量。",
+      "actor": "active-player"
+    },
+    "choose_noble": {
+      "descriptionZh": "当前玩家同时满足多个贵族要求，必须选择其中 1 位。",
+      "actor": "active-player"
+    },
+    "finished": {
+      "descriptionZh": "最终轮完成，结果和同分裁决已经持久化。",
+      "actor": "none"
+    }
+  },
+  "actions": {
+    "take_different": {
+      "states": ["turn_action"],
+      "payload": { "colors": "array<white|blue|green|red|black>" },
+      "validationZh": "颜色互异且供应各至少 1；通常恰取 3 色，少于 3 色仅适用短缺裁决。"
+    },
+    "take_same": {
+      "states": ["turn_action"],
+      "payload": { "color": "white|blue|green|red|black" },
+      "validationZh": "取之前该颜色供应至少 4 枚，随后恰取 2 枚。"
+    },
+    "reserve_face_up": {
+      "states": ["turn_action"],
+      "payload": { "cardId": "development-card-id", "marketRevision": "integer" },
+      "validationZh": "牌仍在市场且本人保留区少于 3 张；立即补同等级市场牌，并在有黄金时取 1 枚。"
+    },
+    "reserve_blind": {
+      "states": ["turn_action"],
+      "payload": { "level": "1|2|3", "marketRevision": "integer" },
+      "validationZh": "所选牌堆非空且本人保留区少于 3 张；只向本人揭示牌，市场不补牌。"
+    },
+    "purchase_face_up": {
+      "states": ["turn_action"],
+      "payload": { "cardId": "development-card-id", "payment": "piece-vector", "marketRevision": "integer" },
+      "validationZh": "牌仍在市场；折扣后的精确支付合法；随后立即补同等级市场牌。"
+    },
+    "purchase_reserved": {
+      "states": ["turn_action"],
+      "payload": { "reservationId": "reservation-id", "payment": "piece-vector" },
+      "validationZh": "保留牌属于本人；折扣后的精确支付合法；不改变市场。"
+    },
+    "return_tokens": {
+      "states": ["return_tokens"],
+      "payload": { "pieces": "piece-vector" },
+      "validationZh": "只能归还本人持有的棋子，归还总数必须恰好使手牌降至 10。"
+    },
+    "choose_noble": {
+      "states": ["choose_noble"],
+      "payload": { "nobleId": "eligible-noble-id" },
+      "validationZh": "必须属于服务端本回合给出的合资格贵族集合。"
+    }
+  },
+  "resolutionPipeline": [
+    { "order": 1, "id": "commit-primary-action", "summaryZh": "校验 revision、当前玩家、目标和资源后，原子提交主要行动。" },
+    { "order": 2, "id": "replace-market-card", "summaryZh": "市场牌被购买或保留时，从相同等级牌堆立即补到 4 张；空堆不补。" },
+    { "order": 3, "id": "enforce-piece-limit", "summaryZh": "若持有棋子超过 10，停在 return_tokens；否则继续。" },
+    { "order": 4, "id": "resolve-noble", "summaryZh": "只用已购买发展卡的永久奖励检查贵族；一个则自动拿取，多个则停在 choose_noble。" },
+    { "order": 5, "id": "trigger-end-game", "summaryZh": "贵族结算后若分数达到 15，记录最终轮和最后行动席位。" },
+    { "order": 6, "id": "advance-or-finish", "summaryZh": "未到最后行动席位则换到顺时针下一家；否则比较分数、已购买发展卡数并结算。" }
+  ],
+  "winnerComparator": [
+    { "order": 1, "metric": "prestige", "direction": "descending" },
+    { "order": 2, "metric": "purchasedDevelopmentCardCount", "direction": "ascending" },
+    { "order": 3, "metric": "sharedVictory", "direction": "all-still-tied" }
+  ],
+  "invariants": [
+    "每个发展卡 ID 恰位于一个区域：对应牌堆、市场、某玩家保留区或某玩家已购买区。",
+    "每种棋子的供应与所有玩家持有量之和恒等于本局该颜色初始总量。",
+    "每个贵族 ID 恰位于未使用、公共可用区或某玩家已获得区。",
+    "稳定状态下最多一名玩家可行动，finished 状态无人可行动。",
+    "分数由已购买发展卡和已获得贵族派生，不信任客户端上传分数。"
+  ]
+}

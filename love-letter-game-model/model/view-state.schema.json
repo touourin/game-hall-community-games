@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/love-letter/view-state.schema.json",
+  "title": "Love Letter viewer-safe state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "modelVersion",
+    "gameId",
+    "profileId",
+    "status",
+    "revision",
+    "roundNumber",
+    "turnNumber",
+    "eventSeq",
+    "viewer",
+    "phase",
+    "currentPlayerId",
+    "deckCount",
+    "reserveAvailable",
+    "faceUpSetAside",
+    "players",
+    "pendingChoice",
+    "privateInfo",
+    "legalActions",
+    "roundSummary",
+    "gameWinnerIds",
+    "lastEvent"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "love-letter" },
+    "profileId": { "enum": ["queen_22", "current_21", "classic_16"] },
+    "status": { "enum": ["setup", "active", "finished"] },
+    "revision": { "type": "integer", "minimum": 0 },
+    "roundNumber": { "type": "integer", "minimum": 1 },
+    "turnNumber": { "type": "integer", "minimum": 0 },
+    "eventSeq": { "type": "integer", "minimum": 0 },
+    "viewer": { "$ref": "#/$defs/viewer" },
+    "phase": {
+      "enum": [
+        "round_setup",
+        "turn_draw",
+        "turn_play",
+        "effect_choice",
+        "chancellor_choice",
+        "effect_resolution",
+        "round_end",
+        "between_rounds",
+        "finished"
+      ]
+    },
+    "currentPlayerId": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/playerId" }
+      ]
+    },
+    "deckCount": { "type": "integer", "minimum": 0, "maximum": 22 },
+    "reserveAvailable": { "type": "boolean" },
+    "faceUpSetAside": {
+      "type": "array",
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/cardView" }
+    },
+    "players": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/playerView" }
+    },
+    "pendingChoice": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/pendingChoiceView" }
+      ]
+    },
+    "privateInfo": { "$ref": "#/$defs/privateInfo" },
+    "legalActions": {
+      "type": "array",
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": { "enum": ["draw_card", "play_card", "resolve_choice", "next_round", "resign"] }
+    },
+    "roundSummary": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/roundSummary" }
+      ]
+    },
+    "gameWinnerIds": {
+      "type": "array",
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/playerId" }
+    },
+    "lastEvent": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/publicEvent" }
+      ]
+    }
+  },
+  "$defs": {
+    "playerId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "instanceId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*-[0-9]{2}$" },
+    "viewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "playerId"],
+      "properties": {
+        "kind": { "enum": ["player", "spectator"] },
+        "playerId": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/playerId" }
+          ]
+        }
+      }
+    },
+    "cardView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["instanceId", "cardTypeId", "value", "nameZh"],
+      "properties": {
+        "instanceId": { "$ref": "#/$defs/instanceId" },
+        "cardTypeId": { "$ref": "#/$defs/slug" },
+        "value": { "type": "number", "minimum": 0, "maximum": 9, "multipleOf": 0.5 },
+        "nameZh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "playedCardView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["card", "turnNumber", "reason"],
+      "properties": {
+        "card": { "$ref": "#/$defs/cardView" },
+        "turnNumber": { "type": "integer", "minimum": 0 },
+        "reason": { "enum": ["played", "prince", "guard-hit", "eliminated", "round-reveal"] }
+      }
+    },
+    "playerView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "seat", "name", "favorTokens", "roundStatus", "protected", "handCount", "visibleHand", "played"],
+      "properties": {
+        "id": { "$ref": "#/$defs/playerId" },
+        "seat": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "favorTokens": { "type": "integer", "minimum": 0, "maximum": 20 },
+        "roundStatus": { "enum": ["active", "out"] },
+        "protected": { "type": "boolean" },
+        "handCount": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "visibleHand": {
+          "type": "array",
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/cardView" }
+        },
+        "played": {
+          "type": "array",
+          "maxItems": 22,
+          "items": { "$ref": "#/$defs/playedCardView" }
+        }
+      }
+    },
+    "pendingChoiceView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "actorPlayerId",
+        "isActor",
+        "choiceId",
+        "promptZh",
+        "candidatePlayerIds",
+        "candidateCardTypeIds",
+        "privateCards"
+      ],
+      "properties": {
+        "kind": { "enum": ["player", "player-and-card-type", "keep-and-order"] },
+        "actorPlayerId": { "$ref": "#/$defs/playerId" },
+        "isActor": { "type": "boolean" },
+        "choiceId": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string", "pattern": "^choice-[A-Za-z0-9_-]+$" }
+          ]
+        },
+        "promptZh": { "type": "string", "minLength": 1 },
+        "candidatePlayerIds": {
+          "type": "array",
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/playerId" }
+        },
+        "candidateCardTypeIds": {
+          "type": "array",
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/slug" }
+        },
+        "privateCards": {
+          "type": "array",
+          "maxItems": 3,
+          "items": { "$ref": "#/$defs/cardView" }
+        }
+      }
+    },
+    "knowledgeView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subjectPlayerId", "card", "source", "acquiredRevision", "current"],
+      "properties": {
+        "subjectPlayerId": { "$ref": "#/$defs/playerId" },
+        "card": { "$ref": "#/$defs/cardView" },
+        "source": { "enum": ["priest", "baron", "king-swap", "own-hand"] },
+        "acquiredRevision": { "type": "integer", "minimum": 0 },
+        "current": { "type": "boolean" }
+      }
+    },
+    "privateInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["knownHands", "privateMessageZh"],
+      "properties": {
+        "knownHands": {
+          "type": "array",
+          "maxItems": 100,
+          "items": { "$ref": "#/$defs/knowledgeView" }
+        },
+        "privateMessageZh": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string", "minLength": 1 }
+          ]
+        }
+      }
+    },
+    "roundSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["endReason", "roundWinnerIds", "spyBonusPlayerId", "rewardDeltas"],
+      "properties": {
+        "endReason": { "enum": ["last-player", "one-card-left", "forfeit"] },
+        "roundWinnerIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/playerId" }
+        },
+        "spyBonusPlayerId": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/playerId" }
+          ]
+        },
+        "rewardDeltas": {
+          "type": "object",
+          "propertyNames": { "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$" },
+          "additionalProperties": { "type": "integer", "minimum": 0, "maximum": 2 }
+        }
+      }
+    },
+    "publicEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eventSeq", "kind", "actorPlayerId", "targetPlayerIds", "publicMessageZh"],
+      "properties": {
+        "eventSeq": { "type": "integer", "minimum": 0 },
+        "kind": { "$ref": "#/$defs/slug" },
+        "actorPlayerId": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/playerId" }
+          ]
+        },
+        "targetPlayerIds": {
+          "type": "array",
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/playerId" }
+        },
+        "publicMessageZh": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

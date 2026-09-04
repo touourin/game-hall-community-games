@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/love-letter/card-catalog.schema.json",
+  "title": "Love Letter card catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "modelVersion", "gameId", "sourceBasis", "cards"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "love-letter" },
+    "sourceBasis": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": { "type": "string", "format": "uri" }
+    },
+    "cards": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": { "$ref": "#/$defs/card" }
+    }
+  },
+  "$defs": {
+    "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "card": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "value", "nameZh", "nameEn", "provenance", "count", "classicCount", "queenVariantCount", "effect", "visual"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "value": { "type": "number", "minimum": 0, "maximum": 9, "multipleOf": 0.5 },
+        "nameZh": { "type": "string", "minLength": 1 },
+        "nameEn": { "type": "string", "minLength": 1 },
+        "provenance": { "enum": ["official-current", "user-directed-variant"] },
+        "count": { "type": "integer", "minimum": 0, "maximum": 6 },
+        "classicCount": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "queenVariantCount": { "type": "integer", "minimum": 1, "maximum": 6 },
+        "effect": { "$ref": "#/$defs/effect" },
+        "visual": { "$ref": "#/$defs/visual" }
+      }
+    },
+    "effect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["opcode", "timings", "targetMode", "choiceKind", "visibility", "mandatory", "summaryZh", "parameters"],
+      "properties": {
+        "opcode": { "$ref": "#/$defs/slug" },
+        "timings": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["legality-check", "on-play", "on-prince-discard", "on-guard-hit", "round-end", "start-own-turn"] }
+        },
+        "targetMode": { "enum": ["none", "self", "other", "any"] },
+        "choiceKind": { "enum": ["none", "player", "player-and-card-type", "keep-and-order"] },
+        "visibility": { "enum": ["public", "public-summary", "actor-private", "participants-private"] },
+        "mandatory": { "const": true },
+        "summaryZh": { "type": "string", "minLength": 1 },
+        "parameters": { "type": "object" }
+      }
+    },
+    "visual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["symbol", "color", "textColor", "motif", "prototypeLabel"],
+      "properties": {
+        "symbol": { "type": "string", "minLength": 1, "maxLength": 2 },
+        "color": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+        "textColor": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+        "motif": { "$ref": "#/$defs/slug" },
+        "prototypeLabel": { "type": "string", "minLength": 1, "maxLength": 8 }
+      }
+    }
+  }
+}

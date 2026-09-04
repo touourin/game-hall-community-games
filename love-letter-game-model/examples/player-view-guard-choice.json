@@ -1,0 +1,161 @@
+{
+  "$schema": "../model/view-state.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.2.0",
+  "gameId": "love-letter",
+  "profileId": "queen_22",
+  "status": "active",
+  "revision": 43,
+  "roundNumber": 2,
+  "turnNumber": 9,
+  "eventSeq": 27,
+  "viewer": {
+    "kind": "player",
+    "playerId": "p1"
+  },
+  "phase": "effect_choice",
+  "currentPlayerId": "p1",
+  "deckCount": 8,
+  "reserveAvailable": true,
+  "faceUpSetAside": [],
+  "players": [
+    {
+      "id": "p1",
+      "seat": 0,
+      "name": "阿梨",
+      "favorTokens": 1,
+      "roundStatus": "active",
+      "protected": false,
+      "handCount": 1,
+      "visibleHand": [
+        { "instanceId": "guard-04", "cardTypeId": "guard", "value": 1, "nameZh": "卫兵" }
+      ],
+      "played": [
+        {
+          "card": { "instanceId": "priest-01", "cardTypeId": "priest", "value": 2, "nameZh": "牧师" },
+          "turnNumber": 1,
+          "reason": "played"
+        },
+        {
+          "card": { "instanceId": "guard-01", "cardTypeId": "guard", "value": 1, "nameZh": "卫兵" },
+          "turnNumber": 5,
+          "reason": "played"
+        },
+        {
+          "card": { "instanceId": "guard-03", "cardTypeId": "guard", "value": 1, "nameZh": "卫兵" },
+          "turnNumber": 9,
+          "reason": "played"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "seat": 1,
+      "name": "白川",
+      "favorTokens": 0,
+      "roundStatus": "active",
+      "protected": true,
+      "handCount": 1,
+      "visibleHand": [],
+      "played": [
+        {
+          "card": { "instanceId": "guard-02", "cardTypeId": "guard", "value": 1, "nameZh": "卫兵" },
+          "turnNumber": 2,
+          "reason": "played"
+        },
+        {
+          "card": { "instanceId": "handmaid-01", "cardTypeId": "handmaid", "value": 4, "nameZh": "侍女" },
+          "turnNumber": 6,
+          "reason": "played"
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "seat": 2,
+      "name": "沉舟",
+      "favorTokens": 1,
+      "roundStatus": "active",
+      "protected": false,
+      "handCount": 1,
+      "visibleHand": [],
+      "played": [
+        {
+          "card": { "instanceId": "spy-01", "cardTypeId": "spy", "value": 0, "nameZh": "间谍" },
+          "turnNumber": 3,
+          "reason": "played"
+        },
+        {
+          "card": { "instanceId": "king-01", "cardTypeId": "king", "value": 7, "nameZh": "国王" },
+          "turnNumber": 7,
+          "reason": "played"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "seat": 3,
+      "name": "冬青",
+      "favorTokens": 0,
+      "roundStatus": "active",
+      "protected": false,
+      "handCount": 1,
+      "visibleHand": [],
+      "played": [
+        {
+          "card": { "instanceId": "prince-01", "cardTypeId": "prince", "value": 5, "nameZh": "王子" },
+          "turnNumber": 4,
+          "reason": "played"
+        },
+        {
+          "card": { "instanceId": "priest-02", "cardTypeId": "priest", "value": 2, "nameZh": "牧师" },
+          "turnNumber": 8,
+          "reason": "played"
+        }
+      ]
+    }
+  ],
+  "pendingChoice": {
+    "kind": "player-and-card-type",
+    "actorPlayerId": "p1",
+    "isActor": true,
+    "choiceId": "choice-r2-t9-guard",
+    "promptZh": "选择一名未受保护的对手，并猜测一个非卫兵角色。",
+    "candidatePlayerIds": ["p3", "p4"],
+    "candidateCardTypeIds": [
+      "spy",
+      "priest",
+      "baron",
+      "handmaid",
+      "prince",
+      "chancellor",
+      "king",
+      "queen",
+      "countess",
+      "princess"
+    ],
+    "privateCards": []
+  },
+  "privateInfo": {
+    "knownHands": [
+      {
+        "subjectPlayerId": "p2",
+        "card": { "instanceId": "princess-01", "cardTypeId": "princess", "value": 9, "nameZh": "公主" },
+        "source": "priest",
+        "acquiredRevision": 18,
+        "current": true
+      }
+    ],
+    "privateMessageZh": "你此前看到白川持有公主，但白川当前受侍女保护，不能成为卫兵目标。"
+  },
+  "legalActions": ["resolve_choice", "resign"],
+  "roundSummary": null,
+  "gameWinnerIds": [],
+  "lastEvent": {
+    "eventSeq": 27,
+    "kind": "play-card",
+    "actorPlayerId": "p1",
+    "targetPlayerIds": [],
+    "publicMessageZh": "阿梨打出卫兵，正在选择目标和猜测。"
+  }
+}

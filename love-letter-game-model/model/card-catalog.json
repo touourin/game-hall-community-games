@@ -1,0 +1,361 @@
+{
+  "$schema": "./card-catalog.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.2.0",
+  "gameId": "love-letter",
+  "sourceBasis": [
+    "https://www.zmangames.com/game/love-letter/",
+    "https://cdn.svc.asmodee.net/production-zman/uploads/2024/09/LL_Rulebook_with_Bag-1.pdf",
+    "https://m.yxlady.com/jingyan/3021440.shtml"
+  ],
+  "cards": [
+    {
+      "id": "spy",
+      "value": 0,
+      "nameZh": "间谍",
+      "nameEn": "Spy",
+      "provenance": "official-current",
+      "count": 2,
+      "classicCount": 0,
+      "queenVariantCount": 2,
+      "effect": {
+        "opcode": "record-spy",
+        "timings": ["on-play", "on-prince-discard", "round-end"],
+        "targetMode": "none",
+        "choiceKind": "none",
+        "visibility": "public-summary",
+        "mandatory": true,
+        "summaryZh": "轮末若你是唯一仍在局且曾打出或弃掉间谍的玩家，额外获得 1 枚好感标记。",
+        "parameters": {
+          "bonusFavor": 1,
+          "requiresActiveAtRoundEnd": true,
+          "requiresUniqueEligiblePlayer": true,
+          "maximumBonusPerPlayer": 1
+        }
+      },
+      "visual": {
+        "symbol": "眼",
+        "color": "#4B5563",
+        "textColor": "#FFFFFF",
+        "motif": "sealed-eye",
+        "prototypeLabel": "暗封"
+      }
+    },
+    {
+      "id": "guard",
+      "value": 1,
+      "nameZh": "卫兵",
+      "nameEn": "Guard",
+      "provenance": "official-current",
+      "count": 6,
+      "classicCount": 5,
+      "queenVariantCount": 6,
+      "effect": {
+        "opcode": "guess-hand",
+        "timings": ["on-play"],
+        "targetMode": "other",
+        "choiceKind": "player-and-card-type",
+        "visibility": "public-summary",
+        "mandatory": true,
+        "summaryZh": "选择另一名玩家并猜一个非卫兵角色；猜中则淘汰对方。",
+        "parameters": {
+          "excludedGuessCardTypeIds": ["guard"],
+          "eliminateOnMatch": true,
+          "revealOnMiss": false
+        }
+      },
+      "visual": {
+        "symbol": "盾",
+        "color": "#9A3412",
+        "textColor": "#FFFFFF",
+        "motif": "shield-question",
+        "prototypeLabel": "盘问"
+      }
+    },
+    {
+      "id": "priest",
+      "value": 2,
+      "nameZh": "牧师",
+      "nameEn": "Priest",
+      "provenance": "official-current",
+      "count": 2,
+      "classicCount": 2,
+      "queenVariantCount": 2,
+      "effect": {
+        "opcode": "peek-hand",
+        "timings": ["on-play"],
+        "targetMode": "other",
+        "choiceKind": "player",
+        "visibility": "actor-private",
+        "mandatory": true,
+        "summaryZh": "私下查看另一名玩家当前的手牌。",
+        "parameters": {
+          "knowledgeRecipients": ["actor"],
+          "expiresWhenTargetHandChanges": true
+        }
+      },
+      "visual": {
+        "symbol": "烛",
+        "color": "#6D28D9",
+        "textColor": "#FFFFFF",
+        "motif": "candle-scroll",
+        "prototypeLabel": "窥信"
+      }
+    },
+    {
+      "id": "baron",
+      "value": 3,
+      "nameZh": "男爵",
+      "nameEn": "Baron",
+      "provenance": "official-current",
+      "count": 2,
+      "classicCount": 2,
+      "queenVariantCount": 2,
+      "effect": {
+        "opcode": "compare-hands",
+        "timings": ["on-play"],
+        "targetMode": "other",
+        "choiceKind": "player",
+        "visibility": "participants-private",
+        "mandatory": true,
+        "summaryZh": "与另一名玩家秘密比点，手牌点数较低者被淘汰；平手则无人出局。",
+        "parameters": {
+          "comparison": "card-value",
+          "loser": "lower",
+          "tieOutcome": "none-eliminated",
+          "knowledgeRecipients": ["actor", "target"]
+        }
+      },
+      "visual": {
+        "symbol": "衡",
+        "color": "#1D4ED8",
+        "textColor": "#FFFFFF",
+        "motif": "balanced-scale",
+        "prototypeLabel": "比点"
+      }
+    },
+    {
+      "id": "handmaid",
+      "value": 4,
+      "nameZh": "侍女",
+      "nameEn": "Handmaid",
+      "provenance": "official-current",
+      "count": 2,
+      "classicCount": 2,
+      "queenVariantCount": 2,
+      "effect": {
+        "opcode": "grant-protection",
+        "timings": ["on-play", "start-own-turn"],
+        "targetMode": "self",
+        "choiceKind": "none",
+        "visibility": "public",
+        "mandatory": true,
+        "summaryZh": "直到你的下一回合开始前，其他玩家不能用牌效选择你。",
+        "parameters": {
+          "blocksOtherPlayersEffects": true,
+          "expires": "before-own-draw"
+        }
+      },
+      "visual": {
+        "symbol": "封",
+        "color": "#0F766E",
+        "textColor": "#FFFFFF",
+        "motif": "ribbon-shield",
+        "prototypeLabel": "护信"
+      }
+    },
+    {
+      "id": "prince",
+      "value": 5,
+      "nameZh": "王子",
+      "nameEn": "Prince",
+      "provenance": "official-current",
+      "count": 2,
+      "classicCount": 2,
+      "queenVariantCount": 2,
+      "effect": {
+        "opcode": "force-redraw",
+        "timings": ["on-play"],
+        "targetMode": "any",
+        "choiceKind": "player",
+        "visibility": "public-summary",
+        "mandatory": true,
+        "summaryZh": "令任意一名仍在局玩家弃掉手牌并重新摸牌；可以选择自己。",
+        "parameters": {
+          "allowSelf": true,
+          "discardTriggers": ["princess", "spy"],
+          "redrawSourcePriority": ["deck", "reserve"],
+          "princessPreventsRedraw": true
+        }
+      },
+      "visual": {
+        "symbol": "诏",
+        "color": "#C2410C",
+        "textColor": "#FFFFFF",
+        "motif": "broken-letter-cycle",
+        "prototypeLabel": "重写"
+      }
+    },
+    {
+      "id": "chancellor",
+      "value": 6,
+      "nameZh": "大臣",
+      "nameEn": "Chancellor",
+      "provenance": "official-current",
+      "count": 2,
+      "classicCount": 0,
+      "queenVariantCount": 2,
+      "effect": {
+        "opcode": "draw-keep-bottom",
+        "timings": ["on-play"],
+        "targetMode": "self",
+        "choiceKind": "keep-and-order",
+        "visibility": "actor-private",
+        "mandatory": true,
+        "summaryZh": "再抽至多两张，秘密保留一张，把其余牌按自定顺序压到牌堆底。",
+        "parameters": {
+          "maximumExtraDraw": 2,
+          "keepCount": 1,
+          "returnDestination": "deck-bottom",
+          "playerOrdersReturnedCards": true,
+          "ignoreCountessConstraintDuringChoice": true
+        }
+      },
+      "visual": {
+        "symbol": "策",
+        "color": "#0369A1",
+        "textColor": "#FFFFFF",
+        "motif": "three-letters-bottom",
+        "prototypeLabel": "筹谋"
+      }
+    },
+    {
+      "id": "king",
+      "value": 7,
+      "nameZh": "国王",
+      "nameEn": "King",
+      "provenance": "official-current",
+      "count": 1,
+      "classicCount": 1,
+      "queenVariantCount": 1,
+      "effect": {
+        "opcode": "trade-hands",
+        "timings": ["on-play"],
+        "targetMode": "other",
+        "choiceKind": "player",
+        "visibility": "participants-private",
+        "mandatory": true,
+        "summaryZh": "与另一名未受保护、仍在局的玩家交换手牌。",
+        "parameters": {
+          "swapAllHandCards": true,
+          "invalidatePriorHandKnowledge": true
+        }
+      },
+      "visual": {
+        "symbol": "冠",
+        "color": "#854D0E",
+        "textColor": "#FFFFFF",
+        "motif": "twin-crowns",
+        "prototypeLabel": "易手"
+      }
+    },
+    {
+      "id": "queen",
+      "value": 7.5,
+      "nameZh": "皇后",
+      "nameEn": "Queen",
+      "provenance": "user-directed-variant",
+      "count": 0,
+      "classicCount": 0,
+      "queenVariantCount": 1,
+      "effect": {
+        "opcode": "queen-guess",
+        "timings": ["legality-check", "on-play", "on-guard-hit"],
+        "targetMode": "other",
+        "choiceKind": "player-and-card-type",
+        "visibility": "public-summary",
+        "mandatory": true,
+        "summaryZh": "与国王或伯爵夫人同手时必须打出；打出后像卫兵一样猜牌；被卫兵猜中时弃掉并重抽，不被淘汰。",
+        "parameters": {
+          "forcingCompanionCardTypeIds": ["king", "countess"],
+          "appliesOnlyToNormalTurnPlay": true,
+          "excludedGuessCardTypeIds": ["guard"],
+          "eliminateOnMatch": true,
+          "guardHitOutcome": "discard-and-redraw",
+          "redrawSourcePriority": ["deck", "reserve"],
+          "revealOnMiss": false
+        }
+      },
+      "visual": {
+        "symbol": "后",
+        "color": "#7E22CE",
+        "textColor": "#FFFFFF",
+        "motif": "moon-crown-letter",
+        "prototypeLabel": "御问"
+      }
+    },
+    {
+      "id": "countess",
+      "value": 8,
+      "nameZh": "伯爵夫人",
+      "nameEn": "Countess",
+      "provenance": "official-current",
+      "count": 1,
+      "classicCount": 1,
+      "queenVariantCount": 1,
+      "effect": {
+        "opcode": "countess-constraint",
+        "timings": ["legality-check", "on-play"],
+        "targetMode": "self",
+        "choiceKind": "none",
+        "visibility": "public-summary",
+        "mandatory": true,
+        "summaryZh": "若另一张手牌是国王或王子，本回合必须打出伯爵夫人。",
+        "parameters": {
+          "forcingCompanionCardTypeIds": ["king", "prince"],
+          "appliesOnlyToNormalTurnPlay": true,
+          "revealCompanion": false,
+          "voluntaryPlayAllowed": true
+        }
+      },
+      "visual": {
+        "symbol": "扇",
+        "color": "#9D174D",
+        "textColor": "#FFFFFF",
+        "motif": "locked-fan",
+        "prototypeLabel": "缄默"
+      }
+    },
+    {
+      "id": "princess",
+      "value": 9,
+      "nameZh": "公主",
+      "nameEn": "Princess",
+      "provenance": "official-current",
+      "count": 1,
+      "classicCount": 1,
+      "queenVariantCount": 1,
+      "effect": {
+        "opcode": "eliminate-self",
+        "timings": ["on-play", "on-prince-discard"],
+        "targetMode": "self",
+        "choiceKind": "none",
+        "visibility": "public",
+        "mandatory": true,
+        "summaryZh": "只要你打出或因王子弃掉公主，你立即被淘汰。",
+        "parameters": {
+          "eliminateOwner": true,
+          "triggerReasons": ["played", "prince"],
+          "idempotentDuringEliminationCleanup": true
+        }
+      },
+      "visual": {
+        "symbol": "玺",
+        "color": "#BE123C",
+        "textColor": "#FFFFFF",
+        "motif": "broken-wax-crown",
+        "prototypeLabel": "失信"
+      }
+    }
+  ]
+}

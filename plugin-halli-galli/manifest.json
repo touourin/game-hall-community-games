@@ -1,0 +1,46 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-halli-galli",
+  "name": "德国心脏病",
+  "description": "2–6 人实时翻牌抢铃，认准同一种水果恰好五个",
+  "category": "反应桌游",
+  "tone": "halli-galli",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 2,
+    "max": 6,
+    "label": "2–6 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": true,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "allowSpectators": true,
+    "firstPlayer": "random",
+    "rulesProfile": "official_last_bell"
+  },
+  "ruleLabels": [
+    "常规基础版",
+    "56 张水果牌",
+    "同种水果恰好 5 个",
+    "实时抢铃",
+    "最终二人再响一铃",
+    "2–6 人"
+  ]
+}

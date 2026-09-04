@@ -91,6 +91,24 @@
       "path": "plugin-dead-mans-draw",
       "status": "enabled",
       "order": 240
+    },
+    {
+      "id": "plugin-love-letter",
+      "path": "plugin-love-letter",
+      "status": "enabled",
+      "order": 250
+    },
+    {
+      "id": "plugin-halli-galli",
+      "path": "plugin-halli-galli",
+      "status": "enabled",
+      "order": 260
+    },
+    {
+      "id": "plugin-splendor",
+      "path": "plugin-splendor",
+      "status": "enabled",
+      "order": 270
     }
   ]
 }

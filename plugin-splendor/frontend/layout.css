@@ -1,0 +1,133 @@
+.splendor-game {
+  --table: #173b3a;
+  --table-deep: #0d2728;
+  --table-edge: #6a5138;
+  --paper: #f4f0e7;
+  --paper-dim: #e7dfd0;
+  --ink: #20292d;
+  --brass: #b78a3f;
+  --focus: #e8bd62;
+  --danger: #a8524b;
+  --hidden: #4d5961;
+  --mist: #9ab0ac;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: 58px 82px minmax(0, 1fr) 150px 82px;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: max(720px, calc(100dvh - 70px));
+  min-height: 0;
+  padding: 8px;
+  overflow: hidden;
+  border: 1px solid #806447;
+  border-radius: 18px;
+  color: #eff3ee;
+  background: radial-gradient(circle at 50% 42%, #21504d 0, var(--table) 38%, var(--table-deep) 100%);
+  box-shadow: inset 0 0 0 5px rgba(106, 81, 56, .62), inset 0 0 60px rgba(0, 0, 0, .35), 0 20px 50px rgba(0, 0, 0, .28);
+  font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+.splendor-game.fullscreen { height: 100dvh; border-radius: 0; }
+.splendor-game *, .splendor-game *::before, .splendor-game *::after { box-sizing: border-box; }
+.splendor-game button, .splendor-game input { font: inherit; }
+.splendor-game button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.splendor-game button:disabled { cursor: not-allowed; filter: saturate(.55); opacity: .48; }
+.splendor-game h2, .splendor-game h3, .splendor-game h4, .splendor-game p { margin: 0; }
+.splendor-game .table-grain { position: absolute; z-index: -1; inset: 0; overflow: hidden; opacity: .075; pointer-events: none; background-image: repeating-radial-gradient(ellipse at 50% 50%, transparent 0 13px, #d2bc81 14px 15px, transparent 16px 31px), linear-gradient(112deg, transparent 47%, #fff 48%, transparent 49%); background-size: 260px 160px, 43px 43px; }
+
+.splendor-game .table-masthead { display: grid; grid-template-columns: 210px minmax(0, 1fr) auto; align-items: center; min-width: 0; padding: 5px 10px; border: 1px solid #54726f; border-radius: 11px; background: rgba(10, 31, 32, .82); box-shadow: 0 6px 14px rgba(0, 0, 0, .18); }
+.splendor-game .brand-lockup small { display: block; color: var(--focus); font-size: 8px; font-weight: 900; letter-spacing: .16em; }
+.splendor-game .brand-lockup h2 { margin-top: 2px; color: #fff7e5; font-family: "Songti SC", Georgia, serif; font-size: 22px; letter-spacing: .04em; }
+.splendor-game .status-copy { min-width: 0; padding: 0 14px; border-left: 1px solid #4a6866; }
+.splendor-game .status-copy > span { color: #9fb2af; font-size: 8px; font-weight: 800; letter-spacing: .08em; }
+.splendor-game .status-copy > strong { display: block; overflow: hidden; margin: 1px 0; color: #f9edcf; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.splendor-game .status-copy > small { display: block; overflow: hidden; color: #9cb2ae; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.splendor-game .status-copy.final { padding: 4px 14px; border: 1px solid #ba8740; border-radius: 7px; background: linear-gradient(90deg, rgba(142, 85, 37, .55), rgba(80, 56, 31, .25)); }
+.splendor-game .status-copy.final > strong, .splendor-game .status-copy.final > small { color: #ffe7ad; }
+.splendor-game .mast-actions { display: flex; gap: 5px; }
+.splendor-game .mast-actions button { display: grid; min-width: 48px; min-height: 40px; padding: 3px 6px; place-items: center; border: 1px solid #587573; border-radius: 7px; color: #d7e1dd; background: #1c3c3d; cursor: pointer; }
+.splendor-game .mast-actions span { font-size: 7px; }
+
+.splendor-game .opponent-rail { display: flex; gap: 6px; min-width: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; scrollbar-color: #6c7d72 transparent; }
+.splendor-game .opponent-rail > * { flex: 1 0 240px; }
+
+.splendor-game .scene-grid { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 6px; min-width: 0; min-height: 0; }
+.splendor-game .market-board { display: grid; grid-template-rows: minmax(76px, .72fr) repeat(3, minmax(112px, 1fr)); gap: 5px; min-width: 0; min-height: 0; padding: 6px; overflow: hidden; border: 1px solid #52706d; border-radius: 12px; background: rgba(8, 31, 31, .58); }
+.splendor-game .noble-row { display: grid; grid-template-columns: 122px minmax(0, 1fr); gap: 5px; min-width: 0; min-height: 0; }
+.splendor-game .noble-row > header { display: grid; align-content: center; padding: 7px; border-right: 1px solid #526c68; }
+.splendor-game .noble-row > header small, .splendor-game .gem-supply header small, .splendor-game .event-strip header small, .splendor-game .reserved-drawer header small { color: var(--focus); font-size: 7px; font-weight: 900; letter-spacing: .13em; }
+.splendor-game .noble-row > header h3, .splendor-game .gem-supply header h3, .splendor-game .event-strip header h3, .splendor-game .reserved-drawer header h3 { margin-top: 2px; color: #eef2eb; font-family: "Songti SC", serif; font-size: 13px; }
+.splendor-game .noble-row > header > span { color: #8fa6a2; font-size: 6px; line-height: 1.35; }
+.splendor-game .noble-list { display: flex; align-items: center; gap: 5px; min-width: 0; overflow-x: auto; overflow-y: hidden; }
+.splendor-game .noble-list .noble-tile { flex: 0 0 clamp(70px, 7.5vw, 92px); height: min(100%, 82px); }
+
+.splendor-game .market-tier { display: grid; grid-template-columns: 62px 72px minmax(0, 1fr); gap: 5px; min-width: 0; min-height: 0; padding: 4px; border: 1px solid #3f5f5d; border-radius: 9px; background: rgba(23, 55, 54, .72); }
+.splendor-game .market-tier > header { display: grid; align-content: center; justify-items: center; border-right: 1px solid #4a6664; }
+.splendor-game .market-tier > header small { color: #829995; font-size: 6px; letter-spacing: .12em; }
+.splendor-game .market-tier > header strong { color: #f3e7c9; font-family: "Songti SC", serif; font-size: 11px; writing-mode: vertical-rl; }
+.splendor-game .deck-stack { position: relative; display: grid; min-width: 0; min-height: 0; place-items: center; }
+.splendor-game .deck-stack::before, .splendor-game .deck-stack::after { content: ""; position: absolute; top: 7px; right: 4px; bottom: 2px; left: 7px; border: 1px solid #98753a; border-radius: 6px; background: #263e3f; transform: translate(3px, -3px); }
+.splendor-game .deck-stack::after { transform: translate(6px, -6px); }
+.splendor-game .deck-stack .development-card { z-index: 2; width: 55px; }
+.splendor-game .deck-stack > b { position: absolute; z-index: 4; right: -1px; bottom: 6px; display: grid; width: 20px; height: 20px; place-items: center; border: 2px solid #f0d790; border-radius: 50%; color: #2a2a22; background: #e6c367; font-size: 8px; }
+.splendor-game .deck-stack > small { position: absolute; z-index: 4; right: -5px; top: 2px; color: #b6c4c0; font-size: 5px; }
+.splendor-game .deck-stack.legal { filter: drop-shadow(0 0 5px rgba(232, 189, 98, .3)); }
+.splendor-game .market-slots { display: grid; grid-template-columns: repeat(4, minmax(82px, 1fr)); gap: 5px; min-width: 0; min-height: 0; }
+.splendor-game .market-slot { display: grid; min-width: 0; min-height: 0; place-items: center; border: 1px dashed rgba(164, 190, 183, .16); border-radius: 7px; }
+.splendor-game .market-slot .development-card { width: min(100%, 118px); height: 100%; max-height: 135px; }
+.splendor-game .market-slot.empty > span { color: #78908c; font-size: 7px; }
+
+.splendor-game .table-sidebar { display: grid; grid-template-rows: minmax(250px, 1.6fr) minmax(125px, 1fr); gap: 6px; min-width: 0; min-height: 0; }
+.splendor-game .gem-supply, .splendor-game .event-strip { min-width: 0; min-height: 0; padding: 8px; overflow: hidden; border: 1px solid #54726f; border-radius: 11px; background: rgba(9, 31, 32, .78); }
+.splendor-game .gem-supply > header { display: flex; align-items: end; justify-content: space-between; margin-bottom: 6px; }
+.splendor-game .gem-supply > header > span { color: #829a96; font-size: 6px; }
+.splendor-game .supply-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; height: calc(100% - 33px); }
+.splendor-game .event-strip { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+.splendor-game .event-strip > header { display: flex; align-items: baseline; gap: 8px; padding-bottom: 4px; border-bottom: 1px solid #405d5b; }
+.splendor-game .event-strip ol { display: grid; align-content: start; gap: 3px; min-height: 0; margin: 5px 0 0; padding: 0; overflow: hidden; list-style: none; }
+.splendor-game .event-strip li { display: grid; grid-template-columns: 21px minmax(0, 1fr); gap: 4px; color: #b3c1bd; font-size: 7px; line-height: 1.25; }
+.splendor-game .event-strip li b { color: var(--focus); font-family: ui-monospace, monospace; font-size: 6px; }
+
+.splendor-game .private-console { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 6px; min-width: 0; min-height: 0; }
+.splendor-game .self-engine, .splendor-game .reserved-drawer { min-width: 0; min-height: 0; padding: 6px; overflow: hidden; border: 1px solid #56736f; border-radius: 11px; background: rgba(10, 32, 33, .84); }
+.splendor-game .self-engine { display: grid; grid-template-columns: 238px minmax(0, 1fr); gap: 6px; }
+.splendor-game .engine-columns { display: grid; grid-template-columns: repeat(5, minmax(68px, 1fr)); gap: 4px; min-width: 0; min-height: 0; }
+.splendor-game .engine-column { display: grid; grid-template-rows: 28px minmax(0, 1fr); min-width: 0; min-height: 0; overflow: hidden; border: 1px solid #495f5d; border-radius: 7px; background: #152f30; }
+.splendor-game .engine-column > header { display: grid; grid-template-columns: 20px 18px minmax(0, 1fr); align-items: center; padding: 3px; color: #e8e4d9; background: var(--engine); }
+.splendor-game .engine-column > header i { font-style: normal; }
+.splendor-game .engine-column > header b { font-size: 11px; }
+.splendor-game .engine-column > header span { overflow: hidden; font-size: 6px; text-overflow: ellipsis; white-space: nowrap; }
+.splendor-game .engine-white { --engine: #756f64; }.splendor-game .engine-blue { --engine: #315f7c; }.splendor-game .engine-green { --engine: #3f6a57; }.splendor-game .engine-red { --engine: #87433e; }.splendor-game .engine-black { --engine: #30383b; }
+.splendor-game .engine-card-stack { position: relative; display: flex; align-items: end; gap: 2px; min-width: 0; min-height: 0; padding: 3px; overflow: hidden; }
+.splendor-game .engine-card-stack .development-card { flex: 0 1 45px; width: 45px; height: 68px; }
+.splendor-game .engine-card-stack > small { margin: auto; color: #6f8783; font-size: 7px; }
+.splendor-game .reserved-drawer { display: grid; grid-template-rows: 27px minmax(0, 1fr); }
+.splendor-game .reserved-drawer > header { display: flex; align-items: center; justify-content: space-between; }
+.splendor-game .reserved-drawer > header div { display: flex; align-items: baseline; gap: 6px; }
+.splendor-game .reserved-drawer > header > b { color: var(--focus); font-size: 9px; }
+.splendor-game .reserved-list { display: flex; align-items: end; gap: 5px; min-width: 0; min-height: 0; overflow-x: auto; }
+.splendor-game .reserved-list .development-card { flex: 0 0 72px; width: 72px; height: 107px; }
+.splendor-game .empty-zone { display: grid; width: 100%; min-height: 55px; place-items: center; border: 1px dashed #496461; border-radius: 7px; color: #758b88; font-size: 7px; }
+
+.splendor-game .action-dock { display: grid; grid-template-columns: 230px minmax(0, 1fr); min-width: 0; min-height: 0; overflow: hidden; border: 1px solid #53706e; border-radius: 11px; background: #193536; box-shadow: 0 -5px 14px rgba(0, 0, 0, .14); }
+.splendor-game .action-dock.active { border-color: var(--focus); box-shadow: inset 0 0 0 1px rgba(232, 189, 98, .24), 0 -5px 14px rgba(0, 0, 0, .2); }
+.splendor-game .action-dock.error { border-color: #cf7166; }
+.splendor-game .action-dock > header { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; align-items: center; gap: 6px; min-width: 0; padding: 7px; border-right: 1px solid #466260; background: #122b2c; }
+.splendor-game .action-dock > header > span { color: #849995; font-family: ui-monospace, monospace; font-size: 6px; writing-mode: vertical-rl; }
+.splendor-game .action-dock > header strong, .splendor-game .action-dock > header small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.splendor-game .action-dock > header strong { color: #f2e4c4; font-size: 10px; }
+.splendor-game .action-dock > header small { margin-top: 2px; color: #93aaa6; font-size: 7px; }
+.splendor-game .action-dock > header em { color: var(--focus); font-size: 7px; font-style: normal; }
+.splendor-game .dock-actions { display: flex; align-items: center; gap: 7px; min-width: 0; padding: 8px; overflow-x: auto; }
+.splendor-game .dock-actions > span { flex: 1 0 130px; color: #8fa4a0; font-size: 7px; text-align: right; }
+.splendor-game .primary-action, .splendor-game .secondary-action, .splendor-game .ghost-action { min-height: 38px; padding: 7px 12px; border-radius: 8px; font-size: 8px; font-weight: 900; cursor: pointer; }
+.splendor-game .primary-action { border: 1px solid #f1ce7c; color: #312918; background: linear-gradient(#f0d081, #c99843); box-shadow: 0 4px 9px rgba(0, 0, 0, .22); }
+.splendor-game .secondary-action { border: 1px solid #66827f; color: #eef2e9; background: #294849; }
+.splendor-game .ghost-action { border: 1px solid #5a7471; color: #c3d0cc; background: transparent; }
+.splendor-game .draft-summary { flex: 1 1 240px; color: #e6ddc8; font-size: 9px; }
+.splendor-game .blind-levels { display: flex; flex: 1; gap: 5px; }
+.splendor-game .blind-levels button { min-height: 36px; padding: 5px 9px; border: 1px solid #5d7774; border-radius: 6px; color: #dce3dc; background: #203d3e; cursor: pointer; }
+.splendor-game .blind-levels button.selected { border-color: var(--focus); color: #302a1c; background: var(--focus); }
+.splendor-game .sr-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

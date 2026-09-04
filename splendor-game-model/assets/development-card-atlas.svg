@@ -1,0 +1,1226 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1720" height="2435" viewBox="0 0 1720 2435"
+  data-model-version="1.0.0" role="img" aria-labelledby="atlas-title atlas-desc">
+  <title id="atlas-title">璀璨宝石完整功能卡牌图集</title>
+  <desc id="atlas-desc">90张发展卡、3种等级牌背与10张贵族板块的原创中性功能原型。</desc>
+  <defs>
+    <pattern id="backPattern" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="16" height="16" fill="#24383D"/>
+      <path d="M0 0 V16 M8 0 V16" stroke="#3F575C" stroke-width="2"/>
+    </pattern>
+    <style>
+      text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #20292D; }
+      .eyebrow { font-size: 16px; font-weight: 800; letter-spacing: 2px; fill: #D5B66E; }
+      .title { font-size: 38px; font-weight: 900; fill: #F4F0E7; }
+      .subtitle { font-size: 16px; fill: #B7C8C6; }
+      .section { font-size: 22px; font-weight: 900; fill: #F4F0E7; }
+      .score { font-size: 25px; font-weight: 900; }
+      .bonus { font-size: 24px; font-weight: 900; }
+      .cost { font-size: 12px; font-weight: 900; }
+      .micro { font-size: 10px; font-weight: 800; }
+      .id { font-size: 7px; fill: #596468; }
+      .back-level { font-size: 16px; font-weight: 900; fill: #F4F0E7; }
+      .back-marks { font-size: 13px; fill: #D5B66E; }
+      .noble-cost { font-size: 15px; font-weight: 900; }
+      .noble-id { font-size: 7px; fill: #655B4D; }
+    </style>
+  </defs>
+  <rect width="1720" height="2435" fill="#102426"/>
+  <text x="70" y="42" class="eyebrow">GAME HALL · FUNCTIONAL CARD ATLAS v1.0.0</text>
+  <text x="70" y="88" class="title">璀璨宝石 · 90 张发展卡与 10 张贵族</text>
+  <text x="70" y="116" class="subtitle">完整规则数值 · 原创几何占位 · 颜色、名称与符号双重编码</text>
+
+    <g transform="translate(1380 14) scale(1.0)" role="img" aria-label="1级发展卡牌背">
+      <rect width="88" height="118" rx="11" fill="#24383D" stroke="#C79B43" stroke-width="2"/>
+      <rect x="8" y="8" width="72" height="102" rx="8" fill="url(#backPattern)" stroke="#718487"/>
+      <text x="44" y="54" class="back-level" text-anchor="middle">1 级</text>
+      <text x="44" y="80" class="back-marks" text-anchor="middle">◇</text>
+    </g>
+
+    <g transform="translate(1478 14) scale(1.0)" role="img" aria-label="2级发展卡牌背">
+      <rect width="88" height="118" rx="11" fill="#24383D" stroke="#C79B43" stroke-width="2"/>
+      <rect x="8" y="8" width="72" height="102" rx="8" fill="url(#backPattern)" stroke="#718487"/>
+      <text x="44" y="54" class="back-level" text-anchor="middle">2 级</text>
+      <text x="44" y="80" class="back-marks" text-anchor="middle">◇ ◇</text>
+    </g>
+
+    <g transform="translate(1576 14) scale(1.0)" role="img" aria-label="3级发展卡牌背">
+      <rect width="88" height="118" rx="11" fill="#24383D" stroke="#C79B43" stroke-width="2"/>
+      <rect x="8" y="8" width="72" height="102" rx="8" fill="url(#backPattern)" stroke="#718487"/>
+      <text x="44" y="54" class="back-level" text-anchor="middle">3 级</text>
+      <text x="44" y="80" class="back-marks" text-anchor="middle">◇ ◇ ◇</text>
+    </g>
+  <text x="70" y="150" class="section">3 级发展卡 · 20 张</text>
+    <g transform="translate(70 174)" data-card-id="dev-white-3-01" role="img" aria-label="3 级钻石奖励发展卡，4 点威望；费用：缟玛瑙 7">
+      <title>3 级钻石奖励发展卡，4 点威望；费用：缟玛瑙 7</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">4</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">7</text>
+      <text x="10" y="143" class="id">dev-white-3-01</text>
+    </g>
+    <g transform="translate(228 174)" data-card-id="dev-white-3-02" role="img" aria-label="3 级钻石奖励发展卡，4 点威望；费用：钻石 3、红宝石 3、缟玛瑙 6">
+      <title>3 级钻石奖励发展卡，4 点威望；费用：钻石 3、红宝石 3、缟玛瑙 6</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">4</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">6</text>
+      <text x="10" y="143" class="id">dev-white-3-02</text>
+    </g>
+    <g transform="translate(386 174)" data-card-id="dev-white-3-03" role="img" aria-label="3 级钻石奖励发展卡，3 点威望；费用：蓝宝石 3、祖母绿 3、红宝石 5、缟玛瑙 3">
+      <title>3 级钻石奖励发展卡，3 点威望；费用：蓝宝石 3、祖母绿 3、红宝石 5、缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">3</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="57.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-white-3-03</text>
+    </g>
+    <g transform="translate(544 174)" data-card-id="dev-white-3-04" role="img" aria-label="3 级钻石奖励发展卡，5 点威望；费用：钻石 3、缟玛瑙 7">
+      <title>3 级钻石奖励发展卡，5 点威望；费用：钻石 3、缟玛瑙 7</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">5</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="82.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">7</text>
+      <text x="10" y="143" class="id">dev-white-3-04</text>
+    </g>
+    <g transform="translate(702 174)" data-card-id="dev-blue-3-01" role="img" aria-label="3 级蓝宝石奖励发展卡，4 点威望；费用：钻石 7">
+      <title>3 级蓝宝石奖励发展卡，4 点威望；费用：钻石 7</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">4</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#20292D">7</text>
+      <text x="10" y="143" class="id">dev-blue-3-01</text>
+    </g>
+    <g transform="translate(860 174)" data-card-id="dev-blue-3-02" role="img" aria-label="3 级蓝宝石奖励发展卡，4 点威望；费用：钻石 6、蓝宝石 3、缟玛瑙 3">
+      <title>3 级蓝宝石奖励发展卡，4 点威望；费用：钻石 6、蓝宝石 3、缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">4</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">6</text><circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-blue-3-02</text>
+    </g>
+    <g transform="translate(1018 174)" data-card-id="dev-blue-3-03" role="img" aria-label="3 级蓝宝石奖励发展卡，3 点威望；费用：钻石 3、祖母绿 3、红宝石 3、缟玛瑙 5">
+      <title>3 级蓝宝石奖励发展卡，3 点威望；费用：钻石 3、祖母绿 3、红宝石 3、缟玛瑙 5</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">3</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="57.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text>
+      <text x="10" y="143" class="id">dev-blue-3-03</text>
+    </g>
+    <g transform="translate(1176 174)" data-card-id="dev-blue-3-04" role="img" aria-label="3 级蓝宝石奖励发展卡，5 点威望；费用：钻石 7、蓝宝石 3">
+      <title>3 级蓝宝石奖励发展卡，5 点威望；费用：钻石 7、蓝宝石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">5</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#20292D">7</text><circle cx="82.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-blue-3-04</text>
+    </g>
+    <g transform="translate(1334 174)" data-card-id="dev-green-3-01" role="img" aria-label="3 级祖母绿奖励发展卡，4 点威望；费用：蓝宝石 7">
+      <title>3 级祖母绿奖励发展卡，4 点威望；费用：蓝宝石 7</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">4</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">7</text>
+      <text x="10" y="143" class="id">dev-green-3-01</text>
+    </g>
+    <g transform="translate(1492 174)" data-card-id="dev-green-3-02" role="img" aria-label="3 级祖母绿奖励发展卡，4 点威望；费用：钻石 3、蓝宝石 6、祖母绿 3">
+      <title>3 级祖母绿奖励发展卡，4 点威望；费用：钻石 3、蓝宝石 6、祖母绿 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">4</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">6</text><circle cx="95.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-green-3-02</text>
+    </g>
+    <g transform="translate(70 379)" data-card-id="dev-green-3-03" role="img" aria-label="3 级祖母绿奖励发展卡，3 点威望；费用：钻石 5、蓝宝石 3、红宝石 3、缟玛瑙 3">
+      <title>3 级祖母绿奖励发展卡，3 点威望；费用：钻石 5、蓝宝石 3、红宝石 3、缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">3</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">5</text><circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-green-3-03</text>
+    </g>
+    <g transform="translate(228 379)" data-card-id="dev-green-3-04" role="img" aria-label="3 级祖母绿奖励发展卡，5 点威望；费用：蓝宝石 7、祖母绿 3">
+      <title>3 级祖母绿奖励发展卡，5 点威望；费用：蓝宝石 7、祖母绿 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">5</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">7</text><circle cx="82.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-green-3-04</text>
+    </g>
+    <g transform="translate(386 379)" data-card-id="dev-red-3-01" role="img" aria-label="3 级红宝石奖励发展卡，4 点威望；费用：祖母绿 7">
+      <title>3 级红宝石奖励发展卡，4 点威望；费用：祖母绿 7</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">4</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">7</text>
+      <text x="10" y="143" class="id">dev-red-3-01</text>
+    </g>
+    <g transform="translate(544 379)" data-card-id="dev-red-3-02" role="img" aria-label="3 级红宝石奖励发展卡，4 点威望；费用：蓝宝石 3、祖母绿 6、红宝石 3">
+      <title>3 级红宝石奖励发展卡，4 点威望；费用：蓝宝石 3、祖母绿 6、红宝石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">4</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">6</text><circle cx="95.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-red-3-02</text>
+    </g>
+    <g transform="translate(702 379)" data-card-id="dev-red-3-03" role="img" aria-label="3 级红宝石奖励发展卡，3 点威望；费用：钻石 3、蓝宝石 5、祖母绿 3、缟玛瑙 3">
+      <title>3 级红宝石奖励发展卡，3 点威望；费用：钻石 3、蓝宝石 5、祖母绿 3、缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">3</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text><circle cx="82.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-red-3-03</text>
+    </g>
+    <g transform="translate(860 379)" data-card-id="dev-red-3-04" role="img" aria-label="3 级红宝石奖励发展卡，5 点威望；费用：祖母绿 7、红宝石 3">
+      <title>3 级红宝石奖励发展卡，5 点威望；费用：祖母绿 7、红宝石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">5</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">7</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-red-3-04</text>
+    </g>
+    <g transform="translate(1018 379)" data-card-id="dev-black-3-01" role="img" aria-label="3 级缟玛瑙奖励发展卡，4 点威望；费用：红宝石 7">
+      <title>3 级缟玛瑙奖励发展卡，4 点威望；费用：红宝石 7</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">4</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">7</text>
+      <text x="10" y="143" class="id">dev-black-3-01</text>
+    </g>
+    <g transform="translate(1176 379)" data-card-id="dev-black-3-02" role="img" aria-label="3 级缟玛瑙奖励发展卡，4 点威望；费用：祖母绿 3、红宝石 6、缟玛瑙 3">
+      <title>3 级缟玛瑙奖励发展卡，4 点威望；费用：祖母绿 3、红宝石 6、缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">4</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">6</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-black-3-02</text>
+    </g>
+    <g transform="translate(1334 379)" data-card-id="dev-black-3-03" role="img" aria-label="3 级缟玛瑙奖励发展卡，3 点威望；费用：钻石 3、蓝宝石 3、祖母绿 5、红宝石 3">
+      <title>3 级缟玛瑙奖励发展卡，3 点威望；费用：钻石 3、蓝宝石 3、祖母绿 5、红宝石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">3</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="82.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text><circle cx="107.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-black-3-03</text>
+    </g>
+    <g transform="translate(1492 379)" data-card-id="dev-black-3-04" role="img" aria-label="3 级缟玛瑙奖励发展卡，5 点威望；费用：红宝石 7、缟玛瑙 3">
+      <title>3 级缟玛瑙奖励发展卡，5 点威望；费用：红宝石 7、缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">5</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">3 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">7</text><circle cx="82.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-black-3-04</text>
+    </g><text x="70" y="590" class="section">2 级发展卡 · 30 张</text>
+    <g transform="translate(70 614)" data-card-id="dev-white-2-01" role="img" aria-label="2 级钻石奖励发展卡，2 点威望；费用：红宝石 5">
+      <title>2 级钻石奖励发展卡，2 点威望；费用：红宝石 5</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text>
+      <text x="10" y="143" class="id">dev-white-2-01</text>
+    </g>
+    <g transform="translate(228 614)" data-card-id="dev-white-2-02" role="img" aria-label="2 级钻石奖励发展卡，3 点威望；费用：钻石 6">
+      <title>2 级钻石奖励发展卡，3 点威望；费用：钻石 6</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">3</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#20292D">6</text>
+      <text x="10" y="143" class="id">dev-white-2-02</text>
+    </g>
+    <g transform="translate(386 614)" data-card-id="dev-white-2-03" role="img" aria-label="2 级钻石奖励发展卡，2 点威望；费用：红宝石 5、缟玛瑙 3">
+      <title>2 级钻石奖励发展卡，2 点威望；费用：红宝石 5、缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text><circle cx="82.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-white-2-03</text>
+    </g>
+    <g transform="translate(544 614)" data-card-id="dev-white-2-04" role="img" aria-label="2 级钻石奖励发展卡，2 点威望；费用：祖母绿 1、红宝石 4、缟玛瑙 2">
+      <title>2 级钻石奖励发展卡，2 点威望；费用：祖母绿 1、红宝石 4、缟玛瑙 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">4</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-white-2-04</text>
+    </g>
+    <g transform="translate(702 614)" data-card-id="dev-white-2-05" role="img" aria-label="2 级钻石奖励发展卡，1 点威望；费用：祖母绿 3、红宝石 2、缟玛瑙 2">
+      <title>2 级钻石奖励发展卡，1 点威望；费用：祖母绿 3、红宝石 2、缟玛瑙 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-white-2-05</text>
+    </g>
+    <g transform="translate(860 614)" data-card-id="dev-white-2-06" role="img" aria-label="2 级钻石奖励发展卡，1 点威望；费用：钻石 2、蓝宝石 3、红宝石 3">
+      <title>2 级钻石奖励发展卡，1 点威望；费用：钻石 2、蓝宝石 3、红宝石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">2</text><circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="95.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-white-2-06</text>
+    </g>
+    <g transform="translate(1018 614)" data-card-id="dev-blue-2-01" role="img" aria-label="2 级蓝宝石奖励发展卡，2 点威望；费用：蓝宝石 5">
+      <title>2 级蓝宝石奖励发展卡，2 点威望；费用：蓝宝石 5</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text>
+      <text x="10" y="143" class="id">dev-blue-2-01</text>
+    </g>
+    <g transform="translate(1176 614)" data-card-id="dev-blue-2-02" role="img" aria-label="2 级蓝宝石奖励发展卡，3 点威望；费用：蓝宝石 6">
+      <title>2 级蓝宝石奖励发展卡，3 点威望；费用：蓝宝石 6</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">3</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">6</text>
+      <text x="10" y="143" class="id">dev-blue-2-02</text>
+    </g>
+    <g transform="translate(1334 614)" data-card-id="dev-blue-2-03" role="img" aria-label="2 级蓝宝石奖励发展卡，2 点威望；费用：钻石 5、蓝宝石 3">
+      <title>2 级蓝宝石奖励发展卡，2 点威望；费用：钻石 5、蓝宝石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#20292D">5</text><circle cx="82.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-blue-2-03</text>
+    </g>
+    <g transform="translate(1492 614)" data-card-id="dev-blue-2-04" role="img" aria-label="2 级蓝宝石奖励发展卡，2 点威望；费用：钻石 2、红宝石 1、缟玛瑙 4">
+      <title>2 级蓝宝石奖励发展卡，2 点威望；费用：钻石 2、红宝石 1、缟玛瑙 4</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">2</text><circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">4</text>
+      <text x="10" y="143" class="id">dev-blue-2-04</text>
+    </g>
+    <g transform="translate(70 819)" data-card-id="dev-blue-2-05" role="img" aria-label="2 级蓝宝石奖励发展卡，1 点威望；费用：蓝宝石 2、祖母绿 2、红宝石 3">
+      <title>2 级蓝宝石奖励发展卡，1 点威望；费用：蓝宝石 2、祖母绿 2、红宝石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="95.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-blue-2-05</text>
+    </g>
+    <g transform="translate(228 819)" data-card-id="dev-blue-2-06" role="img" aria-label="2 级蓝宝石奖励发展卡，1 点威望；费用：蓝宝石 2、祖母绿 3、缟玛瑙 3">
+      <title>2 级蓝宝石奖励发展卡，1 点威望；费用：蓝宝石 2、祖母绿 3、缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-blue-2-06</text>
+    </g>
+    <g transform="translate(386 819)" data-card-id="dev-green-2-01" role="img" aria-label="2 级祖母绿奖励发展卡，2 点威望；费用：祖母绿 5">
+      <title>2 级祖母绿奖励发展卡，2 点威望；费用：祖母绿 5</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text>
+      <text x="10" y="143" class="id">dev-green-2-01</text>
+    </g>
+    <g transform="translate(544 819)" data-card-id="dev-green-2-02" role="img" aria-label="2 级祖母绿奖励发展卡，3 点威望；费用：祖母绿 6">
+      <title>2 级祖母绿奖励发展卡，3 点威望；费用：祖母绿 6</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">3</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">6</text>
+      <text x="10" y="143" class="id">dev-green-2-02</text>
+    </g>
+    <g transform="translate(702 819)" data-card-id="dev-green-2-03" role="img" aria-label="2 级祖母绿奖励发展卡，2 点威望；费用：蓝宝石 5、祖母绿 3">
+      <title>2 级祖母绿奖励发展卡，2 点威望；费用：蓝宝石 5、祖母绿 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text><circle cx="82.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-green-2-03</text>
+    </g>
+    <g transform="translate(860 819)" data-card-id="dev-green-2-04" role="img" aria-label="2 级祖母绿奖励发展卡，2 点威望；费用：钻石 4、蓝宝石 2、缟玛瑙 1">
+      <title>2 级祖母绿奖励发展卡，2 点威望；费用：钻石 4、蓝宝石 2、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">4</text><circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-green-2-04</text>
+    </g>
+    <g transform="translate(1018 819)" data-card-id="dev-green-2-05" role="img" aria-label="2 级祖母绿奖励发展卡，1 点威望；费用：钻石 2、蓝宝石 3、缟玛瑙 2">
+      <title>2 级祖母绿奖励发展卡，1 点威望；费用：钻石 2、蓝宝石 3、缟玛瑙 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">2</text><circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-green-2-05</text>
+    </g>
+    <g transform="translate(1176 819)" data-card-id="dev-green-2-06" role="img" aria-label="2 级祖母绿奖励发展卡，1 点威望；费用：钻石 3、祖母绿 2、红宝石 3">
+      <title>2 级祖母绿奖励发展卡，1 点威望；费用：钻石 3、祖母绿 2、红宝石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="95.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-green-2-06</text>
+    </g>
+    <g transform="translate(1334 819)" data-card-id="dev-red-2-01" role="img" aria-label="2 级红宝石奖励发展卡，2 点威望；费用：缟玛瑙 5">
+      <title>2 级红宝石奖励发展卡，2 点威望；费用：缟玛瑙 5</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text>
+      <text x="10" y="143" class="id">dev-red-2-01</text>
+    </g>
+    <g transform="translate(1492 819)" data-card-id="dev-red-2-02" role="img" aria-label="2 级红宝石奖励发展卡，3 点威望；费用：红宝石 6">
+      <title>2 级红宝石奖励发展卡，3 点威望；费用：红宝石 6</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">3</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">6</text>
+      <text x="10" y="143" class="id">dev-red-2-02</text>
+    </g>
+    <g transform="translate(70 1024)" data-card-id="dev-red-2-03" role="img" aria-label="2 级红宝石奖励发展卡，2 点威望；费用：钻石 3、缟玛瑙 5">
+      <title>2 级红宝石奖励发展卡，2 点威望；费用：钻石 3、缟玛瑙 5</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="82.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text>
+      <text x="10" y="143" class="id">dev-red-2-03</text>
+    </g>
+    <g transform="translate(228 1024)" data-card-id="dev-red-2-04" role="img" aria-label="2 级红宝石奖励发展卡，2 点威望；费用：钻石 1、蓝宝石 4、祖母绿 2">
+      <title>2 级红宝石奖励发展卡，2 点威望；费用：钻石 1、蓝宝石 4、祖母绿 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">4</text><circle cx="95.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-red-2-04</text>
+    </g>
+    <g transform="translate(386 1024)" data-card-id="dev-red-2-05" role="img" aria-label="2 级红宝石奖励发展卡，1 点威望；费用：钻石 2、红宝石 2、缟玛瑙 3">
+      <title>2 级红宝石奖励发展卡，1 点威望；费用：钻石 2、红宝石 2、缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">2</text><circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-red-2-05</text>
+    </g>
+    <g transform="translate(544 1024)" data-card-id="dev-red-2-06" role="img" aria-label="2 级红宝石奖励发展卡，1 点威望；费用：蓝宝石 3、红宝石 2、缟玛瑙 3">
+      <title>2 级红宝石奖励发展卡，1 点威望；费用：蓝宝石 3、红宝石 2、缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-red-2-06</text>
+    </g>
+    <g transform="translate(702 1024)" data-card-id="dev-black-2-01" role="img" aria-label="2 级缟玛瑙奖励发展卡，2 点威望；费用：钻石 5">
+      <title>2 级缟玛瑙奖励发展卡，2 点威望；费用：钻石 5</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#20292D">5</text>
+      <text x="10" y="143" class="id">dev-black-2-01</text>
+    </g>
+    <g transform="translate(860 1024)" data-card-id="dev-black-2-02" role="img" aria-label="2 级缟玛瑙奖励发展卡，3 点威望；费用：缟玛瑙 6">
+      <title>2 级缟玛瑙奖励发展卡，3 点威望；费用：缟玛瑙 6</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">3</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">6</text>
+      <text x="10" y="143" class="id">dev-black-2-02</text>
+    </g>
+    <g transform="translate(1018 1024)" data-card-id="dev-black-2-03" role="img" aria-label="2 级缟玛瑙奖励发展卡，2 点威望；费用：祖母绿 5、红宝石 3">
+      <title>2 级缟玛瑙奖励发展卡，2 点威望；费用：祖母绿 5、红宝石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">5</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-black-2-03</text>
+    </g>
+    <g transform="translate(1176 1024)" data-card-id="dev-black-2-04" role="img" aria-label="2 级缟玛瑙奖励发展卡，2 点威望；费用：蓝宝石 1、祖母绿 4、红宝石 2">
+      <title>2 级缟玛瑙奖励发展卡，2 点威望；费用：蓝宝石 1、祖母绿 4、红宝石 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">2</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">4</text><circle cx="95.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-black-2-04</text>
+    </g>
+    <g transform="translate(1334 1024)" data-card-id="dev-black-2-05" role="img" aria-label="2 级缟玛瑙奖励发展卡，1 点威望；费用：钻石 3、蓝宝石 2、祖母绿 2">
+      <title>2 级缟玛瑙奖励发展卡，1 点威望；费用：钻石 3、蓝宝石 2、祖母绿 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="95.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-black-2-05</text>
+    </g>
+    <g transform="translate(1492 1024)" data-card-id="dev-black-2-06" role="img" aria-label="2 级缟玛瑙奖励发展卡，1 点威望；费用：钻石 3、祖母绿 3、缟玛瑙 2">
+      <title>2 级缟玛瑙奖励发展卡，1 点威望；费用：钻石 3、祖母绿 3、缟玛瑙 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">2 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-black-2-06</text>
+    </g><text x="70" y="1230" class="section">1 级发展卡 · 40 张</text>
+    <g transform="translate(70 1254)" data-card-id="dev-white-1-01" role="img" aria-label="1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 3">
+      <title>1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-white-1-01</text>
+    </g>
+    <g transform="translate(228 1254)" data-card-id="dev-white-1-02" role="img" aria-label="1 级钻石奖励发展卡，1 点威望；费用：祖母绿 4">
+      <title>1 级钻石奖励发展卡，1 点威望；费用：祖母绿 4</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">4</text>
+      <text x="10" y="143" class="id">dev-white-1-02</text>
+    </g>
+    <g transform="translate(386 1254)" data-card-id="dev-white-1-03" role="img" aria-label="1 级钻石奖励发展卡，0 点威望；费用：红宝石 2、缟玛瑙 1">
+      <title>1 级钻石奖励发展卡，0 点威望；费用：红宝石 2、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="82.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-white-1-03</text>
+    </g>
+    <g transform="translate(544 1254)" data-card-id="dev-white-1-04" role="img" aria-label="1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 2、缟玛瑙 2">
+      <title>1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 2、缟玛瑙 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="82.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-white-1-04</text>
+    </g>
+    <g transform="translate(702 1254)" data-card-id="dev-white-1-05" role="img" aria-label="1 级钻石奖励发展卡，0 点威望；费用：钻石 3、蓝宝石 1、缟玛瑙 1">
+      <title>1 级钻石奖励发展卡，0 点威望；费用：钻石 3、蓝宝石 1、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-white-1-05</text>
+    </g>
+    <g transform="translate(860 1254)" data-card-id="dev-white-1-06" role="img" aria-label="1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 2、祖母绿 2、缟玛瑙 1">
+      <title>1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 2、祖母绿 2、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-white-1-06</text>
+    </g>
+    <g transform="translate(1018 1254)" data-card-id="dev-white-1-07" role="img" aria-label="1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 1、祖母绿 1、红宝石 1、缟玛瑙 1">
+      <title>1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 1、祖母绿 1、红宝石 1、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="57.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-white-1-07</text>
+    </g>
+    <g transform="translate(1176 1254)" data-card-id="dev-white-1-08" role="img" aria-label="1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 1、祖母绿 2、红宝石 1、缟玛瑙 1">
+      <title>1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 1、祖母绿 2、红宝石 1、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#E8E3D8"/>
+      <text x="16" y="33" class="score" fill="#20292D">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#20292D">◇</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 钻石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#E8E3D8" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#E8E3D8" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="57.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-white-1-08</text>
+    </g>
+    <g transform="translate(1334 1254)" data-card-id="dev-blue-1-01" role="img" aria-label="1 级蓝宝石奖励发展卡，0 点威望；费用：缟玛瑙 3">
+      <title>1 级蓝宝石奖励发展卡，0 点威望；费用：缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-blue-1-01</text>
+    </g>
+    <g transform="translate(1492 1254)" data-card-id="dev-blue-1-02" role="img" aria-label="1 级蓝宝石奖励发展卡，1 点威望；费用：红宝石 4">
+      <title>1 级蓝宝石奖励发展卡，1 点威望；费用：红宝石 4</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">4</text>
+      <text x="10" y="143" class="id">dev-blue-1-02</text>
+    </g>
+    <g transform="translate(70 1459)" data-card-id="dev-blue-1-03" role="img" aria-label="1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、缟玛瑙 2">
+      <title>1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、缟玛瑙 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="82.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-blue-1-03</text>
+    </g>
+    <g transform="translate(228 1459)" data-card-id="dev-blue-1-04" role="img" aria-label="1 级蓝宝石奖励发展卡，0 点威望；费用：祖母绿 2、缟玛瑙 2">
+      <title>1 级蓝宝石奖励发展卡，0 点威望；费用：祖母绿 2、缟玛瑙 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="82.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-blue-1-04</text>
+    </g>
+    <g transform="translate(386 1459)" data-card-id="dev-blue-1-05" role="img" aria-label="1 级蓝宝石奖励发展卡，0 点威望；费用：蓝宝石 1、祖母绿 3、红宝石 1">
+      <title>1 级蓝宝石奖励发展卡，0 点威望；费用：蓝宝石 1、祖母绿 3、红宝石 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="95.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-blue-1-05</text>
+    </g>
+    <g transform="translate(544 1459)" data-card-id="dev-blue-1-06" role="img" aria-label="1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、祖母绿 2、红宝石 2">
+      <title>1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、祖母绿 2、红宝石 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="95.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-blue-1-06</text>
+    </g>
+    <g transform="translate(702 1459)" data-card-id="dev-blue-1-07" role="img" aria-label="1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、祖母绿 1、红宝石 1、缟玛瑙 1">
+      <title>1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、祖母绿 1、红宝石 1、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="57.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-blue-1-07</text>
+    </g>
+    <g transform="translate(860 1459)" data-card-id="dev-blue-1-08" role="img" aria-label="1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、祖母绿 1、红宝石 2、缟玛瑙 1">
+      <title>1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、祖母绿 1、红宝石 2、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#3A739A"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">◆</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 蓝宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#3A739A" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#3A739A" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="57.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-blue-1-08</text>
+    </g>
+    <g transform="translate(1018 1459)" data-card-id="dev-green-1-01" role="img" aria-label="1 级祖母绿奖励发展卡，0 点威望；费用：红宝石 3">
+      <title>1 级祖母绿奖励发展卡，0 点威望；费用：红宝石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-green-1-01</text>
+    </g>
+    <g transform="translate(1176 1459)" data-card-id="dev-green-1-02" role="img" aria-label="1 级祖母绿奖励发展卡，1 点威望；费用：缟玛瑙 4">
+      <title>1 级祖母绿奖励发展卡，1 点威望；费用：缟玛瑙 4</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">4</text>
+      <text x="10" y="143" class="id">dev-green-1-02</text>
+    </g>
+    <g transform="translate(1334 1459)" data-card-id="dev-green-1-03" role="img" aria-label="1 级祖母绿奖励发展卡，0 点威望；费用：钻石 2、蓝宝石 1">
+      <title>1 级祖母绿奖励发展卡，0 点威望；费用：钻石 2、蓝宝石 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#20292D">2</text><circle cx="82.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-green-1-03</text>
+    </g>
+    <g transform="translate(1492 1459)" data-card-id="dev-green-1-04" role="img" aria-label="1 级祖母绿奖励发展卡，0 点威望；费用：蓝宝石 2、红宝石 2">
+      <title>1 级祖母绿奖励发展卡，0 点威望；费用：蓝宝石 2、红宝石 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-green-1-04</text>
+    </g>
+    <g transform="translate(70 1664)" data-card-id="dev-green-1-05" role="img" aria-label="1 级祖母绿奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 3、祖母绿 1">
+      <title>1 级祖母绿奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 3、祖母绿 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="95.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-green-1-05</text>
+    </g>
+    <g transform="translate(228 1664)" data-card-id="dev-green-1-06" role="img" aria-label="1 级祖母绿奖励发展卡，0 点威望；费用：蓝宝石 1、红宝石 2、缟玛瑙 2">
+      <title>1 级祖母绿奖励发展卡，0 点威望；费用：蓝宝石 1、红宝石 2、缟玛瑙 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-green-1-06</text>
+    </g>
+    <g transform="translate(386 1664)" data-card-id="dev-green-1-07" role="img" aria-label="1 级祖母绿奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、红宝石 1、缟玛瑙 1">
+      <title>1 级祖母绿奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、红宝石 1、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-green-1-07</text>
+    </g>
+    <g transform="translate(544 1664)" data-card-id="dev-green-1-08" role="img" aria-label="1 级祖母绿奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、红宝石 1、缟玛瑙 2">
+      <title>1 级祖母绿奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、红宝石 1、缟玛瑙 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#4E8068"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬟</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 祖母绿奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#4E8068" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#4E8068" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-green-1-08</text>
+    </g>
+    <g transform="translate(702 1664)" data-card-id="dev-red-1-01" role="img" aria-label="1 级红宝石奖励发展卡，0 点威望；费用：钻石 3">
+      <title>1 级红宝石奖励发展卡，0 点威望；费用：钻石 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#20292D">3</text>
+      <text x="10" y="143" class="id">dev-red-1-01</text>
+    </g>
+    <g transform="translate(860 1664)" data-card-id="dev-red-1-02" role="img" aria-label="1 级红宝石奖励发展卡，1 点威望；费用：钻石 4">
+      <title>1 级红宝石奖励发展卡，1 点威望；费用：钻石 4</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#20292D">4</text>
+      <text x="10" y="143" class="id">dev-red-1-02</text>
+    </g>
+    <g transform="translate(1018 1664)" data-card-id="dev-red-1-03" role="img" aria-label="1 级红宝石奖励发展卡，0 点威望；费用：蓝宝石 2、祖母绿 1">
+      <title>1 级红宝石奖励发展卡，0 点威望；费用：蓝宝石 2、祖母绿 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="82.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-red-1-03</text>
+    </g>
+    <g transform="translate(1176 1664)" data-card-id="dev-red-1-04" role="img" aria-label="1 级红宝石奖励发展卡，0 点威望；费用：钻石 2、红宝石 2">
+      <title>1 级红宝石奖励发展卡，0 点威望；费用：钻石 2、红宝石 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#20292D">2</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-red-1-04</text>
+    </g>
+    <g transform="translate(1334 1664)" data-card-id="dev-red-1-05" role="img" aria-label="1 级红宝石奖励发展卡，0 点威望；费用：钻石 1、红宝石 1、缟玛瑙 3">
+      <title>1 级红宝石奖励发展卡，0 点威望；费用：钻石 1、红宝石 1、缟玛瑙 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-red-1-05</text>
+    </g>
+    <g transform="translate(1492 1664)" data-card-id="dev-red-1-06" role="img" aria-label="1 级红宝石奖励发展卡，0 点威望；费用：钻石 2、祖母绿 1、缟玛瑙 2">
+      <title>1 级红宝石奖励发展卡，0 点威望；费用：钻石 2、祖母绿 1、缟玛瑙 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">2</text><circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-red-1-06</text>
+    </g>
+    <g transform="translate(70 1869)" data-card-id="dev-red-1-07" role="img" aria-label="1 级红宝石奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、祖母绿 1、缟玛瑙 1">
+      <title>1 级红宝石奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、祖母绿 1、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="82.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-red-1-07</text>
+    </g>
+    <g transform="translate(228 1869)" data-card-id="dev-red-1-08" role="img" aria-label="1 级红宝石奖励发展卡，0 点威望；费用：钻石 2、蓝宝石 1、祖母绿 1、缟玛瑙 1">
+      <title>1 级红宝石奖励发展卡，0 点威望；费用：钻石 2、蓝宝石 1、祖母绿 1、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#A8524B"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">⬢</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 红宝石奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#A8524B" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#A8524B" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">2</text><circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="82.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="107.5" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-red-1-08</text>
+    </g>
+    <g transform="translate(386 1869)" data-card-id="dev-black-1-01" role="img" aria-label="1 级缟玛瑙奖励发展卡，0 点威望；费用：祖母绿 3">
+      <title>1 级缟玛瑙奖励发展卡，0 点威望；费用：祖母绿 3</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="10" y="143" class="id">dev-black-1-01</text>
+    </g>
+    <g transform="translate(544 1869)" data-card-id="dev-black-1-02" role="img" aria-label="1 级缟玛瑙奖励发展卡，1 点威望；费用：蓝宝石 4">
+      <title>1 级缟玛瑙奖励发展卡，1 点威望；费用：蓝宝石 4</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">1</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">4</text>
+      <text x="10" y="143" class="id">dev-black-1-02</text>
+    </g>
+    <g transform="translate(702 1869)" data-card-id="dev-black-1-03" role="img" aria-label="1 级缟玛瑙奖励发展卡，0 点威望；费用：祖母绿 2、红宝石 1">
+      <title>1 级缟玛瑙奖励发展卡，0 点威望；费用：祖母绿 2、红宝石 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="82.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-black-1-03</text>
+    </g>
+    <g transform="translate(860 1869)" data-card-id="dev-black-1-04" role="img" aria-label="1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 2、祖母绿 2">
+      <title>1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 2、祖母绿 2</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="57.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#20292D">2</text><circle cx="82.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+      <text x="10" y="143" class="id">dev-black-1-04</text>
+    </g>
+    <g transform="translate(1018 1869)" data-card-id="dev-black-1-05" role="img" aria-label="1 级缟玛瑙奖励发展卡，0 点威望；费用：祖母绿 1、红宝石 3、缟玛瑙 1">
+      <title>1 级缟玛瑙奖励发展卡，0 点威望；费用：祖母绿 1、红宝石 3、缟玛瑙 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="70.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="95.0" cy="167" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-black-1-05</text>
+    </g>
+    <g transform="translate(1176 1869)" data-card-id="dev-black-1-06" role="img" aria-label="1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 2、蓝宝石 2、红宝石 1">
+      <title>1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 2、蓝宝石 2、红宝石 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="45.0" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="45.0" y="171" class="cost" text-anchor="middle" fill="#20292D">2</text><circle cx="70.0" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="70.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="95.0" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="95.0" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-black-1-06</text>
+    </g>
+    <g transform="translate(1334 1869)" data-card-id="dev-black-1-07" role="img" aria-label="1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、祖母绿 1、红宝石 1">
+      <title>1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、祖母绿 1、红宝石 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="82.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="107.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-black-1-07</text>
+    </g>
+    <g transform="translate(1492 1869)" data-card-id="dev-black-1-08" role="img" aria-label="1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 2、祖母绿 1、红宝石 1">
+      <title>1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 2、祖母绿 1、红宝石 1</title>
+      <rect width="140" height="190" rx="13" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="130" height="42" rx="10" fill="#353A3D"/>
+      <text x="16" y="33" class="score" fill="#FFFFFF">-</text>
+      <text x="126" y="31" class="bonus" text-anchor="end" fill="#FFFFFF">●</text>
+      <text x="70.0" y="62" class="micro" text-anchor="middle">1 级 · 缟玛瑙奖励</text>
+      <polygon points="70,70 105,95 94,136 46,136 35,95" fill="none" stroke="#353A3D" stroke-width="5"/><path d="M35 95 L94 136 M105 95 L46 136 M70 70 V136" fill="none" stroke="#353A3D" stroke-width="2.5" opacity="0.75"/>
+      <rect x="7" y="148" width="126" height="35" rx="9" fill="#E6DFD2" stroke="#C7BDAA"/>
+      <circle cx="32.5" cy="167" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="32.5" y="171" class="cost" text-anchor="middle" fill="#20292D">1</text><circle cx="57.5" cy="167" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="57.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="82.5" cy="167" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="82.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="107.5" cy="167" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="107.5" y="171" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+      <text x="10" y="143" class="id">dev-black-1-08</text>
+    </g>
+  <text x="70" y="2210" class="section">贵族板块 · 10 张</text>
+
+    <g transform="translate(70 2240)" data-noble-id="noble-white-blue-4" role="img" aria-label="贵族板块，3 点威望；拜访要求：钻石 4、蓝宝石 4的永久奖励">
+      <title>贵族板块，3 点威望；拜访要求：钻石 4、蓝宝石 4的永久奖励</title>
+      <rect width="140" height="140" rx="15" fill="#EFE3C9" stroke="#B78A3F" stroke-width="3"/>
+      <text x="14" y="31" class="score" fill="#60461E">3</text>
+      <circle cx="70" cy="61" r="23" fill="#73665B" opacity="0.28"/>
+      <path d="M35 96 Q70 64 105 96" fill="#73665B" opacity="0.28"/>
+      <circle cx="53.0" cy="112" r="14" fill="#E8E3D8" stroke="#172225" stroke-width="2"/><text x="53.0" y="117" class="noble-cost" text-anchor="middle" fill="#20292D">4</text><circle cx="87.0" cy="112" r="14" fill="#3A739A" stroke="#172225" stroke-width="2"/><text x="87.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">4</text>
+      <text x="70" y="134" class="noble-id" text-anchor="middle">white-blue-4</text>
+    </g>
+    <g transform="translate(228 2240)" data-noble-id="noble-blue-green-4" role="img" aria-label="贵族板块，3 点威望；拜访要求：蓝宝石 4、祖母绿 4的永久奖励">
+      <title>贵族板块，3 点威望；拜访要求：蓝宝石 4、祖母绿 4的永久奖励</title>
+      <rect width="140" height="140" rx="15" fill="#EFE3C9" stroke="#B78A3F" stroke-width="3"/>
+      <text x="14" y="31" class="score" fill="#60461E">3</text>
+      <circle cx="70" cy="61" r="23" fill="#73665B" opacity="0.28"/>
+      <path d="M35 96 Q70 64 105 96" fill="#73665B" opacity="0.28"/>
+      <circle cx="53.0" cy="112" r="14" fill="#3A739A" stroke="#172225" stroke-width="2"/><text x="53.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">4</text><circle cx="87.0" cy="112" r="14" fill="#4E8068" stroke="#172225" stroke-width="2"/><text x="87.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">4</text>
+      <text x="70" y="134" class="noble-id" text-anchor="middle">blue-green-4</text>
+    </g>
+    <g transform="translate(386 2240)" data-noble-id="noble-green-red-4" role="img" aria-label="贵族板块，3 点威望；拜访要求：祖母绿 4、红宝石 4的永久奖励">
+      <title>贵族板块，3 点威望；拜访要求：祖母绿 4、红宝石 4的永久奖励</title>
+      <rect width="140" height="140" rx="15" fill="#EFE3C9" stroke="#B78A3F" stroke-width="3"/>
+      <text x="14" y="31" class="score" fill="#60461E">3</text>
+      <circle cx="70" cy="61" r="23" fill="#73665B" opacity="0.28"/>
+      <path d="M35 96 Q70 64 105 96" fill="#73665B" opacity="0.28"/>
+      <circle cx="53.0" cy="112" r="14" fill="#4E8068" stroke="#172225" stroke-width="2"/><text x="53.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">4</text><circle cx="87.0" cy="112" r="14" fill="#A8524B" stroke="#172225" stroke-width="2"/><text x="87.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">4</text>
+      <text x="70" y="134" class="noble-id" text-anchor="middle">green-red-4</text>
+    </g>
+    <g transform="translate(544 2240)" data-noble-id="noble-red-black-4" role="img" aria-label="贵族板块，3 点威望；拜访要求：红宝石 4、缟玛瑙 4的永久奖励">
+      <title>贵族板块，3 点威望；拜访要求：红宝石 4、缟玛瑙 4的永久奖励</title>
+      <rect width="140" height="140" rx="15" fill="#EFE3C9" stroke="#B78A3F" stroke-width="3"/>
+      <text x="14" y="31" class="score" fill="#60461E">3</text>
+      <circle cx="70" cy="61" r="23" fill="#73665B" opacity="0.28"/>
+      <path d="M35 96 Q70 64 105 96" fill="#73665B" opacity="0.28"/>
+      <circle cx="53.0" cy="112" r="14" fill="#A8524B" stroke="#172225" stroke-width="2"/><text x="53.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">4</text><circle cx="87.0" cy="112" r="14" fill="#353A3D" stroke="#172225" stroke-width="2"/><text x="87.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">4</text>
+      <text x="70" y="134" class="noble-id" text-anchor="middle">red-black-4</text>
+    </g>
+    <g transform="translate(702 2240)" data-noble-id="noble-black-white-4" role="img" aria-label="贵族板块，3 点威望；拜访要求：钻石 4、缟玛瑙 4的永久奖励">
+      <title>贵族板块，3 点威望；拜访要求：钻石 4、缟玛瑙 4的永久奖励</title>
+      <rect width="140" height="140" rx="15" fill="#EFE3C9" stroke="#B78A3F" stroke-width="3"/>
+      <text x="14" y="31" class="score" fill="#60461E">3</text>
+      <circle cx="70" cy="61" r="23" fill="#73665B" opacity="0.28"/>
+      <path d="M35 96 Q70 64 105 96" fill="#73665B" opacity="0.28"/>
+      <circle cx="53.0" cy="112" r="14" fill="#E8E3D8" stroke="#172225" stroke-width="2"/><text x="53.0" y="117" class="noble-cost" text-anchor="middle" fill="#20292D">4</text><circle cx="87.0" cy="112" r="14" fill="#353A3D" stroke="#172225" stroke-width="2"/><text x="87.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">4</text>
+      <text x="70" y="134" class="noble-id" text-anchor="middle">black-white-4</text>
+    </g>
+    <g transform="translate(860 2240)" data-noble-id="noble-white-blue-green-3" role="img" aria-label="贵族板块，3 点威望；拜访要求：钻石 3、蓝宝石 3、祖母绿 3的永久奖励">
+      <title>贵族板块，3 点威望；拜访要求：钻石 3、蓝宝石 3、祖母绿 3的永久奖励</title>
+      <rect width="140" height="140" rx="15" fill="#EFE3C9" stroke="#B78A3F" stroke-width="3"/>
+      <text x="14" y="31" class="score" fill="#60461E">3</text>
+      <circle cx="70" cy="61" r="23" fill="#73665B" opacity="0.28"/>
+      <path d="M35 96 Q70 64 105 96" fill="#73665B" opacity="0.28"/>
+      <circle cx="36.0" cy="112" r="14" fill="#E8E3D8" stroke="#172225" stroke-width="2"/><text x="36.0" y="117" class="noble-cost" text-anchor="middle" fill="#20292D">3</text><circle cx="70.0" cy="112" r="14" fill="#3A739A" stroke="#172225" stroke-width="2"/><text x="70.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="104.0" cy="112" r="14" fill="#4E8068" stroke="#172225" stroke-width="2"/><text x="104.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="70" y="134" class="noble-id" text-anchor="middle">white-blue-green-3</text>
+    </g>
+    <g transform="translate(1018 2240)" data-noble-id="noble-blue-green-red-3" role="img" aria-label="贵族板块，3 点威望；拜访要求：蓝宝石 3、祖母绿 3、红宝石 3的永久奖励">
+      <title>贵族板块，3 点威望；拜访要求：蓝宝石 3、祖母绿 3、红宝石 3的永久奖励</title>
+      <rect width="140" height="140" rx="15" fill="#EFE3C9" stroke="#B78A3F" stroke-width="3"/>
+      <text x="14" y="31" class="score" fill="#60461E">3</text>
+      <circle cx="70" cy="61" r="23" fill="#73665B" opacity="0.28"/>
+      <path d="M35 96 Q70 64 105 96" fill="#73665B" opacity="0.28"/>
+      <circle cx="36.0" cy="112" r="14" fill="#3A739A" stroke="#172225" stroke-width="2"/><text x="36.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="70.0" cy="112" r="14" fill="#4E8068" stroke="#172225" stroke-width="2"/><text x="70.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="104.0" cy="112" r="14" fill="#A8524B" stroke="#172225" stroke-width="2"/><text x="104.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="70" y="134" class="noble-id" text-anchor="middle">blue-green-red-3</text>
+    </g>
+    <g transform="translate(1176 2240)" data-noble-id="noble-green-red-black-3" role="img" aria-label="贵族板块，3 点威望；拜访要求：祖母绿 3、红宝石 3、缟玛瑙 3的永久奖励">
+      <title>贵族板块，3 点威望；拜访要求：祖母绿 3、红宝石 3、缟玛瑙 3的永久奖励</title>
+      <rect width="140" height="140" rx="15" fill="#EFE3C9" stroke="#B78A3F" stroke-width="3"/>
+      <text x="14" y="31" class="score" fill="#60461E">3</text>
+      <circle cx="70" cy="61" r="23" fill="#73665B" opacity="0.28"/>
+      <path d="M35 96 Q70 64 105 96" fill="#73665B" opacity="0.28"/>
+      <circle cx="36.0" cy="112" r="14" fill="#4E8068" stroke="#172225" stroke-width="2"/><text x="36.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="70.0" cy="112" r="14" fill="#A8524B" stroke="#172225" stroke-width="2"/><text x="70.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="104.0" cy="112" r="14" fill="#353A3D" stroke="#172225" stroke-width="2"/><text x="104.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="70" y="134" class="noble-id" text-anchor="middle">green-red-black-3</text>
+    </g>
+    <g transform="translate(1334 2240)" data-noble-id="noble-red-black-white-3" role="img" aria-label="贵族板块，3 点威望；拜访要求：钻石 3、红宝石 3、缟玛瑙 3的永久奖励">
+      <title>贵族板块，3 点威望；拜访要求：钻石 3、红宝石 3、缟玛瑙 3的永久奖励</title>
+      <rect width="140" height="140" rx="15" fill="#EFE3C9" stroke="#B78A3F" stroke-width="3"/>
+      <text x="14" y="31" class="score" fill="#60461E">3</text>
+      <circle cx="70" cy="61" r="23" fill="#73665B" opacity="0.28"/>
+      <path d="M35 96 Q70 64 105 96" fill="#73665B" opacity="0.28"/>
+      <circle cx="36.0" cy="112" r="14" fill="#E8E3D8" stroke="#172225" stroke-width="2"/><text x="36.0" y="117" class="noble-cost" text-anchor="middle" fill="#20292D">3</text><circle cx="70.0" cy="112" r="14" fill="#A8524B" stroke="#172225" stroke-width="2"/><text x="70.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="104.0" cy="112" r="14" fill="#353A3D" stroke="#172225" stroke-width="2"/><text x="104.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="70" y="134" class="noble-id" text-anchor="middle">red-black-white-3</text>
+    </g>
+    <g transform="translate(1492 2240)" data-noble-id="noble-black-white-blue-3" role="img" aria-label="贵族板块，3 点威望；拜访要求：钻石 3、蓝宝石 3、缟玛瑙 3的永久奖励">
+      <title>贵族板块，3 点威望；拜访要求：钻石 3、蓝宝石 3、缟玛瑙 3的永久奖励</title>
+      <rect width="140" height="140" rx="15" fill="#EFE3C9" stroke="#B78A3F" stroke-width="3"/>
+      <text x="14" y="31" class="score" fill="#60461E">3</text>
+      <circle cx="70" cy="61" r="23" fill="#73665B" opacity="0.28"/>
+      <path d="M35 96 Q70 64 105 96" fill="#73665B" opacity="0.28"/>
+      <circle cx="36.0" cy="112" r="14" fill="#E8E3D8" stroke="#172225" stroke-width="2"/><text x="36.0" y="117" class="noble-cost" text-anchor="middle" fill="#20292D">3</text><circle cx="70.0" cy="112" r="14" fill="#3A739A" stroke="#172225" stroke-width="2"/><text x="70.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="104.0" cy="112" r="14" fill="#353A3D" stroke="#172225" stroke-width="2"/><text x="104.0" y="117" class="noble-cost" text-anchor="middle" fill="#FFFFFF">3</text>
+      <text x="70" y="134" class="noble-id" text-anchor="middle">black-white-blue-3</text>
+    </g>
+  <text x="70" y="2410" class="subtitle">仅用于软件建模与视觉 QA；不含任何官方美术或可印刷复刻素材。</text>
+</svg>

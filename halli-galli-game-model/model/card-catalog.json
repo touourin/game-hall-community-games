@@ -1,0 +1,103 @@
+{
+  "$schema": "./card-catalog.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "halli-galli",
+  "sourceBasis": [
+    "https://blog.amigo-spiele.de/content/ap/rule/01700-DE-AmigoRule.pdf",
+    "https://www.amigo-spiele.de/halli-galli_1700_1077",
+    "https://boardgamegeek.com/boardgame/2944/halli-galli",
+    "https://www.brettspiele-report.de/halli-galli/"
+  ],
+  "cardPhysical": {
+    "widthMm": 56,
+    "heightMm": 87,
+    "prototypeWidth": 168,
+    "prototypeHeight": 261,
+    "cornerRadius": 13,
+    "safeInset": 12
+  },
+  "fruits": [
+    {
+      "id": "banana",
+      "nameZh": "香蕉",
+      "nameEn": "Banana",
+      "shape": "crescent-stem",
+      "pattern": "diagonal-stripe",
+      "ariaNounZh": "香蕉",
+      "palette": {
+        "base": "#F3C94A",
+        "dark": "#8A6512",
+        "light": "#FFF1A8"
+      }
+    },
+    {
+      "id": "strawberry",
+      "nameZh": "草莓",
+      "nameEn": "Strawberry",
+      "shape": "seeded-heart",
+      "pattern": "dot-seeds",
+      "ariaNounZh": "草莓",
+      "palette": {
+        "base": "#E9545B",
+        "dark": "#8F2330",
+        "light": "#FFC0BD"
+      }
+    },
+    {
+      "id": "lime",
+      "nameZh": "青柠",
+      "nameEn": "Lime",
+      "shape": "segmented-round",
+      "pattern": "radial-wedge",
+      "ariaNounZh": "青柠",
+      "palette": {
+        "base": "#79B94B",
+        "dark": "#386A28",
+        "light": "#C8E89D"
+      }
+    },
+    {
+      "id": "plum",
+      "nameZh": "李子",
+      "nameEn": "Plum",
+      "shape": "oval-leaf",
+      "pattern": "offset-highlight",
+      "ariaNounZh": "李子",
+      "palette": {
+        "base": "#7D5AA6",
+        "dark": "#432965",
+        "light": "#CDB8E8"
+      }
+    }
+  ],
+  "copyDistribution": [
+    { "fruitCount": 1, "copies": 5, "layoutId": "single" },
+    { "fruitCount": 2, "copies": 3, "layoutId": "diagonal-pair" },
+    { "fruitCount": 3, "copies": 3, "layoutId": "triangle" },
+    { "fruitCount": 4, "copies": 2, "layoutId": "two-by-two" },
+    { "fruitCount": 5, "copies": 1, "layoutId": "four-plus-center" }
+  ],
+  "faces": [
+    { "id": "face-banana-1", "fruitId": "banana", "fruitCount": 1, "copies": 5, "layoutId": "single", "labelZh": "香蕉 ×1", "altZh": "一根香蕉" },
+    { "id": "face-banana-2", "fruitId": "banana", "fruitCount": 2, "copies": 3, "layoutId": "diagonal-pair", "labelZh": "香蕉 ×2", "altZh": "两根香蕉" },
+    { "id": "face-banana-3", "fruitId": "banana", "fruitCount": 3, "copies": 3, "layoutId": "triangle", "labelZh": "香蕉 ×3", "altZh": "三根香蕉" },
+    { "id": "face-banana-4", "fruitId": "banana", "fruitCount": 4, "copies": 2, "layoutId": "two-by-two", "labelZh": "香蕉 ×4", "altZh": "四根香蕉" },
+    { "id": "face-banana-5", "fruitId": "banana", "fruitCount": 5, "copies": 1, "layoutId": "four-plus-center", "labelZh": "香蕉 ×5", "altZh": "五根香蕉" },
+    { "id": "face-strawberry-1", "fruitId": "strawberry", "fruitCount": 1, "copies": 5, "layoutId": "single", "labelZh": "草莓 ×1", "altZh": "一个草莓" },
+    { "id": "face-strawberry-2", "fruitId": "strawberry", "fruitCount": 2, "copies": 3, "layoutId": "diagonal-pair", "labelZh": "草莓 ×2", "altZh": "两个草莓" },
+    { "id": "face-strawberry-3", "fruitId": "strawberry", "fruitCount": 3, "copies": 3, "layoutId": "triangle", "labelZh": "草莓 ×3", "altZh": "三个草莓" },
+    { "id": "face-strawberry-4", "fruitId": "strawberry", "fruitCount": 4, "copies": 2, "layoutId": "two-by-two", "labelZh": "草莓 ×4", "altZh": "四个草莓" },
+    { "id": "face-strawberry-5", "fruitId": "strawberry", "fruitCount": 5, "copies": 1, "layoutId": "four-plus-center", "labelZh": "草莓 ×5", "altZh": "五个草莓" },
+    { "id": "face-lime-1", "fruitId": "lime", "fruitCount": 1, "copies": 5, "layoutId": "single", "labelZh": "青柠 ×1", "altZh": "一个青柠" },
+    { "id": "face-lime-2", "fruitId": "lime", "fruitCount": 2, "copies": 3, "layoutId": "diagonal-pair", "labelZh": "青柠 ×2", "altZh": "两个青柠" },
+    { "id": "face-lime-3", "fruitId": "lime", "fruitCount": 3, "copies": 3, "layoutId": "triangle", "labelZh": "青柠 ×3", "altZh": "三个青柠" },
+    { "id": "face-lime-4", "fruitId": "lime", "fruitCount": 4, "copies": 2, "layoutId": "two-by-two", "labelZh": "青柠 ×4", "altZh": "四个青柠" },
+    { "id": "face-lime-5", "fruitId": "lime", "fruitCount": 5, "copies": 1, "layoutId": "four-plus-center", "labelZh": "青柠 ×5", "altZh": "五个青柠" },
+    { "id": "face-plum-1", "fruitId": "plum", "fruitCount": 1, "copies": 5, "layoutId": "single", "labelZh": "李子 ×1", "altZh": "一个李子" },
+    { "id": "face-plum-2", "fruitId": "plum", "fruitCount": 2, "copies": 3, "layoutId": "diagonal-pair", "labelZh": "李子 ×2", "altZh": "两个李子" },
+    { "id": "face-plum-3", "fruitId": "plum", "fruitCount": 3, "copies": 3, "layoutId": "triangle", "labelZh": "李子 ×3", "altZh": "三个李子" },
+    { "id": "face-plum-4", "fruitId": "plum", "fruitCount": 4, "copies": 2, "layoutId": "two-by-two", "labelZh": "李子 ×4", "altZh": "四个李子" },
+    { "id": "face-plum-5", "fruitId": "plum", "fruitCount": 5, "copies": 1, "layoutId": "four-plus-center", "labelZh": "李子 ×5", "altZh": "五个李子" }
+  ]
+}

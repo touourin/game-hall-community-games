@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"
+  data-model-version="1.0.0" role="img" aria-labelledby="scene-title scene-desc">
+  <title id="scene-title">璀璨宝石四人数字牌桌场景</title>
+  <desc id="scene-desc">顶部状态和对手轨、左侧贵族与三层市场、右侧棋子供应和事件、底部本人引擎与操作区。</desc>
+  <defs><style>
+    text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #EDF1EC; }
+    .eyebrow { font-size: 14px; font-weight: 800; letter-spacing: 2px; fill: #E8BD62; }
+    .scene-title { font-size: 27px; font-weight: 900; }
+    .status { font-size: 17px; font-weight: 800; }
+    .opponent { font-size: 16px; font-weight: 800; }
+    .opponent-meta { font-size: 13px; fill: #B8CAC7; }
+    .zone-title { font-size: 18px; font-weight: 900; }
+    .row-title { font-size: 16px; font-weight: 800; }
+    .deck { font-size: 18px; font-weight: 900; fill: #F4F0E7; }
+    .deck-count { font-size: 11px; fill: #C5D1CF; }
+    .small-score { font-size: 17px; font-weight: 900; }
+    .cost { font-size: 10px; font-weight: 900; }
+    .tiny { font-size: 10px; fill: #554D43; }
+    .token-symbol { font-size: 22px; font-weight: 900; }
+    .token-name { font-size: 14px; font-weight: 800; }
+    .token-count { font-size: 13px; fill: #B8CAC7; }
+    .event { font-size: 13px; fill: #B8CAC7; }
+    .engine-title { font-size: 13px; font-weight: 800; fill: #293135; }
+    .engine-count { font-size: 12px; fill: #596468; }
+    .action { font-size: 16px; font-weight: 900; }
+    .action-meta { font-size: 12px; fill: #B8CAC7; }
+  </style></defs>
+  <rect width="1600" height="1000" fill="#102426"/>
+  <rect x="24" y="24" width="1552" height="952" rx="28" fill="#173B3A" stroke="#6A5138" stroke-width="4"/>
+  <text x="52" y="52" class="eyebrow">GAME HALL · SCENE MODEL v1.0.0</text>
+  <text x="52" y="83" class="scene-title">璀璨宝石 · 四人桌面功能线框</text>
+  <g data-zone-id="status_bar"><rect x="640" y="42" width="908" height="48" rx="13" fill="#203638" stroke="#537174"/><text x="664" y="72" class="status">第 3 轮 · 轮到 P2 · 首位玩家 P1 · 尚未触发最终轮</text></g>
+  <g data-zone-id="opponent_rail"><g transform="translate(324 112)"><rect width="294" height="76" rx="14" fill="#244144" stroke="#E8BD62" stroke-width="2"/><text x="18" y="28" class="opponent">P2 · 当前行动</text><text x="18" y="55" class="opponent-meta">威望 3 · 奖励 2 · 保留 0</text></g><g transform="translate(642 112)"><rect width="294" height="76" rx="14" fill="#244144" stroke="#537174" stroke-width="2"/><text x="18" y="28" class="opponent">P3 · 等待</text><text x="18" y="55" class="opponent-meta">威望 4 · 奖励 3 · 保留 1</text></g><g transform="translate(960 112)"><rect width="294" height="76" rx="14" fill="#244144" stroke="#537174" stroke-width="2"/><text x="18" y="28" class="opponent">P4 · 等待</text><text x="18" y="55" class="opponent-meta">威望 5 · 奖励 4 · 保留 0</text></g></g>
+  <g data-zone-id="noble_row"><rect x="52" y="212" width="1000" height="140" rx="18" fill="#142D2E" stroke="#537174"/><text x="72" y="244" class="zone-title">贵族 · 4 张</text><g transform="translate(204 236)"><rect width="108" height="108" rx="12" fill="#EFE3C9" stroke="#B78A3F" stroke-width="2"/><text x="14" y="27" class="small-score" fill="#60461E">3</text><circle cx="54" cy="50" r="19" fill="#75685B" opacity=".25"/><text x="54" y="89" class="tiny" text-anchor="middle">要求 4+4</text></g><g transform="translate(326 236)"><rect width="108" height="108" rx="12" fill="#EFE3C9" stroke="#B78A3F" stroke-width="2"/><text x="14" y="27" class="small-score" fill="#60461E">3</text><circle cx="54" cy="50" r="19" fill="#75685B" opacity=".25"/><text x="54" y="89" class="tiny" text-anchor="middle">要求 4+4</text></g><g transform="translate(448 236)"><rect width="108" height="108" rx="12" fill="#EFE3C9" stroke="#B78A3F" stroke-width="2"/><text x="14" y="27" class="small-score" fill="#60461E">3</text><circle cx="54" cy="50" r="19" fill="#75685B" opacity=".25"/><text x="54" y="89" class="tiny" text-anchor="middle">要求 3+3+3</text></g><g transform="translate(570 236)"><rect width="108" height="108" rx="12" fill="#EFE3C9" stroke="#B78A3F" stroke-width="2"/><text x="14" y="27" class="small-score" fill="#60461E">3</text><circle cx="54" cy="50" r="19" fill="#75685B" opacity=".25"/><text x="54" y="89" class="tiny" text-anchor="middle">要求 3+3+3</text></g></g>
+  <g data-zone-id="tier_3_market"><rect x="72" y="364" width="102" height="112" rx="10" fill="#24383D" stroke="#C79B43" stroke-width="2"/><text x="123" y="412" class="deck" text-anchor="middle">3 级</text><text x="123" y="439" class="deck-count" text-anchor="middle">牌堆</text><text x="204" y="425" class="row-title">3级市场</text>
+    <g transform="translate(330 364)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">4</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="51.0" cy="98" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="51.0" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">7</text>
+    </g>
+    <g transform="translate(448 364)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">4</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="26.0" cy="98" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="26.0" y="102" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="51.0" cy="98" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="51.0" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="76.0" cy="98" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="76.0" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">6</text>
+    </g>
+    <g transform="translate(566 364)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">3</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="20.2" cy="98" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="20.2" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="40.8" cy="98" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="40.8" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">3</text><circle cx="61.2" cy="98" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="61.2" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">5</text><circle cx="81.8" cy="98" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="81.8" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+    </g>
+    <g transform="translate(684 364)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">5</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="38.5" cy="98" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="38.5" y="102" class="cost" text-anchor="middle" fill="#20292D">3</text><circle cx="63.5" cy="98" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="63.5" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">7</text>
+    </g></g><g data-zone-id="tier_2_market"><rect x="72" y="516" width="102" height="112" rx="10" fill="#24383D" stroke="#C79B43" stroke-width="2"/><text x="123" y="564" class="deck" text-anchor="middle">2 级</text><text x="123" y="591" class="deck-count" text-anchor="middle">牌堆</text><text x="204" y="577" class="row-title">2级市场</text>
+    <g transform="translate(330 516)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">2</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="51.0" cy="98" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="51.0" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">5</text>
+    </g>
+    <g transform="translate(448 516)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">3</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="51.0" cy="98" r="10.5" fill="#E8E3D8" stroke="#172225" stroke-width="1.5"/><text x="51.0" y="102" class="cost" text-anchor="middle" fill="#20292D">6</text>
+    </g>
+    <g transform="translate(566 516)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">2</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="38.5" cy="98" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="38.5" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">5</text><circle cx="63.5" cy="98" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="63.5" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+    </g>
+    <g transform="translate(684 516)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">2</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="26.0" cy="98" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="26.0" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">1</text><circle cx="51.0" cy="98" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="51.0" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">4</text><circle cx="76.0" cy="98" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="76.0" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+    </g></g><g data-zone-id="tier_1_market"><rect x="72" y="668" width="102" height="112" rx="10" fill="#24383D" stroke="#C79B43" stroke-width="2"/><text x="123" y="716" class="deck" text-anchor="middle">1 级</text><text x="123" y="743" class="deck-count" text-anchor="middle">牌堆</text><text x="204" y="729" class="row-title">1级市场</text>
+    <g transform="translate(330 668)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">-</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="51.0" cy="98" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="51.0" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">3</text>
+    </g>
+    <g transform="translate(448 668)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">1</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="51.0" cy="98" r="10.5" fill="#4E8068" stroke="#172225" stroke-width="1.5"/><text x="51.0" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">4</text>
+    </g>
+    <g transform="translate(566 668)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">-</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="38.5" cy="98" r="10.5" fill="#A8524B" stroke="#172225" stroke-width="1.5"/><text x="38.5" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="63.5" cy="98" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="63.5" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">1</text>
+    </g>
+    <g transform="translate(684 668)">
+      <rect width="102" height="112" rx="10" fill="#F7F3EA" stroke="#C7BDAA" stroke-width="2"/>
+      <rect x="5" y="5" width="92" height="27" rx="7" fill="#E8E3D8"/>
+      <text x="14" y="25" class="small-score" fill="#20292D">-</text>
+      <text x="88" y="24" class="small-score" text-anchor="end" fill="#20292D">◇</text>
+      <polygon points="51,43 74,58 66,84 36,84 28,58" fill="none" stroke="#E8E3D8" stroke-width="4"/>
+      <circle cx="38.5" cy="98" r="10.5" fill="#3A739A" stroke="#172225" stroke-width="1.5"/><text x="38.5" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">2</text><circle cx="63.5" cy="98" r="10.5" fill="#353A3D" stroke="#172225" stroke-width="1.5"/><text x="63.5" y="102" class="cost" text-anchor="middle" fill="#FFFFFF">2</text>
+    </g></g>
+  <g data-zone-id="gem_supply"><rect x="1108" y="212" width="440" height="324" rx="18" fill="#142D2E" stroke="#537174"/><text x="1132" y="248" class="zone-title">公共供应</text><g transform="translate(1142 286)"><circle cx="28" cy="28" r="25" fill="#E8E3D8" stroke="#E9E2D4" stroke-width="2"/><text x="28" y="34" class="token-symbol" text-anchor="middle" fill="#20292D">◇</text><text x="66" y="24" class="token-name">钻石</text><text x="66" y="46" class="token-count">× 5</text></g><g transform="translate(1292 286)"><circle cx="28" cy="28" r="25" fill="#3A739A" stroke="#E9E2D4" stroke-width="2"/><text x="28" y="34" class="token-symbol" text-anchor="middle" fill="#FFFFFF">◆</text><text x="66" y="24" class="token-name">蓝宝石</text><text x="66" y="46" class="token-count">× 5</text></g><g transform="translate(1142 368)"><circle cx="28" cy="28" r="25" fill="#4E8068" stroke="#E9E2D4" stroke-width="2"/><text x="28" y="34" class="token-symbol" text-anchor="middle" fill="#FFFFFF">⬟</text><text x="66" y="24" class="token-name">祖母绿</text><text x="66" y="46" class="token-count">× 5</text></g><g transform="translate(1292 368)"><circle cx="28" cy="28" r="25" fill="#A8524B" stroke="#E9E2D4" stroke-width="2"/><text x="28" y="34" class="token-symbol" text-anchor="middle" fill="#FFFFFF">⬢</text><text x="66" y="24" class="token-name">红宝石</text><text x="66" y="46" class="token-count">× 5</text></g><g transform="translate(1142 450)"><circle cx="28" cy="28" r="25" fill="#353A3D" stroke="#E9E2D4" stroke-width="2"/><text x="28" y="34" class="token-symbol" text-anchor="middle" fill="#FFFFFF">●</text><text x="66" y="24" class="token-name">缟玛瑙</text><text x="66" y="46" class="token-count">× 5</text></g><g transform="translate(1292 450)"><circle cx="28" cy="28" r="25" fill="#C79B43" stroke="#E9E2D4" stroke-width="2"/><text x="28" y="34" class="token-symbol" text-anchor="middle" fill="#FFFFFF">★</text><text x="66" y="24" class="token-name">黄金</text><text x="66" y="46" class="token-count">× 4</text></g></g>
+  <g data-zone-id="event_strip"><rect x="1108" y="552" width="440" height="244" rx="18" fill="#142D2E" stroke="#537174"/><text x="1132" y="588" class="zone-title">最近事件</text><text x="1132" y="624" class="event">P1 从 2 级牌堆盲保留一张牌</text><text x="1132" y="652" class="event">P2 拿取蓝、绿、红各一枚</text><text x="1132" y="680" class="event">2 级市场补充一张牌</text><text x="1132" y="744" class="event">盲保留身份仅持有者可见</text></g>
+  <g data-zone-id="self_tableau"><rect x="52" y="826" width="642" height="130" rx="18" fill="#142D2E" stroke="#E8BD62" stroke-width="2"/><text x="76" y="856" class="zone-title">本人引擎 · 威望 4 · 已购 6</text><g transform="translate(82 866)"><rect width="104" height="75" rx="9" fill="#E9E4DA" stroke="#E8E3D8" stroke-width="3"/><text x="52" y="31" class="engine-title" text-anchor="middle">◇ 钻石</text><text x="52" y="56" class="engine-count" text-anchor="middle">奖励 0</text></g><g transform="translate(202 866)"><rect width="104" height="75" rx="9" fill="#E9E4DA" stroke="#3A739A" stroke-width="3"/><text x="52" y="31" class="engine-title" text-anchor="middle">◆ 蓝宝石</text><text x="52" y="56" class="engine-count" text-anchor="middle">奖励 1</text></g><g transform="translate(322 866)"><rect width="104" height="75" rx="9" fill="#E9E4DA" stroke="#4E8068" stroke-width="3"/><text x="52" y="31" class="engine-title" text-anchor="middle">⬟ 祖母绿</text><text x="52" y="56" class="engine-count" text-anchor="middle">奖励 2</text></g><g transform="translate(442 866)"><rect width="104" height="75" rx="9" fill="#E9E4DA" stroke="#A8524B" stroke-width="3"/><text x="52" y="31" class="engine-title" text-anchor="middle">⬢ 红宝石</text><text x="52" y="56" class="engine-count" text-anchor="middle">奖励 0</text></g><g transform="translate(562 866)"><rect width="104" height="75" rx="9" fill="#E9E4DA" stroke="#353A3D" stroke-width="3"/><text x="52" y="31" class="engine-title" text-anchor="middle">● 缟玛瑙</text><text x="52" y="56" class="engine-count" text-anchor="middle">奖励 1</text></g></g>
+  <g data-zone-id="reserved_drawer"><rect x="714" y="826" width="310" height="130" rx="18" fill="#142D2E" stroke="#537174"/><text x="736" y="856" class="zone-title">保留牌 1 / 3</text>
+    <g transform="translate(748 866) scale(0.72)" role="img" aria-label="2级发展卡牌背">
+      <rect width="88" height="118" rx="11" fill="#24383D" stroke="#C79B43" stroke-width="2"/>
+      <rect x="8" y="8" width="72" height="102" rx="8" fill="url(#backPattern)" stroke="#718487"/>
+      <text x="44" y="54" class="back-level" text-anchor="middle">2 级</text>
+      <text x="44" y="80" class="back-marks" text-anchor="middle">◇ ◇</text>
+    </g></g>
+  <g data-zone-id="action_dock"><rect x="1044" y="826" width="504" height="130" rx="18" fill="#203638" stroke="#E8BD62" stroke-width="2"/><text x="1068" y="860" class="action">选择一项主要行动</text><text x="1068" y="892" class="action-meta">取不同色 · 取同色两枚 · 保留 · 购买</text><rect x="1368" y="878" width="152" height="50" rx="12" fill="#B78A3F"/><text x="1444" y="909" class="action" text-anchor="middle" fill="#182325">确认</text></g>
+  <g data-zone-id="payment_sheet" opacity="0"><rect x="848" y="120" width="700" height="740"/></g>
+  <g data-zone-id="resolution_sheet" opacity="0"><rect x="400" y="200" width="800" height="600"/></g>
+  <text x="52" y="986" class="event">原创功能原型 · 不含官方 Logo、插画、肖像、卡框或扫描素材</text>
+</svg>

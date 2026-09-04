@@ -1,0 +1,141 @@
+{
+  "$schema": "../model/game-state.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.2.0",
+  "gameId": "love-letter",
+  "profileId": "queen_22",
+  "status": "active",
+  "revision": 41,
+  "roundNumber": 2,
+  "turnNumber": 9,
+  "eventSeq": 25,
+  "rngCommitment": "sha256:demo-round-2-hidden-seed",
+  "cardRegistry": [
+    { "instanceId": "spy-01", "cardTypeId": "spy" },
+    { "instanceId": "spy-02", "cardTypeId": "spy" },
+    { "instanceId": "guard-01", "cardTypeId": "guard" },
+    { "instanceId": "guard-02", "cardTypeId": "guard" },
+    { "instanceId": "guard-03", "cardTypeId": "guard" },
+    { "instanceId": "guard-04", "cardTypeId": "guard" },
+    { "instanceId": "guard-05", "cardTypeId": "guard" },
+    { "instanceId": "guard-06", "cardTypeId": "guard" },
+    { "instanceId": "priest-01", "cardTypeId": "priest" },
+    { "instanceId": "priest-02", "cardTypeId": "priest" },
+    { "instanceId": "baron-01", "cardTypeId": "baron" },
+    { "instanceId": "baron-02", "cardTypeId": "baron" },
+    { "instanceId": "handmaid-01", "cardTypeId": "handmaid" },
+    { "instanceId": "handmaid-02", "cardTypeId": "handmaid" },
+    { "instanceId": "prince-01", "cardTypeId": "prince" },
+    { "instanceId": "prince-02", "cardTypeId": "prince" },
+    { "instanceId": "chancellor-01", "cardTypeId": "chancellor" },
+    { "instanceId": "chancellor-02", "cardTypeId": "chancellor" },
+    { "instanceId": "king-01", "cardTypeId": "king" },
+    { "instanceId": "queen-01", "cardTypeId": "queen" },
+    { "instanceId": "countess-01", "cardTypeId": "countess" },
+    { "instanceId": "princess-01", "cardTypeId": "princess" }
+  ],
+  "players": [
+    {
+      "id": "p1",
+      "seat": 0,
+      "name": "阿梨",
+      "favorTokens": 1,
+      "roundStatus": "active",
+      "protected": false,
+      "hand": ["guard-03"],
+      "played": [
+        { "cardInstanceId": "priest-01", "cardTypeId": "priest", "turnNumber": 1, "reason": "played" },
+        { "cardInstanceId": "guard-01", "cardTypeId": "guard", "turnNumber": 5, "reason": "played" }
+      ]
+    },
+    {
+      "id": "p2",
+      "seat": 1,
+      "name": "白川",
+      "favorTokens": 0,
+      "roundStatus": "active",
+      "protected": true,
+      "hand": ["princess-01"],
+      "played": [
+        { "cardInstanceId": "guard-02", "cardTypeId": "guard", "turnNumber": 2, "reason": "played" },
+        { "cardInstanceId": "handmaid-01", "cardTypeId": "handmaid", "turnNumber": 6, "reason": "played" }
+      ]
+    },
+    {
+      "id": "p3",
+      "seat": 2,
+      "name": "沉舟",
+      "favorTokens": 1,
+      "roundStatus": "active",
+      "protected": false,
+      "hand": ["baron-02"],
+      "played": [
+        { "cardInstanceId": "spy-01", "cardTypeId": "spy", "turnNumber": 3, "reason": "played" },
+        { "cardInstanceId": "king-01", "cardTypeId": "king", "turnNumber": 7, "reason": "played" }
+      ]
+    },
+    {
+      "id": "p4",
+      "seat": 3,
+      "name": "冬青",
+      "favorTokens": 0,
+      "roundStatus": "active",
+      "protected": false,
+      "hand": ["countess-01"],
+      "played": [
+        { "cardInstanceId": "prince-01", "cardTypeId": "prince", "turnNumber": 4, "reason": "played" },
+        { "cardInstanceId": "priest-02", "cardTypeId": "priest", "turnNumber": 8, "reason": "played" }
+      ]
+    }
+  ],
+  "round": {
+    "startPlayerId": "p1",
+    "currentPlayerId": "p1",
+    "phase": "turn_draw",
+    "deck": [
+      "spy-02",
+      "guard-04",
+      "guard-05",
+      "guard-06",
+      "baron-01",
+      "handmaid-02",
+      "prince-02",
+      "chancellor-02",
+      "queen-01"
+    ],
+    "reserveCardId": "chancellor-01",
+    "faceUpSetAside": [],
+    "pendingChoice": null,
+    "privateKnowledge": [
+      {
+        "id": "knowledge-r2-priest-p1-p2",
+        "viewerPlayerIds": ["p1"],
+        "subjectPlayerId": "p2",
+        "cardInstanceId": "princess-01",
+        "source": "priest",
+        "acquiredRevision": 18,
+        "current": true
+      },
+      {
+        "id": "knowledge-r2-priest-p4-p3",
+        "viewerPlayerIds": ["p4"],
+        "subjectPlayerId": "p3",
+        "cardInstanceId": "baron-02",
+        "source": "priest",
+        "acquiredRevision": 40,
+        "current": true
+      }
+    ],
+    "roundWinnerIds": [],
+    "rewardDeltas": {},
+    "endReason": null
+  },
+  "gameWinnerIds": [],
+  "lastEvent": {
+    "eventSeq": 25,
+    "kind": "turn-complete",
+    "actorPlayerId": "p4",
+    "targetPlayerIds": ["p3"],
+    "publicMessageZh": "冬青打出牧师并完成私密查看。"
+  }
+}

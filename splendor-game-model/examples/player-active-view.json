@@ -1,0 +1,228 @@
+{
+  "$schema": "../model/view-state.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "splendor",
+  "revision": 6,
+  "phase": "turn_action",
+  "viewer": {
+    "mode": "player",
+    "playerId": "p3"
+  },
+  "self": "p3",
+  "turnOrder": [
+    "p1",
+    "p2",
+    "p3"
+  ],
+  "turn": {
+    "firstPlayerId": "p1",
+    "activePlayerId": "p3",
+    "roundNumber": 2,
+    "actionNumber": 5,
+    "pendingReturnCount": 0,
+    "eligibleNobleIds": [],
+    "endTriggeredBy": null,
+    "finalTurnPlayerId": null
+  },
+  "supply": {
+    "white": 4,
+    "blue": 3,
+    "green": 4,
+    "red": 4,
+    "black": 4,
+    "gold": 4
+  },
+  "tiers": {
+    "1": {
+      "level": 1,
+      "deckCount": 32,
+      "market": [
+        "dev-white-1-01",
+        "dev-white-1-02",
+        "dev-white-1-03",
+        "dev-white-1-04"
+      ]
+    },
+    "2": {
+      "level": 2,
+      "deckCount": 24,
+      "market": [
+        "dev-white-2-01",
+        "dev-white-2-02",
+        "dev-white-2-03",
+        "dev-white-2-04"
+      ]
+    },
+    "3": {
+      "level": 3,
+      "deckCount": 16,
+      "market": [
+        "dev-white-3-01",
+        "dev-white-3-02",
+        "dev-white-3-03",
+        "dev-white-3-04"
+      ]
+    }
+  },
+  "availableNobleIds": [
+    "noble-white-blue-4",
+    "noble-blue-green-4",
+    "noble-green-red-4",
+    "noble-red-black-4"
+  ],
+  "players": [
+    {
+      "playerId": "p1",
+      "seatIndex": 0,
+      "name": "青岚",
+      "pieces": {
+        "white": 1,
+        "blue": 1,
+        "green": 0,
+        "red": 0,
+        "black": 0,
+        "gold": 1
+      },
+      "purchasedCardIds": [
+        "dev-white-1-05",
+        "dev-white-1-06"
+      ],
+      "reservations": [
+        {
+          "reservationId": "reservation-p1-001",
+          "cardId": null,
+          "level": 2,
+          "source": "deck",
+          "knownToAll": false
+        }
+      ],
+      "nobleIds": [],
+      "bonuses": {
+        "white": 2,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "score": 0
+    },
+    {
+      "playerId": "p2",
+      "seatIndex": 1,
+      "name": "赤羽",
+      "pieces": {
+        "white": 0,
+        "blue": 1,
+        "green": 1,
+        "red": 1,
+        "black": 0,
+        "gold": 0
+      },
+      "purchasedCardIds": [
+        "dev-white-1-07"
+      ],
+      "reservations": [
+        {
+          "reservationId": "reservation-p2-001",
+          "cardId": "dev-white-2-06",
+          "level": 2,
+          "source": "market",
+          "knownToAll": true
+        }
+      ],
+      "nobleIds": [],
+      "bonuses": {
+        "white": 1,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "score": 0
+    },
+    {
+      "playerId": "p3",
+      "seatIndex": 2,
+      "name": "墨石",
+      "pieces": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 1,
+        "gold": 0
+      },
+      "purchasedCardIds": [
+        "dev-white-1-08"
+      ],
+      "reservations": [],
+      "nobleIds": [],
+      "bonuses": {
+        "white": 1,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "score": 0
+    }
+  ],
+  "legalActions": [
+    {
+      "name": "take_different",
+      "optionCount": 10,
+      "reasonZh": "五种宝石均有供应，任选三种。"
+    },
+    {
+      "name": "take_same",
+      "optionCount": 4,
+      "reasonZh": "除蓝宝石外，四种宝石供应至少四枚。"
+    },
+    {
+      "name": "reserve_face_up",
+      "optionCount": 12,
+      "reasonZh": "本人保留区少于三张。"
+    },
+    {
+      "name": "reserve_blind",
+      "optionCount": 3,
+      "reasonZh": "三个等级牌堆均未抽空。"
+    }
+  ],
+  "events": [
+    {
+      "eventId": "event-0005",
+      "revision": 5,
+      "actionNumber": 4,
+      "kind": "reserve_blind",
+      "actorId": "p1",
+      "publicTextZh": "青岚从 2 级牌堆盲保留一张牌并取得一枚黄金。",
+      "publicData": {
+        "level": 2,
+        "goldTaken": 1
+      }
+    },
+    {
+      "eventId": "event-0006",
+      "revision": 6,
+      "actionNumber": 5,
+      "kind": "take_different",
+      "actorId": "p2",
+      "publicTextZh": "赤羽拿取蓝宝石、祖母绿和红宝石各一枚。",
+      "publicData": {
+        "pieces": {
+          "blue": 1,
+          "green": 1,
+          "red": 1
+        }
+      }
+    }
+  ],
+  "privacy": {
+    "deckOrder": "hidden",
+    "unusedNobles": "hidden",
+    "blindReservations": "owner-only",
+    "spectatorCanSeePrivate": false
+  }
+}

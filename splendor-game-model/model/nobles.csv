@@ -1,0 +1,11 @@
+id,prestige,white,blue,green,red,black
+noble-white-blue-4,3,4,4,0,0,0
+noble-blue-green-4,3,0,4,4,0,0
+noble-green-red-4,3,0,0,4,4,0
+noble-red-black-4,3,0,0,0,4,4
+noble-black-white-4,3,4,0,0,0,4
+noble-white-blue-green-3,3,3,3,3,0,0
+noble-blue-green-red-3,3,0,3,3,3,0
+noble-green-red-black-3,3,0,0,3,3,3
+noble-red-black-white-3,3,3,0,0,3,3
+noble-black-white-blue-3,3,3,3,0,0,3

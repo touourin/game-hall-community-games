@@ -1,0 +1,92 @@
+{
+  "$schema": "../model/game-state.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "halli-galli",
+  "gameNumber": 1,
+  "revision": 44,
+  "phase": "playing",
+  "profileId": "official_last_bell",
+  "players": [
+    {
+      "id": "p1",
+      "seat": 0,
+      "displayName": "阿梨",
+      "connected": true,
+      "status": "eligible",
+      "drawPile": [],
+      "discardPile": ["banana-1-02", "banana-1-03", "banana-1-04", "banana-1-05", "banana-2-01", "banana-2-02", "banana-2-03", "banana-3-01", "banana-3-02", "banana-3-03", "banana-4-01", "banana-4-02", "banana-5-01", "banana-1-01"],
+      "eliminationReason": null,
+      "lastActionSeq": 31
+    },
+    {
+      "id": "p2",
+      "seat": 1,
+      "displayName": "白川",
+      "connected": true,
+      "status": "eligible",
+      "drawPile": ["strawberry-1-02", "strawberry-1-05", "strawberry-3-01", "strawberry-4-01", "lime-1-02", "lime-1-05", "lime-2-03", "lime-4-01", "plum-1-02", "plum-1-05", "plum-2-03", "plum-3-03"],
+      "discardPile": ["strawberry-1-01", "strawberry-2-01"],
+      "eliminationReason": null,
+      "lastActionSeq": 28
+    },
+    {
+      "id": "p3",
+      "seat": 2,
+      "displayName": "青禾",
+      "connected": true,
+      "status": "eligible",
+      "drawPile": ["strawberry-1-03", "strawberry-2-02", "strawberry-3-02", "strawberry-4-02", "lime-1-03", "lime-2-01", "lime-3-02", "lime-4-02", "plum-1-03", "plum-2-01", "plum-3-01", "plum-4-02"],
+      "discardPile": ["lime-1-01", "lime-3-01"],
+      "eliminationReason": null,
+      "lastActionSeq": 29
+    },
+    {
+      "id": "p4",
+      "seat": 3,
+      "displayName": "赤岩",
+      "connected": true,
+      "status": "eligible",
+      "drawPile": ["strawberry-1-04", "strawberry-2-03", "strawberry-3-03", "strawberry-5-01", "lime-1-04", "lime-2-02", "lime-3-03", "lime-5-01", "plum-1-04", "plum-2-02", "plum-3-02", "plum-5-01"],
+      "discardPile": ["plum-1-01", "plum-4-01"],
+      "eliminationReason": null,
+      "lastActionSeq": 30
+    }
+  ],
+  "currentPlayerId": "p2",
+  "boardEpoch": 31,
+  "earliestNextFlipAt": "2026-09-03T20:05:10.350Z",
+  "lastFlip": {
+    "eventSeq": 31,
+    "playerId": "p1",
+    "cardId": "banana-1-01",
+    "faceId": "face-banana-1",
+    "boardEpoch": 31,
+    "revealedAt": "2026-09-03T20:05:10.000Z"
+  },
+  "fruitTotals": {
+    "banana": 1,
+    "strawberry": 2,
+    "lime": 3,
+    "plum": 4
+  },
+  "validFruitIds": [],
+  "finalDuelArmed": false,
+  "bellResolution": null,
+  "noProgressDeadline": null,
+  "result": null,
+  "eventSeq": 31,
+  "events": [
+    { "seq": 28, "type": "card-flipped", "actorId": "p2", "boardEpoch": 28, "cardIds": ["strawberry-2-01"], "targetPlayerIds": [], "textZh": "白川翻开了 2 个草莓。" },
+    { "seq": 29, "type": "card-flipped", "actorId": "p3", "boardEpoch": 29, "cardIds": ["lime-3-01"], "targetPlayerIds": [], "textZh": "青禾翻开了 3 个青柠。" },
+    { "seq": 30, "type": "card-flipped", "actorId": "p4", "boardEpoch": 30, "cardIds": ["plum-4-01"], "targetPlayerIds": [], "textZh": "赤岩翻开了 4 个李子。" },
+    { "seq": 31, "type": "card-flipped", "actorId": "p1", "boardEpoch": 31, "cardIds": ["banana-1-01"], "targetPlayerIds": [], "textZh": "阿梨翻开最后一张牌，仍可抢铃。" }
+  ],
+  "rng": {
+    "algorithm": "python-random-v1",
+    "seedSecret": "example-only-secret-2026",
+    "commitment": "abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789",
+    "dealOffset": 1,
+    "drawsUsed": 56
+  }
+}

@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/splendor/card-catalog.schema.json",
+  "title": "Splendor card and noble catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "modelVersion", "gameId", "rulesEdition", "generatedFrom", "sourceDigestSha256", "sourceBasis", "componentSummary", "colors", "developmentCards", "nobles", "rightsNoteZh"],
+  "properties": {
+    "$schema": { "const": "./card-catalog.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "splendor" },
+    "rulesEdition": { "const": "base-2024-refresh" },
+    "generatedFrom": {
+      "type": "array",
+      "const": ["./development-cards.csv", "./nobles.csv"]
+    },
+    "sourceDigestSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "sourceBasis": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "type": "string", "format": "uri" }
+    },
+    "componentSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["developmentCards", "developmentCardsByLevel", "developmentCardsPerBonusColor", "nobleTiles"],
+      "properties": {
+        "developmentCards": { "const": 90 },
+        "developmentCardsByLevel": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["1", "2", "3"],
+          "properties": {
+            "1": { "const": 40 },
+            "2": { "const": 30 },
+            "3": { "const": 20 }
+          }
+        },
+        "developmentCardsPerBonusColor": { "const": 18 },
+        "nobleTiles": { "const": 10 }
+      }
+    },
+    "colors": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/color" }
+    },
+    "developmentCards": {
+      "type": "array",
+      "minItems": 90,
+      "maxItems": 90,
+      "items": { "$ref": "#/$defs/development" }
+    },
+    "nobles": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": { "$ref": "#/$defs/noble" }
+    },
+    "rightsNoteZh": { "type": "string", "minLength": 20 }
+  },
+  "$defs": {
+    "standardColor": { "enum": ["white", "blue", "green", "red", "black"] },
+    "color": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nameZh", "symbol", "semanticColor", "pattern"],
+      "properties": {
+        "id": { "enum": ["white", "blue", "green", "red", "black", "gold"] },
+        "nameZh": { "type": "string", "minLength": 1 },
+        "symbol": { "type": "string", "minLength": 1, "maxLength": 2 },
+        "semanticColor": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+        "pattern": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }
+      }
+    },
+    "vector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["white", "blue", "green", "red", "black"],
+      "properties": {
+        "white": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "blue": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "green": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "red": { "type": "integer", "minimum": 0, "maximum": 7 },
+        "black": { "type": "integer", "minimum": 0, "maximum": 7 }
+      }
+    },
+    "development": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "level", "bonusColor", "prestige", "cost", "totalCost", "visual", "accessibility"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^dev-(white|blue|green|red|black)-[123]-[0-9]{2}$" },
+        "kind": { "const": "development" },
+        "level": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "bonusColor": { "$ref": "#/$defs/standardColor" },
+        "prestige": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "cost": { "$ref": "#/$defs/vector" },
+        "totalCost": { "type": "integer", "minimum": 3, "maximum": 14 },
+        "visual": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["framePattern", "artworkSlot", "officialArtworkIncluded"],
+          "properties": {
+            "framePattern": { "type": "string" },
+            "artworkSlot": { "type": "string" },
+            "officialArtworkIncluded": { "const": false }
+          }
+        },
+        "accessibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["labelZh", "compactLabelZh"],
+          "properties": {
+            "labelZh": { "type": "string", "minLength": 10 },
+            "compactLabelZh": { "type": "string", "minLength": 5 }
+          }
+        }
+      }
+    },
+    "noble": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "prestige", "requirement", "requirementTotal", "visual", "accessibility"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^noble-[a-z0-9-]+$" },
+        "kind": { "const": "noble" },
+        "prestige": { "const": 3 },
+        "requirement": { "$ref": "#/$defs/vector" },
+        "requirementTotal": { "enum": [8, 9] },
+        "visual": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["portraitSlot", "officialPortraitIncluded"],
+          "properties": {
+            "portraitSlot": { "type": "string" },
+            "officialPortraitIncluded": { "const": false }
+          }
+        },
+        "accessibility": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["labelZh"],
+          "properties": { "labelZh": { "type": "string", "minLength": 10 } }
+        }
+      }
+    }
+  }
+}

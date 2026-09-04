@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "1.2.0",
+  "gameId": "love-letter",
+  "initialPhase": "round_setup",
+  "terminalPhase": "finished",
+  "phases": [
+    {
+      "id": "round_setup",
+      "actor": "server",
+      "allowedActions": [],
+      "summaryZh": "生成牌实例、洗牌、暗置、两人局公开移除、发牌并确定首家。"
+    },
+    {
+      "id": "turn_draw",
+      "actor": "current-player",
+      "allowedActions": ["draw_card", "resign"],
+      "summaryZh": "移除当前玩家的侍女保护并抽一张牌。"
+    },
+    {
+      "id": "turn_play",
+      "actor": "current-player",
+      "allowedActions": ["play_card", "resign"],
+      "summaryZh": "从按伯爵夫人与皇后约束计算出的合法手牌中打出一张。"
+    },
+    {
+      "id": "effect_choice",
+      "actor": "choice-actor",
+      "allowedActions": ["resolve_choice", "resign"],
+      "summaryZh": "选择牌效目标，或完成卫兵／皇后的猜测。"
+    },
+    {
+      "id": "chancellor_choice",
+      "actor": "choice-actor",
+      "allowedActions": ["resolve_choice", "resign"],
+      "summaryZh": "私密选择保留牌并排列压回牌底的牌。"
+    },
+    {
+      "id": "effect_resolution",
+      "actor": "server",
+      "allowedActions": [],
+      "summaryZh": "原子结算移动、知识、保护、弃牌和淘汰。"
+    },
+    {
+      "id": "round_end",
+      "actor": "server",
+      "allowedActions": [],
+      "summaryZh": "确定轮胜者、间谍奖励和好感变化。"
+    },
+    {
+      "id": "between_rounds",
+      "actor": "host-or-server",
+      "allowedActions": ["next_round"],
+      "summaryZh": "展示轮末结果并准备下一轮。"
+    },
+    {
+      "id": "finished",
+      "actor": "none",
+      "allowedActions": [],
+      "summaryZh": "整局结束，只读展示共同胜者与战绩。"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "round_setup",
+      "trigger": "setup-complete",
+      "guard": "valid-card-conservation-and-start-player",
+      "to": "turn_draw"
+    },
+    {
+      "from": "turn_draw",
+      "trigger": "draw_card",
+      "guard": "actor-is-current-and-deck-has-more-than-one-card",
+      "to": "turn_play"
+    },
+    {
+      "from": "turn_play",
+      "trigger": "play_card",
+      "guard": "card-is-in-hand-and-legal-under-countess-and-queen",
+      "to": "effect_resolution"
+    },
+    {
+      "from": "effect_resolution",
+      "trigger": "needs-public-choice",
+      "guard": "legal-options-nonempty",
+      "to": "effect_choice"
+    },
+    {
+      "from": "effect_resolution",
+      "trigger": "needs-chancellor-choice",
+      "guard": "private-candidate-count-at-least-two",
+      "to": "chancellor_choice"
+    },
+    {
+      "from": "effect_choice",
+      "trigger": "resolve_choice",
+      "guard": "choice-id-revision-actor-and-options-valid",
+      "to": "effect_resolution"
+    },
+    {
+      "from": "chancellor_choice",
+      "trigger": "resolve_choice",
+      "guard": "keep-plus-bottom-order-exactly-partition-candidates",
+      "to": "effect_resolution"
+    },
+    {
+      "from": "effect_resolution",
+      "trigger": "only-one-active-player",
+      "guard": "effect-fully-resolved",
+      "to": "round_end"
+    },
+    {
+      "from": "effect_resolution",
+      "trigger": "one-hidden-card-left",
+      "guard": "effect-fully-resolved-and-deck-count-at-most-one-and-at-least-two-active",
+      "to": "round_end"
+    },
+    {
+      "from": "effect_resolution",
+      "trigger": "turn-complete",
+      "guard": "deck-count-greater-than-one-and-at-least-two-active",
+      "to": "turn_draw"
+    },
+    {
+      "from": "round_end",
+      "trigger": "rewards-applied",
+      "guard": "no-player-at-favor-target",
+      "to": "between_rounds"
+    },
+    {
+      "from": "round_end",
+      "trigger": "rewards-applied",
+      "guard": "one-or-more-players-at-favor-target",
+      "to": "finished"
+    },
+    {
+      "from": "between_rounds",
+      "trigger": "next_round",
+      "guard": "next-start-player-selected-from-round-winners",
+      "to": "round_setup"
+    }
+  ],
+  "timeoutDefaults": {
+    "turn_draw": "draw-card",
+    "turn_play": "server-random-legal-card",
+    "effect_choice": "server-random-stable-legal-option",
+    "chancellor_choice": "server-random-keep-and-bottom-order",
+    "between_rounds": "start-next-round-after-minimum-display"
+  }
+}

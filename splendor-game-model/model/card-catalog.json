@@ -1,0 +1,2436 @@
+{
+  "$schema": "./card-catalog.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "splendor",
+  "rulesEdition": "base-2024-refresh",
+  "generatedFrom": [
+    "./development-cards.csv",
+    "./nobles.csv"
+  ],
+  "sourceDigestSha256": "e0b2e797fd6ebee3dfcabfd9bf7d3d36474016a8b1782cde988e3d23dd4dc144",
+  "sourceBasis": [
+    "https://cdn.svc.asmodee.net/production-spacecowboys/uploads/2025/10/SCSPL01EN_SPLENDOR_RULES_LIGHT.pdf",
+    "https://raw.githubusercontent.com/anicolao/splendor/main/data/verified_card_properties.csv",
+    "https://raw.githubusercontent.com/bouk/splendimax/refs/heads/master/Splendor%20Cards.csv"
+  ],
+  "componentSummary": {
+    "developmentCards": 90,
+    "developmentCardsByLevel": {
+      "1": 40,
+      "2": 30,
+      "3": 20
+    },
+    "developmentCardsPerBonusColor": 18,
+    "nobleTiles": 10
+  },
+  "colors": [
+    {
+      "id": "white",
+      "nameZh": "钻石",
+      "symbol": "◇",
+      "semanticColor": "#E8E3D8",
+      "pattern": "dot-grid"
+    },
+    {
+      "id": "blue",
+      "nameZh": "蓝宝石",
+      "symbol": "◆",
+      "semanticColor": "#3A739A",
+      "pattern": "wave"
+    },
+    {
+      "id": "green",
+      "nameZh": "祖母绿",
+      "symbol": "⬟",
+      "semanticColor": "#4E8068",
+      "pattern": "leaf"
+    },
+    {
+      "id": "red",
+      "nameZh": "红宝石",
+      "symbol": "⬢",
+      "semanticColor": "#A8524B",
+      "pattern": "chevron"
+    },
+    {
+      "id": "black",
+      "nameZh": "缟玛瑙",
+      "symbol": "●",
+      "semanticColor": "#353A3D",
+      "pattern": "crosshatch"
+    },
+    {
+      "id": "gold",
+      "nameZh": "黄金百搭",
+      "symbol": "★",
+      "semanticColor": "#C79B43",
+      "pattern": "sunburst"
+    }
+  ],
+  "developmentCards": [
+    {
+      "id": "dev-white-1-01",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "white",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 3,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 3,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 3",
+        "compactLabelZh": "1级 钻石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-white-1-02",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "white",
+      "prestige": 1,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 4,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级钻石奖励发展卡，1 点威望；费用：祖母绿 4",
+        "compactLabelZh": "1级 钻石 +1，1分"
+      }
+    },
+    {
+      "id": "dev-white-1-03",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "white",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 2,
+        "black": 1
+      },
+      "totalCost": 3,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级钻石奖励发展卡，0 点威望；费用：红宝石 2、缟玛瑙 1",
+        "compactLabelZh": "1级 钻石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-white-1-04",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "white",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 2,
+        "green": 0,
+        "red": 0,
+        "black": 2
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 2、缟玛瑙 2",
+        "compactLabelZh": "1级 钻石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-white-1-05",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "white",
+      "prestige": 0,
+      "cost": {
+        "white": 3,
+        "blue": 1,
+        "green": 0,
+        "red": 0,
+        "black": 1
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级钻石奖励发展卡，0 点威望；费用：钻石 3、蓝宝石 1、缟玛瑙 1",
+        "compactLabelZh": "1级 钻石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-white-1-06",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "white",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 2,
+        "green": 2,
+        "red": 0,
+        "black": 1
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 2、祖母绿 2、缟玛瑙 1",
+        "compactLabelZh": "1级 钻石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-white-1-07",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "white",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 1,
+        "green": 1,
+        "red": 1,
+        "black": 1
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 1、祖母绿 1、红宝石 1、缟玛瑙 1",
+        "compactLabelZh": "1级 钻石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-white-1-08",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "white",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 1,
+        "green": 2,
+        "red": 1,
+        "black": 1
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级钻石奖励发展卡，0 点威望；费用：蓝宝石 1、祖母绿 2、红宝石 1、缟玛瑙 1",
+        "compactLabelZh": "1级 钻石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-blue-1-01",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "blue",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 3
+      },
+      "totalCost": 3,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级蓝宝石奖励发展卡，0 点威望；费用：缟玛瑙 3",
+        "compactLabelZh": "1级 蓝宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-blue-1-02",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "blue",
+      "prestige": 1,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 4,
+        "black": 0
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级蓝宝石奖励发展卡，1 点威望；费用：红宝石 4",
+        "compactLabelZh": "1级 蓝宝石 +1，1分"
+      }
+    },
+    {
+      "id": "dev-blue-1-03",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "blue",
+      "prestige": 0,
+      "cost": {
+        "white": 1,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 2
+      },
+      "totalCost": 3,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、缟玛瑙 2",
+        "compactLabelZh": "1级 蓝宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-blue-1-04",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "blue",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 2,
+        "red": 0,
+        "black": 2
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级蓝宝石奖励发展卡，0 点威望；费用：祖母绿 2、缟玛瑙 2",
+        "compactLabelZh": "1级 蓝宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-blue-1-05",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "blue",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 1,
+        "green": 3,
+        "red": 1,
+        "black": 0
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级蓝宝石奖励发展卡，0 点威望；费用：蓝宝石 1、祖母绿 3、红宝石 1",
+        "compactLabelZh": "1级 蓝宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-blue-1-06",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "blue",
+      "prestige": 0,
+      "cost": {
+        "white": 1,
+        "blue": 0,
+        "green": 2,
+        "red": 2,
+        "black": 0
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、祖母绿 2、红宝石 2",
+        "compactLabelZh": "1级 蓝宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-blue-1-07",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "blue",
+      "prestige": 0,
+      "cost": {
+        "white": 1,
+        "blue": 0,
+        "green": 1,
+        "red": 1,
+        "black": 1
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、祖母绿 1、红宝石 1、缟玛瑙 1",
+        "compactLabelZh": "1级 蓝宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-blue-1-08",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "blue",
+      "prestige": 0,
+      "cost": {
+        "white": 1,
+        "blue": 0,
+        "green": 1,
+        "red": 2,
+        "black": 1
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级蓝宝石奖励发展卡，0 点威望；费用：钻石 1、祖母绿 1、红宝石 2、缟玛瑙 1",
+        "compactLabelZh": "1级 蓝宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-green-1-01",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "green",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 3,
+        "black": 0
+      },
+      "totalCost": 3,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级祖母绿奖励发展卡，0 点威望；费用：红宝石 3",
+        "compactLabelZh": "1级 祖母绿 +1，0分"
+      }
+    },
+    {
+      "id": "dev-green-1-02",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "green",
+      "prestige": 1,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 4
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级祖母绿奖励发展卡，1 点威望；费用：缟玛瑙 4",
+        "compactLabelZh": "1级 祖母绿 +1，1分"
+      }
+    },
+    {
+      "id": "dev-green-1-03",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "green",
+      "prestige": 0,
+      "cost": {
+        "white": 2,
+        "blue": 1,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 3,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级祖母绿奖励发展卡，0 点威望；费用：钻石 2、蓝宝石 1",
+        "compactLabelZh": "1级 祖母绿 +1，0分"
+      }
+    },
+    {
+      "id": "dev-green-1-04",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "green",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 2,
+        "green": 0,
+        "red": 2,
+        "black": 0
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级祖母绿奖励发展卡，0 点威望；费用：蓝宝石 2、红宝石 2",
+        "compactLabelZh": "1级 祖母绿 +1，0分"
+      }
+    },
+    {
+      "id": "dev-green-1-05",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "green",
+      "prestige": 0,
+      "cost": {
+        "white": 1,
+        "blue": 3,
+        "green": 1,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级祖母绿奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 3、祖母绿 1",
+        "compactLabelZh": "1级 祖母绿 +1，0分"
+      }
+    },
+    {
+      "id": "dev-green-1-06",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "green",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 1,
+        "green": 0,
+        "red": 2,
+        "black": 2
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级祖母绿奖励发展卡，0 点威望；费用：蓝宝石 1、红宝石 2、缟玛瑙 2",
+        "compactLabelZh": "1级 祖母绿 +1，0分"
+      }
+    },
+    {
+      "id": "dev-green-1-07",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "green",
+      "prestige": 0,
+      "cost": {
+        "white": 1,
+        "blue": 1,
+        "green": 0,
+        "red": 1,
+        "black": 1
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级祖母绿奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、红宝石 1、缟玛瑙 1",
+        "compactLabelZh": "1级 祖母绿 +1，0分"
+      }
+    },
+    {
+      "id": "dev-green-1-08",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "green",
+      "prestige": 0,
+      "cost": {
+        "white": 1,
+        "blue": 1,
+        "green": 0,
+        "red": 1,
+        "black": 2
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级祖母绿奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、红宝石 1、缟玛瑙 2",
+        "compactLabelZh": "1级 祖母绿 +1，0分"
+      }
+    },
+    {
+      "id": "dev-red-1-01",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "red",
+      "prestige": 0,
+      "cost": {
+        "white": 3,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 3,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级红宝石奖励发展卡，0 点威望；费用：钻石 3",
+        "compactLabelZh": "1级 红宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-red-1-02",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "red",
+      "prestige": 1,
+      "cost": {
+        "white": 4,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级红宝石奖励发展卡，1 点威望；费用：钻石 4",
+        "compactLabelZh": "1级 红宝石 +1，1分"
+      }
+    },
+    {
+      "id": "dev-red-1-03",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "red",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 2,
+        "green": 1,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 3,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级红宝石奖励发展卡，0 点威望；费用：蓝宝石 2、祖母绿 1",
+        "compactLabelZh": "1级 红宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-red-1-04",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "red",
+      "prestige": 0,
+      "cost": {
+        "white": 2,
+        "blue": 0,
+        "green": 0,
+        "red": 2,
+        "black": 0
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级红宝石奖励发展卡，0 点威望；费用：钻石 2、红宝石 2",
+        "compactLabelZh": "1级 红宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-red-1-05",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "red",
+      "prestige": 0,
+      "cost": {
+        "white": 1,
+        "blue": 0,
+        "green": 0,
+        "red": 1,
+        "black": 3
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级红宝石奖励发展卡，0 点威望；费用：钻石 1、红宝石 1、缟玛瑙 3",
+        "compactLabelZh": "1级 红宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-red-1-06",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "red",
+      "prestige": 0,
+      "cost": {
+        "white": 2,
+        "blue": 0,
+        "green": 1,
+        "red": 0,
+        "black": 2
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级红宝石奖励发展卡，0 点威望；费用：钻石 2、祖母绿 1、缟玛瑙 2",
+        "compactLabelZh": "1级 红宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-red-1-07",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "red",
+      "prestige": 0,
+      "cost": {
+        "white": 1,
+        "blue": 1,
+        "green": 1,
+        "red": 0,
+        "black": 1
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级红宝石奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、祖母绿 1、缟玛瑙 1",
+        "compactLabelZh": "1级 红宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-red-1-08",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "red",
+      "prestige": 0,
+      "cost": {
+        "white": 2,
+        "blue": 1,
+        "green": 1,
+        "red": 0,
+        "black": 1
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级红宝石奖励发展卡，0 点威望；费用：钻石 2、蓝宝石 1、祖母绿 1、缟玛瑙 1",
+        "compactLabelZh": "1级 红宝石 +1，0分"
+      }
+    },
+    {
+      "id": "dev-black-1-01",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "black",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 3,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 3,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级缟玛瑙奖励发展卡，0 点威望；费用：祖母绿 3",
+        "compactLabelZh": "1级 缟玛瑙 +1，0分"
+      }
+    },
+    {
+      "id": "dev-black-1-02",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "black",
+      "prestige": 1,
+      "cost": {
+        "white": 0,
+        "blue": 4,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级缟玛瑙奖励发展卡，1 点威望；费用：蓝宝石 4",
+        "compactLabelZh": "1级 缟玛瑙 +1，1分"
+      }
+    },
+    {
+      "id": "dev-black-1-03",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "black",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 2,
+        "red": 1,
+        "black": 0
+      },
+      "totalCost": 3,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级缟玛瑙奖励发展卡，0 点威望；费用：祖母绿 2、红宝石 1",
+        "compactLabelZh": "1级 缟玛瑙 +1，0分"
+      }
+    },
+    {
+      "id": "dev-black-1-04",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "black",
+      "prestige": 0,
+      "cost": {
+        "white": 2,
+        "blue": 0,
+        "green": 2,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 2、祖母绿 2",
+        "compactLabelZh": "1级 缟玛瑙 +1，0分"
+      }
+    },
+    {
+      "id": "dev-black-1-05",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "black",
+      "prestige": 0,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 1,
+        "red": 3,
+        "black": 1
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级缟玛瑙奖励发展卡，0 点威望；费用：祖母绿 1、红宝石 3、缟玛瑙 1",
+        "compactLabelZh": "1级 缟玛瑙 +1，0分"
+      }
+    },
+    {
+      "id": "dev-black-1-06",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "black",
+      "prestige": 0,
+      "cost": {
+        "white": 2,
+        "blue": 2,
+        "green": 0,
+        "red": 1,
+        "black": 0
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 2、蓝宝石 2、红宝石 1",
+        "compactLabelZh": "1级 缟玛瑙 +1，0分"
+      }
+    },
+    {
+      "id": "dev-black-1-07",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "black",
+      "prestige": 0,
+      "cost": {
+        "white": 1,
+        "blue": 1,
+        "green": 1,
+        "red": 1,
+        "black": 0
+      },
+      "totalCost": 4,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 1、祖母绿 1、红宝石 1",
+        "compactLabelZh": "1级 缟玛瑙 +1，0分"
+      }
+    },
+    {
+      "id": "dev-black-1-08",
+      "kind": "development",
+      "level": 1,
+      "bonusColor": "black",
+      "prestige": 0,
+      "cost": {
+        "white": 1,
+        "blue": 2,
+        "green": 1,
+        "red": 1,
+        "black": 0
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-1-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "1 级缟玛瑙奖励发展卡，0 点威望；费用：钻石 1、蓝宝石 2、祖母绿 1、红宝石 1",
+        "compactLabelZh": "1级 缟玛瑙 +1，0分"
+      }
+    },
+    {
+      "id": "dev-white-2-01",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "white",
+      "prestige": 2,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 5,
+        "black": 0
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级钻石奖励发展卡，2 点威望；费用：红宝石 5",
+        "compactLabelZh": "2级 钻石 +1，2分"
+      }
+    },
+    {
+      "id": "dev-white-2-02",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "white",
+      "prestige": 3,
+      "cost": {
+        "white": 6,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 6,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级钻石奖励发展卡，3 点威望；费用：钻石 6",
+        "compactLabelZh": "2级 钻石 +1，3分"
+      }
+    },
+    {
+      "id": "dev-white-2-03",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "white",
+      "prestige": 2,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 5,
+        "black": 3
+      },
+      "totalCost": 8,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级钻石奖励发展卡，2 点威望；费用：红宝石 5、缟玛瑙 3",
+        "compactLabelZh": "2级 钻石 +1，2分"
+      }
+    },
+    {
+      "id": "dev-white-2-04",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "white",
+      "prestige": 2,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 1,
+        "red": 4,
+        "black": 2
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级钻石奖励发展卡，2 点威望；费用：祖母绿 1、红宝石 4、缟玛瑙 2",
+        "compactLabelZh": "2级 钻石 +1，2分"
+      }
+    },
+    {
+      "id": "dev-white-2-05",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "white",
+      "prestige": 1,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 3,
+        "red": 2,
+        "black": 2
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级钻石奖励发展卡，1 点威望；费用：祖母绿 3、红宝石 2、缟玛瑙 2",
+        "compactLabelZh": "2级 钻石 +1，1分"
+      }
+    },
+    {
+      "id": "dev-white-2-06",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "white",
+      "prestige": 1,
+      "cost": {
+        "white": 2,
+        "blue": 3,
+        "green": 0,
+        "red": 3,
+        "black": 0
+      },
+      "totalCost": 8,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级钻石奖励发展卡，1 点威望；费用：钻石 2、蓝宝石 3、红宝石 3",
+        "compactLabelZh": "2级 钻石 +1，1分"
+      }
+    },
+    {
+      "id": "dev-blue-2-01",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "blue",
+      "prestige": 2,
+      "cost": {
+        "white": 0,
+        "blue": 5,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级蓝宝石奖励发展卡，2 点威望；费用：蓝宝石 5",
+        "compactLabelZh": "2级 蓝宝石 +1，2分"
+      }
+    },
+    {
+      "id": "dev-blue-2-02",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "blue",
+      "prestige": 3,
+      "cost": {
+        "white": 0,
+        "blue": 6,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 6,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级蓝宝石奖励发展卡，3 点威望；费用：蓝宝石 6",
+        "compactLabelZh": "2级 蓝宝石 +1，3分"
+      }
+    },
+    {
+      "id": "dev-blue-2-03",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "blue",
+      "prestige": 2,
+      "cost": {
+        "white": 5,
+        "blue": 3,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 8,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级蓝宝石奖励发展卡，2 点威望；费用：钻石 5、蓝宝石 3",
+        "compactLabelZh": "2级 蓝宝石 +1，2分"
+      }
+    },
+    {
+      "id": "dev-blue-2-04",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "blue",
+      "prestige": 2,
+      "cost": {
+        "white": 2,
+        "blue": 0,
+        "green": 0,
+        "red": 1,
+        "black": 4
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级蓝宝石奖励发展卡，2 点威望；费用：钻石 2、红宝石 1、缟玛瑙 4",
+        "compactLabelZh": "2级 蓝宝石 +1，2分"
+      }
+    },
+    {
+      "id": "dev-blue-2-05",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "blue",
+      "prestige": 1,
+      "cost": {
+        "white": 0,
+        "blue": 2,
+        "green": 2,
+        "red": 3,
+        "black": 0
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级蓝宝石奖励发展卡，1 点威望；费用：蓝宝石 2、祖母绿 2、红宝石 3",
+        "compactLabelZh": "2级 蓝宝石 +1，1分"
+      }
+    },
+    {
+      "id": "dev-blue-2-06",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "blue",
+      "prestige": 1,
+      "cost": {
+        "white": 0,
+        "blue": 2,
+        "green": 3,
+        "red": 0,
+        "black": 3
+      },
+      "totalCost": 8,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级蓝宝石奖励发展卡，1 点威望；费用：蓝宝石 2、祖母绿 3、缟玛瑙 3",
+        "compactLabelZh": "2级 蓝宝石 +1，1分"
+      }
+    },
+    {
+      "id": "dev-green-2-01",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "green",
+      "prestige": 2,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 5,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级祖母绿奖励发展卡，2 点威望；费用：祖母绿 5",
+        "compactLabelZh": "2级 祖母绿 +1，2分"
+      }
+    },
+    {
+      "id": "dev-green-2-02",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "green",
+      "prestige": 3,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 6,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 6,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级祖母绿奖励发展卡，3 点威望；费用：祖母绿 6",
+        "compactLabelZh": "2级 祖母绿 +1，3分"
+      }
+    },
+    {
+      "id": "dev-green-2-03",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "green",
+      "prestige": 2,
+      "cost": {
+        "white": 0,
+        "blue": 5,
+        "green": 3,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 8,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级祖母绿奖励发展卡，2 点威望；费用：蓝宝石 5、祖母绿 3",
+        "compactLabelZh": "2级 祖母绿 +1，2分"
+      }
+    },
+    {
+      "id": "dev-green-2-04",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "green",
+      "prestige": 2,
+      "cost": {
+        "white": 4,
+        "blue": 2,
+        "green": 0,
+        "red": 0,
+        "black": 1
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级祖母绿奖励发展卡，2 点威望；费用：钻石 4、蓝宝石 2、缟玛瑙 1",
+        "compactLabelZh": "2级 祖母绿 +1，2分"
+      }
+    },
+    {
+      "id": "dev-green-2-05",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "green",
+      "prestige": 1,
+      "cost": {
+        "white": 2,
+        "blue": 3,
+        "green": 0,
+        "red": 0,
+        "black": 2
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级祖母绿奖励发展卡，1 点威望；费用：钻石 2、蓝宝石 3、缟玛瑙 2",
+        "compactLabelZh": "2级 祖母绿 +1，1分"
+      }
+    },
+    {
+      "id": "dev-green-2-06",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "green",
+      "prestige": 1,
+      "cost": {
+        "white": 3,
+        "blue": 0,
+        "green": 2,
+        "red": 3,
+        "black": 0
+      },
+      "totalCost": 8,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级祖母绿奖励发展卡，1 点威望；费用：钻石 3、祖母绿 2、红宝石 3",
+        "compactLabelZh": "2级 祖母绿 +1，1分"
+      }
+    },
+    {
+      "id": "dev-red-2-01",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "red",
+      "prestige": 2,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 5
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级红宝石奖励发展卡，2 点威望；费用：缟玛瑙 5",
+        "compactLabelZh": "2级 红宝石 +1，2分"
+      }
+    },
+    {
+      "id": "dev-red-2-02",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "red",
+      "prestige": 3,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 6,
+        "black": 0
+      },
+      "totalCost": 6,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级红宝石奖励发展卡，3 点威望；费用：红宝石 6",
+        "compactLabelZh": "2级 红宝石 +1，3分"
+      }
+    },
+    {
+      "id": "dev-red-2-03",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "red",
+      "prestige": 2,
+      "cost": {
+        "white": 3,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 5
+      },
+      "totalCost": 8,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级红宝石奖励发展卡，2 点威望；费用：钻石 3、缟玛瑙 5",
+        "compactLabelZh": "2级 红宝石 +1，2分"
+      }
+    },
+    {
+      "id": "dev-red-2-04",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "red",
+      "prestige": 2,
+      "cost": {
+        "white": 1,
+        "blue": 4,
+        "green": 2,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级红宝石奖励发展卡，2 点威望；费用：钻石 1、蓝宝石 4、祖母绿 2",
+        "compactLabelZh": "2级 红宝石 +1，2分"
+      }
+    },
+    {
+      "id": "dev-red-2-05",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "red",
+      "prestige": 1,
+      "cost": {
+        "white": 2,
+        "blue": 0,
+        "green": 0,
+        "red": 2,
+        "black": 3
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级红宝石奖励发展卡，1 点威望；费用：钻石 2、红宝石 2、缟玛瑙 3",
+        "compactLabelZh": "2级 红宝石 +1，1分"
+      }
+    },
+    {
+      "id": "dev-red-2-06",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "red",
+      "prestige": 1,
+      "cost": {
+        "white": 0,
+        "blue": 3,
+        "green": 0,
+        "red": 2,
+        "black": 3
+      },
+      "totalCost": 8,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级红宝石奖励发展卡，1 点威望；费用：蓝宝石 3、红宝石 2、缟玛瑙 3",
+        "compactLabelZh": "2级 红宝石 +1，1分"
+      }
+    },
+    {
+      "id": "dev-black-2-01",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "black",
+      "prestige": 2,
+      "cost": {
+        "white": 5,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 5,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级缟玛瑙奖励发展卡，2 点威望；费用：钻石 5",
+        "compactLabelZh": "2级 缟玛瑙 +1，2分"
+      }
+    },
+    {
+      "id": "dev-black-2-02",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "black",
+      "prestige": 3,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 6
+      },
+      "totalCost": 6,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级缟玛瑙奖励发展卡，3 点威望；费用：缟玛瑙 6",
+        "compactLabelZh": "2级 缟玛瑙 +1，3分"
+      }
+    },
+    {
+      "id": "dev-black-2-03",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "black",
+      "prestige": 2,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 5,
+        "red": 3,
+        "black": 0
+      },
+      "totalCost": 8,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级缟玛瑙奖励发展卡，2 点威望；费用：祖母绿 5、红宝石 3",
+        "compactLabelZh": "2级 缟玛瑙 +1，2分"
+      }
+    },
+    {
+      "id": "dev-black-2-04",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "black",
+      "prestige": 2,
+      "cost": {
+        "white": 0,
+        "blue": 1,
+        "green": 4,
+        "red": 2,
+        "black": 0
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级缟玛瑙奖励发展卡，2 点威望；费用：蓝宝石 1、祖母绿 4、红宝石 2",
+        "compactLabelZh": "2级 缟玛瑙 +1，2分"
+      }
+    },
+    {
+      "id": "dev-black-2-05",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "black",
+      "prestige": 1,
+      "cost": {
+        "white": 3,
+        "blue": 2,
+        "green": 2,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级缟玛瑙奖励发展卡，1 点威望；费用：钻石 3、蓝宝石 2、祖母绿 2",
+        "compactLabelZh": "2级 缟玛瑙 +1，1分"
+      }
+    },
+    {
+      "id": "dev-black-2-06",
+      "kind": "development",
+      "level": 2,
+      "bonusColor": "black",
+      "prestige": 1,
+      "cost": {
+        "white": 3,
+        "blue": 0,
+        "green": 3,
+        "red": 0,
+        "black": 2
+      },
+      "totalCost": 8,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-2-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "2 级缟玛瑙奖励发展卡，1 点威望；费用：钻石 3、祖母绿 3、缟玛瑙 2",
+        "compactLabelZh": "2级 缟玛瑙 +1，1分"
+      }
+    },
+    {
+      "id": "dev-white-3-01",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "white",
+      "prestige": 4,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 7
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级钻石奖励发展卡，4 点威望；费用：缟玛瑙 7",
+        "compactLabelZh": "3级 钻石 +1，4分"
+      }
+    },
+    {
+      "id": "dev-white-3-02",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "white",
+      "prestige": 4,
+      "cost": {
+        "white": 3,
+        "blue": 0,
+        "green": 0,
+        "red": 3,
+        "black": 6
+      },
+      "totalCost": 12,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级钻石奖励发展卡，4 点威望；费用：钻石 3、红宝石 3、缟玛瑙 6",
+        "compactLabelZh": "3级 钻石 +1，4分"
+      }
+    },
+    {
+      "id": "dev-white-3-03",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "white",
+      "prestige": 3,
+      "cost": {
+        "white": 0,
+        "blue": 3,
+        "green": 3,
+        "red": 5,
+        "black": 3
+      },
+      "totalCost": 14,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级钻石奖励发展卡，3 点威望；费用：蓝宝石 3、祖母绿 3、红宝石 5、缟玛瑙 3",
+        "compactLabelZh": "3级 钻石 +1，3分"
+      }
+    },
+    {
+      "id": "dev-white-3-04",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "white",
+      "prestige": 5,
+      "cost": {
+        "white": 3,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 7
+      },
+      "totalCost": 10,
+      "visual": {
+        "framePattern": "white-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级钻石奖励发展卡，5 点威望；费用：钻石 3、缟玛瑙 7",
+        "compactLabelZh": "3级 钻石 +1，5分"
+      }
+    },
+    {
+      "id": "dev-blue-3-01",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "blue",
+      "prestige": 4,
+      "cost": {
+        "white": 7,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级蓝宝石奖励发展卡，4 点威望；费用：钻石 7",
+        "compactLabelZh": "3级 蓝宝石 +1，4分"
+      }
+    },
+    {
+      "id": "dev-blue-3-02",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "blue",
+      "prestige": 4,
+      "cost": {
+        "white": 6,
+        "blue": 3,
+        "green": 0,
+        "red": 0,
+        "black": 3
+      },
+      "totalCost": 12,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级蓝宝石奖励发展卡，4 点威望；费用：钻石 6、蓝宝石 3、缟玛瑙 3",
+        "compactLabelZh": "3级 蓝宝石 +1，4分"
+      }
+    },
+    {
+      "id": "dev-blue-3-03",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "blue",
+      "prestige": 3,
+      "cost": {
+        "white": 3,
+        "blue": 0,
+        "green": 3,
+        "red": 3,
+        "black": 5
+      },
+      "totalCost": 14,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级蓝宝石奖励发展卡，3 点威望；费用：钻石 3、祖母绿 3、红宝石 3、缟玛瑙 5",
+        "compactLabelZh": "3级 蓝宝石 +1，3分"
+      }
+    },
+    {
+      "id": "dev-blue-3-04",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "blue",
+      "prestige": 5,
+      "cost": {
+        "white": 7,
+        "blue": 3,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 10,
+      "visual": {
+        "framePattern": "blue-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级蓝宝石奖励发展卡，5 点威望；费用：钻石 7、蓝宝石 3",
+        "compactLabelZh": "3级 蓝宝石 +1，5分"
+      }
+    },
+    {
+      "id": "dev-green-3-01",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "green",
+      "prestige": 4,
+      "cost": {
+        "white": 0,
+        "blue": 7,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级祖母绿奖励发展卡，4 点威望；费用：蓝宝石 7",
+        "compactLabelZh": "3级 祖母绿 +1，4分"
+      }
+    },
+    {
+      "id": "dev-green-3-02",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "green",
+      "prestige": 4,
+      "cost": {
+        "white": 3,
+        "blue": 6,
+        "green": 3,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 12,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级祖母绿奖励发展卡，4 点威望；费用：钻石 3、蓝宝石 6、祖母绿 3",
+        "compactLabelZh": "3级 祖母绿 +1，4分"
+      }
+    },
+    {
+      "id": "dev-green-3-03",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "green",
+      "prestige": 3,
+      "cost": {
+        "white": 5,
+        "blue": 3,
+        "green": 0,
+        "red": 3,
+        "black": 3
+      },
+      "totalCost": 14,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级祖母绿奖励发展卡，3 点威望；费用：钻石 5、蓝宝石 3、红宝石 3、缟玛瑙 3",
+        "compactLabelZh": "3级 祖母绿 +1，3分"
+      }
+    },
+    {
+      "id": "dev-green-3-04",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "green",
+      "prestige": 5,
+      "cost": {
+        "white": 0,
+        "blue": 7,
+        "green": 3,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 10,
+      "visual": {
+        "framePattern": "green-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级祖母绿奖励发展卡，5 点威望；费用：蓝宝石 7、祖母绿 3",
+        "compactLabelZh": "3级 祖母绿 +1，5分"
+      }
+    },
+    {
+      "id": "dev-red-3-01",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "red",
+      "prestige": 4,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 7,
+        "red": 0,
+        "black": 0
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级红宝石奖励发展卡，4 点威望；费用：祖母绿 7",
+        "compactLabelZh": "3级 红宝石 +1，4分"
+      }
+    },
+    {
+      "id": "dev-red-3-02",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "red",
+      "prestige": 4,
+      "cost": {
+        "white": 0,
+        "blue": 3,
+        "green": 6,
+        "red": 3,
+        "black": 0
+      },
+      "totalCost": 12,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级红宝石奖励发展卡，4 点威望；费用：蓝宝石 3、祖母绿 6、红宝石 3",
+        "compactLabelZh": "3级 红宝石 +1，4分"
+      }
+    },
+    {
+      "id": "dev-red-3-03",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "red",
+      "prestige": 3,
+      "cost": {
+        "white": 3,
+        "blue": 5,
+        "green": 3,
+        "red": 0,
+        "black": 3
+      },
+      "totalCost": 14,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级红宝石奖励发展卡，3 点威望；费用：钻石 3、蓝宝石 5、祖母绿 3、缟玛瑙 3",
+        "compactLabelZh": "3级 红宝石 +1，3分"
+      }
+    },
+    {
+      "id": "dev-red-3-04",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "red",
+      "prestige": 5,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 7,
+        "red": 3,
+        "black": 0
+      },
+      "totalCost": 10,
+      "visual": {
+        "framePattern": "red-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级红宝石奖励发展卡，5 点威望；费用：祖母绿 7、红宝石 3",
+        "compactLabelZh": "3级 红宝石 +1，5分"
+      }
+    },
+    {
+      "id": "dev-black-3-01",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "black",
+      "prestige": 4,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 7,
+        "black": 0
+      },
+      "totalCost": 7,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级缟玛瑙奖励发展卡，4 点威望；费用：红宝石 7",
+        "compactLabelZh": "3级 缟玛瑙 +1，4分"
+      }
+    },
+    {
+      "id": "dev-black-3-02",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "black",
+      "prestige": 4,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 3,
+        "red": 6,
+        "black": 3
+      },
+      "totalCost": 12,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级缟玛瑙奖励发展卡，4 点威望；费用：祖母绿 3、红宝石 6、缟玛瑙 3",
+        "compactLabelZh": "3级 缟玛瑙 +1，4分"
+      }
+    },
+    {
+      "id": "dev-black-3-03",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "black",
+      "prestige": 3,
+      "cost": {
+        "white": 3,
+        "blue": 3,
+        "green": 5,
+        "red": 3,
+        "black": 0
+      },
+      "totalCost": 14,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级缟玛瑙奖励发展卡，3 点威望；费用：钻石 3、蓝宝石 3、祖母绿 5、红宝石 3",
+        "compactLabelZh": "3级 缟玛瑙 +1，3分"
+      }
+    },
+    {
+      "id": "dev-black-3-04",
+      "kind": "development",
+      "level": 3,
+      "bonusColor": "black",
+      "prestige": 5,
+      "cost": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 7,
+        "black": 3
+      },
+      "totalCost": 10,
+      "visual": {
+        "framePattern": "black-functional",
+        "artworkSlot": "original-level-3-merchant-scene",
+        "officialArtworkIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "3 级缟玛瑙奖励发展卡，5 点威望；费用：红宝石 7、缟玛瑙 3",
+        "compactLabelZh": "3级 缟玛瑙 +1，5分"
+      }
+    }
+  ],
+  "nobles": [
+    {
+      "id": "noble-white-blue-4",
+      "kind": "noble",
+      "prestige": 3,
+      "requirement": {
+        "white": 4,
+        "blue": 4,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "requirementTotal": 8,
+      "visual": {
+        "portraitSlot": "original-neutral-patron-01",
+        "officialPortraitIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "贵族板块，3 点威望；拜访要求：钻石 4、蓝宝石 4的永久奖励"
+      }
+    },
+    {
+      "id": "noble-blue-green-4",
+      "kind": "noble",
+      "prestige": 3,
+      "requirement": {
+        "white": 0,
+        "blue": 4,
+        "green": 4,
+        "red": 0,
+        "black": 0
+      },
+      "requirementTotal": 8,
+      "visual": {
+        "portraitSlot": "original-neutral-patron-02",
+        "officialPortraitIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "贵族板块，3 点威望；拜访要求：蓝宝石 4、祖母绿 4的永久奖励"
+      }
+    },
+    {
+      "id": "noble-green-red-4",
+      "kind": "noble",
+      "prestige": 3,
+      "requirement": {
+        "white": 0,
+        "blue": 0,
+        "green": 4,
+        "red": 4,
+        "black": 0
+      },
+      "requirementTotal": 8,
+      "visual": {
+        "portraitSlot": "original-neutral-patron-03",
+        "officialPortraitIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "贵族板块，3 点威望；拜访要求：祖母绿 4、红宝石 4的永久奖励"
+      }
+    },
+    {
+      "id": "noble-red-black-4",
+      "kind": "noble",
+      "prestige": 3,
+      "requirement": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 4,
+        "black": 4
+      },
+      "requirementTotal": 8,
+      "visual": {
+        "portraitSlot": "original-neutral-patron-04",
+        "officialPortraitIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "贵族板块，3 点威望；拜访要求：红宝石 4、缟玛瑙 4的永久奖励"
+      }
+    },
+    {
+      "id": "noble-black-white-4",
+      "kind": "noble",
+      "prestige": 3,
+      "requirement": {
+        "white": 4,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 4
+      },
+      "requirementTotal": 8,
+      "visual": {
+        "portraitSlot": "original-neutral-patron-05",
+        "officialPortraitIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "贵族板块，3 点威望；拜访要求：钻石 4、缟玛瑙 4的永久奖励"
+      }
+    },
+    {
+      "id": "noble-white-blue-green-3",
+      "kind": "noble",
+      "prestige": 3,
+      "requirement": {
+        "white": 3,
+        "blue": 3,
+        "green": 3,
+        "red": 0,
+        "black": 0
+      },
+      "requirementTotal": 9,
+      "visual": {
+        "portraitSlot": "original-neutral-patron-06",
+        "officialPortraitIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "贵族板块，3 点威望；拜访要求：钻石 3、蓝宝石 3、祖母绿 3的永久奖励"
+      }
+    },
+    {
+      "id": "noble-blue-green-red-3",
+      "kind": "noble",
+      "prestige": 3,
+      "requirement": {
+        "white": 0,
+        "blue": 3,
+        "green": 3,
+        "red": 3,
+        "black": 0
+      },
+      "requirementTotal": 9,
+      "visual": {
+        "portraitSlot": "original-neutral-patron-07",
+        "officialPortraitIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "贵族板块，3 点威望；拜访要求：蓝宝石 3、祖母绿 3、红宝石 3的永久奖励"
+      }
+    },
+    {
+      "id": "noble-green-red-black-3",
+      "kind": "noble",
+      "prestige": 3,
+      "requirement": {
+        "white": 0,
+        "blue": 0,
+        "green": 3,
+        "red": 3,
+        "black": 3
+      },
+      "requirementTotal": 9,
+      "visual": {
+        "portraitSlot": "original-neutral-patron-08",
+        "officialPortraitIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "贵族板块，3 点威望；拜访要求：祖母绿 3、红宝石 3、缟玛瑙 3的永久奖励"
+      }
+    },
+    {
+      "id": "noble-red-black-white-3",
+      "kind": "noble",
+      "prestige": 3,
+      "requirement": {
+        "white": 3,
+        "blue": 0,
+        "green": 0,
+        "red": 3,
+        "black": 3
+      },
+      "requirementTotal": 9,
+      "visual": {
+        "portraitSlot": "original-neutral-patron-09",
+        "officialPortraitIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "贵族板块，3 点威望；拜访要求：钻石 3、红宝石 3、缟玛瑙 3的永久奖励"
+      }
+    },
+    {
+      "id": "noble-black-white-blue-3",
+      "kind": "noble",
+      "prestige": 3,
+      "requirement": {
+        "white": 3,
+        "blue": 3,
+        "green": 0,
+        "red": 0,
+        "black": 3
+      },
+      "requirementTotal": 9,
+      "visual": {
+        "portraitSlot": "original-neutral-patron-10",
+        "officialPortraitIncluded": false
+      },
+      "accessibility": {
+        "labelZh": "贵族板块，3 点威望；拜访要求：钻石 3、蓝宝石 3、缟玛瑙 3的永久奖励"
+      }
+    }
+  ],
+  "rightsNoteZh": "仅建模规则数值与原创功能占位；不含官方 Logo、插画、人物肖像、装饰边框或扫描素材。"
+}

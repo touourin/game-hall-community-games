@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/halli-galli/rules-profiles.schema.json",
+  "title": "Halli Galli rules profiles",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "modelVersion", "gameId", "defaultProfileId", "profiles"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "halli-galli" },
+    "defaultProfileId": { "enum": ["official_last_bell", "complete_collection"] },
+    "profiles": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "$ref": "#/$defs/profile" }
+    }
+  },
+  "$defs": {
+    "setup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dealAllCards", "dealPolicy", "firstPlayerPolicy"],
+      "properties": {
+        "dealAllCards": { "const": true },
+        "dealPolicy": { "const": "round-robin-from-random-offset" },
+        "firstPlayerPolicy": { "const": "recent-fruit-salad-or-server-random" }
+      }
+    },
+    "ending": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "armAtEligiblePlayerCount", "twoPlayerStartsArmed", "winnerMetric", "tiePolicy"],
+      "properties": {
+        "mode": { "enum": ["last-accepted-bell-after-two", "one-player-owns-all-cards"] },
+        "armAtEligiblePlayerCount": { "type": ["integer", "null"], "minimum": 2, "maximum": 2 },
+        "twoPlayerStartsArmed": { "type": "boolean" },
+        "winnerMetric": { "enum": ["owned-card-count", "all-cards-owned"] },
+        "tiePolicy": { "enum": ["shared-win", "shared-win-on-no-progress-only"] }
+      }
+    },
+    "wrongBell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cardsPerOtherEligiblePlayer", "finalDuelOutcome", "insufficientCardsPolicy"],
+      "properties": {
+        "cardsPerOtherEligiblePlayer": { "const": 1 },
+        "finalDuelOutcome": { "enum": ["opponent-collects-all-discards", "not-applicable"] },
+        "insufficientCardsPolicy": { "const": "clockwise-partial-then-eliminate" }
+      }
+    },
+    "emptyDraw": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["retainEligibilityWhileOwnDiscardExists", "skipFlipTurn", "reviveOnCorrectBell", "eliminateOnOwnDiscardCaptured", "eliminateOnWrongBell"],
+      "properties": {
+        "retainEligibilityWhileOwnDiscardExists": { "const": true },
+        "skipFlipTurn": { "const": true },
+        "reviveOnCorrectBell": { "const": true },
+        "eliminateOnOwnDiscardCaptured": { "const": true },
+        "eliminateOnWrongBell": { "const": true }
+      }
+    },
+    "digital": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimumNextFlipDelayMs", "noProgressTimeoutMs", "countAssistDefault", "serverArrivalOrder", "staleBellPenalty", "duplicateBellPenalty"],
+      "properties": {
+        "minimumNextFlipDelayMs": { "type": "integer", "minimum": 0, "maximum": 3000 },
+        "noProgressTimeoutMs": { "type": "integer", "minimum": 1000, "maximum": 60000 },
+        "countAssistDefault": { "const": false },
+        "serverArrivalOrder": { "const": true },
+        "staleBellPenalty": { "const": false },
+        "duplicateBellPenalty": { "const": false }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nameZh", "provenance", "playerMin", "playerMax", "deckSize", "bellTarget", "setup", "ending", "wrongBell", "emptyDraw", "digital"],
+      "properties": {
+        "id": { "enum": ["official_last_bell", "complete_collection"] },
+        "nameZh": { "type": "string", "minLength": 1 },
+        "provenance": { "enum": ["amigo-v3.1", "amigo-v3.1-agreed-variant"] },
+        "playerMin": { "const": 2 },
+        "playerMax": { "const": 6 },
+        "deckSize": { "const": 56 },
+        "bellTarget": { "const": 5 },
+        "setup": { "$ref": "#/$defs/setup" },
+        "ending": { "$ref": "#/$defs/ending" },
+        "wrongBell": { "$ref": "#/$defs/wrongBell" },
+        "emptyDraw": { "$ref": "#/$defs/emptyDraw" },
+        "digital": { "$ref": "#/$defs/digital" }
+      }
+    }
+  }
+}

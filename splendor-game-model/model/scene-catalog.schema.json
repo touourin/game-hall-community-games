@@ -1,0 +1,132 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/splendor/scene-catalog.schema.json",
+  "title": "Splendor scene catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "modelVersion", "gameId", "logicalCanvas", "layout", "theme", "cardMetrics", "breakpoints", "viewportPolicy", "zones", "seatLayouts", "scenes", "animationCues", "responsiveStrategy", "accessibility"],
+  "properties": {
+    "$schema": { "const": "./scene-catalog.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "splendor" },
+    "logicalCanvas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "unit", "viewerAnchor"],
+      "properties": {
+        "width": { "const": 1600 },
+        "height": { "const": 1000 },
+        "unit": { "const": "logical-pixel" },
+        "viewerAnchor": { "const": "bottom-center" }
+      }
+    },
+    "layout": { "const": "immersive" },
+    "theme": {
+      "type": "object",
+      "minProperties": 8,
+      "additionalProperties": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+    },
+    "cardMetrics": { "type": "object" },
+    "breakpoints": { "type": "object" },
+    "viewportPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pageLevelHorizontalOverflow", "localHorizontalScrollZones", "stickyZonesOnCompact"],
+      "properties": {
+        "pageLevelHorizontalOverflow": { "const": false },
+        "localHorizontalScrollZones": { "type": "array", "minItems": 5, "uniqueItems": true, "items": { "type": "string" } },
+        "stickyZonesOnCompact": { "type": "array", "const": ["status_bar", "action_dock"] }
+      }
+    },
+    "zones": { "type": "array", "minItems": 13, "items": { "$ref": "#/$defs/zone" } },
+    "seatLayouts": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/seatLayout" } },
+    "scenes": { "type": "array", "minItems": 12, "items": { "$ref": "#/$defs/scene" } },
+    "animationCues": { "type": "array", "minItems": 10, "items": { "$ref": "#/$defs/cue" } },
+    "responsiveStrategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wide", "desktop", "medium", "compact", "narrow"],
+      "properties": {
+        "wide": { "type": "string", "minLength": 1 },
+        "desktop": { "type": "string", "minLength": 1 },
+        "medium": { "type": "string", "minLength": 1 },
+        "compact": { "type": "string", "minLength": 1 },
+        "narrow": { "type": "string", "minLength": 1 }
+      }
+    },
+    "accessibility": { "type": "object" }
+  },
+  "$defs": {
+    "rect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0, "maximum": 1 },
+        "y": { "type": "number", "minimum": 0, "maximum": 1 },
+        "width": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "height": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+      }
+    },
+    "zone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "rect", "zIndex", "visibility", "interaction"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "role": { "type": "string", "minLength": 1 },
+        "rect": { "$ref": "#/$defs/rect" },
+        "zIndex": { "type": "integer", "minimum": 0 },
+        "visibility": { "enum": ["always", "player-count-dependent", "phase-dependent"] },
+        "interaction": { "enum": ["read-only", "primary-action", "effect-target", "modal", "expandable"] }
+      }
+    },
+    "seat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relativeSeat", "zoneId", "alignment", "rotation"],
+      "properties": {
+        "relativeSeat": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "zoneId": { "type": "string" },
+        "alignment": { "enum": ["bottom-center", "top-left", "top-center", "top-right"] },
+        "rotation": { "const": 0 }
+      }
+    },
+    "seatLayout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playerCount", "seats"],
+      "properties": {
+        "playerCount": { "type": "integer", "minimum": 2, "maximum": 4 },
+        "seats": { "type": "array", "minItems": 2, "maxItems": 4, "items": { "$ref": "#/$defs/seat" } }
+      }
+    },
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "phase", "requiredZones", "primaryActions", "focusTarget", "announcementZh"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "phase": { "enum": ["waiting", "turn_action", "return_tokens", "choose_noble", "finished", "presentation"] },
+        "requiredZones": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+        "primaryActions": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "focusTarget": { "type": "string" },
+        "announcementZh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "cue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "durationMs", "fromZone", "toZone", "reducedMotion", "ariaTemplateZh"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "durationMs": { "type": "integer", "minimum": 0, "maximum": 650 },
+        "fromZone": { "type": ["string", "null"] },
+        "toZone": { "type": ["string", "null"] },
+        "reducedMotion": { "enum": ["fade", "instant", "outline"] },
+        "ariaTemplateZh": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

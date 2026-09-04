@@ -1,0 +1,426 @@
+{
+  "$schema": "./scene-catalog.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.2.0",
+  "gameId": "love-letter",
+  "logicalCanvas": {
+    "width": 1600,
+    "height": 900,
+    "unit": "logical-pixel"
+  },
+  "theme": {
+    "background": "#24151C",
+    "table": "#512B3A",
+    "tableEdge": "#A66A76",
+    "paper": "#FFF7E8",
+    "ink": "#2D1820",
+    "mutedInk": "#6B5560",
+    "wax": "#BE123C",
+    "gold": "#D6A84B",
+    "focus": "#7DD3FC",
+    "protected": "#5EEAD4",
+    "disabled": "#766570",
+    "danger": "#FB7185"
+  },
+  "cardMetrics": {
+    "width": 112,
+    "height": 168,
+    "compactWidth": 78,
+    "cornerRadius": 10,
+    "minimumTarget": 44
+  },
+  "breakpoints": {
+    "narrowMax": 359,
+    "compactMax": 759,
+    "mediumMax": 1179,
+    "wideMin": 1180
+  },
+  "zones": [
+    {
+      "id": "status_bar",
+      "role": "轮数、规则档案、当前行动和牌堆数量",
+      "rect": { "x": 0.03, "y": 0.02, "width": 0.94, "height": 0.08 },
+      "zIndex": 20,
+      "visibility": "always",
+      "interaction": "read-only"
+    },
+    {
+      "id": "opponent_arc",
+      "role": "按相对座次承载一至三名对手",
+      "rect": { "x": 0.05, "y": 0.10, "width": 0.90, "height": 0.32 },
+      "zIndex": 10,
+      "visibility": "player-count-dependent",
+      "interaction": "effect-target"
+    },
+    {
+      "id": "self_seat",
+      "role": "本人名称、好感、状态与保护",
+      "rect": { "x": 0.30, "y": 0.78, "width": 0.40, "height": 0.18 },
+      "zIndex": 14,
+      "visibility": "always",
+      "interaction": "effect-target"
+    },
+    {
+      "id": "self_hand",
+      "role": "本人一至三张私密手牌",
+      "rect": { "x": 0.36, "y": 0.64, "width": 0.28, "height": 0.27 },
+      "zIndex": 30,
+      "visibility": "player-only",
+      "interaction": "primary-action"
+    },
+    {
+      "id": "court_table",
+      "role": "公共牌堆与最近动作的中央牌桌",
+      "rect": { "x": 0.20, "y": 0.34, "width": 0.60, "height": 0.38 },
+      "zIndex": 4,
+      "visibility": "always",
+      "interaction": "read-only"
+    },
+    {
+      "id": "draw_pile",
+      "role": "角色牌堆与剩余数量",
+      "rect": { "x": 0.42, "y": 0.40, "width": 0.08, "height": 0.24 },
+      "zIndex": 12,
+      "visibility": "always",
+      "interaction": "primary-action"
+    },
+    {
+      "id": "reserve_card",
+      "role": "暗置牌背与可用状态",
+      "rect": { "x": 0.32, "y": 0.44, "width": 0.07, "height": 0.20 },
+      "zIndex": 8,
+      "visibility": "always",
+      "interaction": "read-only"
+    },
+    {
+      "id": "face_up_set_aside",
+      "role": "两人局公开移除的三张牌",
+      "rect": { "x": 0.20, "y": 0.42, "width": 0.18, "height": 0.22 },
+      "zIndex": 9,
+      "visibility": "two-player-only",
+      "interaction": "expandable"
+    },
+    {
+      "id": "recent_play",
+      "role": "当前打出牌与效果摘要",
+      "rect": { "x": 0.53, "y": 0.38, "width": 0.22, "height": 0.28 },
+      "zIndex": 16,
+      "visibility": "phase-dependent",
+      "interaction": "read-only"
+    },
+    {
+      "id": "public_history",
+      "role": "按玩家展开的公开出牌与弃牌历史",
+      "rect": { "x": 0.04, "y": 0.67, "width": 0.24, "height": 0.28 },
+      "zIndex": 18,
+      "visibility": "always",
+      "interaction": "expandable"
+    },
+    {
+      "id": "private_log",
+      "role": "本人通过牧师、男爵或交换获得的历史知识",
+      "rect": { "x": 0.72, "y": 0.68, "width": 0.24, "height": 0.26 },
+      "zIndex": 18,
+      "visibility": "player-only",
+      "interaction": "expandable"
+    },
+    {
+      "id": "primary_action",
+      "role": "当前玩家唯一主操作和禁用原因",
+      "rect": { "x": 0.40, "y": 0.92, "width": 0.20, "height": 0.06 },
+      "zIndex": 40,
+      "visibility": "phase-dependent",
+      "interaction": "primary-action"
+    },
+    {
+      "id": "choice_overlay",
+      "role": "目标、猜测与大臣排序选择层",
+      "rect": { "x": 0.18, "y": 0.12, "width": 0.64, "height": 0.72 },
+      "zIndex": 80,
+      "visibility": "phase-dependent",
+      "interaction": "modal"
+    },
+    {
+      "id": "private_reveal",
+      "role": "牧师或男爵仅参与者可见的牌面",
+      "rect": { "x": 0.31, "y": 0.20, "width": 0.38, "height": 0.52 },
+      "zIndex": 90,
+      "visibility": "viewer-dependent",
+      "interaction": "modal"
+    },
+    {
+      "id": "round_result",
+      "role": "轮胜、间谍奖励和标记变化",
+      "rect": { "x": 0.20, "y": 0.14, "width": 0.60, "height": 0.68 },
+      "zIndex": 100,
+      "visibility": "phase-dependent",
+      "interaction": "modal"
+    },
+    {
+      "id": "game_result",
+      "role": "共同胜者、最终进度和逐轮摘要",
+      "rect": { "x": 0.17, "y": 0.10, "width": 0.66, "height": 0.76 },
+      "zIndex": 110,
+      "visibility": "phase-dependent",
+      "interaction": "modal"
+    },
+    {
+      "id": "rule_help",
+      "role": "角色牌表、流程与规则档案帮助",
+      "rect": { "x": 0.74, "y": 0.08, "width": 0.24, "height": 0.84 },
+      "zIndex": 70,
+      "visibility": "on-demand",
+      "interaction": "expandable"
+    }
+  ],
+  "seatLayouts": [
+    {
+      "playerCount": 2,
+      "seats": [
+        { "relativeSeat": 0, "x": 0.50, "y": 0.86, "rotation": 0 },
+        { "relativeSeat": 1, "x": 0.50, "y": 0.19, "rotation": 180 }
+      ]
+    },
+    {
+      "playerCount": 3,
+      "seats": [
+        { "relativeSeat": 0, "x": 0.50, "y": 0.86, "rotation": 0 },
+        { "relativeSeat": 1, "x": 0.25, "y": 0.21, "rotation": 150 },
+        { "relativeSeat": 2, "x": 0.75, "y": 0.21, "rotation": 210 }
+      ]
+    },
+    {
+      "playerCount": 4,
+      "seats": [
+        { "relativeSeat": 0, "x": 0.50, "y": 0.86, "rotation": 0 },
+        { "relativeSeat": 1, "x": 0.15, "y": 0.43, "rotation": 90 },
+        { "relativeSeat": 2, "x": 0.50, "y": 0.17, "rotation": 180 },
+        { "relativeSeat": 3, "x": 0.85, "y": 0.43, "rotation": 270 }
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "round_setup",
+      "phase": "round_setup",
+      "privacy": "public",
+      "requiredZones": ["status_bar", "court_table", "draw_pile", "reserve_card", "self_seat", "opponent_arc"],
+      "primaryActions": [],
+      "focusTarget": "status_bar",
+      "announcementZh": "新一轮开始，洗牌、暗置并发放手牌。"
+    },
+    {
+      "id": "turn_draw",
+      "phase": "turn_draw",
+      "privacy": "viewer-dependent",
+      "requiredZones": ["status_bar", "draw_pile", "self_hand", "primary_action"],
+      "primaryActions": ["draw_card"],
+      "focusTarget": "draw_pile",
+      "announcementZh": "当前玩家抽一张牌。"
+    },
+    {
+      "id": "turn_play",
+      "phase": "turn_play",
+      "privacy": "viewer-dependent",
+      "requiredZones": ["status_bar", "self_hand", "public_history", "primary_action"],
+      "primaryActions": ["play_card"],
+      "focusTarget": "self_hand",
+      "announcementZh": "请选择并打出一张合法手牌。"
+    },
+    {
+      "id": "target_choice",
+      "phase": "effect_choice",
+      "privacy": "viewer-dependent",
+      "requiredZones": ["opponent_arc", "self_seat", "recent_play", "choice_overlay"],
+      "primaryActions": ["resolve_choice"],
+      "focusTarget": "choice_overlay",
+      "announcementZh": "请选择牌效目标。"
+    },
+    {
+      "id": "guard_choice",
+      "phase": "effect_choice",
+      "privacy": "viewer-dependent",
+      "requiredZones": ["opponent_arc", "recent_play", "choice_overlay"],
+      "primaryActions": ["resolve_choice"],
+      "focusTarget": "choice_overlay",
+      "announcementZh": "请选择一名对手并猜测非卫兵角色。"
+    },
+    {
+      "id": "private_reveal",
+      "phase": "effect_resolution",
+      "privacy": "private-to-participants",
+      "requiredZones": ["recent_play", "private_reveal", "private_log"],
+      "primaryActions": [],
+      "focusTarget": "private_reveal",
+      "announcementZh": "仅相关玩家可查看私密牌面。"
+    },
+    {
+      "id": "chancellor_choice",
+      "phase": "chancellor_choice",
+      "privacy": "private-to-actor",
+      "requiredZones": ["draw_pile", "self_hand", "choice_overlay"],
+      "primaryActions": ["resolve_choice"],
+      "focusTarget": "choice_overlay",
+      "announcementZh": "秘密保留一张，并排列其余牌的牌底顺序。"
+    },
+    {
+      "id": "round_result",
+      "phase": "between_rounds",
+      "privacy": "public",
+      "requiredZones": ["status_bar", "round_result"],
+      "primaryActions": ["next_round"],
+      "focusTarget": "round_result",
+      "announcementZh": "本轮结束，展示轮胜、间谍奖励和好感变化。"
+    },
+    {
+      "id": "game_result",
+      "phase": "finished",
+      "privacy": "public",
+      "requiredZones": ["status_bar", "game_result"],
+      "primaryActions": [],
+      "focusTarget": "game_result",
+      "announcementZh": "整局结束，展示所有共同胜者。"
+    }
+  ],
+  "animationCues": [
+    {
+      "id": "deal_card",
+      "durationMs": 360,
+      "fromZone": "draw_pile",
+      "toZone": "opponent_arc",
+      "reducedMotion": "fade",
+      "ariaTemplateZh": "向玩家发放一张隐藏手牌。"
+    },
+    {
+      "id": "draw_card",
+      "durationMs": 280,
+      "fromZone": "draw_pile",
+      "toZone": "self_hand",
+      "reducedMotion": "outline",
+      "ariaTemplateZh": "{player} 抽了一张牌。"
+    },
+    {
+      "id": "play_card",
+      "durationMs": 320,
+      "fromZone": "self_hand",
+      "toZone": "recent_play",
+      "reducedMotion": "outline",
+      "ariaTemplateZh": "{player} 打出 {card}。"
+    },
+    {
+      "id": "peek_hand",
+      "durationMs": 220,
+      "fromZone": "opponent_arc",
+      "toZone": "private_reveal",
+      "reducedMotion": "fade",
+      "ariaTemplateZh": "仅你可见：{target} 当前持有 {card}。"
+    },
+    {
+      "id": "compare_hands",
+      "durationMs": 420,
+      "fromZone": "self_hand",
+      "toZone": "private_reveal",
+      "reducedMotion": "outline",
+      "ariaTemplateZh": "{actor} 与 {target} 秘密比较手牌。"
+    },
+    {
+      "id": "gain_protection",
+      "durationMs": 260,
+      "fromZone": "recent_play",
+      "toZone": "self_seat",
+      "reducedMotion": "outline",
+      "ariaTemplateZh": "{player} 获得侍女保护。"
+    },
+    {
+      "id": "force_discard",
+      "durationMs": 340,
+      "fromZone": "opponent_arc",
+      "toZone": "public_history",
+      "reducedMotion": "outline",
+      "ariaTemplateZh": "{target} 弃掉了 {card}。"
+    },
+    {
+      "id": "trade_hands",
+      "durationMs": 500,
+      "fromZone": "self_seat",
+      "toZone": "opponent_arc",
+      "reducedMotion": "outline",
+      "ariaTemplateZh": "{actor} 与 {target} 交换了手牌。"
+    },
+    {
+      "id": "bottom_cards",
+      "durationMs": 380,
+      "fromZone": "choice_overlay",
+      "toZone": "draw_pile",
+      "reducedMotion": "fade",
+      "ariaTemplateZh": "{player} 将 {count} 张牌秘密压回牌堆底。"
+    },
+    {
+      "id": "player_eliminated",
+      "durationMs": 520,
+      "fromZone": "recent_play",
+      "toZone": "opponent_arc",
+      "reducedMotion": "outline",
+      "ariaTemplateZh": "{player} 本轮出局：{reason}。"
+    },
+    {
+      "id": "gain_favor",
+      "durationMs": 420,
+      "fromZone": "court_table",
+      "toZone": "opponent_arc",
+      "reducedMotion": "outline",
+      "ariaTemplateZh": "{player} 获得 {count} 枚好感标记。"
+    },
+    {
+      "id": "queen_guard_discard",
+      "durationMs": 320,
+      "fromZone": "opponent_arc",
+      "toZone": "public_history",
+      "reducedMotion": "outline",
+      "ariaTemplateZh": "{target} 的皇后被卫兵猜中，公开弃掉但没有出局。"
+    },
+    {
+      "id": "queen_guard_redraw",
+      "durationMs": 300,
+      "fromZone": "draw_pile",
+      "toZone": "opponent_arc",
+      "reducedMotion": "fade",
+      "ariaTemplateZh": "{target} 因皇后防卫重新抽取一张隐藏手牌。"
+    }
+  ],
+  "stateBindings": {
+    "currentPlayer": "currentPlayerId",
+    "deckBadge": "deckCount",
+    "reserveBadge": "reserveAvailable",
+    "seatProtection": "players[].protected",
+    "seatElimination": "players[].roundStatus",
+    "favorProgress": "players[].favorTokens",
+    "choiceModal": "pendingChoice",
+    "privateHistory": "privateInfo.knownHands",
+    "roundModal": "roundSummary",
+    "winnerModal": "gameWinnerIds"
+  },
+  "responsiveStrategy": {
+    "wide": "环形桌面，公开历史常驻，选择面板使用右侧抽屉。",
+    "medium": "压缩座位与历史，中央桌面不变，选择层覆盖下半部。",
+    "compact": "对手横向轨道、中央公共区、底部固定本人手牌与操作。",
+    "narrow": "移除装饰并使用紧凑卡，局部容器滚动，根页面不横向溢出。"
+  },
+  "accessibility": {
+    "notColorOnly": true,
+    "liveRegion": "礼貌播报抽牌与普通出牌；淘汰、轮末和错误使用高优先级播报。",
+    "reducedMotion": "所有位移动画替换为淡入、描边或即时状态变化。",
+    "keyboardActions": [
+      "抽牌",
+      "选择并打出手牌",
+      "选择目标",
+      "选择卫兵猜测",
+      "大臣保留牌",
+      "大臣牌底排序",
+      "关闭私密查看",
+      "打开规则帮助"
+    ],
+    "minimumContrast": 4.5,
+    "minimumTarget": 44
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-love-letter",
+  "name": "情书 · 密封宫廷",
+  "description": "2–4 人推理卡牌游戏，含 7.5 皇后与最后一张永久封存规则",
+  "category": "推理卡牌",
+  "tone": "love-letter",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 2,
+    "max": 4,
+    "label": "2–4 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": false,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "allowSpectators": false,
+    "firstPlayer": "random"
+  },
+  "ruleLabels": [
+    "22 张角色牌",
+    "7.5 皇后",
+    "最后一张永久封存",
+    "秘密推理",
+    "好感标记赛",
+    "2–4 人"
+  ]
+}

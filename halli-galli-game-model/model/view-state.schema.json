@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/halli-galli/view-state.schema.json",
+  "title": "Halli Galli safe client view",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "modelVersion", "gameId", "gameNumber", "revision", "phase", "rules", "viewer", "players", "currentPlayerId", "boardEpoch", "earliestNextFlipAt", "lastFlip", "assistFruitTotals", "finalDuelArmed", "bellResolution", "actions", "result", "events"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "halli-galli" },
+    "gameNumber": { "type": "integer", "minimum": 1 },
+    "revision": { "type": "integer", "minimum": 0 },
+    "phase": { "enum": ["waiting", "playing", "finished"] },
+    "rules": { "$ref": "#/$defs/rules" },
+    "viewer": { "$ref": "#/$defs/viewer" },
+    "players": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/publicPlayer" }
+    },
+    "currentPlayerId": { "type": ["string", "null"] },
+    "boardEpoch": { "type": "integer", "minimum": 0 },
+    "earliestNextFlipAt": { "type": ["string", "null"], "format": "date-time" },
+    "lastFlip": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/publicLastFlip" }
+      ]
+    },
+    "assistFruitTotals": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/fruitTotals" }
+      ]
+    },
+    "finalDuelArmed": { "type": "boolean" },
+    "bellResolution": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/publicBellResolution" }
+      ]
+    },
+    "actions": { "$ref": "#/$defs/actions" },
+    "result": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/publicResult" }
+      ]
+    },
+    "events": {
+      "type": "array",
+      "maxItems": 20,
+      "items": { "$ref": "#/$defs/publicEvent" }
+    }
+  },
+  "$defs": {
+    "fruitId": { "enum": ["banana", "strawberry", "lime", "plum"] },
+    "faceId": { "type": "string", "pattern": "^face-(banana|strawberry|lime|plum)-[1-5]$" },
+    "rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profileId", "profileNameZh", "countAssist"],
+      "properties": {
+        "profileId": { "enum": ["official_last_bell", "complete_collection"] },
+        "profileNameZh": { "type": "string", "minLength": 1 },
+        "countAssist": { "type": "boolean" }
+      }
+    },
+    "viewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "playerId"],
+      "properties": {
+        "mode": { "enum": ["player", "spectator"] },
+        "playerId": { "type": ["string", "null"] }
+      }
+    },
+    "topDiscard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["faceId", "fruitId", "fruitCount", "labelZh", "ariaLabelZh"],
+      "properties": {
+        "faceId": { "$ref": "#/$defs/faceId" },
+        "fruitId": { "$ref": "#/$defs/fruitId" },
+        "fruitCount": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "labelZh": { "type": "string", "minLength": 1 },
+        "ariaLabelZh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "publicPlayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "seat", "displayName", "connected", "status", "drawCount", "discardCount", "topDiscard", "eligibilityLabelZh"],
+      "properties": {
+        "id": { "type": "string" },
+        "seat": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "displayName": { "type": "string", "minLength": 1 },
+        "connected": { "type": "boolean" },
+        "status": { "enum": ["eligible", "eliminated", "resigned"] },
+        "drawCount": { "type": "integer", "minimum": 0, "maximum": 56 },
+        "discardCount": { "type": "integer", "minimum": 0, "maximum": 56 },
+        "topDiscard": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/topDiscard" }
+          ]
+        },
+        "eligibilityLabelZh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "publicLastFlip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eventSeq", "playerId", "faceId", "boardEpoch", "revealedAt"],
+      "properties": {
+        "eventSeq": { "type": "integer", "minimum": 1 },
+        "playerId": { "type": "string" },
+        "faceId": { "$ref": "#/$defs/faceId" },
+        "boardEpoch": { "type": "integer", "minimum": 1 },
+        "revealedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "fruitTotals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["banana", "strawberry", "lime", "plum"],
+      "properties": {
+        "banana": { "type": "integer", "minimum": 0, "maximum": 30 },
+        "strawberry": { "type": "integer", "minimum": 0, "maximum": 30 },
+        "lime": { "type": "integer", "minimum": 0, "maximum": 30 },
+        "plum": { "type": "integer", "minimum": 0, "maximum": 30 }
+      }
+    },
+    "publicBellResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resolutionId", "boardEpoch", "ringerId", "correct", "outcome", "collectorId", "collectedCount", "penaltyCount", "messageZh", "eventSeq"],
+      "properties": {
+        "resolutionId": { "type": "string", "pattern": "^bell-[0-9]+$" },
+        "boardEpoch": { "type": "integer", "minimum": 0 },
+        "ringerId": { "type": "string" },
+        "correct": { "type": "boolean" },
+        "outcome": { "enum": ["correct-collect", "wrong-penalty", "final-wrong-opponent-collect"] },
+        "collectorId": { "type": ["string", "null"] },
+        "collectedCount": { "type": "integer", "minimum": 0, "maximum": 56 },
+        "penaltyCount": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "messageZh": { "type": "string", "minLength": 1 },
+        "eventSeq": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "actions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["canFlip", "canRing", "canRestart", "flipDisabledReasonZh", "ringDisabledReasonZh"],
+      "properties": {
+        "canFlip": { "type": "boolean" },
+        "canRing": { "type": "boolean" },
+        "canRestart": { "type": "boolean" },
+        "flipDisabledReasonZh": { "type": ["string", "null"] },
+        "ringDisabledReasonZh": { "type": ["string", "null"] }
+      }
+    },
+    "score": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playerId", "drawCount", "discardCount", "total"],
+      "properties": {
+        "playerId": { "type": "string" },
+        "drawCount": { "type": "integer", "minimum": 0, "maximum": 56 },
+        "discardCount": { "type": "integer", "minimum": 0, "maximum": 56 },
+        "total": { "type": "integer", "minimum": 0, "maximum": 56 }
+      }
+    },
+    "publicResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason", "winnerIds", "scores", "summaryZh"],
+      "properties": {
+        "reason": { "enum": ["final-correct-bell", "final-wrong-bell", "all-cards-owned", "no-progress", "player-exit"] },
+        "winnerIds": { "type": "array", "minItems": 1, "maxItems": 6, "uniqueItems": true, "items": { "type": "string" } },
+        "scores": { "type": "array", "minItems": 2, "maxItems": 6, "items": { "$ref": "#/$defs/score" } },
+        "summaryZh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "publicEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seq", "type", "actorId", "boardEpoch", "faceIds", "targetPlayerIds", "textZh"],
+      "properties": {
+        "seq": { "type": "integer", "minimum": 1 },
+        "type": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "actorId": { "type": ["string", "null"] },
+        "boardEpoch": { "type": "integer", "minimum": 0 },
+        "faceIds": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/faceId" } },
+        "targetPlayerIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+        "textZh": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

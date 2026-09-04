@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/halli-galli/card-catalog.schema.json",
+  "title": "Halli Galli card catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "modelVersion", "gameId", "sourceBasis", "cardPhysical", "fruits", "copyDistribution", "faces"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "halli-galli" },
+    "sourceBasis": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": { "type": "string", "format": "uri" }
+    },
+    "cardPhysical": { "$ref": "#/$defs/cardPhysical" },
+    "fruits": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/fruit" }
+    },
+    "copyDistribution": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/distribution" }
+    },
+    "faces": {
+      "type": "array",
+      "minItems": 20,
+      "maxItems": 20,
+      "items": { "$ref": "#/$defs/face" }
+    }
+  },
+  "$defs": {
+    "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+    "cardPhysical": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["widthMm", "heightMm", "prototypeWidth", "prototypeHeight", "cornerRadius", "safeInset"],
+      "properties": {
+        "widthMm": { "const": 56 },
+        "heightMm": { "const": 87 },
+        "prototypeWidth": { "const": 168 },
+        "prototypeHeight": { "const": 261 },
+        "cornerRadius": { "type": "integer", "minimum": 0, "maximum": 30 },
+        "safeInset": { "type": "integer", "minimum": 8, "maximum": 30 }
+      }
+    },
+    "palette": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base", "dark", "light"],
+      "properties": {
+        "base": { "$ref": "#/$defs/hex" },
+        "dark": { "$ref": "#/$defs/hex" },
+        "light": { "$ref": "#/$defs/hex" }
+      }
+    },
+    "fruit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nameZh", "nameEn", "shape", "pattern", "ariaNounZh", "palette"],
+      "properties": {
+        "id": { "enum": ["banana", "strawberry", "lime", "plum"] },
+        "nameZh": { "type": "string", "minLength": 1, "maxLength": 8 },
+        "nameEn": { "type": "string", "minLength": 1 },
+        "shape": { "$ref": "#/$defs/slug" },
+        "pattern": { "$ref": "#/$defs/slug" },
+        "ariaNounZh": { "type": "string", "minLength": 1 },
+        "palette": { "$ref": "#/$defs/palette" }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fruitCount", "copies", "layoutId"],
+      "properties": {
+        "fruitCount": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "copies": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "layoutId": { "enum": ["single", "diagonal-pair", "triangle", "two-by-two", "four-plus-center"] }
+      }
+    },
+    "face": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "fruitId", "fruitCount", "copies", "layoutId", "labelZh", "altZh"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^face-(banana|strawberry|lime|plum)-[1-5]$" },
+        "fruitId": { "enum": ["banana", "strawberry", "lime", "plum"] },
+        "fruitCount": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "copies": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "layoutId": { "enum": ["single", "diagonal-pair", "triangle", "two-by-two", "four-plus-center"] },
+        "labelZh": { "type": "string", "minLength": 1 },
+        "altZh": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

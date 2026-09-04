@@ -22,7 +22,7 @@ import {
 import GameBoard from './GameBoard.vue'
 import { ITEM_ART, MAP_ART, PLAYER_ART } from './catalog'
 import { createBombPeopleSound } from './sound'
-import type { BombGame, BombMap, BombPlayer } from './types'
+import type { BombGame, BombLocalPlayerVisual, BombMap, BombPlayer } from './types'
 
 const props = defineProps<{ snapshot: ArcadeSnapshot }>()
 const actions = usePluginGameActions()
@@ -37,15 +37,27 @@ const touchMask = ref(0)
 const joystickX = ref(0)
 const joystickY = ref(0)
 const joystickActive = ref(false)
-const SNAPSHOT_CLOCK_MS = 50
-const BACKUP_CLOCK_STALE_MS = 180
-const RELEASE_RETRY_DELAYS_MS = [45, 120] as const
+const localPlayerVisual = ref<BombLocalPlayerVisual | null>(null)
+const SNAPSHOT_CLOCK_MS = 100
+const BACKUP_CLOCK_STALE_MS = 320
+const RELEASE_RETRY_DELAYS_MS = [75] as const
+
+interface PendingMovePrediction {
+  fromX: number
+  fromY: number
+  targetX: number
+  targetY: number
+  expiresTick: number
+}
+
 let inputSequence = 0
 let heartbeatSequence = 0
 let heartbeatTimer: ReturnType<typeof setInterval> | null = null
 let heartbeatInFlight = false
 let lastSnapshotAt = performance.now()
 let disposed = false
+let predictionRound = props.snapshot.roundNumber
+let pendingMovePrediction: PendingMovePrediction | null = null
 let joystickPointerId: number | null = null
 let soundEffectsInitialized = false
 let soundRound = props.snapshot.roundNumber
@@ -169,6 +181,183 @@ function combinedMask() {
   return keyboardMask.value | touchMask.value
 }
 
+function movementDirection(mask: number, actor = selfActor.value): [number, number] {
+  const horizontal = Number(Boolean(mask & 8)) - Number(Boolean(mask & 4))
+  const vertical = Number(Boolean(mask & 2)) - Number(Boolean(mask & 1))
+  if (!horizontal || !vertical) return [horizontal, vertical]
+  const facingX = localPlayerVisual.value?.facingX ?? actor?.facingX ?? 0
+  const facingY = localPlayerVisual.value?.facingY ?? actor?.facingY ?? 1
+  if (facingX === horizontal) return [horizontal, 0]
+  if (facingY === vertical) return [0, vertical]
+  return [horizontal, 0]
+}
+
+function movementIntervalTicks(actor: BombPlayer) {
+  return actor.moveIntervalTicks ?? Math.max(2, 4 - actor.equipment.speedLevel * 0.65)
+}
+
+function visualFromActor(actor: BombPlayer, moving = false, released = true): BombLocalPlayerVisual {
+  return {
+    x: actor.x,
+    y: actor.y,
+    facingX: actor.facingX,
+    facingY: actor.facingY,
+    moving,
+    released,
+    predicted: false,
+  }
+}
+
+function canPredictCell(actor: BombPlayer, x: number, y: number) {
+  if (x < 0 || y < 0 || x >= game.value.boardSize || y >= game.value.boardSize) return false
+  const cell = game.value.board[y]?.[x]
+  if (cell == null || cell === 1 || cell === 3) return false
+  if (cell === 2 && !actor.equipment.ghost) return false
+  if (game.value.bombs.some(bomb => !bomb.carriedBy && bomb.x === x && bomb.y === y)) return false
+  return !game.value.players.some(player => (
+    player.id !== actor.id && player.alive && player.x === x && player.y === y
+  ))
+}
+
+function predictLocalMove() {
+  const actor = selfActor.value
+  if (disposed || !actor || !canControl.value || pendingMovePrediction) return
+  const [dx, dy] = movementDirection(combinedMask(), actor)
+  if (!dx && !dy) return
+
+  const visual = localPlayerVisual.value ?? visualFromActor(actor, true, false)
+  if (visual.x !== actor.x || visual.y !== actor.y) return
+
+  const targetX = actor.x + dx
+  const targetY = actor.y + dy
+  if (!canPredictCell(actor, targetX, targetY)) {
+    localPlayerVisual.value = {
+      ...visual,
+      facingX: dx,
+      facingY: dy,
+      moving: true,
+      released: false,
+      predicted: false,
+    }
+    return
+  }
+
+  const intervalTicks = movementIntervalTicks(actor)
+  pendingMovePrediction = {
+    fromX: actor.x,
+    fromY: actor.y,
+    targetX,
+    targetY,
+    expiresTick: game.value.tick + Math.ceil(intervalTicks) + 2,
+  }
+  localPlayerVisual.value = {
+    x: targetX,
+    y: targetY,
+    facingX: dx,
+    facingY: dy,
+    moving: true,
+    released: false,
+    predicted: true,
+  }
+}
+
+function reconcileLocalVisual(force = false) {
+  const actor = selfActor.value
+  if (!actor) {
+    pendingMovePrediction = null
+    localPlayerVisual.value = null
+    return
+  }
+
+  const roundChanged = predictionRound !== props.snapshot.roundNumber
+  if (force || roundChanged || !localPlayerVisual.value) {
+    predictionRound = props.snapshot.roundNumber
+    pendingMovePrediction = null
+    const [dx, dy] = movementDirection(combinedMask(), actor)
+    const moving = Boolean(dx || dy) && canControl.value
+    localPlayerVisual.value = {
+      ...visualFromActor(actor, moving, !moving),
+      facingX: moving ? dx : actor.facingX,
+      facingY: moving ? dy : actor.facingY,
+    }
+    return
+  }
+
+  const [dx, dy] = movementDirection(combinedMask(), actor)
+  const moving = Boolean(dx || dy) && canControl.value
+  const pending = pendingMovePrediction
+  if (pending) {
+    if (actor.x === pending.targetX && actor.y === pending.targetY) {
+      pendingMovePrediction = null
+      localPlayerVisual.value = {
+        x: actor.x,
+        y: actor.y,
+        facingX: moving ? dx : actor.facingX,
+        facingY: moving ? dy : actor.facingY,
+        moving,
+        released: !moving,
+        predicted: false,
+      }
+      return
+    }
+
+    const leftOrigin = actor.x !== pending.fromX || actor.y !== pending.fromY
+    if (leftOrigin || game.value.tick > pending.expiresTick) {
+      pendingMovePrediction = null
+      localPlayerVisual.value = {
+        ...visualFromActor(actor, moving, !moving),
+        facingX: moving ? dx : actor.facingX,
+        facingY: moving ? dy : actor.facingY,
+      }
+      return
+    }
+
+    localPlayerVisual.value = {
+      ...localPlayerVisual.value,
+      facingX: moving ? dx : localPlayerVisual.value.facingX,
+      facingY: moving ? dy : localPlayerVisual.value.facingY,
+      moving,
+      released: !moving,
+    }
+    return
+  }
+
+  localPlayerVisual.value = {
+    ...visualFromActor(actor, moving, !moving),
+    facingX: moving ? dx : actor.facingX,
+    facingY: moving ? dy : actor.facingY,
+  }
+}
+
+function updateLocalDirection(previousMask: number, nextMask: number) {
+  const previousDirection = previousMask & DIRECTION_MASK
+  const nextDirection = nextMask & DIRECTION_MASK
+  if (previousDirection === nextDirection) return
+  const actor = selfActor.value
+  if (!actor) return
+  if (!localPlayerVisual.value) localPlayerVisual.value = visualFromActor(actor)
+  const [dx, dy] = movementDirection(nextMask, actor)
+  const moving = Boolean(dx || dy) && canControl.value
+  if (!moving) {
+    localPlayerVisual.value = {
+      ...localPlayerVisual.value,
+      moving: false,
+      released: true,
+    }
+    return
+  }
+
+  localPlayerVisual.value = {
+    ...localPlayerVisual.value,
+    facingX: dx,
+    facingY: dy,
+    moving: true,
+    released: false,
+  }
+  const freshPress = previousDirection === 0
+  if (freshPress) predictLocalMove()
+}
+
 function unlockSound() {
   sound.unlock()
 }
@@ -217,11 +406,16 @@ function sendInput(nextMask = combinedMask(), released = false) {
   }
 }
 
+function commitInputChange(previous: number, next: number) {
+  if (next === previous) return
+  updateLocalDirection(previous, next)
+  sendInput(next, Boolean(previous & ~next))
+}
+
 function updateKeyboard(bit: number, pressed: boolean) {
   const previous = combinedMask()
   keyboardMask.value = pressed ? keyboardMask.value | bit : keyboardMask.value & ~bit
-  const next = combinedMask()
-  if (next !== previous) sendInput(next, Boolean(previous & ~next))
+  commitInputChange(previous, combinedMask())
 }
 
 function keydown(event: KeyboardEvent) {
@@ -246,21 +440,20 @@ function touchDown(bit: number, event: PointerEvent) {
   ;(event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId)
   const previous = combinedMask()
   touchMask.value |= bit
-  if (combinedMask() !== previous) sendInput()
+  commitInputChange(previous, combinedMask())
 }
 
 function touchUp(bit: number, event: PointerEvent) {
   event.preventDefault()
   const previous = combinedMask()
   touchMask.value &= ~bit
-  if (combinedMask() !== previous) sendInput(combinedMask(), true)
+  commitInputChange(previous, combinedMask())
 }
 
 function setTouchDirection(bit: number) {
   const previous = combinedMask()
   touchMask.value = (touchMask.value & ~DIRECTION_MASK) | bit
-  const next = combinedMask()
-  if (next !== previous) sendInput(next, Boolean(previous & ~next))
+  commitInputChange(previous, combinedMask())
 }
 
 function moveJoystick(event: PointerEvent) {
@@ -307,13 +500,15 @@ function stopJoystick(event: PointerEvent) {
 }
 
 function clearInput(notify = true) {
-  const hadInput = combinedMask() !== 0
+  const previous = combinedMask()
+  const hadInput = previous !== 0
   keyboardMask.value = 0
   touchMask.value = 0
   joystickPointerId = null
   joystickActive.value = false
   joystickX.value = 0
   joystickY.value = 0
+  updateLocalDirection(previous, 0)
   if (notify && hadInput && props.snapshot.phase === 'playing' && !isSpectator.value) {
     sendInput(0, true)
   }
@@ -347,7 +542,22 @@ async function heartbeat() {
   }
 }
 
-watch(canControl, active => { if (!active) clearInput(true) })
+watch(canControl, active => {
+  if (!active) clearInput(true)
+  else reconcileLocalVisual(true)
+})
+watch(
+  () => [
+    props.snapshot.roundNumber,
+    game.value.tick,
+    selfActor.value?.x,
+    selfActor.value?.y,
+    selfActor.value?.alive,
+    game.value.frozen,
+  ],
+  () => reconcileLocalVisual(),
+  { immediate: true },
+)
 watch(() => props.snapshot.phase, phase => {
   showMaps.value = phase === 'lobby'
 })
@@ -479,7 +689,12 @@ onBeforeUnmount(() => {
       </aside>
 
       <main class="arena-column">
-        <GameBoard :game="game" :self-id="snapshot.self.id" :self-input-mask="combinedMask()" />
+        <GameBoard
+          :game="game"
+          :self-id="snapshot.self.id"
+          :self-input-mask="combinedMask()"
+          :self-visual="localPlayerVisual"
+        />
 
         <div v-if="!isSpectator && snapshot.phase === 'playing'" class="touch-controls" :class="{ disabled: !canControl }" aria-label="移动端触屏操作">
           <div

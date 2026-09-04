@@ -1408,6 +1408,8 @@ class BombPeopleEngine:
         name: str,
     ) -> dict[str, Any]:
         record = state.session_records.get(actor.player_id, SessionRecord())
+        direction = self._movement_direction(actor)
+        queued_direction = (actor.queued_move_x, actor.queued_move_y)
         win_rate = (
             round(record.championships * 100 / record.matches, 1)
             if record.matches
@@ -1426,8 +1428,7 @@ class BombPeopleEngine:
             "moving": bool(
                 actor.alive
                 and not state.frozen
-                and state.tick - actor.last_move_tick
-                <= self._move_interval_ticks(state, actor)
+                and (direction != (0, 0) or queued_direction != (0, 0))
             ),
             "moveIntervalTicks": self._move_interval_ticks(state, actor),
             "carriedBombId": actor.carried_bomb_id,

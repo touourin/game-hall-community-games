@@ -260,10 +260,22 @@ def test_quick_direction_tap_moves_exactly_one_cell(loaded):
     engine.apply_input(room, members[0], 2, 0)
     assert actor.input_mask == 0
     assert (actor.queued_move_x, actor.queued_move_y) == (1, 0)
+    queued_view = engine.view(room, members[0])
+    queued_actor = next(
+        player for player in queued_view["players"]
+        if player["id"] == actor.player_id
+    )
+    assert queued_actor["moving"] is True
 
     engine.tick(room)
     assert (actor.x, actor.y) == (6, 5)
     assert (actor.queued_move_x, actor.queued_move_y) == (0, 0)
+    stopped_view = engine.view(room, members[0])
+    stopped_actor = next(
+        player for player in stopped_view["players"]
+        if player["id"] == actor.player_id
+    )
+    assert stopped_actor["moving"] is False
     for _ in range(engine_module.TICK_RATE // 2):
         engine.tick(room)
     assert (actor.x, actor.y) == (6, 5)

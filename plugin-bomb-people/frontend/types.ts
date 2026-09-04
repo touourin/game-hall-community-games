@@ -53,6 +53,16 @@ export interface BombPlayer {
   equipment: BombEquipment
 }
 
+export interface BombLocalPlayerVisual {
+  x: number
+  y: number
+  facingX: number
+  facingY: number
+  moving: boolean
+  released: boolean
+  predicted: boolean
+}
+
 export interface BombObject {
   id: number
   ownerId: string

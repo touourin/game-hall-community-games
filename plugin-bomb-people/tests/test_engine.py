@@ -244,6 +244,51 @@ def test_movement_starts_faster_and_scales_smoothly_with_speed_items(
     assert own["moveIntervalTicks"] == expected_interval + 2.0
 
 
+def test_quick_direction_tap_moves_exactly_one_cell(loaded):
+    Engine, _, _, engine_module = loaded
+    engine = Engine(random.Random(1701))
+    room, members = start_active(engine, 2)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    opponent = room.state.players[members[1].id]
+    actor.x, actor.y = 5, 5
+    opponent.x, opponent.y = 18, 18
+
+    # Press and release before the next authoritative tick.  The tap must not
+    # be lost, and it must never turn into a held direction.
+    engine.apply_input(room, members[0], 1, engine_module.INPUT_RIGHT)
+    engine.apply_input(room, members[0], 2, 0)
+    assert actor.input_mask == 0
+    assert (actor.queued_move_x, actor.queued_move_y) == (1, 0)
+
+    engine.tick(room)
+    assert (actor.x, actor.y) == (6, 5)
+    assert (actor.queued_move_x, actor.queued_move_y) == (0, 0)
+    for _ in range(engine_module.TICK_RATE // 2):
+        engine.tick(room)
+    assert (actor.x, actor.y) == (6, 5)
+
+
+def test_disconnected_player_input_is_cleared_before_movement(loaded):
+    Engine, _, _, engine_module = loaded
+    engine = Engine(random.Random(1702))
+    room, members = start_active(engine, 2)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    opponent = room.state.players[members[1].id]
+    actor.x, actor.y = 5, 5
+    opponent.x, opponent.y = 18, 18
+    engine.apply_input(room, members[0], 1, engine_module.INPUT_RIGHT)
+
+    members[0].connected = False
+    engine.tick(room)
+
+    assert (actor.x, actor.y) == (5, 5)
+    assert actor.input_mask == 0
+    assert (actor.queued_move_x, actor.queued_move_y) == (0, 0)
+    assert actor.move_cooldown == 0
+
+
 def test_bombs_have_an_authoritative_two_second_fuse(loaded):
     Engine, _, _, engine_module = loaded
     engine = Engine(random.Random(2))

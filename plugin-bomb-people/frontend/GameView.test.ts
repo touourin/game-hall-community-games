@@ -183,6 +183,32 @@ describe('Bomb People arena', () => {
     wrapper.unmount()
   })
 
+  it('starts local walking feedback immediately and reinforces key releases', async () => {
+    const wrapper = render()
+    const self = wrapper.get('.player-piece.self')
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyD', cancelable: true }))
+    await flushPromises()
+    expect(self.classes()).toEqual(expect.arrayContaining(['walking', 'local-input']))
+
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyD', cancelable: true }))
+    await flushPromises()
+    expect(self.classes()).not.toContain('local-input')
+    expect(self.classes()).not.toContain('walking')
+
+    await vi.advanceTimersByTimeAsync(120)
+    const inputPayloads = mocks.rapidAction.mock.calls
+      .filter(([action]) => action === 'input')
+      .map(([, payload]) => payload)
+    expect(inputPayloads).toEqual([
+      { sequence: 1, inputMask: 8 },
+      { sequence: 2, inputMask: 0 },
+      { sequence: 3, inputMask: 0 },
+      { sequence: 4, inputMask: 0 },
+    ])
+    wrapper.unmount()
+  })
+
   it('uses C as the dedicated remote timer trigger', async () => {
     const wrapper = render()
     const trigger = new KeyboardEvent('keydown', { code: 'KeyC', cancelable: true })
@@ -384,13 +410,42 @@ describe('Bomb People arena', () => {
     wrapper.unmount()
   })
 
-  it('uses one elected player as the lightweight snapshot clock', async () => {
+  it('uses one elected player as a 20 Hz snapshot clock', async () => {
     const data = snapshot()
     const game = data.game as unknown as BombGame
     game.clockLeaderId = 'p0'
     const wrapper = render(data)
-    await vi.advanceTimersByTimeAsync(125)
+    await vi.advanceTimersByTimeAsync(50)
     expect(mocks.rapidAction).toHaveBeenCalledWith('heartbeat', { sequence: 1 })
+    wrapper.unmount()
+  })
+
+  it('lets another player refresh the room when the elected clock stalls', async () => {
+    const wrapper = render()
+    await vi.advanceTimersByTimeAsync(200)
+    expect(mocks.rapidAction).toHaveBeenCalledWith('heartbeat', { sequence: 1 })
+    wrapper.unmount()
+  })
+
+  it('never queues snapshot heartbeats behind a slow request', async () => {
+    let resolveHeartbeat: ((accepted: boolean) => void) | undefined
+    mocks.rapidAction.mockImplementation((action: string) => (
+      action === 'heartbeat'
+        ? new Promise<boolean>(resolve => { resolveHeartbeat = resolve })
+        : Promise.resolve(true)
+    ))
+    const data = snapshot()
+    const game = data.game as unknown as BombGame
+    game.clockLeaderId = 'p0'
+    const wrapper = render(data)
+
+    await vi.advanceTimersByTimeAsync(200)
+    expect(mocks.rapidAction.mock.calls.filter(([action]) => action === 'heartbeat')).toHaveLength(1)
+
+    resolveHeartbeat?.(true)
+    await flushPromises()
+    await vi.advanceTimersByTimeAsync(50)
+    expect(mocks.rapidAction.mock.calls.filter(([action]) => action === 'heartbeat')).toHaveLength(2)
     wrapper.unmount()
   })
 

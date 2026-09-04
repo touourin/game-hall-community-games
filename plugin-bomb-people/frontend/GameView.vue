@@ -37,13 +37,20 @@ const touchMask = ref(0)
 const joystickX = ref(0)
 const joystickY = ref(0)
 const joystickActive = ref(false)
+const SNAPSHOT_CLOCK_MS = 50
+const BACKUP_CLOCK_STALE_MS = 180
+const RELEASE_RETRY_DELAYS_MS = [45, 120] as const
 let inputSequence = 0
 let heartbeatSequence = 0
 let heartbeatTimer: ReturnType<typeof setInterval> | null = null
+let heartbeatInFlight = false
+let lastSnapshotAt = performance.now()
+let disposed = false
 let joystickPointerId: number | null = null
 let soundEffectsInitialized = false
 let soundRound = props.snapshot.roundNumber
 const seenSoundEffectIds = new Set<number>()
+const inputRetryTimers = new Set<ReturnType<typeof setTimeout>>()
 
 const game = computed(() => props.snapshot.game as unknown as BombGame)
 const isSpectator = computed(() => props.snapshot.viewer?.mode === 'spectator')
@@ -166,17 +173,55 @@ function unlockSound() {
   sound.unlock()
 }
 
-function sendInput(nextMask = combinedMask()) {
-  if (!canControl.value) return
+function canTransmitInput(nextMask: number) {
+  if (nextMask !== 0) return canControl.value
+  return props.snapshot.phase === 'playing' && !isSpectator.value
+}
+
+function scheduleInputRetry(nextMask: number, delay: number, retryOnFailure = false) {
+  if (disposed) return
+  const timer = setTimeout(() => {
+    inputRetryTimers.delete(timer)
+    if (disposed || combinedMask() !== nextMask || !canTransmitInput(nextMask)) return
+    transmitInput(nextMask, retryOnFailure)
+  }, delay)
+  inputRetryTimers.add(timer)
+}
+
+function transmitInput(nextMask: number, retryOnFailure = true) {
+  if (disposed || !canTransmitInput(nextMask)) return
   inputSequence = Math.max(inputSequence, game.value.selfInputSequence) + 1
-  void actions.rapidAction('input', { sequence: inputSequence, inputMask: nextMask })
+  const request = actions.rapidAction('input', {
+    sequence: inputSequence,
+    inputMask: nextMask,
+  })
+  void request.then(
+    accepted => {
+      if (!accepted && retryOnFailure && combinedMask() === nextMask) {
+        scheduleInputRetry(nextMask, 70)
+      }
+    },
+    () => {
+      if (retryOnFailure && combinedMask() === nextMask) {
+        scheduleInputRetry(nextMask, 70)
+      }
+    },
+  )
+}
+
+function sendInput(nextMask = combinedMask(), released = false) {
+  transmitInput(nextMask)
+  if (!released) return
+  for (const delay of RELEASE_RETRY_DELAYS_MS) {
+    scheduleInputRetry(nextMask, delay)
+  }
 }
 
 function updateKeyboard(bit: number, pressed: boolean) {
   const previous = combinedMask()
   keyboardMask.value = pressed ? keyboardMask.value | bit : keyboardMask.value & ~bit
   const next = combinedMask()
-  if (next !== previous) sendInput(next)
+  if (next !== previous) sendInput(next, Boolean(previous & ~next))
 }
 
 function keydown(event: KeyboardEvent) {
@@ -208,13 +253,14 @@ function touchUp(bit: number, event: PointerEvent) {
   event.preventDefault()
   const previous = combinedMask()
   touchMask.value &= ~bit
-  if (combinedMask() !== previous) sendInput()
+  if (combinedMask() !== previous) sendInput(combinedMask(), true)
 }
 
 function setTouchDirection(bit: number) {
   const previous = combinedMask()
   touchMask.value = (touchMask.value & ~DIRECTION_MASK) | bit
-  if (combinedMask() !== previous) sendInput()
+  const next = combinedMask()
+  if (next !== previous) sendInput(next, Boolean(previous & ~next))
 }
 
 function moveJoystick(event: PointerEvent) {
@@ -269,8 +315,7 @@ function clearInput(notify = true) {
   joystickX.value = 0
   joystickY.value = 0
   if (notify && hadInput && props.snapshot.phase === 'playing' && !isSpectator.value) {
-    inputSequence = Math.max(inputSequence, game.value.selfInputSequence) + 1
-    void actions.rapidAction('input', { sequence: inputSequence, inputMask: 0 })
+    sendInput(0, true)
   }
 }
 
@@ -278,19 +323,36 @@ function blur() {
   clearInput(true)
 }
 
-function heartbeat() {
+function visibilityChange() {
+  if (document.hidden) clearInput(true)
+}
+
+async function heartbeat() {
+  const isLeader = game.value.clockLeaderId === props.snapshot.self.id
+  const backupDelay = BACKUP_CLOCK_STALE_MS + Math.max(0, props.snapshot.self.seat) * 15
   if (
-    props.snapshot.phase !== 'playing'
+    heartbeatInFlight
+    || props.snapshot.phase !== 'playing'
     || isSpectator.value
-    || game.value.clockLeaderId !== props.snapshot.self.id
+    || (!isLeader && performance.now() - lastSnapshotAt < backupDelay)
   ) return
+  heartbeatInFlight = true
   heartbeatSequence += 1
-  void actions.rapidAction('heartbeat', { sequence: heartbeatSequence })
+  try {
+    await actions.rapidAction('heartbeat', { sequence: heartbeatSequence })
+  } catch {
+    // The next clock slot retries naturally; never build an in-flight queue.
+  } finally {
+    heartbeatInFlight = false
+  }
 }
 
 watch(canControl, active => { if (!active) clearInput(true) })
 watch(() => props.snapshot.phase, phase => {
   showMaps.value = phase === 'lobby'
+})
+watch(() => game.value.tick, () => {
+  lastSnapshotAt = performance.now()
 })
 watch(() => game.value.effects ?? [], nextEffects => {
   if (soundRound !== props.snapshot.roundNumber) {
@@ -311,16 +373,23 @@ onMounted(() => {
   window.addEventListener('keyup', keyup, { passive: false })
   window.addEventListener('pointerdown', unlockSound, { passive: true, once: true })
   window.addEventListener('blur', blur)
-  heartbeatTimer = setInterval(heartbeat, 125)
+  window.addEventListener('pagehide', blur)
+  document.addEventListener('visibilitychange', visibilityChange)
+  heartbeatTimer = setInterval(() => { void heartbeat() }, SNAPSHOT_CLOCK_MS)
 })
 
 onBeforeUnmount(() => {
   clearInput(true)
+  disposed = true
   window.removeEventListener('keydown', keydown)
   window.removeEventListener('keyup', keyup)
   window.removeEventListener('pointerdown', unlockSound)
   window.removeEventListener('blur', blur)
+  window.removeEventListener('pagehide', blur)
+  document.removeEventListener('visibilitychange', visibilityChange)
   if (heartbeatTimer) clearInterval(heartbeatTimer)
+  for (const timer of inputRetryTimers) clearTimeout(timer)
+  inputRetryTimers.clear()
   sound.destroy()
 })
 </script>
@@ -410,7 +479,7 @@ onBeforeUnmount(() => {
       </aside>
 
       <main class="arena-column">
-        <GameBoard :game="game" :self-id="snapshot.self.id" />
+        <GameBoard :game="game" :self-id="snapshot.self.id" :self-input-mask="combinedMask()" />
 
         <div v-if="!isSpectator && snapshot.phase === 'playing'" class="touch-controls" :class="{ disabled: !canControl }" aria-label="移动端触屏操作">
           <div

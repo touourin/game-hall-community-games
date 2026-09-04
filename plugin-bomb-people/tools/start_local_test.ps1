@@ -16,16 +16,21 @@ $viteConfig = Join-Path $pluginRoot 'dev\vite.config.mjs'
 $logRoot = Join-Path $pluginRoot '.local-test'
 $serverOut = Join-Path $logRoot 'server.out.log'
 $serverError = Join-Path $logRoot 'server.error.log'
+$workspacePython = Join-Path $hallRoot '.venv\Scripts\python.exe'
 
 if (-not (Test-Path -LiteralPath $viteCommand -PathType Leaf)) {
     throw '缺少前端依赖。请先在游戏大厅 frontend 目录执行 npm install。'
 }
-if (-not (Get-Command python -ErrorAction SilentlyContinue)) {
+if (-not (Test-Path -LiteralPath $workspacePython -PathType Leaf) -and -not (Get-Command python -ErrorAction SilentlyContinue)) {
     throw '找不到 Python。请先安装 Python 并加入 PATH。'
 }
 
 New-Item -ItemType Directory -Force -Path $logRoot | Out-Null
-$pythonCommand = (Get-Command python).Source
+$pythonCommand = if (Test-Path -LiteralPath $workspacePython -PathType Leaf) {
+    $workspacePython
+} else {
+    (Get-Command python).Source
+}
 $serverProcess = $null
 $previousApiPort = $env:BOMB_PEOPLE_API_PORT
 

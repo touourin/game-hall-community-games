@@ -1,0 +1,45 @@
+{
+  "$schema": "../plugin.schema.json",
+  "apiVersion": 1,
+  "version": "1.0.0",
+  "author": "Game Hall Contributors",
+  "license": "UNLICENSED",
+  "id": "plugin-splendor",
+  "name": "璀璨宝石",
+  "description": "2–4 人收集宝石、构筑永久折扣并争取贵族拜访的经典策略桌游",
+  "category": "策略桌游",
+  "tone": "splendor-guild",
+  "roomLayout": "immersive",
+  "players": {
+    "min": 2,
+    "max": 4,
+    "label": "2–4 人"
+  },
+  "capabilities": {
+    "guests": true,
+    "spectators": false,
+    "spectatorFrames": false,
+    "firstPlayer": true,
+    "undoActions": [],
+    "drawRequests": false,
+    "replay": false,
+    "ai": false
+  },
+  "records": {
+    "scoreKind": "outcome"
+  },
+  "defaultOptions": {
+    "listed": true,
+    "allowGuests": true,
+    "allowSpectators": false,
+    "firstPlayer": "random",
+    "rulesProfile": "base-2024-refresh"
+  },
+  "ruleLabels": [
+    "2024 基础常规规则",
+    "90 张发展卡",
+    "精确黄金支付",
+    "贵族拜访",
+    "15 分触发最终轮"
+  ]
+}

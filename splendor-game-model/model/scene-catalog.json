@@ -1,0 +1,107 @@
+{
+  "$schema": "./scene-catalog.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "splendor",
+  "logicalCanvas": { "width": 1600, "height": 1000, "unit": "logical-pixel", "viewerAnchor": "bottom-center" },
+  "layout": "immersive",
+  "theme": {
+    "table": "#173B3A",
+    "tableEdge": "#6A5138",
+    "paper": "#F4F0E7",
+    "ink": "#20292D",
+    "brass": "#B78A3F",
+    "focus": "#E8BD62",
+    "danger": "#A8524B",
+    "hidden": "#4D5961"
+  },
+  "cardMetrics": {
+    "developmentWidth": 160,
+    "developmentHeight": 224,
+    "nobleWidth": 180,
+    "nobleHeight": 180,
+    "cornerRadius": 14,
+    "minimumTarget": 44,
+    "tableauVisibleTopRatio": 0.28
+  },
+  "breakpoints": { "narrowMax": 390, "compactMax": 599, "mediumMax": 899, "desktopMax": 1279, "wideMin": 1280 },
+  "viewportPolicy": {
+    "pageLevelHorizontalOverflow": false,
+    "localHorizontalScrollZones": ["opponent_rail", "noble_row", "tier_3_market", "tier_2_market", "tier_1_market", "reserved_drawer"],
+    "stickyZonesOnCompact": ["status_bar", "action_dock"]
+  },
+  "zones": [
+    { "id": "status_bar", "role": "回合、轮数与最终轮状态", "rect": { "x": 0.02, "y": 0.02, "width": 0.96, "height": 0.07 }, "zIndex": 30, "visibility": "always", "interaction": "read-only" },
+    { "id": "opponent_rail", "role": "对手公开资源与引擎摘要", "rect": { "x": 0.02, "y": 0.10, "width": 0.96, "height": 0.10 }, "zIndex": 10, "visibility": "player-count-dependent", "interaction": "expandable" },
+    { "id": "noble_row", "role": "本局可用贵族", "rect": { "x": 0.03, "y": 0.22, "width": 0.69, "height": 0.12 }, "zIndex": 10, "visibility": "always", "interaction": "effect-target" },
+    { "id": "tier_3_market", "role": "3 级牌堆与四个市场槽", "rect": { "x": 0.03, "y": 0.35, "width": 0.69, "height": 0.14 }, "zIndex": 10, "visibility": "always", "interaction": "primary-action" },
+    { "id": "tier_2_market", "role": "2 级牌堆与四个市场槽", "rect": { "x": 0.03, "y": 0.50, "width": 0.69, "height": 0.14 }, "zIndex": 10, "visibility": "always", "interaction": "primary-action" },
+    { "id": "tier_1_market", "role": "1 级牌堆与四个市场槽", "rect": { "x": 0.03, "y": 0.65, "width": 0.69, "height": 0.14 }, "zIndex": 10, "visibility": "always", "interaction": "primary-action" },
+    { "id": "gem_supply", "role": "五色宝石与黄金公共供应", "rect": { "x": 0.74, "y": 0.22, "width": 0.23, "height": 0.38 }, "zIndex": 10, "visibility": "always", "interaction": "primary-action" },
+    { "id": "event_strip", "role": "最近公开且脱敏的行动事件", "rect": { "x": 0.74, "y": 0.61, "width": 0.23, "height": 0.18 }, "zIndex": 8, "visibility": "always", "interaction": "expandable" },
+    { "id": "self_tableau", "role": "本人五色发展引擎与贵族", "rect": { "x": 0.03, "y": 0.81, "width": 0.50, "height": 0.16 }, "zIndex": 12, "visibility": "phase-dependent", "interaction": "expandable" },
+    { "id": "reserved_drawer", "role": "本人最多三张保留牌", "rect": { "x": 0.54, "y": 0.81, "width": 0.18, "height": 0.16 }, "zIndex": 12, "visibility": "phase-dependent", "interaction": "primary-action" },
+    { "id": "action_dock", "role": "当前意图、确认与禁用原因", "rect": { "x": 0.74, "y": 0.81, "width": 0.23, "height": 0.16 }, "zIndex": 40, "visibility": "always", "interaction": "primary-action" },
+    { "id": "payment_sheet", "role": "精确支付与黄金替代编辑器", "rect": { "x": 0.53, "y": 0.12, "width": 0.44, "height": 0.76 }, "zIndex": 80, "visibility": "phase-dependent", "interaction": "modal" },
+    { "id": "resolution_sheet", "role": "归还棋子、贵族选择或最终排名", "rect": { "x": 0.25, "y": 0.20, "width": 0.50, "height": 0.60 }, "zIndex": 90, "visibility": "phase-dependent", "interaction": "modal" }
+  ],
+  "seatLayouts": [
+    { "playerCount": 2, "seats": [
+      { "relativeSeat": 0, "zoneId": "self_tableau", "alignment": "bottom-center", "rotation": 0 },
+      { "relativeSeat": 1, "zoneId": "opponent_rail", "alignment": "top-center", "rotation": 0 }
+    ] },
+    { "playerCount": 3, "seats": [
+      { "relativeSeat": 0, "zoneId": "self_tableau", "alignment": "bottom-center", "rotation": 0 },
+      { "relativeSeat": 1, "zoneId": "opponent_rail", "alignment": "top-right", "rotation": 0 },
+      { "relativeSeat": 2, "zoneId": "opponent_rail", "alignment": "top-left", "rotation": 0 }
+    ] },
+    { "playerCount": 4, "seats": [
+      { "relativeSeat": 0, "zoneId": "self_tableau", "alignment": "bottom-center", "rotation": 0 },
+      { "relativeSeat": 1, "zoneId": "opponent_rail", "alignment": "top-right", "rotation": 0 },
+      { "relativeSeat": 2, "zoneId": "opponent_rail", "alignment": "top-center", "rotation": 0 },
+      { "relativeSeat": 3, "zoneId": "opponent_rail", "alignment": "top-left", "rotation": 0 }
+    ] }
+  ],
+  "scenes": [
+    { "id": "setup_table", "phase": "waiting", "requiredZones": ["status_bar", "opponent_rail", "noble_row", "tier_3_market", "tier_2_market", "tier_1_market", "gem_supply"], "primaryActions": [], "focusTarget": "status_bar", "announcementZh": "牌桌等待开局，展示玩家席位和组件说明。" },
+    { "id": "turn_idle", "phase": "turn_action", "requiredZones": ["status_bar", "noble_row", "tier_3_market", "tier_2_market", "tier_1_market", "gem_supply", "self_tableau", "reserved_drawer", "action_dock"], "primaryActions": ["take_different", "take_same", "reserve_face_up", "reserve_blind", "purchase_face_up", "purchase_reserved"], "focusTarget": "action_dock", "announcementZh": "轮到当前玩家，选择一项主要行动。" },
+    { "id": "take_different_select", "phase": "presentation", "requiredZones": ["gem_supply", "action_dock"], "primaryActions": ["take_different"], "focusTarget": "gem_supply", "announcementZh": "选择规定数量的不同颜色宝石，黄金不可选。" },
+    { "id": "take_same_select", "phase": "presentation", "requiredZones": ["gem_supply", "action_dock"], "primaryActions": ["take_same"], "focusTarget": "gem_supply", "announcementZh": "选择供应至少有四枚的一个颜色，并拿取两枚。" },
+    { "id": "card_action_select", "phase": "presentation", "requiredZones": ["tier_3_market", "tier_2_market", "tier_1_market", "reserved_drawer", "action_dock"], "primaryActions": ["reserve_face_up", "purchase_face_up", "purchase_reserved"], "focusTarget": "action_dock", "announcementZh": "查看卡牌原价、奖励折扣和可用行动。" },
+    { "id": "blind_reserve_select", "phase": "presentation", "requiredZones": ["tier_3_market", "tier_2_market", "tier_1_market", "action_dock"], "primaryActions": ["reserve_blind"], "focusTarget": "tier_1_market", "announcementZh": "选择一个未抽空的等级进行盲保留。" },
+    { "id": "payment_compose", "phase": "presentation", "requiredZones": ["payment_sheet"], "primaryActions": ["purchase_face_up", "purchase_reserved"], "focusTarget": "payment_sheet", "announcementZh": "编辑精确支付，可以用黄金替代仍需支付的任意宝石。" },
+    { "id": "return_tokens", "phase": "return_tokens", "requiredZones": ["status_bar", "gem_supply", "self_tableau", "resolution_sheet"], "primaryActions": ["return_tokens"], "focusTarget": "resolution_sheet", "announcementZh": "棋子超过十枚，必须归还指定数量才能结束回合。" },
+    { "id": "choose_noble", "phase": "choose_noble", "requiredZones": ["status_bar", "noble_row", "self_tableau", "resolution_sheet"], "primaryActions": ["choose_noble"], "focusTarget": "resolution_sheet", "announcementZh": "同时满足多位贵族，必须选择其中一位。" },
+    { "id": "final_round", "phase": "turn_action", "requiredZones": ["status_bar", "opponent_rail", "noble_row", "tier_3_market", "tier_2_market", "tier_1_market", "gem_supply", "action_dock"], "primaryActions": ["take_different", "take_same", "reserve_face_up", "reserve_blind", "purchase_face_up", "purchase_reserved"], "focusTarget": "status_bar", "announcementZh": "最终轮进行中，状态栏列出尚可行动的玩家。" },
+    { "id": "game_finished", "phase": "finished", "requiredZones": ["status_bar", "opponent_rail", "resolution_sheet"], "primaryActions": [], "focusTarget": "resolution_sheet", "announcementZh": "游戏结束，展示威望、发展卡数量和共同赢家。" },
+    { "id": "spectator_table", "phase": "presentation", "requiredZones": ["status_bar", "opponent_rail", "noble_row", "tier_3_market", "tier_2_market", "tier_1_market", "gem_supply", "event_strip"], "primaryActions": [], "focusTarget": "status_bar", "announcementZh": "只读观战视图，不显示任何盲保留牌身份。" }
+  ],
+  "animationCues": [
+    { "id": "pieces_taken", "durationMs": 380, "fromZone": "gem_supply", "toZone": "self_tableau", "reducedMotion": "fade", "ariaTemplateZh": "{playerName}拿取{piecesLabel}。" },
+    { "id": "pieces_returned", "durationMs": 320, "fromZone": "self_tableau", "toZone": "gem_supply", "reducedMotion": "fade", "ariaTemplateZh": "{playerName}归还{piecesLabel}。" },
+    { "id": "card_reserved_public", "durationMs": 420, "fromZone": "market", "toZone": "reserved_drawer", "reducedMotion": "outline", "ariaTemplateZh": "{playerName}保留公开的{cardLabel}。" },
+    { "id": "card_reserved_blind", "durationMs": 360, "fromZone": "deck", "toZone": "reserved_drawer", "reducedMotion": "fade", "ariaTemplateZh": "{playerName}从{level}级牌堆盲保留一张牌。" },
+    { "id": "card_purchased", "durationMs": 520, "fromZone": "card_source", "toZone": "self_tableau", "reducedMotion": "outline", "ariaTemplateZh": "{playerName}购买{cardLabel}。" },
+    { "id": "market_refilled", "durationMs": 280, "fromZone": "deck", "toZone": "market", "reducedMotion": "fade", "ariaTemplateZh": "{level}级市场补充一张牌。" },
+    { "id": "noble_acquired", "durationMs": 560, "fromZone": "noble_row", "toZone": "self_tableau", "reducedMotion": "outline", "ariaTemplateZh": "{playerName}获得一位贵族和三点威望。" },
+    { "id": "final_round_triggered", "durationMs": 420, "fromZone": null, "toZone": "status_bar", "reducedMotion": "instant", "ariaTemplateZh": "{playerName}达到十五点，最终轮开始。" },
+    { "id": "turn_advanced", "durationMs": 220, "fromZone": null, "toZone": "status_bar", "reducedMotion": "instant", "ariaTemplateZh": "轮到{playerName}。" },
+    { "id": "game_finished", "durationMs": 650, "fromZone": null, "toZone": "resolution_sheet", "reducedMotion": "instant", "ariaTemplateZh": "游戏结束，{winnerLabel}。" }
+  ],
+  "responsiveStrategy": {
+    "wide": "至少 1280px：三层市场四列完整显示，供应固定右侧，本人引擎与保留区并排。",
+    "desktop": "900-1279px：供应压成两行并靠上，市场保持四列，对手轨可局部横向滚动。",
+    "medium": "600-899px：纵向舞台，每层市场独立横向滚动，详情和支付改为底部 sheet。",
+    "compact": "391-599px：118-132px 固定卡宽，状态与行动 Dock 固定，页面根节点不横滚。",
+    "narrow": "不超过 390px：减少装饰与插画高度，保留等级、奖励、威望、全部费用和 44px 目标。"
+  },
+  "accessibility": {
+    "notColorOnly": true,
+    "liveRegion": "公开行动使用 polite；强制归还、贵族选择和终局使用 assertive。",
+    "reducedMotion": "飞移动画替换为淡入、轮廓变化或即时状态。",
+    "keyboardActions": ["navigate-market", "open-card", "select-piece", "edit-payment", "confirm-action", "cancel-draft", "choose-noble"],
+    "minimumContrast": 4.5,
+    "minimumTarget": 44,
+    "spectatorPrivateData": "never"
+  }
+}

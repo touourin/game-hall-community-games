@@ -1,0 +1,72 @@
+{
+  "$schema": "./component-catalog.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "splendor",
+  "rulesBaseline": {
+    "id": "base-2024-refresh",
+    "nameZh": "2024 十周年新版基础游戏",
+    "players": { "min": 2, "max": 4 },
+    "targetPrestige": 15,
+    "marketCardsPerLevel": 4,
+    "reservedCardLimit": 3,
+    "heldPieceLimitAtTurnEnd": 10,
+    "noblesPerGameFormula": "playerCount + 1"
+  },
+  "colors": [
+    { "id": "white", "nameZh": "钻石", "symbol": "◇", "semanticColor": "#E8E3D8", "pattern": "dot-grid" },
+    { "id": "blue", "nameZh": "蓝宝石", "symbol": "◆", "semanticColor": "#3A739A", "pattern": "wave" },
+    { "id": "green", "nameZh": "祖母绿", "symbol": "⬟", "semanticColor": "#4E8068", "pattern": "leaf" },
+    { "id": "red", "nameZh": "红宝石", "symbol": "⬢", "semanticColor": "#A8524B", "pattern": "chevron" },
+    { "id": "black", "nameZh": "缟玛瑙", "symbol": "●", "semanticColor": "#353A3D", "pattern": "crosshatch" },
+    { "id": "gold", "nameZh": "黄金百搭", "symbol": "★", "semanticColor": "#C79B43", "pattern": "sunburst" }
+  ],
+  "components": {
+    "developmentCards": {
+      "total": 90,
+      "byLevel": { "1": 40, "2": 30, "3": 20 },
+      "sourceFile": "./development-cards.csv"
+    },
+    "nobleTiles": { "total": 10, "prestigeEach": 3, "sourceFile": "./nobles.csv" },
+    "pieces": {
+      "total": 40,
+      "coloredEachInBox": 7,
+      "goldInBox": 5,
+      "supplyByPlayerCount": {
+        "2": { "white": 4, "blue": 4, "green": 4, "red": 4, "black": 4, "gold": 5 },
+        "3": { "white": 5, "blue": 5, "green": 5, "red": 5, "black": 5, "gold": 5 },
+        "4": { "white": 7, "blue": 7, "green": 7, "red": 7, "black": 7, "gold": 5 }
+      }
+    },
+    "firstPlayerMarker": { "total": 1, "physicalAssignment": "youngest-player" }
+  },
+  "informationPolicy": {
+    "public": [
+      "piece supply and every player's held-piece counts",
+      "face-up market cards, purchased cards, bonuses, scores, and acquired nobles",
+      "development deck counts and every reserved card's level",
+      "identity of a market card that was reserved face up"
+    ],
+    "ownerOnly": ["identity of a card reserved blindly from a deck"],
+    "serverOnly": ["development deck order", "unused noble order", "RNG seed"]
+  },
+  "digitalRulings": [
+    {
+      "id": "short-supply-take-maximum-distinct",
+      "summaryZh": "只有不足 3 种非空宝石色时才可少取；此时从每个非空颜色各取 1 枚，即取 min(3, 非空颜色数) 枚。"
+    },
+    {
+      "id": "face-up-reservation-remains-public-knowledge",
+      "summaryZh": "从市场保留的牌继续向所有视角显示身份；盲抽保留牌只向持有者显示身份，其他视角只显示等级。"
+    },
+    {
+      "id": "player-selects-exact-payment",
+      "summaryZh": "购买时玩家提交精确支付向量；在不超付的前提下可主动以黄金替代仍持有的对应颜色宝石。"
+    },
+    {
+      "id": "platform-first-player-controls-marker",
+      "summaryZh": "实体规则由最年轻玩家持首位标记；线上房间由宿主先手配置决定，并把标记绑定到实际首家。"
+    }
+  ],
+  "copyrightBoundary": "Numerical rules and original neutral prototypes only; do not copy official logos, card art, noble portraits, ornamental frames, or scans."
+}

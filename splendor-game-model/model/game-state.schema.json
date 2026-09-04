@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/splendor/game-state.schema.json",
+  "title": "Splendor authoritative game state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "modelVersion", "gameId", "gameNumber", "revision", "phase", "rulesProfile", "turnOrder", "turn", "supply", "tiers", "availableNobleIds", "unusedNobleIds", "players", "rng", "events"],
+  "properties": {
+    "$schema": { "const": "../model/game-state.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "const": "1.0.0" },
+    "gameId": { "const": "splendor" },
+    "gameNumber": { "type": "integer", "minimum": 1 },
+    "revision": { "type": "integer", "minimum": 0 },
+    "phase": { "$ref": "#/$defs/phase" },
+    "rulesProfile": { "const": "base-2024-refresh" },
+    "turnOrder": { "type": "array", "minItems": 2, "maxItems": 4, "uniqueItems": true, "items": { "$ref": "#/$defs/playerId" } },
+    "turn": { "$ref": "#/$defs/turn" },
+    "supply": { "$ref": "#/$defs/pieceVector" },
+    "tiers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["1", "2", "3"],
+      "properties": {
+        "1": { "$ref": "#/$defs/tier" },
+        "2": { "$ref": "#/$defs/tier" },
+        "3": { "$ref": "#/$defs/tier" }
+      }
+    },
+    "availableNobleIds": { "type": "array", "minItems": 0, "maxItems": 5, "uniqueItems": true, "items": { "$ref": "#/$defs/nobleId" } },
+    "unusedNobleIds": { "type": "array", "minItems": 0, "maxItems": 7, "uniqueItems": true, "items": { "$ref": "#/$defs/nobleId" } },
+    "players": { "type": "array", "minItems": 2, "maxItems": 4, "items": { "$ref": "#/$defs/player" } },
+    "rng": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "seed", "seedCommitment"],
+      "properties": {
+        "algorithm": { "type": "string", "minLength": 1 },
+        "seed": { "type": "string", "minLength": 16 },
+        "seedCommitment": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "events": { "type": "array", "items": { "$ref": "#/$defs/event" } }
+  },
+  "$defs": {
+    "phase": { "enum": ["waiting", "turn_action", "return_tokens", "choose_noble", "finished"] },
+    "playerId": { "type": "string", "pattern": "^p[1-4]$" },
+    "cardId": { "type": "string", "pattern": "^dev-(white|blue|green|red|black)-[123]-[0-9]{2}$" },
+    "nobleId": { "type": "string", "pattern": "^noble-[a-z0-9-]+$" },
+    "colorVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["white", "blue", "green", "red", "black"],
+      "properties": {
+        "white": { "type": "integer", "minimum": 0 },
+        "blue": { "type": "integer", "minimum": 0 },
+        "green": { "type": "integer", "minimum": 0 },
+        "red": { "type": "integer", "minimum": 0 },
+        "black": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "pieceVector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["white", "blue", "green", "red", "black", "gold"],
+      "properties": {
+        "white": { "type": "integer", "minimum": 0 },
+        "blue": { "type": "integer", "minimum": 0 },
+        "green": { "type": "integer", "minimum": 0 },
+        "red": { "type": "integer", "minimum": 0 },
+        "black": { "type": "integer", "minimum": 0 },
+        "gold": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "reservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reservationId", "cardId", "level", "source", "knownToAll", "reservedAtAction"],
+      "properties": {
+        "reservationId": { "type": "string", "pattern": "^reservation-p[1-4]-[0-9]{3}$" },
+        "cardId": { "$ref": "#/$defs/cardId" },
+        "level": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "source": { "enum": ["market", "deck"] },
+        "knownToAll": { "type": "boolean" },
+        "reservedAtAction": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "player": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playerId", "seatIndex", "name", "pieces", "purchasedCardIds", "reservations", "nobleIds", "cachedBonuses", "cachedScore"],
+      "properties": {
+        "playerId": { "$ref": "#/$defs/playerId" },
+        "seatIndex": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "name": { "type": "string", "minLength": 1 },
+        "pieces": { "$ref": "#/$defs/pieceVector" },
+        "purchasedCardIds": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/cardId" } },
+        "reservations": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/reservation" } },
+        "nobleIds": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/nobleId" } },
+        "cachedBonuses": { "$ref": "#/$defs/colorVector" },
+        "cachedScore": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "tier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "deck", "market"],
+      "properties": {
+        "level": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "deck": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/cardId" } },
+        "market": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "oneOf": [{ "$ref": "#/$defs/cardId" }, { "type": "null" }] } }
+      }
+    },
+    "turn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["firstPlayerId", "activePlayerId", "roundNumber", "actionNumber", "pendingReturnCount", "eligibleNobleIds", "endTriggeredBy", "finalTurnPlayerId", "lastAction"],
+      "properties": {
+        "firstPlayerId": { "$ref": "#/$defs/playerId" },
+        "activePlayerId": { "oneOf": [{ "$ref": "#/$defs/playerId" }, { "type": "null" }] },
+        "roundNumber": { "type": "integer", "minimum": 1 },
+        "actionNumber": { "type": "integer", "minimum": 0 },
+        "pendingReturnCount": { "type": "integer", "minimum": 0 },
+        "eligibleNobleIds": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/nobleId" } },
+        "endTriggeredBy": { "oneOf": [{ "$ref": "#/$defs/playerId" }, { "type": "null" }] },
+        "finalTurnPlayerId": { "oneOf": [{ "$ref": "#/$defs/playerId" }, { "type": "null" }] },
+        "lastAction": { "oneOf": [{ "$ref": "#/$defs/event" }, { "type": "null" }] }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eventId", "revision", "actionNumber", "kind", "actorId", "publicTextZh", "publicData"],
+      "properties": {
+        "eventId": { "type": "string", "pattern": "^event-[0-9]{4}$" },
+        "revision": { "type": "integer", "minimum": 0 },
+        "actionNumber": { "type": "integer", "minimum": 0 },
+        "kind": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "actorId": { "oneOf": [{ "$ref": "#/$defs/playerId" }, { "type": "null" }] },
+        "publicTextZh": { "type": "string", "minLength": 1 },
+        "publicData": { "type": "object" }
+      }
+    }
+  }
+}

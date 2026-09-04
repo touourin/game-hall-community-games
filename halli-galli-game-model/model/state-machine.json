@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "halli-galli",
+  "initialPhase": "waiting",
+  "phases": [
+    {
+      "id": "waiting",
+      "terminal": false,
+      "acceptedActions": ["start_game"],
+      "invariants": ["no-card-instance-dealt", "result-null"]
+    },
+    {
+      "id": "playing",
+      "terminal": false,
+      "acceptedActions": ["flip_card", "ring_bell", "resign"],
+      "invariants": ["all-56-cards-conserved", "fruit-cache-matches-tops", "no-open-bell-resolution"]
+    },
+    {
+      "id": "resolving_bell",
+      "terminal": false,
+      "acceptedActions": [],
+      "invariants": ["room-write-lock-held", "one-resolution-id", "new-flips-frozen"]
+    },
+    {
+      "id": "finished",
+      "terminal": true,
+      "acceptedActions": ["restart"],
+      "invariants": ["result-present", "winner-ids-valid", "score-total-56"]
+    }
+  ],
+  "transitions": [
+    {
+      "id": "start-game",
+      "from": "waiting",
+      "action": "start_game",
+      "to": "playing",
+      "guards": ["player-count-2-to-6", "profile-valid", "all-players-ready"],
+      "effects": ["expand-56-instances", "shuffle-server-side", "deal-round-robin", "set-first-player", "initialize-final-duel-for-two", "increment-revision"]
+    },
+    {
+      "id": "flip-card",
+      "from": "playing",
+      "action": "flip_card",
+      "to": "playing",
+      "guards": ["actor-is-current-player", "actor-eligible", "actor-draw-nonempty", "revision-current", "board-epoch-current", "minimum-delay-met"],
+      "effects": ["move-draw-top-to-discard-top", "increment-board-epoch", "recompute-fruit-totals", "record-public-flip", "choose-next-flipper", "schedule-no-progress-if-needed", "increment-revision"]
+    },
+    {
+      "id": "ring-correct-begin",
+      "from": "playing",
+      "action": "ring_bell",
+      "to": "resolving_bell",
+      "guards": ["actor-eligible", "board-epoch-current", "bell-unresolved-for-epoch", "at-least-one-fruit-total-equals-five"],
+      "effects": ["claim-resolution-id", "capture-pre-resolution-final-duel-flag"]
+    },
+    {
+      "id": "ring-correct-complete-continue",
+      "from": "resolving_bell",
+      "action": "internal_complete_correct_bell",
+      "to": "playing",
+      "guards": ["pre-resolution-final-duel-false", "normal-end-not-reached"],
+      "effects": ["collect-all-discards", "eliminate-empty-losers", "set-ringer-as-next-flipper", "increment-board-epoch", "recompute-fruit-totals", "arm-final-duel-if-now-two", "record-bell", "increment-revision"]
+    },
+    {
+      "id": "ring-correct-complete-finish",
+      "from": "resolving_bell",
+      "action": "internal_complete_correct_bell",
+      "to": "finished",
+      "guards": ["pre-resolution-final-duel-true-or-all-cards-owned"],
+      "effects": ["collect-all-discards", "increment-board-epoch", "score-owned-cards", "select-highest-winners", "record-final-correct-bell", "increment-revision"]
+    },
+    {
+      "id": "ring-wrong-begin",
+      "from": "playing",
+      "action": "ring_bell",
+      "to": "resolving_bell",
+      "guards": ["actor-eligible", "board-epoch-current", "bell-unresolved-for-epoch", "no-fruit-total-equals-five"],
+      "effects": ["claim-resolution-id", "capture-pre-resolution-final-duel-flag"]
+    },
+    {
+      "id": "ring-wrong-standard",
+      "from": "resolving_bell",
+      "action": "internal_complete_wrong_bell",
+      "to": "playing",
+      "guards": ["pre-resolution-final-duel-false"],
+      "effects": ["transfer-one-card-clockwise-per-other-eligible", "eliminate-ringer-if-draw-empty", "preserve-discard-tops-and-board-epoch", "arm-final-duel-if-now-two", "record-wrong-bell", "schedule-no-progress-if-needed", "increment-revision"]
+    },
+    {
+      "id": "ring-wrong-final",
+      "from": "resolving_bell",
+      "action": "internal_complete_wrong_bell",
+      "to": "finished",
+      "guards": ["pre-resolution-final-duel-true"],
+      "effects": ["opponent-collects-all-discards", "increment-board-epoch", "score-owned-cards", "select-highest-winners", "record-final-wrong-bell", "increment-revision"]
+    },
+    {
+      "id": "resign-continue",
+      "from": "playing",
+      "action": "resign",
+      "to": "playing",
+      "guards": ["actor-is-player", "enough-eligible-players-remain"],
+      "effects": ["mark-resigned", "preserve-owned-cards", "choose-next-flipper", "arm-final-duel-if-now-two", "increment-revision"]
+    },
+    {
+      "id": "resign-finish",
+      "from": "playing",
+      "action": "resign",
+      "to": "finished",
+      "guards": ["continuation-impossible"],
+      "effects": ["mark-resigned", "score-owned-cards", "select-highest-eligible-winners", "record-player-exit", "increment-revision"]
+    },
+    {
+      "id": "no-progress-finish",
+      "from": "playing",
+      "action": "internal_no_progress_timeout",
+      "to": "finished",
+      "guards": ["deadline-reached", "no-eligible-player-can-flip", "no-fruit-total-equals-five"],
+      "effects": ["score-owned-cards", "select-highest-winners", "record-digital-safety-ruling", "increment-revision"]
+    },
+    {
+      "id": "restart",
+      "from": "finished",
+      "action": "restart",
+      "to": "waiting",
+      "guards": ["host-platform-authorized"],
+      "effects": ["increment-game-number", "clear-game-state-via-host"]
+    }
+  ],
+  "rejections": [
+    {
+      "code": "STALE_BOARD",
+      "action": "ring_bell",
+      "condition": "request-board-epoch-differs",
+      "mutatesState": false,
+      "penalty": false
+    },
+    {
+      "code": "BELL_ALREADY_RESOLVED",
+      "action": "ring_bell",
+      "condition": "same-board-epoch-has-resolution-id",
+      "mutatesState": false,
+      "penalty": false
+    },
+    {
+      "code": "NOT_ELIGIBLE",
+      "action": "ring_bell",
+      "condition": "viewer-or-player-cannot-ring",
+      "mutatesState": false,
+      "penalty": false
+    },
+    {
+      "code": "NOT_YOUR_TURN",
+      "action": "flip_card",
+      "condition": "actor-not-current-player",
+      "mutatesState": false,
+      "penalty": false
+    },
+    {
+      "code": "FLIP_TOO_EARLY",
+      "action": "flip_card",
+      "condition": "minimum-next-flip-delay-not-reached",
+      "mutatesState": false,
+      "penalty": false
+    }
+  ],
+  "raceArbitration": {
+    "scope": "room-and-board-epoch",
+    "winner": "first-server-lock-acquisition",
+    "clientTimestampTrusted": false,
+    "idempotencyKeyRequired": true,
+    "laterSameEpochPenalty": false,
+    "staleEpochPenalty": false
+  }
+}

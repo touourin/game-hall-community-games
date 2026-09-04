@@ -1,0 +1,149 @@
+{
+  "$schema": "./rules-profiles.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.2.0",
+  "gameId": "love-letter",
+  "defaultProfileId": "queen_22",
+  "profiles": [
+    {
+      "id": "queen_22",
+      "nameZh": "2–4 人皇后扩展版",
+      "playerMin": 2,
+      "playerMax": 4,
+      "deckSize": 22,
+      "cardCounts": {
+        "spy": 2,
+        "guard": 6,
+        "priest": 2,
+        "baron": 2,
+        "handmaid": 2,
+        "prince": 2,
+        "chancellor": 2,
+        "king": 1,
+        "queen": 1,
+        "countess": 1,
+        "princess": 1
+      },
+      "setup": {
+        "hiddenReserveCount": 1,
+        "faceUpSetAsideByPlayerCount": {
+          "2": 3,
+          "3": 0,
+          "4": 0
+        },
+        "startingHandSize": 1,
+        "initialFirstPlayerPolicy": "recent-letter-or-server-random",
+        "nextRoundFirstPlayerPolicy": "previous-round-winner-random-tiebreak"
+      },
+      "favorTargetByPlayerCount": {
+        "2": 6,
+        "3": 5,
+        "4": 4
+      },
+      "guardGuessCardTypeIds": [
+        "spy",
+        "priest",
+        "baron",
+        "handmaid",
+        "prince",
+        "chancellor",
+        "king",
+        "queen",
+        "countess",
+        "princess"
+      ]
+    },
+    {
+      "id": "current_21",
+      "nameZh": "现行 21 张牌版",
+      "playerMin": 2,
+      "playerMax": 4,
+      "deckSize": 21,
+      "cardCounts": {
+        "spy": 2,
+        "guard": 6,
+        "priest": 2,
+        "baron": 2,
+        "handmaid": 2,
+        "prince": 2,
+        "chancellor": 2,
+        "king": 1,
+        "queen": 0,
+        "countess": 1,
+        "princess": 1
+      },
+      "setup": {
+        "hiddenReserveCount": 1,
+        "faceUpSetAsideByPlayerCount": {
+          "2": 3,
+          "3": 0,
+          "4": 0
+        },
+        "startingHandSize": 1,
+        "initialFirstPlayerPolicy": "recent-letter-or-server-random",
+        "nextRoundFirstPlayerPolicy": "previous-round-winner-random-tiebreak"
+      },
+      "favorTargetByPlayerCount": {
+        "2": 6,
+        "3": 5,
+        "4": 4
+      },
+      "guardGuessCardTypeIds": [
+        "spy",
+        "priest",
+        "baron",
+        "handmaid",
+        "prince",
+        "chancellor",
+        "king",
+        "countess",
+        "princess"
+      ]
+    },
+    {
+      "id": "classic_16",
+      "nameZh": "经典 16 张牌版",
+      "playerMin": 2,
+      "playerMax": 4,
+      "deckSize": 16,
+      "cardCounts": {
+        "spy": 0,
+        "guard": 5,
+        "priest": 2,
+        "baron": 2,
+        "handmaid": 2,
+        "prince": 2,
+        "chancellor": 0,
+        "king": 1,
+        "queen": 0,
+        "countess": 1,
+        "princess": 1
+      },
+      "setup": {
+        "hiddenReserveCount": 1,
+        "faceUpSetAsideByPlayerCount": {
+          "2": 3,
+          "3": 0,
+          "4": 0
+        },
+        "startingHandSize": 1,
+        "initialFirstPlayerPolicy": "recent-letter-or-server-random",
+        "nextRoundFirstPlayerPolicy": "previous-round-winner-random-tiebreak"
+      },
+      "favorTargetByPlayerCount": {
+        "2": 6,
+        "3": 5,
+        "4": 4
+      },
+      "guardGuessCardTypeIds": [
+        "priest",
+        "baron",
+        "handmaid",
+        "prince",
+        "king",
+        "countess",
+        "princess"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "$schema": "./scene-catalog.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "halli-galli",
+  "logicalCanvas": {
+    "width": 1600,
+    "height": 900,
+    "unit": "logical-pixel"
+  },
+  "theme": {
+    "page": "#101817",
+    "table": "#173C36",
+    "tableEdge": "#B58A4A",
+    "panel": "#F7F2E8",
+    "ink": "#18211F",
+    "muted": "#66736F",
+    "bell": "#D6B56B",
+    "bellDark": "#7B5725",
+    "success": "#2F855A",
+    "danger": "#B23A48",
+    "focus": "#F7D774",
+    "cardBack": "#274F49"
+  },
+  "cardMetrics": {
+    "width": 168,
+    "height": 261,
+    "cornerRadius": 13,
+    "compactWidth": 44,
+    "compactHeight": 68
+  },
+  "bellMetrics": {
+    "wideDiameter": 136,
+    "compactDiameter": 88,
+    "minimumTarget": 64,
+    "clearance": 12
+  },
+  "breakpoints": {
+    "narrowMax": 374,
+    "compactMax": 759,
+    "mediumMax": 1179,
+    "wideMin": 1180
+  },
+  "zones": [
+    { "id": "table_stage", "role": "共享牌桌与安全区", "rect": { "x": 0.02, "y": 0.03, "width": 0.96, "height": 0.86 }, "zIndex": 0, "visibility": "always", "interaction": "read-only" },
+    { "id": "bell_zone", "role": "固定中央铃与提交状态", "rect": { "x": 0.42, "y": 0.37, "width": 0.16, "height": 0.22 }, "zIndex": 90, "visibility": "playing", "interaction": "primary-action" },
+    { "id": "fruit_legend", "role": "四种水果图例；忠实模式不显示聚合答案", "rect": { "x": 0.35, "y": 0.29, "width": 0.30, "height": 0.07 }, "zIndex": 55, "visibility": "playing", "interaction": "read-only" },
+    { "id": "turn_banner", "role": "当前翻牌者与阶段", "rect": { "x": 0.32, "y": 0.01, "width": 0.36, "height": 0.07 }, "zIndex": 60, "visibility": "always", "interaction": "read-only" },
+    { "id": "network_badge", "role": "本人连接与 RTT 档位", "rect": { "x": 0.81, "y": 0.02, "width": 0.17, "height": 0.05 }, "zIndex": 65, "visibility": "playing", "interaction": "expandable" },
+    { "id": "reaction_banner", "role": "铃判定与竞争结果", "rect": { "x": 0.31, "y": 0.20, "width": 0.38, "height": 0.09 }, "zIndex": 100, "visibility": "event-dependent", "interaction": "read-only" },
+    { "id": "self_controls", "role": "本人翻牌与快捷键提示", "rect": { "x": 0.38, "y": 0.91, "width": 0.24, "height": 0.07 }, "zIndex": 70, "visibility": "player-only", "interaction": "secondary-action" },
+    { "id": "event_strip", "role": "最近三条公开事件", "rect": { "x": 0.02, "y": 0.90, "width": 0.34, "height": 0.08 }, "zIndex": 55, "visibility": "playing", "interaction": "expandable" },
+    { "id": "rules_drawer", "role": "快速规则与水果图例", "rect": { "x": 0.88, "y": 0.90, "width": 0.10, "height": 0.08 }, "zIndex": 140, "visibility": "always", "interaction": "modal" },
+    { "id": "result_overlay", "role": "终局分数、胜者与结束原因", "rect": { "x": 0.18, "y": 0.12, "width": 0.64, "height": 0.72 }, "zIndex": 170, "visibility": "finished", "interaction": "modal" },
+    { "id": "seat_0", "role": "相对座位 0（本人）", "rect": { "x": 0.37, "y": 0.66, "width": 0.26, "height": 0.24 }, "zIndex": 30, "visibility": "player-count-dependent", "interaction": "read-only" },
+    { "id": "seat_1", "role": "相对座位 1", "rect": { "x": 0.05, "y": 0.58, "width": 0.22, "height": 0.25 }, "zIndex": 30, "visibility": "player-count-dependent", "interaction": "read-only" },
+    { "id": "seat_2", "role": "相对座位 2", "rect": { "x": 0.05, "y": 0.17, "width": 0.22, "height": 0.25 }, "zIndex": 30, "visibility": "player-count-dependent", "interaction": "read-only" },
+    { "id": "seat_3", "role": "相对座位 3（上方）", "rect": { "x": 0.37, "y": 0.08, "width": 0.26, "height": 0.22 }, "zIndex": 30, "visibility": "player-count-dependent", "interaction": "read-only" },
+    { "id": "seat_4", "role": "相对座位 4", "rect": { "x": 0.73, "y": 0.17, "width": 0.22, "height": 0.25 }, "zIndex": 30, "visibility": "player-count-dependent", "interaction": "read-only" },
+    { "id": "seat_5", "role": "相对座位 5", "rect": { "x": 0.73, "y": 0.58, "width": 0.22, "height": 0.25 }, "zIndex": 30, "visibility": "player-count-dependent", "interaction": "read-only" },
+    { "id": "live_region", "role": "屏幕阅读器动态播报", "rect": { "x": 0.0, "y": 0.0, "width": 0.01, "height": 0.01 }, "zIndex": 200, "visibility": "always", "interaction": "read-only" }
+  ],
+  "seatLayouts": [
+    { "playerCount": 2, "seats": [
+      { "relativeSeat": 0, "wideZoneId": "seat_0", "compactSlot": 1, "rotation": 0 },
+      { "relativeSeat": 1, "wideZoneId": "seat_3", "compactSlot": 0, "rotation": 0 }
+    ] },
+    { "playerCount": 3, "seats": [
+      { "relativeSeat": 0, "wideZoneId": "seat_0", "compactSlot": 2, "rotation": 0 },
+      { "relativeSeat": 1, "wideZoneId": "seat_2", "compactSlot": 0, "rotation": 0 },
+      { "relativeSeat": 2, "wideZoneId": "seat_4", "compactSlot": 1, "rotation": 0 }
+    ] },
+    { "playerCount": 4, "seats": [
+      { "relativeSeat": 0, "wideZoneId": "seat_0", "compactSlot": 3, "rotation": 0 },
+      { "relativeSeat": 1, "wideZoneId": "seat_1", "compactSlot": 0, "rotation": 0 },
+      { "relativeSeat": 2, "wideZoneId": "seat_3", "compactSlot": 1, "rotation": 0 },
+      { "relativeSeat": 3, "wideZoneId": "seat_5", "compactSlot": 2, "rotation": 0 }
+    ] },
+    { "playerCount": 5, "seats": [
+      { "relativeSeat": 0, "wideZoneId": "seat_0", "compactSlot": 4, "rotation": 0 },
+      { "relativeSeat": 1, "wideZoneId": "seat_1", "compactSlot": 0, "rotation": 0 },
+      { "relativeSeat": 2, "wideZoneId": "seat_2", "compactSlot": 1, "rotation": 0 },
+      { "relativeSeat": 3, "wideZoneId": "seat_4", "compactSlot": 2, "rotation": 0 },
+      { "relativeSeat": 4, "wideZoneId": "seat_5", "compactSlot": 3, "rotation": 0 }
+    ] },
+    { "playerCount": 6, "seats": [
+      { "relativeSeat": 0, "wideZoneId": "seat_0", "compactSlot": 5, "rotation": 0 },
+      { "relativeSeat": 1, "wideZoneId": "seat_1", "compactSlot": 0, "rotation": 0 },
+      { "relativeSeat": 2, "wideZoneId": "seat_2", "compactSlot": 1, "rotation": 0 },
+      { "relativeSeat": 3, "wideZoneId": "seat_3", "compactSlot": 2, "rotation": 0 },
+      { "relativeSeat": 4, "wideZoneId": "seat_4", "compactSlot": 3, "rotation": 0 },
+      { "relativeSeat": 5, "wideZoneId": "seat_5", "compactSlot": 4, "rotation": 0 }
+    ] }
+  ],
+  "seatStates": [
+    { "id": "ready", "labelZh": "可翻牌／可抢铃", "tone": "neutral", "canFlip": true, "canRing": true },
+    { "id": "current_turn", "labelZh": "轮到翻牌", "tone": "focus", "canFlip": true, "canRing": true },
+    { "id": "last_chance", "labelZh": "无牌·仍可抢铃", "tone": "warning", "canFlip": false, "canRing": true },
+    { "id": "eliminated", "labelZh": "已退出", "tone": "muted", "canFlip": false, "canRing": false },
+    { "id": "ring_claimed", "labelZh": "先按到", "tone": "success", "canFlip": false, "canRing": false },
+    { "id": "wrong_bell", "labelZh": "误按", "tone": "danger", "canFlip": false, "canRing": false },
+    { "id": "disconnected", "labelZh": "重连中", "tone": "warning", "canFlip": false, "canRing": false }
+  ],
+  "scenes": [
+    { "id": "waiting_room", "phase": "waiting", "requiredZones": ["table_stage", "turn_banner", "rules_drawer", "live_region"], "primaryActions": [], "focusTarget": "rules_drawer", "announcementZh": "等待玩家并确认终局规则" },
+    { "id": "playing_self_turn", "phase": "playing", "requiredZones": ["table_stage", "bell_zone", "fruit_legend", "turn_banner", "self_controls", "event_strip", "rules_drawer", "live_region"], "primaryActions": ["flip_card", "ring_bell"], "focusTarget": "self_controls", "announcementZh": "轮到你翻牌，铃铛仍可随时使用" },
+    { "id": "playing_other_turn", "phase": "playing", "requiredZones": ["table_stage", "bell_zone", "fruit_legend", "turn_banner", "event_strip", "rules_drawer", "live_region"], "primaryActions": ["ring_bell"], "focusTarget": "bell_zone", "announcementZh": "等待其他玩家翻牌，你仍可抢铃" },
+    { "id": "exact_five_visible", "phase": "playing", "requiredZones": ["table_stage", "bell_zone", "turn_banner", "live_region"], "primaryActions": ["ring_bell"], "focusTarget": "bell_zone", "announcementZh": "牌面已更新" },
+    { "id": "bell_resolved_correct", "phase": "presentation", "requiredZones": ["table_stage", "bell_zone", "reaction_banner", "live_region"], "primaryActions": [], "focusTarget": "reaction_banner", "announcementZh": "正确抢铃，明牌已归入赢家牌堆" },
+    { "id": "bell_resolved_wrong", "phase": "presentation", "requiredZones": ["table_stage", "bell_zone", "reaction_banner", "live_region"], "primaryActions": [], "focusTarget": "reaction_banner", "announcementZh": "误按铃，已执行对应处罚" },
+    { "id": "last_chance_player", "phase": "playing", "requiredZones": ["table_stage", "bell_zone", "turn_banner", "live_region"], "primaryActions": ["ring_bell"], "focusTarget": "bell_zone", "announcementZh": "你的抽牌已空，但明牌尚在，仍可抢铃" },
+    { "id": "finished", "phase": "finished", "requiredZones": ["table_stage", "result_overlay", "live_region"], "primaryActions": ["restart"], "focusTarget": "result_overlay", "announcementZh": "游戏结束，结果已结算" }
+  ],
+  "animationCues": [
+    { "id": "card_flip", "durationMs": 180, "fromZone": null, "toZone": "seat_0", "reducedMotion": "fade", "blocksBell": false, "ariaTemplateZh": "{player} 翻开 {card}" },
+    { "id": "bell_press_local", "durationMs": 70, "fromZone": "bell_zone", "toZone": "bell_zone", "reducedMotion": "outline", "blocksBell": false, "ariaTemplateZh": "抢铃请求已发送" },
+    { "id": "bell_confirmed", "durationMs": 160, "fromZone": "bell_zone", "toZone": "reaction_banner", "reducedMotion": "outline", "blocksBell": true, "ariaTemplateZh": "{player} 先按到铃" },
+    { "id": "collect_piles", "durationMs": 220, "fromZone": "table_stage", "toZone": "seat_0", "reducedMotion": "instant", "blocksBell": true, "ariaTemplateZh": "{player} 收走 {count} 张明牌" },
+    { "id": "penalty_transfer", "durationMs": 180, "fromZone": "seat_0", "toZone": "table_stage", "reducedMotion": "instant", "blocksBell": true, "ariaTemplateZh": "{player} 因误按付出 {count} 张牌" },
+    { "id": "player_eliminated", "durationMs": 200, "fromZone": null, "toZone": "table_stage", "reducedMotion": "outline", "blocksBell": false, "ariaTemplateZh": "{player} 已退出本局" },
+    { "id": "final_duel_armed", "durationMs": 260, "fromZone": null, "toZone": "turn_banner", "reducedMotion": "outline", "blocksBell": false, "ariaTemplateZh": "进入最终二人阶段，下一次铃结束游戏" },
+    { "id": "result_enter", "durationMs": 240, "fromZone": null, "toZone": "result_overlay", "reducedMotion": "fade", "blocksBell": true, "ariaTemplateZh": "游戏结束，{winner} 获胜" }
+  ],
+  "responsiveStrategy": {
+    "wide": "六个席位沿桌面椭圆分布，本人固定下方；顶牌正立，中央铃直径 136。",
+    "medium": "缩短席位身份栏并压缩抽牌堆深度，仍保持所有顶牌同时可见。",
+    "compact": "对手顶牌使用最多五列矩阵，本人在铃下方；中央铃直径 88，事件条折叠为一行。",
+    "narrow": "隐藏对手长名称而保留座位号、顶牌数字和资格；不使用轮播或页面横向滚动。"
+  },
+  "fidelity": {
+    "allTopCardsSimultaneouslyVisible": true,
+    "showAggregateFruitTotalsDefault": false,
+    "highlightCorrectBellConditionDefault": false,
+    "coveredCardsBrowsableDuringPlay": false,
+    "bellAvailableDuringFlipAnimation": true
+  },
+  "accessibility": {
+    "notColorOnly": true,
+    "liveRegion": "polite for flips; assertive only for the viewer's resolved bell",
+    "reducedMotion": "replace rotation, flight and pulse with fade, outline and numeric updates",
+    "keyboardActions": ["Space: ring bell", "Enter: activate focused primary action", "F: flip when eligible", "R: open rules when not typing", "Escape: close local overlay"],
+    "minimumTextContrast": 4.5,
+    "minimumLargeSymbolContrast": 3.0,
+    "minimumBellTarget": 64
+  }
+}

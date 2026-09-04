@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/love-letter/scene-catalog.schema.json",
+  "title": "Love Letter scene catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "modelVersion",
+    "gameId",
+    "logicalCanvas",
+    "theme",
+    "cardMetrics",
+    "breakpoints",
+    "zones",
+    "seatLayouts",
+    "scenes",
+    "animationCues",
+    "stateBindings",
+    "responsiveStrategy",
+    "accessibility"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "love-letter" },
+    "logicalCanvas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "unit"],
+      "properties": {
+        "width": { "const": 1600 },
+        "height": { "const": 900 },
+        "unit": { "const": "logical-pixel" }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "minProperties": 10,
+      "additionalProperties": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+    },
+    "cardMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "compactWidth", "cornerRadius", "minimumTarget"],
+      "properties": {
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "compactWidth": { "type": "integer", "minimum": 1 },
+        "cornerRadius": { "type": "integer", "minimum": 0 },
+        "minimumTarget": { "type": "integer", "minimum": 44 }
+      }
+    },
+    "breakpoints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["narrowMax", "compactMax", "mediumMax", "wideMin"],
+      "properties": {
+        "narrowMax": { "const": 359 },
+        "compactMax": { "const": 759 },
+        "mediumMax": { "const": 1179 },
+        "wideMin": { "const": 1180 }
+      }
+    },
+    "zones": {
+      "type": "array",
+      "minItems": 15,
+      "items": { "$ref": "#/$defs/zone" }
+    },
+    "seatLayouts": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/seatLayout" }
+    },
+    "scenes": {
+      "type": "array",
+      "minItems": 9,
+      "items": { "$ref": "#/$defs/scene" }
+    },
+    "animationCues": {
+      "type": "array",
+      "minItems": 10,
+      "items": { "$ref": "#/$defs/cue" }
+    },
+    "stateBindings": {
+      "type": "object",
+      "minProperties": 8,
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "responsiveStrategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wide", "medium", "compact", "narrow"],
+      "properties": {
+        "wide": { "type": "string", "minLength": 1 },
+        "medium": { "type": "string", "minLength": 1 },
+        "compact": { "type": "string", "minLength": 1 },
+        "narrow": { "type": "string", "minLength": 1 }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["notColorOnly", "liveRegion", "reducedMotion", "keyboardActions", "minimumContrast", "minimumTarget"],
+      "properties": {
+        "notColorOnly": { "const": true },
+        "liveRegion": { "type": "string", "minLength": 1 },
+        "reducedMotion": { "type": "string", "minLength": 1 },
+        "keyboardActions": {
+          "type": "array",
+          "minItems": 8,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "minimumContrast": { "type": "number", "minimum": 4.5 },
+        "minimumTarget": { "type": "integer", "minimum": 44 }
+      }
+    }
+  },
+  "$defs": {
+    "rect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0, "maximum": 1 },
+        "y": { "type": "number", "minimum": 0, "maximum": 1 },
+        "width": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "height": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+      }
+    },
+    "zone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "rect", "zIndex", "visibility", "interaction"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "role": { "type": "string", "minLength": 1 },
+        "rect": { "$ref": "#/$defs/rect" },
+        "zIndex": { "type": "integer", "minimum": 0 },
+        "visibility": { "enum": ["always", "player-count-dependent", "phase-dependent", "player-only", "two-player-only", "viewer-dependent", "on-demand"] },
+        "interaction": { "enum": ["read-only", "primary-action", "effect-target", "modal", "expandable"] }
+      }
+    },
+    "seat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relativeSeat", "x", "y", "rotation"],
+      "properties": {
+        "relativeSeat": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "x": { "type": "number", "minimum": 0, "maximum": 1 },
+        "y": { "type": "number", "minimum": 0, "maximum": 1 },
+        "rotation": { "type": "integer", "minimum": 0, "maximum": 359 }
+      }
+    },
+    "seatLayout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playerCount", "seats"],
+      "properties": {
+        "playerCount": { "type": "integer", "minimum": 2, "maximum": 4 },
+        "seats": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/seat" }
+        }
+      }
+    },
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "phase", "privacy", "requiredZones", "primaryActions", "focusTarget", "announcementZh"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "phase": { "enum": ["round_setup", "turn_draw", "turn_play", "effect_choice", "chancellor_choice", "effect_resolution", "between_rounds", "finished"] },
+        "privacy": { "enum": ["public", "viewer-dependent", "private-to-actor", "private-to-participants"] },
+        "requiredZones": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" }
+        },
+        "primaryActions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["draw_card", "play_card", "resolve_choice", "next_round"] }
+        },
+        "focusTarget": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "announcementZh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "cue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "durationMs", "fromZone", "toZone", "reducedMotion", "ariaTemplateZh"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "durationMs": { "type": "integer", "minimum": 0, "maximum": 1200 },
+        "fromZone": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" }
+          ]
+        },
+        "toZone": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" }
+          ]
+        },
+        "reducedMotion": { "enum": ["fade", "instant", "outline"] },
+        "ariaTemplateZh": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

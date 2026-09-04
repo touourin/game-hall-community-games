@@ -1,0 +1,88 @@
+@media (max-width: 1180px) {
+  .splendor-game { grid-template-rows: 58px 82px minmax(0, 1fr) 150px 88px; }
+  .splendor-game .scene-grid { grid-template-columns: minmax(0, 1fr) 235px; }
+  .splendor-game .private-console { grid-template-columns: minmax(0, 1fr) 275px; }
+  .splendor-game .self-engine { grid-template-columns: 210px minmax(0, 1fr); }
+  .splendor-game .market-tier { grid-template-columns: 48px 62px minmax(0, 1fr); }
+  .splendor-game .deck-stack .development-card { width: 48px; }
+  .splendor-game .action-dock { grid-template-columns: 200px minmax(0, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .splendor-game { height: auto; min-height: calc(100dvh - 64px); grid-template-rows: auto auto auto auto auto; overflow: visible; }
+  .splendor-game .table-masthead { position: sticky; z-index: 35; top: 0; grid-template-columns: minmax(150px, 1fr) auto; }
+  .splendor-game .status-copy { grid-column: 1 / -1; grid-row: 2; margin-top: 5px; padding: 4px 0 0; border-top: 1px solid #496563; border-left: 0; }
+  .splendor-game .mast-actions { grid-column: 2; grid-row: 1; }
+  .splendor-game .opponent-rail > * { flex-basis: 215px; }
+  .splendor-game .scene-grid { grid-template-columns: 1fr; }
+  .splendor-game .market-board { grid-template-rows: auto repeat(3, 150px); overflow: visible; }
+  .splendor-game .noble-row { min-height: 105px; }
+  .splendor-game .market-tier { grid-template-columns: 54px 70px minmax(0, 1fr); }
+  .splendor-game .market-slots { grid-template-columns: repeat(4, 118px); overflow-x: auto; scroll-snap-type: x proximity; }
+  .splendor-game .market-slot { scroll-snap-align: start; }
+  .splendor-game .table-sidebar { grid-template-columns: 1fr 1fr; grid-template-rows: 190px; }
+  .splendor-game .supply-grid { grid-template-columns: repeat(3, 1fr); }
+  .splendor-game .private-console { grid-template-columns: 1fr; }
+  .splendor-game .self-engine { min-height: 150px; }
+  .splendor-game .reserved-drawer { min-height: 145px; }
+  .splendor-game .action-dock { position: sticky; z-index: 42; bottom: 0; min-height: 96px; grid-template-columns: 195px minmax(0, 1fr); }
+  .splendor-game .card-detail-sheet { position: fixed; top: auto; right: 8px; bottom: 8px; left: 8px; width: auto; max-height: calc(100dvh - 16px); }
+  .splendor-game .modal-scrim { position: fixed; }
+}
+
+@media (max-width: 620px) {
+  .splendor-game { gap: 5px; padding: 5px; border-radius: 0; }
+  .splendor-game .brand-lockup small { display: none; }
+  .splendor-game .brand-lockup h2 { font-size: 18px; }
+  .splendor-game .mast-actions button { min-width: 42px; }
+  .splendor-game .mast-actions span { display: none; }
+  .splendor-game .opponent-rail { scroll-snap-type: x proximity; }
+  .splendor-game .opponent-rail > * { flex-basis: 205px; scroll-snap-align: start; }
+  .splendor-game .noble-row { grid-template-columns: 86px minmax(0, 1fr); }
+  .splendor-game .noble-row > header > span { display: none; }
+  .splendor-game .noble-list .noble-tile { flex-basis: 80px; }
+  .splendor-game .market-board { padding: 4px; }
+  .splendor-game .market-tier { grid-template-columns: 38px 62px minmax(0, 1fr); padding: 3px; }
+  .splendor-game .market-tier > header strong { font-size: 9px; }
+  .splendor-game .market-slots { grid-template-columns: repeat(4, 124px); }
+  .splendor-game .table-sidebar { grid-template-columns: 1fr; grid-template-rows: 235px 145px; }
+  .splendor-game .gem-supply { padding: 6px; }
+  .splendor-game .supply-grid { grid-template-columns: repeat(3, 1fr); }
+  .splendor-game .gem-token { grid-template-columns: 39px minmax(0, 1fr); min-height: 55px; padding: 3px; }
+  .splendor-game .gem-disc { width: 36px; height: 36px; }
+  .splendor-game .self-engine { grid-template-columns: 1fr; min-height: 272px; }
+  .splendor-game .player-tableau.self { height: 86px; }
+  .splendor-game .engine-columns { min-height: 155px; overflow-x: auto; grid-template-columns: repeat(5, 92px); }
+  .splendor-game .reserved-drawer { min-height: 150px; }
+  .splendor-game .action-dock { grid-template-columns: 1fr; min-height: 145px; }
+  .splendor-game .action-dock > header { grid-template-columns: 35px minmax(0, 1fr) auto; border-right: 0; border-bottom: 1px solid #466260; }
+  .splendor-game .dock-actions { flex-wrap: wrap; align-content: center; overflow: visible; }
+  .splendor-game .dock-actions > span { display: none; }
+  .splendor-game .primary-action, .splendor-game .secondary-action, .splendor-game .ghost-action { flex: 1 1 120px; min-height: 44px; }
+  .splendor-game .card-detail-body { grid-template-columns: 115px minmax(0, 1fr); }.splendor-game .card-detail-body > .development-card { width: 115px; }
+  .splendor-game .modal-scrim { padding: 7px; }
+  .splendor-game .payment-composer, .splendor-game .resolution-sheet, .splendor-game .rules-sheet { padding: 11px; }
+  .splendor-game .payment-layout { grid-template-columns: 92px minmax(0, 1fr); gap: 8px; }.splendor-game .payment-layout > .development-card { width: 92px; }
+  .splendor-game .payment-head, .splendor-game .payment-row { grid-template-columns: minmax(65px, 1.2fr) repeat(4, .45fr) minmax(85px, .9fr); padding: 2px 3px; }
+  .splendor-game .payment-row > b { font-size: 6px; }.splendor-game .payment-row > b i { width: 18px; height: 18px; }
+  .splendor-game .return-grid { grid-template-columns: repeat(2, 1fr); }
+  .splendor-game .noble-choice-list { justify-content: flex-start; }
+  .splendor-game .ranking-table article { grid-template-columns: 30px minmax(80px, 1fr) 58px; }.splendor-game .ranking-table article > span, .splendor-game .ranking-table article > small { grid-column: 2 / -1; }
+  .splendor-game .rules-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 390px) {
+  .splendor-game .table-masthead { padding: 5px 7px; }
+  .splendor-game .status-copy > strong { font-size: 11px; }
+  .splendor-game .status-copy > small { white-space: normal; }
+  .splendor-game .market-tier { grid-template-columns: 32px 56px minmax(0, 1fr); }
+  .splendor-game .market-slots { grid-template-columns: repeat(4, 120px); }
+  .splendor-game .deck-stack .development-card { width: 46px; }
+  .splendor-game .supply-grid { grid-template-columns: repeat(2, 1fr); }
+  .splendor-game .table-sidebar { grid-template-rows: 330px 145px; }
+  .splendor-game .card-detail-body { grid-template-columns: 90px minmax(0, 1fr); }.splendor-game .card-detail-body > .development-card { width: 90px; }
+  .splendor-game .cost-analysis > div { grid-template-columns: minmax(58px, 1fr) 18px 22px 22px; }
+  .splendor-game .payment-layout { grid-template-columns: 1fr; }.splendor-game .payment-layout > .development-card { display: none; }
+  .splendor-game .payment-ledger { overflow-x: auto; }.splendor-game .payment-head, .splendor-game .payment-row { min-width: 345px; }
+  .splendor-game .payment-total { min-width: 345px; }
+}

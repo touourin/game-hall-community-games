@@ -1,0 +1,91 @@
+{
+  "$schema": "../model/view-state.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "halli-galli",
+  "gameNumber": 1,
+  "revision": 21,
+  "phase": "playing",
+  "rules": {
+    "profileId": "official_last_bell",
+    "profileNameZh": "当前官方·最终二人再响一铃",
+    "countAssist": false
+  },
+  "viewer": {
+    "mode": "player",
+    "playerId": "p1"
+  },
+  "players": [
+    {
+      "id": "p1",
+      "seat": 0,
+      "displayName": "阿梨",
+      "connected": true,
+      "status": "eligible",
+      "drawCount": 11,
+      "discardCount": 3,
+      "topDiscard": { "faceId": "face-banana-2", "fruitId": "banana", "fruitCount": 2, "labelZh": "香蕉 ×2", "ariaLabelZh": "阿梨，2 个香蕉，明牌堆共 3 张" },
+      "eligibilityLabelZh": "可翻牌／可抢铃"
+    },
+    {
+      "id": "p2",
+      "seat": 1,
+      "displayName": "白川",
+      "connected": true,
+      "status": "eligible",
+      "drawCount": 11,
+      "discardCount": 3,
+      "topDiscard": { "faceId": "face-banana-3", "fruitId": "banana", "fruitCount": 3, "labelZh": "香蕉 ×3", "ariaLabelZh": "白川，3 个香蕉，明牌堆共 3 张" },
+      "eligibilityLabelZh": "可翻牌／可抢铃"
+    },
+    {
+      "id": "p3",
+      "seat": 2,
+      "displayName": "青禾",
+      "connected": true,
+      "status": "eligible",
+      "drawCount": 11,
+      "discardCount": 3,
+      "topDiscard": { "faceId": "face-strawberry-4", "fruitId": "strawberry", "fruitCount": 4, "labelZh": "草莓 ×4", "ariaLabelZh": "青禾，4 个草莓，明牌堆共 3 张" },
+      "eligibilityLabelZh": "轮到翻牌"
+    },
+    {
+      "id": "p4",
+      "seat": 3,
+      "displayName": "赤岩",
+      "connected": true,
+      "status": "eligible",
+      "drawCount": 11,
+      "discardCount": 3,
+      "topDiscard": { "faceId": "face-plum-1", "fruitId": "plum", "fruitCount": 1, "labelZh": "李子 ×1", "ariaLabelZh": "赤岩，1 个李子，明牌堆共 3 张" },
+      "eligibilityLabelZh": "可翻牌／可抢铃"
+    }
+  ],
+  "currentPlayerId": "p3",
+  "boardEpoch": 12,
+  "earliestNextFlipAt": "2026-09-03T20:00:00.350Z",
+  "lastFlip": {
+    "eventSeq": 12,
+    "playerId": "p2",
+    "faceId": "face-banana-3",
+    "boardEpoch": 12,
+    "revealedAt": "2026-09-03T20:00:00.000Z"
+  },
+  "assistFruitTotals": null,
+  "finalDuelArmed": false,
+  "bellResolution": null,
+  "actions": {
+    "canFlip": false,
+    "canRing": true,
+    "canRestart": false,
+    "flipDisabledReasonZh": "当前轮到青禾翻牌",
+    "ringDisabledReasonZh": null
+  },
+  "result": null,
+  "events": [
+    { "seq": 9, "type": "card-flipped", "actorId": "p1", "boardEpoch": 9, "faceIds": ["face-banana-2"], "targetPlayerIds": [], "textZh": "阿梨翻开了 2 个香蕉。" },
+    { "seq": 10, "type": "card-flipped", "actorId": "p3", "boardEpoch": 10, "faceIds": ["face-strawberry-4"], "targetPlayerIds": [], "textZh": "青禾翻开了 4 个草莓。" },
+    { "seq": 11, "type": "card-flipped", "actorId": "p4", "boardEpoch": 11, "faceIds": ["face-plum-1"], "targetPlayerIds": [], "textZh": "赤岩翻开了 1 个李子。" },
+    { "seq": 12, "type": "card-flipped", "actorId": "p2", "boardEpoch": 12, "faceIds": ["face-banana-3"], "targetPlayerIds": [], "textZh": "白川翻开了 3 个香蕉。" }
+  ]
+}

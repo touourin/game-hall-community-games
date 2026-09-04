@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1020" height="1320" viewBox="0 0 1020 1320" role="img" aria-labelledby="svg-title svg-desc">
+  <title id="svg-title">德国心脏病水果牌原型图集</title>
+  <desc id="svg-desc">四行五列展示香蕉、草莓、青柠和李子的 1 至 5 数量牌面。</desc>
+  <style>
+    text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; }
+    .title { font-size: 34px; font-weight: 800; letter-spacing: 1px; }
+    .subtitle { font-size: 16px; font-weight: 500; }
+    .corner { font-size: 28px; font-weight: 900; }
+    .fruit-label { font-size: 15px; font-weight: 800; }
+    .copy { font-size: 10px; font-weight: 700; fill: #554D42; }
+    .seat-name { font-size: 20px; font-weight: 800; fill: #FFFDF7; }
+    .seat-meta { font-size: 14px; font-weight: 600; fill: #CEDBD5; }
+  </style>
+  <rect width="1020" height="1320" fill="#101817"/><rect x="26" y="24" width="968" height="1272" rx="30" fill="#173C36" stroke="#B58A4A" stroke-width="3"/><text x="55" y="66" class="title" fill="#FFFDF7">德国心脏病 · 20 种唯一牌面</text><text x="56" y="94" class="subtitle" fill="#C9D8D2">原创功能原型 · 四种水果各 14 张 · 总计 56 张</text>
+      <g id="face-banana-1" transform="translate(54 122) scale(1)" role="img" aria-label="一根香蕉">
+        <title>香蕉 ×1</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#8A6512" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#8A6512">1</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×5</text>
+          </g>
+
+      <g data-fruit="banana" transform="translate(46 94) scale(0.76)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#8A6512"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">香蕉 ×1</text>
+
+      </g>
+
+      <g id="face-banana-2" transform="translate(240 122) scale(1)" role="img" aria-label="两根香蕉">
+        <title>香蕉 ×2</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#8A6512" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#8A6512">2</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×3</text>
+          </g>
+
+      <g data-fruit="banana" transform="translate(30 78) scale(0.54)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g><g data-fruit="banana" transform="translate(84 133) scale(0.54)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#8A6512"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">香蕉 ×2</text>
+
+      </g>
+
+      <g id="face-banana-3" transform="translate(426 122) scale(1)" role="img" aria-label="三根香蕉">
+        <title>香蕉 ×3</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#8A6512" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#8A6512">3</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×3</text>
+          </g>
+
+      <g data-fruit="banana" transform="translate(33.5 81.5) scale(0.45)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g><g data-fruit="banana" transform="translate(89.5 81.5) scale(0.45)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g><g data-fruit="banana" transform="translate(61.5 142.5) scale(0.45)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#8A6512"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">香蕉 ×3</text>
+
+      </g>
+
+      <g id="face-banana-4" transform="translate(612 122) scale(1)" role="img" aria-label="四根香蕉">
+        <title>香蕉 ×4</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#8A6512" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#8A6512">4</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×2</text>
+          </g>
+
+      <g data-fruit="banana" transform="translate(35 84) scale(0.42)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g><g data-fruit="banana" transform="translate(91 84) scale(0.42)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g><g data-fruit="banana" transform="translate(35 143) scale(0.42)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g><g data-fruit="banana" transform="translate(91 143) scale(0.42)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#8A6512"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">香蕉 ×4</text>
+
+      </g>
+
+      <g id="face-banana-5" transform="translate(798 122) scale(1)" role="img" aria-label="五根香蕉">
+        <title>香蕉 ×5</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#8A6512" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#8A6512">5</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×1</text>
+          </g>
+
+      <g data-fruit="banana" transform="translate(36 83) scale(0.36)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g><g data-fruit="banana" transform="translate(96 83) scale(0.36)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g><g data-fruit="banana" transform="translate(36 151) scale(0.36)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g><g data-fruit="banana" transform="translate(96 151) scale(0.36)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g><g data-fruit="banana" transform="translate(66 117) scale(0.36)">
+          <path d="M17 18 C25 62 56 88 87 56 C70 68 45 57 36 12 Z" fill="#F3C94A" stroke="#8A6512" stroke-width="6" stroke-linejoin="round"/>
+          <path d="M35 15 L39 4 L49 8 L43 20" fill="#8A6512"/>
+          <path d="M28 35 C40 60 59 68 77 59" fill="none" stroke="#FFF1A8" stroke-width="5" stroke-linecap="round"/>
+          <path d="M20 25 L31 30 M26 46 L37 47 M39 65 L49 61" stroke="#8A6512" stroke-width="3" stroke-linecap="round" opacity="0.45"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#8A6512"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">香蕉 ×5</text>
+
+      </g>
+
+      <g id="face-strawberry-1" transform="translate(54 405) scale(1)" role="img" aria-label="一个草莓">
+        <title>草莓 ×1</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#8F2330" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#8F2330">1</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×5</text>
+          </g>
+
+      <g data-fruit="strawberry" transform="translate(46 94) scale(0.76)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#8F2330"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">草莓 ×1</text>
+
+      </g>
+
+      <g id="face-strawberry-2" transform="translate(240 405) scale(1)" role="img" aria-label="两个草莓">
+        <title>草莓 ×2</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#8F2330" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#8F2330">2</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×3</text>
+          </g>
+
+      <g data-fruit="strawberry" transform="translate(30 78) scale(0.54)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g><g data-fruit="strawberry" transform="translate(84 133) scale(0.54)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#8F2330"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">草莓 ×2</text>
+
+      </g>
+
+      <g id="face-strawberry-3" transform="translate(426 405) scale(1)" role="img" aria-label="三个草莓">
+        <title>草莓 ×3</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#8F2330" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#8F2330">3</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×3</text>
+          </g>
+
+      <g data-fruit="strawberry" transform="translate(33.5 81.5) scale(0.45)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g><g data-fruit="strawberry" transform="translate(89.5 81.5) scale(0.45)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g><g data-fruit="strawberry" transform="translate(61.5 142.5) scale(0.45)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#8F2330"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">草莓 ×3</text>
+
+      </g>
+
+      <g id="face-strawberry-4" transform="translate(612 405) scale(1)" role="img" aria-label="四个草莓">
+        <title>草莓 ×4</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#8F2330" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#8F2330">4</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×2</text>
+          </g>
+
+      <g data-fruit="strawberry" transform="translate(35 84) scale(0.42)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g><g data-fruit="strawberry" transform="translate(91 84) scale(0.42)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g><g data-fruit="strawberry" transform="translate(35 143) scale(0.42)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g><g data-fruit="strawberry" transform="translate(91 143) scale(0.42)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#8F2330"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">草莓 ×4</text>
+
+      </g>
+
+      <g id="face-strawberry-5" transform="translate(798 405) scale(1)" role="img" aria-label="五个草莓">
+        <title>草莓 ×5</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#8F2330" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#8F2330">5</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×1</text>
+          </g>
+
+      <g data-fruit="strawberry" transform="translate(36 83) scale(0.36)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g><g data-fruit="strawberry" transform="translate(96 83) scale(0.36)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g><g data-fruit="strawberry" transform="translate(36 151) scale(0.36)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g><g data-fruit="strawberry" transform="translate(96 151) scale(0.36)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g><g data-fruit="strawberry" transform="translate(66 117) scale(0.36)">
+          <path d="M50 91 C31 78 16 55 20 37 C24 20 42 17 50 28 C58 17 76 20 80 37 C84 55 69 78 50 91 Z" fill="#E9545B" stroke="#8F2330" stroke-width="5"/>
+          <path d="M50 28 L33 14 L45 17 L50 5 L55 17 L68 14 Z" fill="#8F2330" stroke="#8F2330" stroke-width="3" stroke-linejoin="round"/>
+          <g fill="#FFC0BD"><circle cx="36" cy="43" r="3"/><circle cx="58" cy="40" r="3"/><circle cx="47" cy="57" r="3"/><circle cx="65" cy="59" r="3"/><circle cx="42" cy="73" r="3"/></g>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#8F2330"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">草莓 ×5</text>
+
+      </g>
+
+      <g id="face-lime-1" transform="translate(54 688) scale(1)" role="img" aria-label="一个青柠">
+        <title>青柠 ×1</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#386A28" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#386A28">1</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×5</text>
+          </g>
+
+      <g data-fruit="lime" transform="translate(46 94) scale(0.76)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#386A28"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">青柠 ×1</text>
+
+      </g>
+
+      <g id="face-lime-2" transform="translate(240 688) scale(1)" role="img" aria-label="两个青柠">
+        <title>青柠 ×2</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#386A28" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#386A28">2</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×3</text>
+          </g>
+
+      <g data-fruit="lime" transform="translate(30 78) scale(0.54)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g><g data-fruit="lime" transform="translate(84 133) scale(0.54)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#386A28"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">青柠 ×2</text>
+
+      </g>
+
+      <g id="face-lime-3" transform="translate(426 688) scale(1)" role="img" aria-label="三个青柠">
+        <title>青柠 ×3</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#386A28" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#386A28">3</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×3</text>
+          </g>
+
+      <g data-fruit="lime" transform="translate(33.5 81.5) scale(0.45)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g><g data-fruit="lime" transform="translate(89.5 81.5) scale(0.45)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g><g data-fruit="lime" transform="translate(61.5 142.5) scale(0.45)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#386A28"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">青柠 ×3</text>
+
+      </g>
+
+      <g id="face-lime-4" transform="translate(612 688) scale(1)" role="img" aria-label="四个青柠">
+        <title>青柠 ×4</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#386A28" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#386A28">4</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×2</text>
+          </g>
+
+      <g data-fruit="lime" transform="translate(35 84) scale(0.42)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g><g data-fruit="lime" transform="translate(91 84) scale(0.42)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g><g data-fruit="lime" transform="translate(35 143) scale(0.42)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g><g data-fruit="lime" transform="translate(91 143) scale(0.42)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#386A28"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">青柠 ×4</text>
+
+      </g>
+
+      <g id="face-lime-5" transform="translate(798 688) scale(1)" role="img" aria-label="五个青柠">
+        <title>青柠 ×5</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#386A28" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#386A28">5</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×1</text>
+          </g>
+
+      <g data-fruit="lime" transform="translate(36 83) scale(0.36)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g><g data-fruit="lime" transform="translate(96 83) scale(0.36)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g><g data-fruit="lime" transform="translate(36 151) scale(0.36)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g><g data-fruit="lime" transform="translate(96 151) scale(0.36)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g><g data-fruit="lime" transform="translate(66 117) scale(0.36)">
+          <circle cx="50" cy="52" r="39" fill="#79B94B" stroke="#386A28" stroke-width="6"/>
+          <circle cx="50" cy="52" r="29" fill="#C8E89D" stroke="#386A28" stroke-width="3"/>
+          <path d="M50 52 L50 23 M50 52 L75 38 M50 52 L75 67 M50 52 L50 81 M50 52 L25 67 M50 52 L25 38" stroke="#386A28" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="50" cy="52" r="5" fill="#386A28"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#386A28"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">青柠 ×5</text>
+
+      </g>
+
+      <g id="face-plum-1" transform="translate(54 971) scale(1)" role="img" aria-label="一个李子">
+        <title>李子 ×1</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#432965" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#432965">1</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×5</text>
+          </g>
+
+      <g data-fruit="plum" transform="translate(46 94) scale(0.76)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#432965"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">李子 ×1</text>
+
+      </g>
+
+      <g id="face-plum-2" transform="translate(240 971) scale(1)" role="img" aria-label="两个李子">
+        <title>李子 ×2</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#432965" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#432965">2</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×3</text>
+          </g>
+
+      <g data-fruit="plum" transform="translate(30 78) scale(0.54)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g><g data-fruit="plum" transform="translate(84 133) scale(0.54)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#432965"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">李子 ×2</text>
+
+      </g>
+
+      <g id="face-plum-3" transform="translate(426 971) scale(1)" role="img" aria-label="三个李子">
+        <title>李子 ×3</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#432965" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#432965">3</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×3</text>
+          </g>
+
+      <g data-fruit="plum" transform="translate(33.5 81.5) scale(0.45)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g><g data-fruit="plum" transform="translate(89.5 81.5) scale(0.45)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g><g data-fruit="plum" transform="translate(61.5 142.5) scale(0.45)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#432965"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">李子 ×3</text>
+
+      </g>
+
+      <g id="face-plum-4" transform="translate(612 971) scale(1)" role="img" aria-label="四个李子">
+        <title>李子 ×4</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#432965" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#432965">4</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×2</text>
+          </g>
+
+      <g data-fruit="plum" transform="translate(35 84) scale(0.42)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g><g data-fruit="plum" transform="translate(91 84) scale(0.42)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g><g data-fruit="plum" transform="translate(35 143) scale(0.42)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g><g data-fruit="plum" transform="translate(91 143) scale(0.42)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#432965"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">李子 ×4</text>
+
+      </g>
+
+      <g id="face-plum-5" transform="translate(798 971) scale(1)" role="img" aria-label="五个李子">
+        <title>李子 ×5</title>
+
+      <rect width="168" height="261" rx="13" fill="#FFFDF7" stroke="#BEB39E" stroke-width="2"/>
+      <rect x="8" y="8" width="152" height="245" rx="10" fill="none" stroke="#432965" stroke-width="2" opacity="0.42"/>
+      <text x="17" y="33" class="corner" fill="#432965">5</text>
+
+          <g transform="translate(111 17)">
+            <rect width="42" height="22" rx="11" fill="#E8E0D1"/>
+            <text x="21" y="15" text-anchor="middle" class="copy">牌组 ×1</text>
+          </g>
+
+      <g data-fruit="plum" transform="translate(36 83) scale(0.36)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g><g data-fruit="plum" transform="translate(96 83) scale(0.36)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g><g data-fruit="plum" transform="translate(36 151) scale(0.36)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g><g data-fruit="plum" transform="translate(96 151) scale(0.36)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g><g data-fruit="plum" transform="translate(66 117) scale(0.36)">
+          <ellipse cx="49" cy="57" rx="33" ry="38" fill="#7D5AA6" stroke="#432965" stroke-width="6"/>
+          <path d="M50 20 C53 8 61 5 68 4" fill="none" stroke="#432965" stroke-width="5" stroke-linecap="round"/>
+          <path d="M62 15 C73 4 90 10 91 24 C78 28 68 24 62 15 Z" fill="#CDB8E8" stroke="#432965" stroke-width="4"/>
+          <ellipse cx="37" cy="44" rx="9" ry="15" fill="#CDB8E8" opacity="0.72" transform="rotate(28 37 44)"/>
+          <path d="M27 63 C39 76 60 81 73 68" fill="none" stroke="#432965" stroke-width="3" opacity="0.38"/>
+        </g>
+      <rect x="25" y="211" width="118" height="28" rx="14" fill="#432965"/>
+      <text x="84" y="230" text-anchor="middle" class="fruit-label" fill="#FFFFFF">李子 ×5</text>
+
+      </g>
+    <rect x="54" y="1268" width="912" height="2" fill="#B58A4A" opacity="0.7"/><text x="54" y="1290" class="subtitle" fill="#C9D8D2">数量 1/2/3/4/5 的副本数依次为 5/3/3/2/1；几何图形不复制官方插画。</text>
+</svg>

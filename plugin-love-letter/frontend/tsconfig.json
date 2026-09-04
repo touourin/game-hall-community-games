@@ -1,0 +1,16 @@
+{
+  "extends": "../../../frontend/tsconfig.app.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "noEmit": true,
+    "typeRoots": [
+      "../../../frontend/node_modules/@types",
+      "../../../frontend/node_modules"
+    ],
+    "paths": {
+      "@game-hall/plugin-sdk": ["../../../frontend/src/plugin-sdk/index.ts"],
+      "@/*": ["../../../frontend/src/*"]
+    }
+  },
+  "include": ["./**/*.ts", "./**/*.vue", "../dev/**/*.ts", "../dev/**/*.vue"]
+}

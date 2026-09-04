@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/love-letter/rules-profiles.schema.json",
+  "title": "Love Letter rules profiles",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "modelVersion", "gameId", "defaultProfileId", "profiles"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "love-letter" },
+    "defaultProfileId": { "enum": ["queen_22", "current_21", "classic_16"] },
+    "profiles": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "$ref": "#/$defs/profile" }
+    }
+  },
+  "$defs": {
+    "slug": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "countMap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spy", "guard", "priest", "baron", "handmaid", "prince", "chancellor", "king", "queen", "countess", "princess"],
+      "properties": {
+        "spy": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "guard": { "type": "integer", "minimum": 5, "maximum": 6 },
+        "priest": { "const": 2 },
+        "baron": { "const": 2 },
+        "handmaid": { "const": 2 },
+        "prince": { "const": 2 },
+        "chancellor": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "king": { "const": 1 },
+        "queen": { "type": "integer", "minimum": 0, "maximum": 1 },
+        "countess": { "const": 1 },
+        "princess": { "const": 1 }
+      }
+    },
+    "playerIntMap": {
+      "type": "object",
+      "minProperties": 3,
+      "maxProperties": 3,
+      "propertyNames": { "pattern": "^[2-4]$" },
+      "additionalProperties": { "type": "integer", "minimum": 0, "maximum": 10 }
+    },
+    "setup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hiddenReserveCount", "faceUpSetAsideByPlayerCount", "startingHandSize", "initialFirstPlayerPolicy", "nextRoundFirstPlayerPolicy"],
+      "properties": {
+        "hiddenReserveCount": { "const": 1 },
+        "faceUpSetAsideByPlayerCount": { "$ref": "#/$defs/playerIntMap" },
+        "startingHandSize": { "const": 1 },
+        "initialFirstPlayerPolicy": { "const": "recent-letter-or-server-random" },
+        "nextRoundFirstPlayerPolicy": { "const": "previous-round-winner-random-tiebreak" }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "nameZh", "playerMin", "playerMax", "deckSize", "cardCounts", "setup", "favorTargetByPlayerCount", "guardGuessCardTypeIds"],
+      "properties": {
+        "id": { "enum": ["queen_22", "current_21", "classic_16"] },
+        "nameZh": { "type": "string", "minLength": 1 },
+        "playerMin": { "const": 2 },
+        "playerMax": { "const": 4 },
+        "deckSize": { "enum": [16, 21, 22] },
+        "cardCounts": { "$ref": "#/$defs/countMap" },
+        "setup": { "$ref": "#/$defs/setup" },
+        "favorTargetByPlayerCount": { "$ref": "#/$defs/playerIntMap" },
+        "guardGuessCardTypeIds": {
+          "type": "array",
+          "minItems": 7,
+          "maxItems": 10,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "not": { "contains": { "const": "guard" } }
+        }
+      }
+    }
+  }
+}

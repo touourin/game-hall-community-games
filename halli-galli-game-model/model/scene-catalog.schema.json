@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/halli-galli/scene-catalog.schema.json",
+  "title": "Halli Galli scene catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "modelVersion", "gameId", "logicalCanvas", "theme", "cardMetrics", "bellMetrics", "breakpoints", "zones", "seatLayouts", "seatStates", "scenes", "animationCues", "responsiveStrategy", "fidelity", "accessibility"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "halli-galli" },
+    "logicalCanvas": { "$ref": "#/$defs/logicalCanvas" },
+    "theme": {
+      "type": "object",
+      "minProperties": 10,
+      "additionalProperties": { "$ref": "#/$defs/hex" }
+    },
+    "cardMetrics": { "$ref": "#/$defs/cardMetrics" },
+    "bellMetrics": { "$ref": "#/$defs/bellMetrics" },
+    "breakpoints": { "$ref": "#/$defs/breakpoints" },
+    "zones": { "type": "array", "minItems": 17, "items": { "$ref": "#/$defs/zone" } },
+    "seatLayouts": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "$ref": "#/$defs/seatLayout" } },
+    "seatStates": { "type": "array", "minItems": 7, "items": { "$ref": "#/$defs/seatState" } },
+    "scenes": { "type": "array", "minItems": 8, "items": { "$ref": "#/$defs/scene" } },
+    "animationCues": { "type": "array", "minItems": 8, "items": { "$ref": "#/$defs/cue" } },
+    "responsiveStrategy": { "$ref": "#/$defs/responsiveStrategy" },
+    "fidelity": { "$ref": "#/$defs/fidelity" },
+    "accessibility": { "$ref": "#/$defs/accessibility" }
+  },
+  "$defs": {
+    "hex": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+    "slug": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "logicalCanvas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "unit"],
+      "properties": {
+        "width": { "const": 1600 },
+        "height": { "const": 900 },
+        "unit": { "const": "logical-pixel" }
+      }
+    },
+    "cardMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "cornerRadius", "compactWidth", "compactHeight"],
+      "properties": {
+        "width": { "const": 168 },
+        "height": { "const": 261 },
+        "cornerRadius": { "type": "integer", "minimum": 0 },
+        "compactWidth": { "type": "integer", "minimum": 44 },
+        "compactHeight": { "type": "integer", "minimum": 44 }
+      }
+    },
+    "bellMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wideDiameter", "compactDiameter", "minimumTarget", "clearance"],
+      "properties": {
+        "wideDiameter": { "type": "integer", "minimum": 64 },
+        "compactDiameter": { "type": "integer", "minimum": 64 },
+        "minimumTarget": { "type": "integer", "minimum": 64 },
+        "clearance": { "type": "integer", "minimum": 8 }
+      }
+    },
+    "breakpoints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["narrowMax", "compactMax", "mediumMax", "wideMin"],
+      "properties": {
+        "narrowMax": { "const": 374 },
+        "compactMax": { "const": 759 },
+        "mediumMax": { "const": 1179 },
+        "wideMin": { "const": 1180 }
+      }
+    },
+    "rect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0, "maximum": 1 },
+        "y": { "type": "number", "minimum": 0, "maximum": 1 },
+        "width": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+        "height": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 }
+      }
+    },
+    "zone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "rect", "zIndex", "visibility", "interaction"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "role": { "type": "string", "minLength": 1 },
+        "rect": { "$ref": "#/$defs/rect" },
+        "zIndex": { "type": "integer", "minimum": 0, "maximum": 300 },
+        "visibility": { "enum": ["always", "playing", "finished", "player-only", "player-count-dependent", "event-dependent"] },
+        "interaction": { "enum": ["read-only", "primary-action", "secondary-action", "expandable", "modal"] }
+      }
+    },
+    "seat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relativeSeat", "wideZoneId", "compactSlot", "rotation"],
+      "properties": {
+        "relativeSeat": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "wideZoneId": { "type": "string", "pattern": "^seat_[0-5]$" },
+        "compactSlot": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "rotation": { "const": 0 }
+      }
+    },
+    "seatLayout": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playerCount", "seats"],
+      "properties": {
+        "playerCount": { "type": "integer", "minimum": 2, "maximum": 6 },
+        "seats": { "type": "array", "minItems": 2, "maxItems": 6, "items": { "$ref": "#/$defs/seat" } }
+      }
+    },
+    "seatState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "labelZh", "tone", "canFlip", "canRing"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "labelZh": { "type": "string", "minLength": 1 },
+        "tone": { "enum": ["neutral", "focus", "warning", "muted", "success", "danger"] },
+        "canFlip": { "type": "boolean" },
+        "canRing": { "type": "boolean" }
+      }
+    },
+    "scene": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "phase", "requiredZones", "primaryActions", "focusTarget", "announcementZh"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "phase": { "enum": ["waiting", "playing", "presentation", "finished"] },
+        "requiredZones": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+        "primaryActions": { "type": "array", "uniqueItems": true, "items": { "enum": ["flip_card", "ring_bell", "restart"] } },
+        "focusTarget": { "type": "string" },
+        "announcementZh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "cue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "durationMs", "fromZone", "toZone", "reducedMotion", "blocksBell", "ariaTemplateZh"],
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "durationMs": { "type": "integer", "minimum": 0, "maximum": 1200 },
+        "fromZone": { "type": ["string", "null"] },
+        "toZone": { "type": ["string", "null"] },
+        "reducedMotion": { "enum": ["fade", "instant", "outline"] },
+        "blocksBell": { "type": "boolean" },
+        "ariaTemplateZh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "responsiveStrategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wide", "medium", "compact", "narrow"],
+      "properties": {
+        "wide": { "type": "string", "minLength": 1 },
+        "medium": { "type": "string", "minLength": 1 },
+        "compact": { "type": "string", "minLength": 1 },
+        "narrow": { "type": "string", "minLength": 1 }
+      }
+    },
+    "fidelity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allTopCardsSimultaneouslyVisible", "showAggregateFruitTotalsDefault", "highlightCorrectBellConditionDefault", "coveredCardsBrowsableDuringPlay", "bellAvailableDuringFlipAnimation"],
+      "properties": {
+        "allTopCardsSimultaneouslyVisible": { "const": true },
+        "showAggregateFruitTotalsDefault": { "const": false },
+        "highlightCorrectBellConditionDefault": { "const": false },
+        "coveredCardsBrowsableDuringPlay": { "const": false },
+        "bellAvailableDuringFlipAnimation": { "const": true }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["notColorOnly", "liveRegion", "reducedMotion", "keyboardActions", "minimumTextContrast", "minimumLargeSymbolContrast", "minimumBellTarget"],
+      "properties": {
+        "notColorOnly": { "const": true },
+        "liveRegion": { "type": "string", "minLength": 1 },
+        "reducedMotion": { "type": "string", "minLength": 1 },
+        "keyboardActions": { "type": "array", "minItems": 5, "uniqueItems": true, "items": { "type": "string" } },
+        "minimumTextContrast": { "type": "number", "minimum": 4.5 },
+        "minimumLargeSymbolContrast": { "type": "number", "minimum": 3.0 },
+        "minimumBellTarget": { "type": "integer", "minimum": 64 }
+      }
+    }
+  }
+}

@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://game-hall.local/schemas/halli-galli/game-state.schema.json",
+  "title": "Halli Galli authoritative state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "modelVersion", "gameId", "gameNumber", "revision", "phase", "profileId", "players", "currentPlayerId", "boardEpoch", "earliestNextFlipAt", "lastFlip", "fruitTotals", "validFruitIds", "finalDuelArmed", "bellResolution", "noProgressDeadline", "result", "eventSeq", "events", "rng"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "modelVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "gameId": { "const": "halli-galli" },
+    "gameNumber": { "type": "integer", "minimum": 1 },
+    "revision": { "type": "integer", "minimum": 0 },
+    "phase": { "enum": ["waiting", "playing", "resolving_bell", "finished"] },
+    "profileId": { "enum": ["official_last_bell", "complete_collection"] },
+    "players": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/player" }
+    },
+    "currentPlayerId": { "type": ["string", "null"] },
+    "boardEpoch": { "type": "integer", "minimum": 0 },
+    "earliestNextFlipAt": { "type": ["string", "null"], "format": "date-time" },
+    "lastFlip": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/lastFlip" }
+      ]
+    },
+    "fruitTotals": { "$ref": "#/$defs/fruitTotals" },
+    "validFruitIds": {
+      "type": "array",
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/fruitId" }
+    },
+    "finalDuelArmed": { "type": "boolean" },
+    "bellResolution": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/bellResolution" }
+      ]
+    },
+    "noProgressDeadline": { "type": ["string", "null"], "format": "date-time" },
+    "result": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/result" }
+      ]
+    },
+    "eventSeq": { "type": "integer", "minimum": 0 },
+    "events": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/event" }
+    },
+    "rng": { "$ref": "#/$defs/rng" }
+  },
+  "$defs": {
+    "fruitId": { "enum": ["banana", "strawberry", "lime", "plum"] },
+    "cardId": { "type": "string", "pattern": "^(banana|strawberry|lime|plum)-[1-5]-0[1-5]$" },
+    "faceId": { "type": "string", "pattern": "^face-(banana|strawberry|lime|plum)-[1-5]$" },
+    "playerStatus": { "enum": ["eligible", "eliminated", "resigned"] },
+    "cardStack": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/cardId" }
+    },
+    "player": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "seat", "displayName", "connected", "status", "drawPile", "discardPile", "eliminationReason", "lastActionSeq"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "seat": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "connected": { "type": "boolean" },
+        "status": { "$ref": "#/$defs/playerStatus" },
+        "drawPile": { "$ref": "#/$defs/cardStack" },
+        "discardPile": { "$ref": "#/$defs/cardStack" },
+        "eliminationReason": {
+          "type": ["string", "null"],
+          "enum": [null, "discard-captured", "wrong-bell-empty", "resigned"]
+        },
+        "lastActionSeq": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "lastFlip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eventSeq", "playerId", "cardId", "faceId", "boardEpoch", "revealedAt"],
+      "properties": {
+        "eventSeq": { "type": "integer", "minimum": 1 },
+        "playerId": { "type": "string" },
+        "cardId": { "$ref": "#/$defs/cardId" },
+        "faceId": { "$ref": "#/$defs/faceId" },
+        "boardEpoch": { "type": "integer", "minimum": 1 },
+        "revealedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "fruitTotals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["banana", "strawberry", "lime", "plum"],
+      "properties": {
+        "banana": { "type": "integer", "minimum": 0, "maximum": 30 },
+        "strawberry": { "type": "integer", "minimum": 0, "maximum": 30 },
+        "lime": { "type": "integer", "minimum": 0, "maximum": 30 },
+        "plum": { "type": "integer", "minimum": 0, "maximum": 30 }
+      }
+    },
+    "penaltyTransfer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fromPlayerId", "toPlayerId", "cardId"],
+      "properties": {
+        "fromPlayerId": { "type": "string" },
+        "toPlayerId": { "type": "string" },
+        "cardId": { "$ref": "#/$defs/cardId" }
+      }
+    },
+    "bellResolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resolutionId", "boardEpoch", "ringerId", "correct", "validFruitIds", "outcome", "collectorId", "collectedCount", "penaltyTransfers", "receivedAtNs", "eventSeq"],
+      "properties": {
+        "resolutionId": { "type": "string", "pattern": "^bell-[0-9]+$" },
+        "boardEpoch": { "type": "integer", "minimum": 0 },
+        "ringerId": { "type": "string" },
+        "correct": { "type": "boolean" },
+        "validFruitIds": {
+          "type": "array",
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/fruitId" }
+        },
+        "outcome": { "enum": ["correct-collect", "wrong-penalty", "final-wrong-opponent-collect"] },
+        "collectorId": { "type": ["string", "null"] },
+        "collectedCount": { "type": "integer", "minimum": 0, "maximum": 56 },
+        "penaltyTransfers": {
+          "type": "array",
+          "maxItems": 5,
+          "items": { "$ref": "#/$defs/penaltyTransfer" }
+        },
+        "receivedAtNs": { "type": "integer", "minimum": 0 },
+        "eventSeq": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "score": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["playerId", "drawCount", "discardCount", "total"],
+      "properties": {
+        "playerId": { "type": "string" },
+        "drawCount": { "type": "integer", "minimum": 0, "maximum": 56 },
+        "discardCount": { "type": "integer", "minimum": 0, "maximum": 56 },
+        "total": { "type": "integer", "minimum": 0, "maximum": 56 }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reason", "winnerIds", "scores", "summaryZh", "finishedAt"],
+      "properties": {
+        "reason": { "enum": ["final-correct-bell", "final-wrong-bell", "all-cards-owned", "no-progress", "player-exit"] },
+        "winnerIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "scores": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": { "$ref": "#/$defs/score" }
+        },
+        "summaryZh": { "type": "string", "minLength": 1 },
+        "finishedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seq", "type", "actorId", "boardEpoch", "cardIds", "targetPlayerIds", "textZh"],
+      "properties": {
+        "seq": { "type": "integer", "minimum": 1 },
+        "type": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "actorId": { "type": ["string", "null"] },
+        "boardEpoch": { "type": "integer", "minimum": 0 },
+        "cardIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/cardId" }
+        },
+        "targetPlayerIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "textZh": { "type": "string", "minLength": 1 }
+      }
+    },
+    "rng": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "seedSecret", "commitment", "dealOffset", "drawsUsed"],
+      "properties": {
+        "algorithm": { "const": "python-random-v1" },
+        "seedSecret": { "type": "string", "minLength": 16 },
+        "commitment": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "dealOffset": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "drawsUsed": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

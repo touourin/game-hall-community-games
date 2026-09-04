@@ -1,0 +1,91 @@
+{
+  "$schema": "./rules-profiles.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "halli-galli",
+  "defaultProfileId": "official_last_bell",
+  "profiles": [
+    {
+      "id": "official_last_bell",
+      "nameZh": "当前官方·最终二人再响一铃",
+      "provenance": "amigo-v3.1",
+      "playerMin": 2,
+      "playerMax": 6,
+      "deckSize": 56,
+      "bellTarget": 5,
+      "setup": {
+        "dealAllCards": true,
+        "dealPolicy": "round-robin-from-random-offset",
+        "firstPlayerPolicy": "recent-fruit-salad-or-server-random"
+      },
+      "ending": {
+        "mode": "last-accepted-bell-after-two",
+        "armAtEligiblePlayerCount": 2,
+        "twoPlayerStartsArmed": true,
+        "winnerMetric": "owned-card-count",
+        "tiePolicy": "shared-win"
+      },
+      "wrongBell": {
+        "cardsPerOtherEligiblePlayer": 1,
+        "finalDuelOutcome": "opponent-collects-all-discards",
+        "insufficientCardsPolicy": "clockwise-partial-then-eliminate"
+      },
+      "emptyDraw": {
+        "retainEligibilityWhileOwnDiscardExists": true,
+        "skipFlipTurn": true,
+        "reviveOnCorrectBell": true,
+        "eliminateOnOwnDiscardCaptured": true,
+        "eliminateOnWrongBell": true
+      },
+      "digital": {
+        "minimumNextFlipDelayMs": 350,
+        "noProgressTimeoutMs": 10000,
+        "countAssistDefault": false,
+        "serverArrivalOrder": true,
+        "staleBellPenalty": false,
+        "duplicateBellPenalty": false
+      }
+    },
+    {
+      "id": "complete_collection",
+      "nameZh": "约定延长·一人收齐全部牌",
+      "provenance": "amigo-v3.1-agreed-variant",
+      "playerMin": 2,
+      "playerMax": 6,
+      "deckSize": 56,
+      "bellTarget": 5,
+      "setup": {
+        "dealAllCards": true,
+        "dealPolicy": "round-robin-from-random-offset",
+        "firstPlayerPolicy": "recent-fruit-salad-or-server-random"
+      },
+      "ending": {
+        "mode": "one-player-owns-all-cards",
+        "armAtEligiblePlayerCount": null,
+        "twoPlayerStartsArmed": false,
+        "winnerMetric": "all-cards-owned",
+        "tiePolicy": "shared-win-on-no-progress-only"
+      },
+      "wrongBell": {
+        "cardsPerOtherEligiblePlayer": 1,
+        "finalDuelOutcome": "not-applicable",
+        "insufficientCardsPolicy": "clockwise-partial-then-eliminate"
+      },
+      "emptyDraw": {
+        "retainEligibilityWhileOwnDiscardExists": true,
+        "skipFlipTurn": true,
+        "reviveOnCorrectBell": true,
+        "eliminateOnOwnDiscardCaptured": true,
+        "eliminateOnWrongBell": true
+      },
+      "digital": {
+        "minimumNextFlipDelayMs": 350,
+        "noProgressTimeoutMs": 10000,
+        "countAssistDefault": false,
+        "serverArrivalOrder": true,
+        "staleBellPenalty": false,
+        "duplicateBellPenalty": false
+      }
+    }
+  ]
+}

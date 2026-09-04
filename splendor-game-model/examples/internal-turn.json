@@ -1,0 +1,302 @@
+{
+  "$schema": "../model/game-state.schema.json",
+  "schemaVersion": 1,
+  "modelVersion": "1.0.0",
+  "gameId": "splendor",
+  "gameNumber": 1,
+  "revision": 6,
+  "phase": "turn_action",
+  "rulesProfile": "base-2024-refresh",
+  "turnOrder": [
+    "p1",
+    "p2",
+    "p3"
+  ],
+  "turn": {
+    "firstPlayerId": "p1",
+    "activePlayerId": "p3",
+    "roundNumber": 2,
+    "actionNumber": 5,
+    "pendingReturnCount": 0,
+    "eligibleNobleIds": [],
+    "endTriggeredBy": null,
+    "finalTurnPlayerId": null,
+    "lastAction": {
+      "eventId": "event-0006",
+      "revision": 6,
+      "actionNumber": 5,
+      "kind": "take_different",
+      "actorId": "p2",
+      "publicTextZh": "赤羽拿取蓝宝石、祖母绿和红宝石各一枚。",
+      "publicData": {
+        "pieces": {
+          "blue": 1,
+          "green": 1,
+          "red": 1
+        }
+      }
+    }
+  },
+  "supply": {
+    "white": 4,
+    "blue": 3,
+    "green": 4,
+    "red": 4,
+    "black": 4,
+    "gold": 4
+  },
+  "tiers": {
+    "1": {
+      "level": 1,
+      "deck": [
+        "dev-blue-1-01",
+        "dev-blue-1-02",
+        "dev-blue-1-03",
+        "dev-blue-1-04",
+        "dev-blue-1-05",
+        "dev-blue-1-06",
+        "dev-blue-1-07",
+        "dev-blue-1-08",
+        "dev-green-1-01",
+        "dev-green-1-02",
+        "dev-green-1-03",
+        "dev-green-1-04",
+        "dev-green-1-05",
+        "dev-green-1-06",
+        "dev-green-1-07",
+        "dev-green-1-08",
+        "dev-red-1-01",
+        "dev-red-1-02",
+        "dev-red-1-03",
+        "dev-red-1-04",
+        "dev-red-1-05",
+        "dev-red-1-06",
+        "dev-red-1-07",
+        "dev-red-1-08",
+        "dev-black-1-01",
+        "dev-black-1-02",
+        "dev-black-1-03",
+        "dev-black-1-04",
+        "dev-black-1-05",
+        "dev-black-1-06",
+        "dev-black-1-07",
+        "dev-black-1-08"
+      ],
+      "market": [
+        "dev-white-1-01",
+        "dev-white-1-02",
+        "dev-white-1-03",
+        "dev-white-1-04"
+      ]
+    },
+    "2": {
+      "level": 2,
+      "deck": [
+        "dev-blue-2-01",
+        "dev-blue-2-02",
+        "dev-blue-2-03",
+        "dev-blue-2-04",
+        "dev-blue-2-05",
+        "dev-blue-2-06",
+        "dev-green-2-01",
+        "dev-green-2-02",
+        "dev-green-2-03",
+        "dev-green-2-04",
+        "dev-green-2-05",
+        "dev-green-2-06",
+        "dev-red-2-01",
+        "dev-red-2-02",
+        "dev-red-2-03",
+        "dev-red-2-04",
+        "dev-red-2-05",
+        "dev-red-2-06",
+        "dev-black-2-01",
+        "dev-black-2-02",
+        "dev-black-2-03",
+        "dev-black-2-04",
+        "dev-black-2-05",
+        "dev-black-2-06"
+      ],
+      "market": [
+        "dev-white-2-01",
+        "dev-white-2-02",
+        "dev-white-2-03",
+        "dev-white-2-04"
+      ]
+    },
+    "3": {
+      "level": 3,
+      "deck": [
+        "dev-blue-3-01",
+        "dev-blue-3-02",
+        "dev-blue-3-03",
+        "dev-blue-3-04",
+        "dev-green-3-01",
+        "dev-green-3-02",
+        "dev-green-3-03",
+        "dev-green-3-04",
+        "dev-red-3-01",
+        "dev-red-3-02",
+        "dev-red-3-03",
+        "dev-red-3-04",
+        "dev-black-3-01",
+        "dev-black-3-02",
+        "dev-black-3-03",
+        "dev-black-3-04"
+      ],
+      "market": [
+        "dev-white-3-01",
+        "dev-white-3-02",
+        "dev-white-3-03",
+        "dev-white-3-04"
+      ]
+    }
+  },
+  "availableNobleIds": [
+    "noble-white-blue-4",
+    "noble-blue-green-4",
+    "noble-green-red-4",
+    "noble-red-black-4"
+  ],
+  "unusedNobleIds": [
+    "noble-black-white-4",
+    "noble-white-blue-green-3",
+    "noble-blue-green-red-3",
+    "noble-green-red-black-3",
+    "noble-red-black-white-3",
+    "noble-black-white-blue-3"
+  ],
+  "players": [
+    {
+      "playerId": "p1",
+      "seatIndex": 0,
+      "name": "青岚",
+      "pieces": {
+        "white": 1,
+        "blue": 1,
+        "green": 0,
+        "red": 0,
+        "black": 0,
+        "gold": 1
+      },
+      "purchasedCardIds": [
+        "dev-white-1-05",
+        "dev-white-1-06"
+      ],
+      "reservations": [
+        {
+          "reservationId": "reservation-p1-001",
+          "cardId": "dev-white-2-05",
+          "level": 2,
+          "source": "deck",
+          "knownToAll": false,
+          "reservedAtAction": 4
+        }
+      ],
+      "nobleIds": [],
+      "cachedBonuses": {
+        "white": 2,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "cachedScore": 0
+    },
+    {
+      "playerId": "p2",
+      "seatIndex": 1,
+      "name": "赤羽",
+      "pieces": {
+        "white": 0,
+        "blue": 1,
+        "green": 1,
+        "red": 1,
+        "black": 0,
+        "gold": 0
+      },
+      "purchasedCardIds": [
+        "dev-white-1-07"
+      ],
+      "reservations": [
+        {
+          "reservationId": "reservation-p2-001",
+          "cardId": "dev-white-2-06",
+          "level": 2,
+          "source": "market",
+          "knownToAll": true,
+          "reservedAtAction": 2
+        }
+      ],
+      "nobleIds": [],
+      "cachedBonuses": {
+        "white": 1,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "cachedScore": 0
+    },
+    {
+      "playerId": "p3",
+      "seatIndex": 2,
+      "name": "墨石",
+      "pieces": {
+        "white": 0,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 1,
+        "gold": 0
+      },
+      "purchasedCardIds": [
+        "dev-white-1-08"
+      ],
+      "reservations": [],
+      "nobleIds": [],
+      "cachedBonuses": {
+        "white": 1,
+        "blue": 0,
+        "green": 0,
+        "red": 0,
+        "black": 0
+      },
+      "cachedScore": 0
+    }
+  ],
+  "rng": {
+    "algorithm": "deterministic-example-only",
+    "seed": "example-seed-splendor-model-v1",
+    "seedCommitment": "e1f1efe5d702aab4dc65a30238f44b8108632433c38df3064d3034f1d23ece14"
+  },
+  "events": [
+    {
+      "eventId": "event-0005",
+      "revision": 5,
+      "actionNumber": 4,
+      "kind": "reserve_blind",
+      "actorId": "p1",
+      "publicTextZh": "青岚从 2 级牌堆盲保留一张牌并取得一枚黄金。",
+      "publicData": {
+        "level": 2,
+        "goldTaken": 1
+      }
+    },
+    {
+      "eventId": "event-0006",
+      "revision": 6,
+      "actionNumber": 5,
+      "kind": "take_different",
+      "actorId": "p2",
+      "publicTextZh": "赤羽拿取蓝宝石、祖母绿和红宝石各一枚。",
+      "publicData": {
+        "pieces": {
+          "blue": 1,
+          "green": 1,
+          "red": 1
+        }
+      }
+    }
+  ]
+}

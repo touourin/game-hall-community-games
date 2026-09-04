@@ -102,6 +102,21 @@ def press(engine, room, player, sequence: int, bit: int):
     engine.apply_input(room, player, sequence + 1, 0)
 
 
+def place_actor(actor, x: int, y: int):
+    actor.x, actor.y = x, y
+    actor.offset_x = actor.offset_y = 0
+
+
+def move_one_cell(engine, room, player, sequence: int, bit: int):
+    actor = room.state.players[player.id]
+    assert actor.offset_x == actor.offset_y == 0
+    engine.apply_input(room, player, sequence, bit)
+    for _ in range(round(engine._move_interval_ticks(room.state, actor))):
+        engine.tick(room)
+    engine.apply_input(room, player, sequence + 1, 0)
+    assert actor.offset_x == actor.offset_y == 0
+
+
 def force_next_map(engine, map_key: str):
     engine._choose_round_map = lambda _previous: map_key
 
@@ -112,6 +127,7 @@ def test_manifest_and_engine_contract_match(loaded):
     engine = Engine(random.Random(1))
     assert (engine.key, engine.name) == (manifest["id"], manifest["name"])
     assert (engine.min_players, engine.max_players) == (2, 8)
+    assert (engine.realtime_tick_rate, engine.realtime_snapshot_rate) == (40, 20)
     assert manifest["roomLayout"] == "immersive"
     assert manifest["records"]["scoreKind"] == "outcome"
 
@@ -207,10 +223,10 @@ def test_player_count_is_enforced(loaded, count):
 @pytest.mark.parametrize(
     ("speed_level", "expected_steps", "expected_interval"),
     (
-        (0, 5, 4.0),
-        (1, 6, 3.2),
-        (2, 8, 2.6),
-        (3, 10, 2.0),
+        (0, 5, 8.0),
+        (1, 6, 6.4),
+        (2, 8, 5.2),
+        (3, 10, 4.0),
     ),
 )
 def test_movement_starts_faster_and_scales_smoothly_with_speed_items(
@@ -237,14 +253,19 @@ def test_movement_starts_faster_and_scales_smoothly_with_speed_items(
     view = engine.view(room, members[0])
     own = next(player for player in view["players"] if player["id"] == actor.player_id)
     assert own["moveIntervalTicks"] == expected_interval
+    assert own["movementSpeed"] == round(engine_module.TICK_RATE / expected_interval, 3)
+    assert own["cellX"] == actor.x
+    assert own["x"] == pytest.approx(
+        actor.x + actor.offset_x / engine_module.POSITION_SCALE,
+    )
 
     room.state.ice_tiles[(actor.x, actor.y)] = room.state.tick + 10
     slowed = engine.view(room, members[0])
     own = next(player for player in slowed["players"] if player["id"] == actor.player_id)
-    assert own["moveIntervalTicks"] == expected_interval + 2.0
+    assert own["moveIntervalTicks"] == expected_interval + 4.0
 
 
-def test_quick_direction_tap_moves_exactly_one_cell(loaded):
+def test_quick_direction_tap_moves_only_one_subcell_quantum(loaded):
     Engine, _, _, engine_module = loaded
     engine = Engine(random.Random(1701))
     room, members = start_active(engine, 2)
@@ -254,8 +275,8 @@ def test_quick_direction_tap_moves_exactly_one_cell(loaded):
     actor.x, actor.y = 5, 5
     opponent.x, opponent.y = 18, 18
 
-    # Press and release before the next authoritative tick.  The tap must not
-    # be lost, and it must never turn into a held direction.
+    # Press and release before the next authoritative tick. The tap is not
+    # lost, but crucially it no longer teleports the player a whole cell.
     engine.apply_input(room, members[0], 1, engine_module.INPUT_RIGHT)
     engine.apply_input(room, members[0], 2, 0)
     assert actor.input_mask == 0
@@ -268,7 +289,8 @@ def test_quick_direction_tap_moves_exactly_one_cell(loaded):
     assert queued_actor["moving"] is True
 
     engine.tick(room)
-    assert (actor.x, actor.y) == (6, 5)
+    assert (actor.x, actor.y) == (5, 5)
+    assert (actor.offset_x, actor.offset_y) == (125, 0)
     assert (actor.queued_move_x, actor.queued_move_y) == (0, 0)
     stopped_view = engine.view(room, members[0])
     stopped_actor = next(
@@ -276,9 +298,69 @@ def test_quick_direction_tap_moves_exactly_one_cell(loaded):
         if player["id"] == actor.player_id
     )
     assert stopped_actor["moving"] is False
+    assert stopped_actor["x"] == pytest.approx(5.125)
+    assert stopped_actor["y"] == pytest.approx(5.0)
     for _ in range(engine_module.TICK_RATE // 2):
         engine.tick(room)
-    assert (actor.x, actor.y) == (6, 5)
+    assert (actor.x, actor.y) == (5, 5)
+    assert (actor.offset_x, actor.offset_y) == (125, 0)
+
+
+def test_held_direction_streams_bounded_authoritative_subcell_positions(loaded):
+    Engine, _, _, engine_module = loaded
+    engine = Engine(random.Random(1704))
+    room, members = start_active(engine, 2)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    opponent = room.state.players[members[1].id]
+    place_actor(actor, 5, 5)
+    place_actor(opponent, 18, 18)
+
+    engine.apply_input(room, members[0], 1, engine_module.INPUT_RIGHT)
+    samples = []
+    for _ in range(round(engine._move_interval_ticks(room.state, actor))):
+        engine.tick(room)
+        actor_view = next(
+            item for item in engine.view(room, members[0])["players"]
+            if item["id"] == actor.player_id
+        )
+        samples.append(actor_view["x"])
+
+    assert samples == pytest.approx(
+        [5.125, 5.25, 5.375, 5.5, 5.625, 5.75, 5.875, 6.0],
+    )
+    assert max(
+        current - previous
+        for previous, current in zip([5.0, *samples[:-1]], samples)
+    ) == pytest.approx(0.125)
+    assert (actor.x, actor.y, actor.offset_x, actor.offset_y) == (6, 5, 0, 0)
+    engine.apply_input(room, members[0], 2, 0)
+
+
+def test_rapid_direction_changes_recentre_smoothly_without_grid_jumps(loaded):
+    Engine, _, _, engine_module = loaded
+    engine = Engine(random.Random(1703))
+    room, members = start_active(engine, 2)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    opponent = room.state.players[members[1].id]
+    place_actor(actor, 5, 5)
+    place_actor(opponent, 18, 18)
+
+    engine.apply_input(room, members[0], 1, engine_module.INPUT_RIGHT)
+    engine.tick(room)
+    first = engine.view(room, members[0])["players"][0]
+    assert (first["x"], first["y"]) == pytest.approx((5.125, 5.0))
+
+    engine.apply_input(room, members[0], 2, engine_module.INPUT_UP)
+    engine.tick(room)
+    recentered = engine.view(room, members[0])["players"][0]
+    assert (recentered["x"], recentered["y"]) == pytest.approx((5.0, 5.0))
+
+    engine.tick(room)
+    turned = engine.view(room, members[0])["players"][0]
+    assert (turned["x"], turned["y"]) == pytest.approx((5.0, 4.875))
+    engine.apply_input(room, members[0], 3, 0)
 
 
 def test_disconnected_player_input_is_cleared_before_movement(loaded):
@@ -347,11 +429,15 @@ def test_kick_punch_and_throw_work_on_an_opponents_bomb(loaded):
     room.state.bombs = {1: enemy}
     engine.apply_input(room, members[0], 1, engine_module.INPUT_RIGHT)
     engine.tick(room)
-    assert (actor.x, actor.y) == (5, 5)
+    assert (actor.x, actor.y) == (4, 5)
+    assert (actor.offset_x, actor.offset_y) == (125, 0)
+    moved_view = engine.view(room, members[0])
+    moved_actor = next(item for item in moved_view["players"] if item["id"] == actor.player_id)
+    assert moved_actor["x"] == pytest.approx(4.125)
     assert (enemy.x, enemy.y) == (6, 5)
     assert enemy.credit_player_id == members[0].id
 
-    actor.x, actor.y = 4, 7
+    place_actor(actor, 4, 7)
     actor.facing_x, actor.facing_y = 1, 0
     enemy.x, enemy.y = 5, 7
     engine.apply_input(room, members[0], 2, engine_module.INPUT_PUNCH)
@@ -359,7 +445,7 @@ def test_kick_punch_and_throw_work_on_an_opponents_bomb(loaded):
     assert enemy.x >= 6 and enemy.credit_player_id == members[0].id
     engine.apply_input(room, members[0], 3, 0)
 
-    actor.x, actor.y = 4, 9
+    place_actor(actor, 4, 9)
     actor.facing_x, actor.facing_y = 1, 0
     enemy.x, enemy.y = 5, 9
     enemy.motion_dx = enemy.motion_dy = 0
@@ -369,10 +455,7 @@ def test_kick_punch_and_throw_work_on_an_opponents_bomb(loaded):
     assert enemy.carrier_id == actor.player_id
     assert not any(effect.kind == "bomb_thrown" for effect in room.state.effects)
 
-    actor.move_cooldown = 0
-    engine.apply_input(room, members[0], 6, engine_module.INPUT_RIGHT)
-    engine.tick(room)
-    engine.apply_input(room, members[0], 7, 0)
+    move_one_cell(engine, room, members[0], 6, engine_module.INPUT_RIGHT)
     assert (actor.x, actor.y) == (5, 9)
     assert (enemy.x, enemy.y) == (5, 9)
 
@@ -493,10 +576,7 @@ def test_carried_bomb_freezes_its_fuse_until_thrown_then_resumes(loaded):
 
     press(engine, room, members[0], 1, engine_module.INPUT_THROW)
     assert bomb.fuse_ticks == 3
-    actor.move_cooldown = 0
-    engine.apply_input(room, members[0], 3, engine_module.INPUT_UP)
-    engine.tick(room)
-    engine.apply_input(room, members[0], 4, 0)
+    move_one_cell(engine, room, members[0], 3, engine_module.INPUT_UP)
 
     assert (actor.x, actor.y) == (5, 4)
     assert (bomb.x, bomb.y) == (5, 4)
@@ -535,10 +615,7 @@ def test_two_stage_throw_stays_authoritative_for_two_to_eight_players(loaded, co
     room.state.bombs = {bomb.bomb_id: bomb}
 
     press(engine, room, members[0], 1, engine_module.INPUT_THROW)
-    actor.move_cooldown = 0
-    engine.apply_input(room, members[0], 3, engine_module.INPUT_DOWN)
-    engine.tick(room)
-    engine.apply_input(room, members[0], 4, 0)
+    move_one_cell(engine, room, members[0], 3, engine_module.INPUT_DOWN)
 
     assert (actor.x, actor.y) == (5, 6)
     assert (bomb.x, bomb.y, bomb.carrier_id) == (5, 6, actor.player_id)
@@ -697,19 +774,17 @@ def test_ghost_is_permanent_crosses_only_soft_walls_and_can_bomb_them(loaded):
     room.state.board[5][6] = state_module.CELL_SOFT
     room.state.board[5][7] = state_module.CELL_HARD
     room.state.board[6][6] = state_module.CELL_STONE
-    press(engine, room, members[0], 1, engine_module.INPUT_RIGHT)
+    move_one_cell(engine, room, members[0], 1, engine_module.INPUT_RIGHT)
     assert (actor.x, actor.y) == (6, 5)
 
-    actor.move_cooldown = 0
-    press(engine, room, members[0], 3, engine_module.INPUT_RIGHT)
+    move_one_cell(engine, room, members[0], 3, engine_module.INPUT_RIGHT)
     assert (actor.x, actor.y) == (6, 5)
 
-    actor.x, actor.y = 5, 6
-    actor.move_cooldown = 0
-    press(engine, room, members[0], 5, engine_module.INPUT_RIGHT)
+    place_actor(actor, 5, 6)
+    move_one_cell(engine, room, members[0], 5, engine_module.INPUT_RIGHT)
     assert (actor.x, actor.y) == (5, 6)
 
-    actor.x, actor.y = 6, 5
+    place_actor(actor, 6, 5)
     actor.has_ghost = False
     press(engine, room, members[0], 7, engine_module.INPUT_BOMB)
     assert not room.state.bombs
@@ -721,7 +796,7 @@ def test_ghost_is_permanent_crosses_only_soft_walls_and_can_bomb_them(loaded):
     assert len(room.state.bombs) == 1
     assert room.state.board[5][6] == state_module.CELL_SOFT
 
-    actor.x, actor.y = 15, 15
+    place_actor(actor, 15, 15)
     for _ in range(engine_module.BOMB_FUSE_TICKS):
         engine.tick(room)
     assert not room.state.bombs
@@ -732,8 +807,7 @@ def test_ghost_is_permanent_crosses_only_soft_walls_and_can_bomb_them(loaded):
         engine.tick(room)
     assert actor.has_ghost
     room.state.board[15][16] = state_module.CELL_SOFT
-    actor.move_cooldown = 0
-    press(engine, room, members[0], 11, engine_module.INPUT_RIGHT)
+    move_one_cell(engine, room, members[0], 11, engine_module.INPUT_RIGHT)
     assert (actor.x, actor.y) == (16, 15)
 
 

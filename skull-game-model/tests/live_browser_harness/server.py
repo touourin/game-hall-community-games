@@ -164,16 +164,24 @@ def temporary_pass_scenario() -> dict[str, Any]:
             if disc.kind == "flower"
         )
 
-    # The first player commits last, then everyone places one extra flower so
-    # the scenario can raise without reaching the table maximum.
-    for player in (players[1], players[2], players[0]):
+    # The randomly selected first player commits last, then everyone places one
+    # extra flower in the authoritative turn order. This keeps the harness valid
+    # without assuming that the host opens the first round.
+    first_id = room.state.round.first_player_id
+    committers = [player for player in players if player.id != first_id]
+    committers.append(room.player(first_id))
+    for player in committers:
         engine.act(
             room,
             player,
             "commit_initial",
             {"discId": flower_id(player.id)},
         )
-    for player in players:
+    for _ in players:
+        current_id = room.state.round.current_player_id
+        if current_id is None:
+            raise HTTPException(500, "叠牌阶段缺少当前玩家")
+        player = room.player(current_id)
         engine.act(
             room,
             player,
@@ -181,24 +189,37 @@ def temporary_pass_scenario() -> dict[str, Any]:
             {"discId": flower_id(player.id)},
         )
 
-    engine.act(room, players[0], "open_bid", {"count": 1})
-    engine.act(room, players[1], "pass_bid", {})
-    declined_before_raise = list(room.state.round.passed_player_ids)
-    engine.act(room, players[2], "raise_bid", {"count": 2})
-    declined_after_raise = list(room.state.round.passed_player_ids)
-    engine.act(room, players[0], "pass_bid", {})
+    opener_id = room.state.round.current_player_id
+    if opener_id is None:
+        raise HTTPException(500, "竞价阶段缺少开叫玩家")
+    opener = room.player(opener_id)
+    engine.act(room, opener, "open_bid", {"count": 1})
 
-    reactivated = engine.view(room, players[1])
+    first_responder_id = room.state.round.current_player_id
+    if first_responder_id is None:
+        raise HTTPException(500, "竞价阶段缺少回应玩家")
+    first_responder = room.player(first_responder_id)
+    engine.act(room, first_responder, "pass_bid", {})
+    declined_before_raise = list(room.state.round.passed_player_ids)
+
+    raiser_id = room.state.round.current_player_id
+    if raiser_id is None:
+        raise HTTPException(500, "竞价阶段缺少加价玩家")
+    engine.act(room, room.player(raiser_id), "raise_bid", {"count": 2})
+    declined_after_raise = list(room.state.round.passed_player_ids)
+    engine.act(room, opener, "pass_bid", {})
+
+    reactivated = engine.view(room, first_responder)
     if (
-        declined_before_raise != [players[1].id]
+        declined_before_raise != [first_responder.id]
         or declined_after_raise
-        or room.state.round.current_player_id != players[1].id
+        or room.state.round.current_player_id != first_responder.id
         or not {"raise_bid", "pass_bid"}.issubset(reactivated["actions"])
     ):
         raise HTTPException(500, "暂不跟价玩家未在加价后恢复行动资格")
 
     return {
-        "snapshot": _snapshot(engine, room, players, players[1]),
+        "snapshot": _snapshot(engine, room, players, first_responder),
         "report": {
             "playerCount": 3,
             "actionCount": 10,
@@ -206,7 +227,10 @@ def temporary_pass_scenario() -> dict[str, Any]:
             "resultReason": "temporary_pass_reactivated",
             "winnerPlayerIds": [],
             "settlement": [],
-            "summary": "规则通过 · 玩家2暂不跟价后，因玩家3加价而重新获得行动",
+            "summary": (
+                f"规则通过 · {first_responder.name}暂不跟价后，"
+                f"因{room.player(raiser_id).name}加价而重新获得行动"
+            ),
         },
     }
 

@@ -6,6 +6,7 @@ import type { BombEffect, BombGame, BombObject, BombPlayer } from './types'
 const props = defineProps<{
   game: BombGame
   selfId: string
+  selfInputMask?: number
 }>()
 
 const flatCells = computed(() => props.game.board.flatMap((row, y) => (
@@ -47,11 +48,28 @@ function objectStyle(x: number, y: number, z = 10) {
   }
 }
 
+function localMovementDirection(player: BombPlayer): [number, number] {
+  if (player.id !== props.selfId) return [0, 0]
+  const mask = props.selfInputMask ?? 0
+  const horizontal = Number(Boolean(mask & 8)) - Number(Boolean(mask & 4))
+  const vertical = Number(Boolean(mask & 2)) - Number(Boolean(mask & 1))
+  if (horizontal && vertical) {
+    if (player.facingX === horizontal) return [horizontal, 0]
+    if (player.facingY === vertical) return [0, vertical]
+    return [horizontal, 0]
+  }
+  return [horizontal, vertical]
+}
+
 function playerStyle(player: BombPlayer) {
   const size = 100 / props.game.boardSize
   const fallbackInterval = Math.max(2, 4 - player.equipment.speedLevel * 0.65)
   const intervalTicks = player.moveIntervalTicks ?? fallbackInterval
-  const moveDurationMs = player.moving
+  const [localX, localY] = localMovementDirection(player)
+  const locallyMoving = Boolean(localX || localY)
+  const facingX = locallyMoving ? localX : player.facingX
+  const facingY = locallyMoving ? localY : player.facingY
+  const moveDurationMs = player.moving || locallyMoving
     ? Math.max(90, Math.round(intervalTicks * 1_000 / Math.max(1, props.game.tickRate)))
     : 70
   const action = latestActionByPlayer.value.get(player.id)
@@ -62,15 +80,15 @@ function playerStyle(player: BombPlayer) {
     height: `${size}%`,
     transform: `translate3d(${player.x * 100}%, ${player.y * 100}%, 0)`,
     '--player-color': player.color,
-    '--face-scale': player.facingX < 0 ? -1 : 1,
-    '--travel-lean': `${player.facingX * 4}deg`,
-    '--counter-lean': `${player.facingX * -1.6}deg`,
+    '--face-scale': facingX < 0 ? -1 : 1,
+    '--travel-lean': `${facingX * 4}deg`,
+    '--counter-lean': `${facingX * -1.6}deg`,
     '--move-duration': `${moveDurationMs}ms`,
     '--walk-step-duration': `${Math.max(90, moveDurationMs)}ms`,
     '--walk-body-duration': `${Math.max(70, Math.round(moveDurationMs * 0.62))}ms`,
-    '--pickup-x': `${(action?.directionX ?? player.facingX) * 88}%`,
-    '--pickup-near-x': `${(action?.directionX ?? player.facingX) * 23}%`,
-    '--pickup-y': `${112 + (action?.directionY ?? player.facingY) * 30}%`,
+    '--pickup-x': `${(action?.directionX ?? facingX) * 88}%`,
+    '--pickup-near-x': `${(action?.directionX ?? facingX) * 23}%`,
+    '--pickup-y': `${112 + (action?.directionY ?? facingY) * 30}%`,
   }
 }
 
@@ -83,11 +101,15 @@ function bombStyle(bomb: BombObject) {
 
 function playerAnimationClass(player: BombPlayer) {
   const action = latestActionByPlayer.value.get(player.id)
+  const [localX, localY] = localMovementDirection(player)
+  const locallyMoving = Boolean(localX || localY)
+  const facingY = locallyMoving ? localY : player.facingY
   return {
-    walking: player.moving && player.alive,
+    walking: (player.moving || locallyMoving) && player.alive,
+    'local-input': locallyMoving,
     carrying: carriedBombsByPlayer.value.has(player.id),
-    'facing-up': player.facingY < 0,
-    'facing-down': player.facingY > 0,
+    'facing-up': facingY < 0,
+    'facing-down': facingY > 0,
     'action-kick': action?.kind === 'bomb_kicked',
     'action-punch': action?.kind === 'bomb_punched',
     'action-pickup': action?.kind === 'bomb_picked_up',
@@ -292,7 +314,7 @@ function fuseText(ticks: number) {
 
 <style scoped>
 .arena-frame { width: 100%; min-width: 0; display: grid; place-items: center; }
-.arena-board { position: relative; width: min(100%, calc(100vh - 112px)); max-width: 100%; aspect-ratio: 1; overflow: hidden; isolation: isolate; border: 3px solid #333b43; border-radius: 16px; background: #151a1e; box-shadow: 0 24px 70px #0009, inset 0 0 0 2px #ffffff12; outline: none; user-select: none; }
+.arena-board { position: relative; width: min(100%, calc(100vh - 112px)); max-width: 100%; aspect-ratio: 1; overflow: hidden; contain: layout paint style; isolation: isolate; border: 3px solid #333b43; border-radius: 16px; background: #151a1e; box-shadow: 0 24px 70px #0009, inset 0 0 0 2px #ffffff12; outline: none; user-select: none; }
 .arena-board:focus-visible { border-color: #f8c45b; box-shadow: 0 0 0 3px #f8c45b55, 0 24px 70px #0009; }
 .map-art { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; opacity: .34; filter: saturate(.88) contrast(1.08) brightness(.75); }
 .floor-grid { position: absolute; inset: 0; z-index: 1; background-image: linear-gradient(#aab3b41f 1px, transparent 1px), linear-gradient(90deg, #aab3b41f 1px, transparent 1px); background-size: 5% 5%; box-shadow: inset 0 0 80px #000a; }

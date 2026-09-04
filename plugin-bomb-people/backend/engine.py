@@ -51,11 +51,9 @@ INPUT_BOMB = 16
 INPUT_PUNCH = 32
 INPUT_THROW = 64
 INPUT_TIMER = 128
+DIRECTION_INPUT_MASK = INPUT_UP | INPUT_DOWN | INPUT_LEFT | INPUT_RIGHT
 VALID_INPUT_MASK = (
-    INPUT_UP
-    | INPUT_DOWN
-    | INPUT_LEFT
-    | INPUT_RIGHT
+    DIRECTION_INPUT_MASK
     | INPUT_BOMB
     | INPUT_PUNCH
     | INPUT_THROW
@@ -273,6 +271,11 @@ class BombPeopleEngine:
         ):
             if pressed & bit:
                 actor.facing_x, actor.facing_y = direction
+                # Preserve one grid step when a short tap is pressed and
+                # released between two server ticks.  Only the latest tap is
+                # queued, so keyboard repeat or latency can never build a
+                # long movement backlog.
+                actor.queued_move_x, actor.queued_move_y = direction
         return True
 
     def tick(self, room: ArcadeRoom) -> bool:
@@ -286,8 +289,12 @@ class BombPeopleEngine:
         }
         if not room_players:
             return False
+        cleared_disconnected_input = self._clear_disconnected_inputs(
+            state,
+            room_players,
+        )
         if not any(player.connected for player in room_players.values()):
-            changed = not state.frozen
+            changed = cleared_disconnected_input or not state.frozen
             state.frozen = True
             return changed
         state.frozen = False
@@ -330,6 +337,36 @@ class BombPeopleEngine:
 
         self._check_finish(room, state)
         return True
+
+    @staticmethod
+    def _clear_disconnected_inputs(
+        state: BombPeopleState,
+        room_players: dict[str, ArcadePlayer],
+    ) -> bool:
+        """Never let a lost browser leave a character walking indefinitely."""
+        changed = False
+        for player_id, actor in state.players.items():
+            player = room_players.get(player_id)
+            if player is not None and player.connected:
+                continue
+            changed = changed or bool(
+                actor.input_mask
+                or actor.queued_move_x
+                or actor.queued_move_y
+                or actor.bomb_requested
+                or actor.punch_requested
+                or actor.throw_requested
+                or actor.timer_requested
+            )
+            actor.input_mask = 0
+            actor.queued_move_x = 0
+            actor.queued_move_y = 0
+            actor.move_cooldown = 0.0
+            actor.bomb_requested = False
+            actor.punch_requested = False
+            actor.throw_requested = False
+            actor.timer_requested = False
+        return changed
 
     @staticmethod
     def _clear_requests(state: BombPeopleState) -> None:
@@ -617,6 +654,13 @@ class BombPeopleEngine:
                 if actor.move_cooldown > 0:
                     continue
             direction = self._movement_direction(actor)
+            if direction == (0, 0):
+                direction = (actor.queued_move_x, actor.queued_move_y)
+            # A queued tap is consumed once, whether or not its destination is
+            # currently passable.  This prevents taps from accumulating and
+            # firing much later after an obstacle disappears.
+            actor.queued_move_x = 0
+            actor.queued_move_y = 0
             if direction == (0, 0):
                 actor.move_cooldown = 0.0
                 continue
@@ -922,6 +966,8 @@ class BombPeopleEngine:
         self._drop_carried_bomb(state, actor)
         actor.alive = False
         actor.input_mask = 0
+        actor.queued_move_x = 0
+        actor.queued_move_y = 0
         actor.eliminated_tick = state.tick
         actor.eliminated_by = credit_player_id
         actor.elimination_reason = reason
@@ -1209,6 +1255,8 @@ class BombPeopleEngine:
         self._drop_carried_bomb(state, actor)
         actor.alive = False
         actor.input_mask = 0
+        actor.queued_move_x = 0
+        actor.queued_move_y = 0
         actor.eliminated_tick = state.tick
         actor.elimination_reason = "forfeit"
         actor.bomb_requested = actor.punch_requested = actor.throw_requested = False

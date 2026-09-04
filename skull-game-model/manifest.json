@@ -1,7 +1,7 @@
 {
   "$schema": "../plugin.schema.json",
   "apiVersion": 1,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Game Hall Contributors",
   "license": "UNLICENSED",
   "id": "plugin-skull",
@@ -19,7 +19,7 @@
     "guests": true,
     "spectators": true,
     "spectatorFrames": false,
-    "firstPlayer": true,
+    "firstPlayer": false,
     "undoActions": [],
     "drawRequests": false,
     "replay": false,
@@ -32,8 +32,7 @@
     "listed": true,
     "allowGuests": true,
     "allowSpectators": true,
-    "firstPlayer": "random",
     "lastChanceEnabled": true
   },
-  "ruleLabels": ["3 花 1 骷髅", "两次挑战胜利", "服务端隐藏信息", "新版最后机会"]
+  "ruleLabels": ["首轮随机首家", "3 花 1 骷髅", "全员公开翻牌", "两次挑战胜利", "新版最后机会"]
 }

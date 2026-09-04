@@ -98,14 +98,8 @@ class SkullEngine:
         if not self.min_players <= len(players) <= self.max_players:
             raise GameRuleError("骷髅牌需要 3–6 位玩家")
 
-        if room.options.get("firstPlayer") == "host":
-            first_player = next(
-                (player for player in players if player.id == room.host_id),
-                players[0],
-            )
-        else:
-            first_player = self.rng.choice(players)
-
+        # 开局首轮始终随机选择首家；后续轮次仍遵循挑战结果决定首家的原有规则。
+        first_player = self.rng.choice(players)
         first_index = players.index(first_player)
         ordered = players[first_index:] + players[:first_index]
         player_states: dict[str, SkullPlayerState] = {}
@@ -130,7 +124,7 @@ class SkullEngine:
             last_chance_enabled=room.options.get("lastChanceEnabled", True) is True,
             public_history=[{
                 "type": "game_start",
-                "message": f"{first_player.name} 成为首家，所有玩家开始秘密暗置",
+                "message": f"开局随机抽中 {first_player.name} 为第一轮首家",
             }],
         )
         room.state = state
@@ -302,6 +296,7 @@ class SkullEngine:
             ),
             "maximumBid": total_placed,
             "lastPrivatePenalty": state.private_penalties.get(viewer.id),
+            "publicReveals": self._public_reveals(state),
             "history": list(state.public_history[-18:]),
             "stats": {
                 "roundsPlayed": round_state.number,
@@ -396,6 +391,7 @@ class SkullEngine:
             "minimumBid": 1,
             "maximumBid": 0,
             "lastPrivatePenalty": None,
+            "publicReveals": [],
             "history": list(state.public_history),
             "stats": {
                 "roundsPlayed": 0,
@@ -606,16 +602,18 @@ class SkullEngine:
             raise GameRuleError("这个牌堆已经没有暗牌")
         disc.face_up = True
         round_state.revealed_disc_ids.append(disc.id)
+        reveal_index = len(round_state.revealed_disc_ids)
+        owner_name = state.players[owner_id].display_name
+        kind_label = "骷髅牌" if disc.kind == "skull" else "花牌"
         state.public_history.append({
             "type": "reveal",
+            "eventId": f"reveal-{round_state.number}-{reveal_index}",
+            "round": round_state.number,
+            "index": reveal_index,
             "playerId": player.id,
             "ownerId": owner_id,
             "kind": disc.kind,
-            "message": (
-                f"{player.name} 翻开一枚骷髅"
-                if disc.kind == "skull"
-                else f"{player.name} 翻开一枚花牌"
-            ),
+            "message": f"{player.name} 翻开 {owner_name} 的牌堆顶部：{kind_label}",
         })
         if disc.kind == "skull":
             self._prepare_penalty(room, state, disc)
@@ -1109,6 +1107,36 @@ class SkullEngine:
             "personalDiscCount": len(self._remaining_personal_discs(player_state)),
             "theme": dict(theme),
         }
+
+    @staticmethod
+    def _public_reveals(state: SkullState) -> list[dict[str, Any]]:
+        """Project the latest challenge's ordered, fully public reveal results."""
+        latest_challenge_start = max(
+            (
+                index for index, event in enumerate(state.public_history)
+                if event.get("type") == "challenge_start"
+            ),
+            default=-1,
+        )
+        reveal_events = [
+            event for event in state.public_history[latest_challenge_start + 1:]
+            if event.get("type") == "reveal"
+        ]
+        return [
+            {
+                "eventId": event.get(
+                    "eventId",
+                    f"reveal-{event.get('round', 0)}-{event.get('index', index + 1)}",
+                ),
+                "round": event.get("round", 0),
+                "index": event.get("index", index + 1),
+                "challengerId": event.get("playerId"),
+                "ownerId": event.get("ownerId"),
+                "kind": event.get("kind"),
+                "message": event.get("message", ""),
+            }
+            for index, event in enumerate(reveal_events)
+        ]
 
     @staticmethod
     def _private_disc_view(disc: Disc) -> dict[str, Any]:

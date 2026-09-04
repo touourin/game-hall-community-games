@@ -153,6 +153,50 @@ describe('ponzi scheme tabletop view', () => {
     expect(wrapper.find('.player-screen').exists()).toBe(true)
   })
 
+  it('shows every public loan repayment round in a dedicated readable badge', () => {
+    const current = snapshot()
+    const game = current.game as Record<string, any>
+    game.ledgers[0].funds = [
+      { ...card(9, 1), dueIn: 5 },
+      { ...card(12, 2), id: 'F012-owned', dueIn: 1 },
+    ]
+    game.ledgers[0].fundCount = 2
+
+    const wrapper = mount(GameView, { props: { snapshot: current } })
+    const badges = wrapper.findAll('.fund-due-rounds')
+
+    expect(badges).toHaveLength(2)
+    expect(badges.map(badge => badge.text())).toEqual(['5轮', '1轮'])
+    expect(badges.map(badge => badge.attributes('aria-label'))).toEqual(['5 轮后还款', '1 轮后还款'])
+  })
+
+  it('opens the rulebook from the upper-right header and closes by Escape or button', async () => {
+    const wrapper = mount(GameView, { props: { snapshot: snapshot() } })
+    const button = wrapper.get('.rulebook-button')
+
+    expect(button.text()).toContain('说明书')
+    expect(wrapper.get('.header-tools').element.lastElementChild).toBe(button.element)
+    expect(button.attributes('aria-expanded')).toBe('false')
+
+    await button.trigger('click')
+    const dialog = wrapper.get('[role="dialog"]')
+    expect(button.attributes('aria-expanded')).toBe('true')
+    expect(dialog.attributes('aria-modal')).toBe('true')
+    expect(dialog.text()).toContain('募集资金')
+    expect(dialog.text()).toContain('暗盘交易')
+    expect(dialog.text()).toContain('熊市牌达到玩家人数')
+    expect(dialog.text()).toContain('现金恰好付至 0')
+    expect(dialog.text()).toContain('仍相同则并列获胜')
+
+    await dialog.trigger('keydown', { key: 'Escape' })
+    expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
+
+    await button.trigger('click')
+    await wrapper.get('[aria-label="关闭说明书"]').trigger('click')
+    expect(wrapper.find('[role="dialog"]').exists()).toBe(false)
+    expect(actionMock).not.toHaveBeenCalled()
+  })
+
   it('submits only the selected industry and server-authorized market card', async () => {
     const wrapper = mount(GameView, { props: { snapshot: snapshot() } })
     await wrapper.findAll('.fund-card')[0].trigger('click')

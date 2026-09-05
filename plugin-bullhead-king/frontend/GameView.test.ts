@@ -232,30 +232,36 @@ describe('bullhead king table and card model', () => {
     expect(wrapper.find('.commit-button').exists()).toBe(false)
   })
 
-  it('offers all four rows only to the low-card owner', async () => {
-    const lowCardGame = baseGame({
-      sceneId: 'turn.choose-row',
-      stage: 'choose_row',
-      pendingLowCard: { playerId: 'p1', card: card(3) },
-      rowChoices: [
-        { rowIndex: 0, cardCount: 2, bullheads: 2 },
-        { rowIndex: 1, cardCount: 1, bullheads: 1 },
-        { rowIndex: 2, cardCount: 3, bullheads: 13 },
-        { rowIndex: 3, cardCount: 2, bullheads: 2 },
-      ],
-      actions: ['take_row'],
+  it('does not offer row choices during an automatic forced collection', () => {
+    const forcedCollection = baseGame({
+      sceneId: 'turn.resolve',
+      stage: 'resolving',
+      actions: [],
       canSelect: false,
-      canChooseRow: true,
+      animation: {
+        id: 6,
+        kind: 'turn_resolution',
+        roundNumber: 1,
+        turnNumber: 1,
+        revealed: [{ playerId: 'p1', card: card(3) }],
+        steps: [{
+          id: 'animation-6-3-0',
+          type: 'take_low',
+          playerId: 'p1',
+          card: card(3),
+          rowIndex: 0,
+          takenCards: [card(12), card(14)],
+          penalty: 2,
+        }],
+        pendingChoice: null,
+        complete: true,
+      },
     })
-    const wrapper = render(lowCardGame)
+    const wrapper = render(forcedCollection)
 
-    expect(wrapper.findAll('.take-row-button')).toHaveLength(4)
-    await wrapper.get('[data-row-index="1"] .take-row-button').trigger('click')
-    await flushPromises()
-    expect(pluginActions.action).toHaveBeenCalledWith('take_row', {
-      rowIndex: 1,
-      turnNumber: 1,
-    })
+    expect(wrapper.find('.take-row-button').exists()).toBe(false)
+    expect(wrapper.text()).not.toContain('收这行')
+    expect(pluginActions.action).not.toHaveBeenCalled()
   })
 
   it('renders reveal order and the authoritative take animation event', () => {
@@ -366,7 +372,7 @@ describe('bullhead king table and card model', () => {
     const wrapper = render()
 
     await buttonWithText(wrapper, '规则').trigger('click')
-    expect(wrapper.get('.rules-sheet').text()).toContain('低牌选行')
+    expect(wrapper.get('.rules-sheet').text()).toContain('自动收行')
     expect(wrapper.get('.rules-sheet').text()).toContain('55 = 7 分')
     await wrapper.get('button[aria-label="关闭规则"]').trigger('click')
     expect(wrapper.find('.rules-overlay').exists()).toBe(false)

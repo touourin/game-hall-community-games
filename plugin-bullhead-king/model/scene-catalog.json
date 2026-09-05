@@ -49,17 +49,7 @@
       "entry": ["最后一名玩家锁定手牌"],
       "focusZones": ["reveal-rail", "active-row", "take-flight"],
       "actions": [],
-      "exit": "全部牌落位或遇到低牌选择"
-    },
-    {
-      "id": "turn.choose-row",
-      "stage": "choose_row",
-      "title": "低牌收行",
-      "purpose": "打出的牌低于所有行尾时，由该玩家比较四行牛头分并选择。",
-      "entry": ["结算牌无法接在任何行尾"],
-      "focusZones": ["pending-card", "row-penalties", "row-choice-buttons"],
-      "actions": ["take_row"],
-      "exit": "所选行被收走，继续升序结算"
+      "exit": "全部牌完成自动落位或收行"
     },
     {
       "id": "round.summary",

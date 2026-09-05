@@ -45,7 +45,7 @@ export interface BullAnimationStep {
 
 export interface BullAnimation {
   id: number
-  kind: 'round_deal' | 'turn_resolution' | 'low_card_choice'
+  kind: 'round_deal' | 'turn_resolution'
   roundNumber: number
   turnNumber: number
   revealed: PublicPlay[]
@@ -72,7 +72,7 @@ export interface BullHistoryEntry {
 export interface BullheadGameView {
   schemaVersion: 1
   sceneId: string
-  stage: 'setup' | 'select' | 'resolving' | 'choose_row' | 'round_summary' | 'finished'
+  stage: 'setup' | 'select' | 'resolving' | 'round_summary' | 'finished'
   roundNumber: number
   turnNumber: number
   rules: {

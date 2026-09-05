@@ -15,16 +15,12 @@
       "on": {
         "place": "resolving",
         "full_row": "resolving",
-        "low_card": "choose_row",
+        "forced_row": "resolving",
         "turn_complete": "select",
         "hand_complete": "round_summary",
         "threshold_reached": "finished"
       },
-      "invariants": ["按牌号严格升序", "落到小于该牌且差值最小的行尾"]
-    },
-    "choose_row": {
-      "on": { "take_row": "resolving" },
-      "invariants": ["仅低牌所有者选择", "收走整行后该牌成为新行首"]
+      "invariants": ["按牌号严格升序", "四行按行首升序", "按行首区间唯一判行", "无法追加时自动收行并以出牌重开"]
     },
     "round_summary": {
       "on": { "next_round": "select" },
@@ -37,7 +33,6 @@
   },
   "actions": {
     "select_card": { "payload": ["cardId", "turnNumber"], "private": true },
-    "take_row": { "payload": ["rowIndex", "turnNumber"], "private": false },
     "next_round": { "payload": ["roundNumber"], "private": false },
     "resign": { "payload": [], "private": false }
   }

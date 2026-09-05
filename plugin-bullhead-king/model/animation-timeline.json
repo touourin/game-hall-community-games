@@ -53,8 +53,8 @@
       "id": "row.take-low",
       "durationMs": 760,
       "trigger": "step.type = take_low",
-      "keyframes": ["chosen row outline 0%", "cards compress 24%", "stack flies to player 76%", "low card becomes row head 100%"],
-      "inputLock": "request-and-presentation"
+      "keyframes": ["target row outline 0%", "cards compress 24%", "stack flies to player 76%", "played card becomes row head 100%"],
+      "inputLock": "presentation"
     },
     {
       "id": "round.deal",

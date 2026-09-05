@@ -83,7 +83,6 @@ class BullheadKingState:
     selections: dict[str, NumberCard] = field(default_factory=dict)
     revealed: list[PendingPlay] = field(default_factory=list)
     resolution_queue: list[PendingPlay] = field(default_factory=list)
-    pending_low: PendingPlay | None = None
     animation_serial: int = 0
     animation: dict[str, Any] | None = None
     round_summary: dict[str, Any] | None = None
@@ -157,7 +156,7 @@ class BullheadKingEngine:
         if action == "select_card":
             self._select_card(room, state, player, payload)
         elif action == "take_row":
-            self._choose_low_row(room, state, player, payload)
+            raise GameRuleError("收牌行由系统自动判定")
         elif action == "next_round":
             self._next_round(room, state, player, payload)
         else:
@@ -210,7 +209,6 @@ class BullheadKingEngine:
         state.selections = {}
         state.revealed = revealed
         state.resolution_queue = list(revealed)
-        state.pending_low = None
         state.stage = "resolving"
         state.animation_serial += 1
         state.animation = {
@@ -233,41 +231,33 @@ class BullheadKingEngine:
     def _process_resolution(
         self, room: ArcadeRoom, state: BullheadKingState,
     ) -> None:
+        self._sort_rows(state)
         while state.resolution_queue:
             play = state.resolution_queue.pop(0)
-            eligible = [
-                (row[-1].number, index)
-                for index, row in enumerate(state.rows)
-                if row and row[-1].number < play.card.number
-            ]
-            if not eligible:
-                state.pending_low = play
-                state.stage = "choose_row"
-                if state.animation is not None:
-                    state.animation["pendingChoice"] = self._public_play(play)
-                state.history.append({
-                    "type": "low_card",
-                    "playerId": play.player_id,
-                    "message": (
-                        f"{room.player(play.player_id).name} 的 {play.card.number} "
-                        "低于所有行尾，必须选择一行收走"
-                    ),
-                })
-                return
-
-            _, row_index = max(eligible)
+            row_index = self._target_row_index(state.rows, play.card)
             row = state.rows[row_index]
-            if len(row) == ROW_LIMIT:
+            must_replace = play.card.number < row[-1].number
+            if must_replace or len(row) == ROW_LIMIT:
                 taken = list(row)
                 self._take_cards(state, play.player_id, taken)
-                state.rows[row_index] = [play.card]
+                replacement = [play.card]
+                state.rows[row_index] = replacement
+                self._sort_rows(state)
+                row_index = state.rows.index(replacement)
+                kind = "take_low" if must_replace else "take_full"
                 step = self._animation_step(
-                    state, "take_full", play, row_index, taken,
+                    state, kind, play, row_index, taken,
                 )
-                message = (
-                    f"{room.player(play.player_id).name} 用 {play.card.number} "
-                    f"成为第六张，收走第 {row_index + 1} 行"
-                )
+                if must_replace:
+                    message = (
+                        f"{room.player(play.player_id).name} 的 {play.card.number} "
+                        f"无法接在目标行末，自动收走第 {row_index + 1} 行并重开"
+                    )
+                else:
+                    message = (
+                        f"{room.player(play.player_id).name} 用 {play.card.number} "
+                        f"成为第六张，收走第 {row_index + 1} 行"
+                    )
             else:
                 state.rows[row_index].append(play.card)
                 step = self._animation_step(
@@ -288,72 +278,9 @@ class BullheadKingEngine:
 
         self._complete_turn(room, state)
 
-    def _choose_low_row(
-        self,
-        room: ArcadeRoom,
-        state: BullheadKingState,
-        player: ArcadePlayer,
-        payload: dict[str, Any],
-    ) -> None:
-        pending = state.pending_low
-        if state.stage != "choose_row" or pending is None:
-            raise GameRuleError("当前没有需要选择的行")
-        if pending.player_id != player.id:
-            raise GameRuleError("只有打出低牌的玩家可以选择收哪一行")
-        if (
-            type(payload.get("turnNumber")) is not int
-            or payload["turnNumber"] != state.turn_number
-        ):
-            raise GameRuleError("桌面已更新，请重新选择")
-        row_index = payload.get("rowIndex")
-        if type(row_index) is not int or not 0 <= row_index < ROW_COUNT:
-            raise GameRuleError("请选择第 1–4 行中的一行")
-        self._resolve_low_row(room, state, pending, row_index, automatic=False)
-
-    def _resolve_low_row(
-        self,
-        room: ArcadeRoom,
-        state: BullheadKingState,
-        pending: PendingPlay,
-        row_index: int,
-        *,
-        automatic: bool,
-    ) -> None:
-        taken = list(state.rows[row_index])
-        self._take_cards(state, pending.player_id, taken)
-        state.rows[row_index] = [pending.card]
-        state.pending_low = None
-        state.stage = "resolving"
-        state.animation_serial += 1
-        state.animation = {
-            "id": state.animation_serial,
-            "kind": "low_card_choice",
-            "roundNumber": state.round_number,
-            "turnNumber": state.turn_number,
-            "revealed": [self._public_play(play) for play in state.revealed],
-            "steps": [self._animation_step(
-                state, "take_low", pending, row_index, taken,
-            )],
-            "pendingChoice": None,
-            "complete": False,
-        }
-        player_name = room.player(pending.player_id).name
-        auto_note = "自动" if automatic else ""
-        state.history.append({
-            "type": "take_low",
-            "playerId": pending.player_id,
-            "rowIndex": row_index,
-            "message": (
-                f"{player_name} {auto_note}收走第 {row_index + 1} 行，"
-                f"用 {pending.card.number} 重开该行"
-            ),
-        })
-        self._process_resolution(room, state)
-
     def _complete_turn(
         self, room: ArcadeRoom, state: BullheadKingState,
     ) -> None:
-        state.pending_low = None
         state.resolution_queue = []
         if state.animation is not None:
             state.animation["complete"] = True
@@ -428,7 +355,10 @@ class BullheadKingEngine:
                 deck[offset:offset + HAND_SIZE], key=lambda card: card.number,
             )
             offset += HAND_SIZE
-        state.rows = [[deck[offset + index]] for index in range(ROW_COUNT)]
+        state.rows = sorted(
+            ([deck[offset + index]] for index in range(ROW_COUNT)),
+            key=lambda row: row[0].number,
+        )
         state.captured = {player_id: [] for player_id in state.player_ids}
         state.round_penalties = {player_id: 0 for player_id in state.player_ids}
         state.stage = "select"
@@ -437,7 +367,6 @@ class BullheadKingEngine:
         state.selections = {}
         state.revealed = []
         state.resolution_queue = []
-        state.pending_low = None
         state.round_summary = None
         state.animation_serial += 1
         state.animation = {
@@ -490,9 +419,6 @@ class BullheadKingEngine:
         state: BullheadKingState = room.state
         if room.phase != "playing" or player.id in state.forfeited_ids:
             return False
-        pending = state.pending_low if (
-            state.pending_low and state.pending_low.player_id == player.id
-        ) else None
         state.forfeited_ids.append(player.id)
         state.selections.pop(player.id, None)
         state.history.append({
@@ -503,19 +429,7 @@ class BullheadKingEngine:
         if len(self._active_ids(state)) <= 1:
             self._finish_game(room, state)
             return True
-        if pending is not None:
-            row_index = min(
-                range(ROW_COUNT),
-                key=lambda index: (
-                    sum(card.bullheads for card in state.rows[index]),
-                    len(state.rows[index]),
-                    index,
-                ),
-            )
-            self._resolve_low_row(
-                room, state, pending, row_index, automatic=True,
-            )
-        elif state.stage == "select" and self._all_active_committed(state):
+        if state.stage == "select" and self._all_active_committed(state):
             self._begin_resolution(room, state)
         return True
 
@@ -525,7 +439,6 @@ class BullheadKingEngine:
     def view(self, room: ArcadeRoom, viewer: ArcadePlayer) -> dict[str, Any]:
         state: BullheadKingState = room.state
         active_ids = self._active_ids(state)
-        pending = state.pending_low
         own_selection = state.selections.get(viewer.id)
         players = []
         for player_id in state.player_ids:
@@ -554,13 +467,6 @@ class BullheadKingEngine:
             and viewer.id not in state.selections
         ):
             actions.append("select_card")
-        if (
-            room.phase == "playing"
-            and state.stage == "choose_row"
-            and pending is not None
-            and pending.player_id == viewer.id
-        ):
-            actions.append("take_row")
         if (
             room.phase == "playing"
             and state.stage == "round_summary"
@@ -600,22 +506,15 @@ class BullheadKingEngine:
                 if player_id not in state.selections
             ] if state.stage == "select" else [],
             "revealed": [self._public_play(play) for play in state.revealed],
-            "pendingLowCard": self._public_play(pending) if pending else None,
-            "rowChoices": [
-                {
-                    "rowIndex": index,
-                    "cardCount": len(row),
-                    "bullheads": sum(card.bullheads for card in row),
-                }
-                for index, row in enumerate(state.rows)
-            ] if pending else [],
+            "pendingLowCard": None,
+            "rowChoices": [],
             "actions": actions,
             "animation": deepcopy(state.animation),
             "roundSummary": deepcopy(state.round_summary),
             "history": deepcopy(state.history[-16:]),
             "rankings": list(state.rankings),
             "canSelect": "select_card" in actions,
-            "canChooseRow": "take_row" in actions,
+            "canChooseRow": False,
             "canStartNextRound": "next_round" in actions,
         }
 
@@ -643,6 +542,21 @@ class BullheadKingEngine:
         return bool(active_ids) and all(
             player_id in state.selections for player_id in active_ids
         )
+
+    @staticmethod
+    def _sort_rows(state: BullheadKingState) -> None:
+        state.rows.sort(key=lambda row: row[0].number)
+
+    @staticmethod
+    def _target_row_index(
+        rows: list[list[NumberCard]], card: NumberCard,
+    ) -> int:
+        eligible = [
+            (row[0].number, index)
+            for index, row in enumerate(rows)
+            if row and row[0].number <= card.number
+        ]
+        return max(eligible)[1] if eligible else 0
 
     @staticmethod
     def _rank_for(state: BullheadKingState, player_id: str) -> int | None:
@@ -707,8 +621,6 @@ class BullheadKingEngine:
                 "turn.waiting" if viewer_id in state.selections
                 else "turn.select"
             )
-        if state.stage == "choose_row":
-            return "turn.choose-row"
         if state.stage == "round_summary":
             return "round.summary"
         return "turn.resolve"

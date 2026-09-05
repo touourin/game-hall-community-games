@@ -2,7 +2,7 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import {
   BookOpen, CheckCircle2, Clock3, Crown, Layers3,
-  RotateCcw, Send, ShieldCheck, TriangleAlert, X,
+  RotateCcw, Send, ShieldCheck, X,
 } from '@lucide/vue'
 import {
   PluginButton,
@@ -15,7 +15,6 @@ import type {
   BullCard,
   BullPlayerView,
   BullheadGameView,
-  RowChoice,
 } from './types'
 
 const props = defineProps<{ snapshot: ArcadeSnapshot }>()
@@ -98,9 +97,6 @@ const winnerNames = computed(() => (
 const statusTitle = computed(() => {
   if (props.snapshot.phase === 'finished') return '牛头王已经揭晓'
   if (game.value.stage === 'round_summary') return `第 ${game.value.roundNumber} 轮结算完成`
-  if (game.value.stage === 'choose_row') {
-    return game.value.canChooseRow ? '你的牌低于所有行尾' : `等待 ${playerName(game.value.pendingLowCard?.playerId)} 选择收牌行`
-  }
   if (game.value.stage === 'resolving') return '正按牌号从小到大结算'
   if (game.value.committedCard) return `已锁定 ${game.value.committedCard.number}`
   if (game.value.canSelect) return '从手牌中暗选一张'
@@ -113,9 +109,6 @@ const statusDetail = computed(() => {
   }
   if (game.value.stage === 'round_summary') {
     return '比较本轮新增分和累计分，准备好后开始下一轮。'
-  }
-  if (game.value.stage === 'choose_row' && game.value.pendingLowCard) {
-    return `${playerName(game.value.pendingLowCard.playerId)} 的 ${game.value.pendingLowCard.card.number} 无法正常接行，必须收走任意一行。`
   }
   if (game.value.stage === 'resolving') {
     return revealPlays.value.length
@@ -154,10 +147,6 @@ function cardLabel(card: BullCard): string {
 
 function rowPenalty(row: BullCard[]): number {
   return row.reduce((sum, card) => sum + card.bullheads, 0)
-}
-
-function choiceFor(index: number): RowChoice | null {
-  return game.value.rowChoices?.find(choice => choice.rowIndex === index) ?? null
 }
 
 function stepsForRow(index: number): BullAnimationStep[] {
@@ -207,7 +196,6 @@ function rowClasses(index: number) {
   return {
     'row-line--active': steps.length > 0,
     'row-line--taken': steps.some(step => step.type !== 'place'),
-    'row-line--choice': game.value.canChooseRow,
   }
 }
 
@@ -377,20 +365,6 @@ async function commitCard() {
   }
 }
 
-async function chooseRow(rowIndex: number) {
-  if (!game.value.canChooseRow || busy.value) return
-  busy.value = true
-  try {
-    await actions.action('take_row', {
-      rowIndex,
-      turnNumber: game.value.turnNumber,
-    })
-  }
-  finally {
-    busy.value = false
-  }
-}
-
 async function nextRound() {
   if (!game.value.canStartNextRound || busy.value) return
   busy.value = true
@@ -431,9 +405,8 @@ async function nextRound() {
       </button>
     </header>
 
-    <div class="status-banner" :class="{ urgent: game.stage === 'choose_row', done: snapshot.phase === 'finished' }" role="status" aria-live="polite">
-      <TriangleAlert v-if="game.stage === 'choose_row'" :size="21" />
-      <Crown v-else-if="snapshot.phase === 'finished'" :size="21" />
+    <div class="status-banner" :class="{ done: snapshot.phase === 'finished' }" role="status" aria-live="polite">
+      <Crown v-if="snapshot.phase === 'finished'" :size="21" />
       <Clock3 v-else-if="game.committedCard" :size="21" />
       <Layers3 v-else :size="21" />
       <span><strong>{{ statusTitle }}</strong><small>{{ statusDetail }}</small></span>
@@ -526,17 +499,6 @@ async function nextRound() {
               aria-hidden="true"
             />
           </div>
-          <button
-            v-if="game.canChooseRow"
-            class="take-row-button"
-            type="button"
-            :disabled="busy"
-            :aria-label="`收走第 ${rowIndex + 1} 行，${choiceFor(rowIndex)?.bullheads ?? rowPenalty(row)} 牛头分`"
-            @click="chooseRow(rowIndex)"
-          >
-            <span>收这行</span>
-            <b>+{{ choiceFor(rowIndex)?.bullheads ?? rowPenalty(row) }} 分</b>
-          </button>
         </article>
       </section>
 
@@ -681,15 +643,15 @@ async function nextRound() {
         </section>
         <section>
           <b>2 · 由小到大</b>
-          <p>公开牌按数字升序处理，必须接到比它小且差值最小的行尾。</p>
+          <p>公开牌按数字升序处理；四行按第一张牌升序，牌进入对应的行首区间。</p>
         </section>
         <section>
           <b>3 · 避开第六张</b>
           <p>你的牌若成为第六张，收走原五张；自己的牌成为新行首。</p>
         </section>
         <section>
-          <b>4 · 低牌选行</b>
-          <p>若低于四个行尾，由你选择一整行收走，再用低牌重开。</p>
+          <b>4 · 自动收行</b>
+          <p>低于所有行首时自动收第一行；落入一行已有牌之间时自动收该行，再用出牌重开。</p>
         </section>
         <section>
           <b>5 · 最低分获胜</b>
@@ -753,8 +715,6 @@ async function nextRound() {
 .status-banner > span { min-width: 0; display: grid; gap: 2px; }
 .status-banner strong { font-size: 13px; }
 .status-banner small { overflow: hidden; color: var(--muted); font-size: 9px; text-overflow: ellipsis; white-space: nowrap; }
-.status-banner.urgent { border-color: color-mix(in srgb, var(--bull-coral) 65%, var(--line)); background: linear-gradient(90deg, rgb(223 115 84 / .16), transparent 65%), var(--surface-inset); }
-.status-banner.urgent > svg { color: var(--bull-coral); }
 .status-banner.done { border-color: color-mix(in srgb, #75c89f 58%, var(--line)); }
 .player-rail { display: flex; gap: 8px; min-width: 0; overflow-x: auto; padding: 2px 1px 7px; scrollbar-width: thin; }
 .player-chip { min-width: 150px; display: grid; grid-template-columns: 32px minmax(58px, 1fr) auto; align-items: center; gap: 7px; border: 1px solid var(--line); border-radius: 13px; padding: 8px; background: var(--surface-inset); }
@@ -782,10 +742,9 @@ async function nextRound() {
 .reveal-entry { display: grid; justify-items: center; gap: 3px; animation: reveal-flip 420ms cubic-bezier(.2, .7, .2, 1) both; animation-delay: var(--reveal-delay); }
 .reveal-entry > small { max-width: 58px; overflow: hidden; color: #bcd0cc; font-size: 7px; text-overflow: ellipsis; white-space: nowrap; }
 .row-board { position: relative; z-index: 1; display: grid; gap: 9px; }
-.row-line { position: relative; display: grid; grid-template-columns: 80px minmax(0, 1fr) auto; align-items: center; gap: 11px; min-width: 0; border: 1px solid rgb(143 181 171 / .18); border-radius: 15px; padding: 8px 10px; background: rgb(2 20 22 / .28); transition: border-color 180ms ease, background 180ms ease; }
+.row-line { position: relative; display: grid; grid-template-columns: 80px minmax(0, 1fr); align-items: center; gap: 11px; min-width: 0; border: 1px solid rgb(143 181 171 / .18); border-radius: 15px; padding: 8px 10px; background: rgb(2 20 22 / .28); transition: border-color 180ms ease, background 180ms ease; }
 .row-line--active { border-color: rgb(214 164 71 / .6); background: rgb(214 164 71 / .07); }
 .row-line--taken { animation: row-warning 760ms ease-out both; animation-delay: var(--row-motion-delay, 0ms); }
-.row-line--choice { border-color: rgb(223 115 84 / .45); }
 .row-meta { display: grid; gap: 2px; border-right: 1px solid rgb(255 255 255 / .09); padding-right: 10px; }
 .row-meta > span { color: #c9ded8; font-size: 9px; }
 .row-meta > span b { color: var(--bull-gold); font: 800 15px Georgia, serif; }
@@ -797,10 +756,6 @@ async function nextRound() {
 .bullhead-game :deep(.number-card.deal-card) { animation: card-deal 520ms cubic-bezier(.18, .78, .22, 1) both; animation-delay: var(--deal-delay, 0ms); }
 .bullhead-game :deep(.number-card.commit-lift) { animation: commit-lift 180ms ease-out both; }
 .empty-slot { width: clamp(54px, 6.3vw, 82px); aspect-ratio: 68 / 96; flex: 0 0 auto; border: 1px dashed rgb(164 199 190 / .2); border-radius: 9px; background: rgb(255 255 255 / .012); }
-.take-row-button { min-width: 86px; min-height: 48px; display: grid; place-items: center; gap: 1px; border: 1px solid var(--bull-coral); border-radius: 12px; padding: 6px 10px; color: #fff1e7; background: rgb(151 53 37 / .42); cursor: pointer; animation: choice-pulse 1.4s ease-in-out infinite; }
-.take-row-button span { font-size: 9px; font-weight: 800; }
-.take-row-button b { font-size: 11px; }
-.take-row-button:disabled { cursor: wait; opacity: .55; }
 .play-flight { position: absolute; z-index: 23; left: var(--play-flight-x); top: var(--play-flight-y); width: var(--play-flight-width); pointer-events: none; will-change: transform, opacity; animation: play-flight 360ms cubic-bezier(.2, .78, .24, 1) both; animation-delay: var(--play-flight-delay, 0ms); filter: drop-shadow(0 10px 10px rgb(0 0 0 / .34)); }
 .play-flight :deep(.play-flight-card) { width: var(--play-flight-width); }
 .take-flight { position: absolute; z-index: 24; left: var(--flight-x); top: var(--flight-y); width: 82px; height: 58px; pointer-events: none; will-change: transform, opacity; animation: take-flight 760ms cubic-bezier(.2, .72, .24, 1) both; animation-delay: var(--flight-delay, 0ms); filter: drop-shadow(0 12px 12px rgb(0 0 0 / .38)); }
@@ -861,7 +816,6 @@ async function nextRound() {
 @keyframes card-deal { 0% { opacity: 0; transform: translateY(-24px) scale(.74) rotate(-5deg); } 66% { opacity: 1; transform: translateY(2px) scale(1.03) rotate(1deg); } 100% { opacity: 1; transform: none; } }
 @keyframes commit-lift { 0% { opacity: 1; transform: translateY(-12px) rotate(-1deg); } 55% { opacity: .92; transform: translateY(-18px) scale(.94); } 100% { opacity: .55; transform: translateY(-8px) scale(.86); } }
 @keyframes row-warning { 0%, 100% { box-shadow: none; } 28% { box-shadow: inset 0 0 0 2px rgb(223 115 84 / .8), 0 0 24px rgb(223 115 84 / .22); } }
-@keyframes choice-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgb(223 115 84 / 0); } 50% { box-shadow: 0 0 0 5px rgb(223 115 84 / .13); } }
 @keyframes play-flight { 0% { opacity: 0; transform: translate3d(0, 0, 0) scale(.96) rotate(-4deg); } 14% { opacity: 1; } 62% { opacity: 1; transform: translate3d(var(--play-flight-middle-x), var(--play-flight-middle-y), 0) scale(1.02) rotate(2deg); } 100% { opacity: 0; transform: translate3d(var(--play-flight-destination-x), var(--play-flight-destination-y), 0) scale(.96) rotate(0); } }
 @keyframes take-flight { 0% { opacity: 0; transform: translate3d(0, 0, 0) scale(1.08) rotate(-7deg); } 14% { opacity: 1; } 58% { opacity: 1; transform: translate3d(var(--flight-middle-x), var(--flight-middle-y), 0) scale(.88) rotate(4deg); } 88% { opacity: 1; } 100% { opacity: 0; transform: translate3d(var(--flight-destination-x), var(--flight-destination-y), 0) scale(.48) rotate(9deg); } }
 @keyframes score-hit { 0% { transform: scale(1); } 48% { transform: scale(1.055); border-color: var(--bull-coral); box-shadow: 0 0 0 6px rgb(223 115 84 / .13), inset 0 0 18px rgb(223 115 84 / .12); } 100% { transform: scale(1); } }
@@ -876,7 +830,6 @@ async function nextRound() {
   .hero-metrics span { flex: 1; }
   .rules-button { grid-column: 2; grid-row: 1; }
   .row-line { grid-template-columns: 64px minmax(0, 1fr); }
-  .take-row-button { grid-column: 1 / -1; width: 100%; grid-template-columns: 1fr auto; }
   .empty-slot { width: clamp(38px, 8.2vw, 58px); }
 }
 @media (max-width: 620px) {
@@ -909,7 +862,7 @@ async function nextRound() {
   .empty-slot { width: clamp(44px, 13vw, 58px); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .reveal-entry, .row-line--taken, .row-cards :deep(.number-card.motion-card), .bullhead-game :deep(.number-card.deal-card), .bullhead-game :deep(.number-card.commit-lift), .player-chip.score-hit, .play-flight, .take-flight, .take-row-button { animation: none !important; }
+  .reveal-entry, .row-line--taken, .row-cards :deep(.number-card.motion-card), .bullhead-game :deep(.number-card.deal-card), .bullhead-game :deep(.number-card.commit-lift), .player-chip.score-hit, .play-flight, .take-flight { animation: none !important; }
   .row-line { transition: opacity 120ms linear; }
 }
 </style>

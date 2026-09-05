@@ -64,7 +64,6 @@ def configure_turn(game, room, hands, rows, *, turn_number=1, scores=None):
     state.selections = {}
     state.revealed = []
     state.resolution_queue = []
-    state.pending_low = None
     state.round_summary = None
 
 
@@ -82,6 +81,9 @@ def assert_table_invariants(room) -> None:
     assert all(
         [card.number for card in row] == sorted(card.number for card in row)
         for row in state.rows
+    )
+    assert [row[0].number for row in state.rows] == sorted(
+        row[0].number for row in state.rows
     )
     assert all(
         state.round_penalties[player_id]
@@ -107,24 +109,6 @@ def play_automatic_game(game, room, players) -> dict[str, int]:
                     game, room, players_by_id[player_id], hand[offset].number,
                 )
                 action_count += 1
-        while room.phase == "playing" and state.stage == "choose_row":
-            pending = state.pending_low
-            assert pending is not None
-            row_index = min(
-                range(4),
-                key=lambda index: (
-                    sum(card.bullheads for card in state.rows[index]),
-                    len(state.rows[index]),
-                    index,
-                ),
-            )
-            game.act(
-                room,
-                players_by_id[pending.player_id],
-                "take_row",
-                {"rowIndex": row_index, "turnNumber": state.turn_number},
-            )
-            action_count += 1
         if state.animation and state.animation["complete"]:
             assert [
                 play["card"]["number"] for play in state.animation["revealed"]
@@ -185,6 +169,7 @@ def test_start_deals_ten_unique_cards_each_and_four_row_heads(player_count: int)
     assert all(len(state.hands[player.id]) == 10 for player in players)
     assert len(state.rows) == 4
     assert all(len(row) == 1 for row in state.rows)
+    assert row_heads == sorted(row_heads)
     assert len(set(dealt + row_heads)) == player_count * 10 + 4
 
 
@@ -208,7 +193,6 @@ def test_four_to_eight_players_complete_full_games(player_count: int) -> None:
     ]
     assert max(active_scores.values()) >= 66
     assert animation_counts["place"] > 0
-    assert animation_counts["take_full"] > 0
     assert animation_counts["take_low"] > 0
 
 
@@ -229,7 +213,7 @@ def test_locked_card_is_private_until_everyone_commits() -> None:
         select(game, room, players[0], 2)
 
 
-def test_revealed_cards_resolve_in_ascending_order_to_closest_lower_tail() -> None:
+def test_revealed_cards_resolve_in_ascending_order_by_row_head_range() -> None:
     game, room, players = make_room(2)
     configure_turn(
         game, room,
@@ -268,31 +252,51 @@ def test_sixth_card_collects_the_existing_five_and_starts_a_new_row() -> None:
     assert [card["number"] for card in take_step["takenCards"]] == [1, 2, 3, 4, 5]
 
 
-def test_low_card_pauses_for_its_owner_then_resolution_continues() -> None:
+def test_low_card_automatically_takes_first_sorted_row_and_resolution_continues() -> None:
     game, room, players = make_room(2)
     configure_turn(
         game, room,
-        {players[0].id: [5], players[1].id: [50]},
-        [[10], [20], [30], [40]],
+        {players[0].id: [4], players[1].id: [98]},
+        [[15], [77], [24, 66], [80, 104]],
     )
-    select(game, room, players[0], 5)
-    select(game, room, players[1], 50)
+    select(game, room, players[0], 4)
+    select(game, room, players[1], 98)
 
-    assert room.state.stage == "choose_row"
-    assert room.state.pending_low.player_id == players[0].id
-    assert game.view(room, players[0])["canChooseRow"] is True
-    assert game.view(room, players[1])["canChooseRow"] is False
-    with pytest.raises(GameRuleError, match="只有打出低牌"):
-        game.act(room, players[1], "take_row", {"rowIndex": 0, "turnNumber": 1})
-
-    game.act(room, players[0], "take_row", {"rowIndex": 0, "turnNumber": 1})
-
-    assert [card.number for card in room.state.rows[0]] == [5]
-    assert [card.number for card in room.state.rows[3]] == [40, 50]
-    assert room.state.scores[players[0].id] == 3
-    assert [step["type"] for step in room.state.animation["steps"]] == [
-        "take_low", "place",
+    assert [[card.number for card in row] for row in room.state.rows] == [
+        [4], [24, 66], [77], [98],
     ]
+    assert [card.number for card in room.state.captured[players[0].id]] == [15]
+    assert [card.number for card in room.state.captured[players[1].id]] == [80, 104]
+    assert room.state.scores[players[0].id] == 2
+    assert room.state.scores[players[1].id] == 4
+    assert [step["type"] for step in room.state.animation["steps"]] == [
+        "take_low", "take_low",
+    ]
+    assert room.state.stage == "round_summary"
+    view = game.view(room, players[0])
+    assert view["canChooseRow"] is False
+    assert "take_row" not in view["actions"]
+    with pytest.raises(GameRuleError, match="系统自动判定"):
+        game.act(room, players[0], "take_row", {"rowIndex": 1, "turnNumber": 1})
+
+
+def test_card_inside_a_row_range_takes_that_row_and_becomes_its_head() -> None:
+    game, room, players = make_room(2)
+    configure_turn(
+        game, room,
+        {players[0].id: [50], players[1].id: [90]},
+        [[15], [77], [24, 66], [80]],
+    )
+
+    select(game, room, players[0], 50)
+    select(game, room, players[1], 90)
+
+    assert [[card.number for card in row] for row in room.state.rows] == [
+        [15], [50], [77], [80, 90],
+    ]
+    assert [card.number for card in room.state.captured[players[0].id]] == [24, 66]
+    assert room.state.animation["steps"][0]["type"] == "take_low"
+    assert room.state.animation["steps"][0]["rowIndex"] == 1
 
 
 def test_stale_turn_and_invalid_card_are_rejected() -> None:
@@ -337,13 +341,12 @@ def test_sixty_six_is_checked_after_the_round_and_lowest_score_wins() -> None:
     configure_turn(
         game, room,
         {players[0].id: [1], players[1].id: [100]},
-        [[55], [20], [30], [40]],
+        [[55], [60], [70], [80]],
         turn_number=10,
         scores={players[0].id: 65, players[1].id: 1},
     )
     select(game, room, players[0], 1)
     select(game, room, players[1], 100)
-    game.act(room, players[0], "take_row", {"rowIndex": 0, "turnNumber": 10})
 
     assert room.phase == "finished"
     assert room.state.scores[players[0].id] == 72
@@ -374,7 +377,7 @@ def test_equal_lowest_scores_share_the_win() -> None:
     assert game.view(room, players[0])["players"][2]["rank"] == 3
 
 
-def test_forfeit_during_low_choice_uses_the_lowest_penalty_row() -> None:
+def test_forfeit_does_not_interrupt_automatic_forced_collection() -> None:
     game, room, players = make_room(3)
     configure_turn(
         game, room,
@@ -385,13 +388,11 @@ def test_forfeit_during_low_choice_uses_the_lowest_penalty_row() -> None:
         },
         [[10], [11], [20], [55]],
     )
-    for player, number in zip(players, [5, 50, 60], strict=True):
-        select(game, room, player, number)
-    assert room.state.stage == "choose_row"
+    select(game, room, players[0], 5)
+    assert game.manual_forfeit(room, players[1]) is True
+    select(game, room, players[2], 60)
 
-    assert game.manual_forfeit(room, players[0]) is True
-
-    assert players[0].id in room.state.forfeited_ids
+    assert players[1].id in room.state.forfeited_ids
     assert [card.number for card in room.state.rows[0]] == [5]
     assert room.state.round_penalties[players[0].id] == 3
     assert room.state.stage == "round_summary"

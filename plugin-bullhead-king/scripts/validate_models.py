@@ -50,7 +50,7 @@ def main() -> None:
     states = set(machine["states"])
     actions = set(machine["actions"])
     scene_ids = [scene["id"] for scene in scenes["scenes"]]
-    assert len(scene_ids) == len(set(scene_ids)) == 7
+    assert len(scene_ids) == len(set(scene_ids)) == 6
     for scene in scenes["scenes"]:
         assert scene["stage"] in states
         assert set(scene["actions"]) <= actions
@@ -78,7 +78,7 @@ def main() -> None:
 
     print(
         "Bullhead models valid: 104 cards, 171 bullheads, "
-        "7 scenes, 6 animation clips, 2 SVG sheets."
+        "6 scenes, 6 animation clips, 2 SVG sheets."
     )
 
 

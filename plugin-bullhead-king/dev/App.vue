@@ -5,7 +5,7 @@ import GameView from '../frontend/GameView.vue'
 import type { BullCard, BullCardTier, BullheadGameView } from '../frontend/types'
 import { setDevPluginActions } from './local-sdk'
 
-type Scenario = 'deal' | 'select' | 'waiting' | 'place' | 'take_full' | 'choose' | 'take_low' | 'summary' | 'finished'
+type Scenario = 'deal' | 'select' | 'waiting' | 'place' | 'take_full' | 'take_low' | 'summary' | 'finished'
 
 const scenarios: Array<{ id: Scenario; label: string }> = [
   { id: 'deal', label: '发牌' },
@@ -13,8 +13,7 @@ const scenarios: Array<{ id: Scenario; label: string }> = [
   { id: 'waiting', label: '等待' },
   { id: 'place', label: '升序落牌' },
   { id: 'take_full', label: '第六张收牌' },
-  { id: 'choose', label: '低牌选行' },
-  { id: 'take_low', label: '低牌收牌' },
+  { id: 'take_low', label: '自动收牌' },
   { id: 'summary', label: '轮末' },
   { id: 'finished', label: '终局' },
 ]
@@ -69,18 +68,27 @@ function resolveFixture(
   startingRows: number[][],
   revealed: Array<{ playerId: string; card: BullCard }>,
 ) {
-  const rows = startingRows.map(row => row.map(card))
+  const rows = startingRows
+    .map(row => row.map(card))
+    .sort((left, right) => left[0]!.number - right[0]!.number)
   const steps = revealed.map((play, index) => {
     const eligible = rows
-      .map((row, rowIndex) => ({ tail: row.at(-1)!.number, rowIndex }))
-      .filter(candidate => candidate.tail < play.card.number)
-    if (!eligible.length) throw new Error('fixture contains an unresolved low card')
-    const rowIndex = eligible.reduce((best, candidate) => (
-      candidate.tail > best.tail ? candidate : best
-    )).rowIndex
-    const takenCards = rows[rowIndex]!.length === 5 ? [...rows[rowIndex]!] : []
-    const type = takenCards.length ? 'take_full' as const : 'place' as const
-    rows[rowIndex] = takenCards.length ? [play.card] : [...rows[rowIndex]!, play.card]
+      .map((row, rowIndex) => ({ head: row[0]!.number, rowIndex }))
+      .filter(candidate => candidate.head <= play.card.number)
+    let rowIndex = eligible.at(-1)?.rowIndex ?? 0
+    const mustReplace = play.card.number < rows[rowIndex]!.at(-1)!.number
+    const isSixth = !mustReplace && rows[rowIndex]!.length === 5
+    const takenCards = mustReplace || isSixth ? [...rows[rowIndex]!] : []
+    const type = mustReplace ? 'take_low' as const : isSixth ? 'take_full' as const : 'place' as const
+    if (takenCards.length) {
+      const replacement = [play.card]
+      rows[rowIndex] = replacement
+      rows.sort((left, right) => left[0]!.number - right[0]!.number)
+      rowIndex = rows.indexOf(replacement)
+    }
+    else {
+      rows[rowIndex] = [...rows[rowIndex]!, play.card]
+    }
     return {
       id: `fixture-${activeScenario.value}-${index}-${play.card.number}`,
       type,
@@ -199,17 +207,6 @@ function gameFor(scenario: Scenario): BullheadGameView {
       },
     }
   }
-  if (scenario === 'choose') {
-    return {
-      ...base,
-      sceneId: 'turn.choose-row', stage: 'choose_row', actions: ['take_row'], canSelect: false, canChooseRow: true,
-      pendingLowCard: { playerId: 'p1', card: card(3) },
-      revealed: [{ playerId: 'p1', card: card(3) }, { playerId: 'p2', card: card(62) }],
-      rowChoices: base.rows.map((row, rowIndex) => ({
-        rowIndex, cardCount: row.length, bullheads: row.reduce((sum, item) => sum + item.bullheads, 0),
-      })),
-    }
-  }
   if (scenario === 'take_low') {
     const lowPlayer = players.at(-1)!
     const otherPlayers = players.slice(0, -1)
@@ -219,27 +216,16 @@ function gameFor(scenario: Scenario): BullheadGameView {
         .slice(0, playerCount.value - 1)
         .map((number, index) => ({ playerId: otherPlayers[index]!.id, card: card(number) })),
     ]
-    const takenCards = [43, 44, 55].map(card)
-    const afterChoice = [[12], [37], [3], [83]]
-    const fixture = resolveFixture(afterChoice, revealed.slice(1))
-    const takeStep = {
-      id: `fixture-take-low-${playerCount.value}`,
-      type: 'take_low' as const,
-      playerId: lowPlayer.id,
-      card: card(3),
-      rowIndex: 2,
-      takenCards,
-      penalty: takenCards.reduce((sum, item) => sum + item.bullheads, 0),
-    }
+    const fixture = resolveFixture([[12], [37], [43, 44, 55], [83]], revealed)
     return {
       ...base,
       sceneId: 'turn.resolve', stage: 'resolving', actions: [], canSelect: false,
       rows: fixture.rows,
       revealed,
       animation: {
-        id: 9_000 + playerCount.value, kind: 'low_card_choice', roundNumber: 2, turnNumber: 4,
+        id: 9_000 + playerCount.value, kind: 'turn_resolution', roundNumber: 2, turnNumber: 4,
         revealed,
-        steps: [takeStep, ...fixture.steps],
+        steps: fixture.steps,
         pendingChoice: null, complete: true,
       },
     }
@@ -309,7 +295,6 @@ const snapshot = computed(() => {
 setDevPluginActions({
   async action(action) {
     if (action === 'select_card') activeScenario.value = 'waiting'
-    if (action === 'take_row') activeScenario.value = 'take_low'
     if (action === 'next_round') activeScenario.value = 'select'
     return true
   },

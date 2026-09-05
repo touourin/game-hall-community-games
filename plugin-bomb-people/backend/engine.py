@@ -42,6 +42,7 @@ ITEM_REFRESH_CHANCE = 0.24
 CRATE_DROP_CHANCE = 0.38
 COLLAPSE_INTERVAL_TICKS = round(0.15 * TICK_RATE)
 BOMB_MOVE_INTERVAL_TICKS = max(1, round(0.1 * TICK_RATE))
+KICKED_BOMB_MOVE_INTERVAL_TICKS = max(1, BOMB_MOVE_INTERVAL_TICKS // 2)
 POSITION_SCALE = 1_000
 PLAYER_HITBOX_RADIUS = 300
 SOLID_HALF_EXTENT = 480
@@ -145,6 +146,13 @@ class BombPeopleEngine:
         return BombPeopleState(selected_map=MAP_SPECS[0].key)
 
     def _choose_round_map(self, previous: BombPeopleState | None) -> str:
+        negotiated = (
+            getattr(previous, "next_map", None)
+            if previous is not None
+            else None
+        )
+        if negotiated in MAP_BY_KEY:
+            return negotiated
         candidates = [spec.key for spec in MAP_SPECS]
         if (
             previous is not None
@@ -216,8 +224,12 @@ class BombPeopleEngine:
         action: str,
         payload: dict[str, Any],
     ) -> None:
-        if action in {"propose_map", "vote_map"}:
-            raise GameRuleError("地图会在每局开始时随机切换，无需协商")
+        if action == "propose_map":
+            self._propose_map(room, player, payload)
+            return
+        if action == "vote_map":
+            self._vote_map(room, player, payload)
+            return
         if action == "resign":
             self.manual_forfeit(room, player)
             return
@@ -236,6 +248,92 @@ class BombPeopleEngine:
             payload.get("sequence"),
             payload.get("inputMask"),
         )
+
+    def _propose_map(
+        self,
+        room: ArcadeRoom,
+        player: ArcadePlayer,
+        payload: dict[str, Any],
+    ) -> None:
+        if room.phase not in {"lobby", "finished"}:
+            raise GameRuleError("只能在开局前或本局结束后协商地图")
+        if player.left_room or player.id != room.host_id:
+            raise GameRuleError("只有房主可以发起地图协商")
+        map_key = payload.get("mapKey")
+        if not isinstance(map_key, str) or map_key not in MAP_BY_KEY:
+            raise GameRuleError("请选择有效地图")
+        state: BombPeopleState = room.state
+        state.proposed_map = map_key
+        state.proposed_by = player.id
+        state.map_approvals = {player.id}
+        self._add_event(
+            state,
+            "map_proposed",
+            actor_id=player.id,
+            message=f"房主提议下一局使用{MAP_BY_KEY[map_key].name}",
+        )
+        self._commit_map_if_approved(room, state)
+
+    def _vote_map(
+        self,
+        room: ArcadeRoom,
+        player: ArcadePlayer,
+        payload: dict[str, Any],
+    ) -> None:
+        if room.phase not in {"lobby", "finished"}:
+            raise GameRuleError("当前不能参与地图协商")
+        active_ids = {
+            member.id for member in room.players if not member.left_room
+        }
+        if player.left_room or player.id not in active_ids:
+            raise GameRuleError("只有当前房间玩家可以参与地图协商")
+        state: BombPeopleState = room.state
+        if state.proposed_map is None:
+            raise GameRuleError("当前没有待确认的地图")
+        accept = payload.get("accept")
+        if not isinstance(accept, bool):
+            raise GameRuleError("地图投票格式不正确")
+        if not accept:
+            self._add_event(
+                state,
+                "map_rejected",
+                actor_id=player.id,
+                message=f"{player.name}否决了本次地图提议",
+            )
+            state.proposed_map = None
+            state.proposed_by = None
+            state.map_approvals.clear()
+            return
+        state.map_approvals.add(player.id)
+        self._add_event(
+            state,
+            "map_approved",
+            actor_id=player.id,
+            message=f"{player.name}同意了地图提议",
+        )
+        self._commit_map_if_approved(room, state)
+
+    def _commit_map_if_approved(
+        self,
+        room: ArcadeRoom,
+        state: BombPeopleState,
+    ) -> bool:
+        required = {
+            player.id for player in room.players if not player.left_room
+        }
+        if state.proposed_map is None or not required <= state.map_approvals:
+            return False
+        selected = state.proposed_map
+        state.next_map = selected
+        state.proposed_map = None
+        state.proposed_by = None
+        state.map_approvals.clear()
+        self._add_event(
+            state,
+            "map_changed",
+            message=f"全员同意，下一局已锁定{MAP_BY_KEY[selected].name}",
+        )
+        return True
 
     def apply_input(
         self,
@@ -434,6 +532,44 @@ class BombPeopleEngine:
             if punch_requested and actor.can_punch:
                 self._punch_bomb(state, actor)
 
+    @staticmethod
+    def _facing_interval_cell(
+        actor: PlayerState,
+        *,
+        advance_when_centered: bool,
+    ) -> tuple[int, int]:
+        """Return the cell on the physical body's forward side.
+
+        The rule cell changes only after crossing a half-tile. While a body is
+        between two cells, actions must nevertheless use the one in front of
+        the facing direction, independent of which side currently owns the
+        rule cell.
+        """
+        x, y = actor.x, actor.y
+        if actor.facing_x:
+            offset = getattr(actor, "offset_x", 0)
+            if (
+                offset * actor.facing_x > 0
+                or (offset == 0 and advance_when_centered)
+            ):
+                x += actor.facing_x
+        elif actor.facing_y:
+            offset = getattr(actor, "offset_y", 0)
+            if (
+                offset * actor.facing_y > 0
+                or (offset == 0 and advance_when_centered)
+            ):
+                y += actor.facing_y
+        return x, y
+
+    @classmethod
+    def _bomb_placement_cell(cls, actor: PlayerState) -> tuple[int, int]:
+        return cls._facing_interval_cell(actor, advance_when_centered=False)
+
+    @classmethod
+    def _forward_interaction_cell(cls, actor: PlayerState) -> tuple[int, int]:
+        return cls._facing_interval_cell(actor, advance_when_centered=True)
+
     def _place_bomb(
         self,
         room: ArcadeRoom,
@@ -458,9 +594,12 @@ class BombPeopleEngine:
         remote = len(regular_owned) >= actor.bomb_capacity
         if remote and (not actor.can_timer or remote_active):
             return
-        if self._bomb_at(state, actor.x, actor.y) is not None:
+        bomb_x, bomb_y = self._bomb_placement_cell(actor)
+        if not _inside(bomb_x, bomb_y):
             return
-        cell = state.board[actor.y][actor.x]
+        if self._bomb_at(state, bomb_x, bomb_y) is not None:
+            return
+        cell = state.board[bomb_y][bomb_x]
         if cell in {CELL_HARD, CELL_STONE}:
             return
         if cell == CELL_SOFT and not actor.has_ghost:
@@ -469,8 +608,8 @@ class BombPeopleEngine:
             bomb_id=state.next_bomb_id,
             owner_id=actor.player_id,
             credit_player_id=actor.player_id,
-            x=actor.x,
-            y=actor.y,
+            x=bomb_x,
+            y=bomb_y,
             placed_tick=state.tick,
             fuse_ticks=BOMB_FUSE_TICKS,
             blast_range=actor.blast_range,
@@ -528,11 +667,8 @@ class BombPeopleEngine:
     def _punch_bomb(self, state: BombPeopleState, actor: PlayerState) -> None:
         if actor.carried_bomb_id is not None:
             return
-        bomb = self._bomb_at(
-            state,
-            actor.x + actor.facing_x,
-            actor.y + actor.facing_y,
-        )
+        target_x, target_y = self._forward_interaction_cell(actor)
+        bomb = self._bomb_at(state, target_x, target_y)
         if bomb is None:
             return
         impact_x, impact_y = bomb.x, bomb.y
@@ -541,6 +677,7 @@ class BombPeopleEngine:
         bomb.motion_dy = actor.facing_y
         bomb.travel_left = 3
         bomb.motion_delay = 0
+        bomb.motion_interval_ticks = 0
         if self._move_bomb_once(state, bomb):
             self._add_effect(
                 state,
@@ -568,11 +705,8 @@ class BombPeopleEngine:
         self._pick_up_bomb(state, actor)
 
     def _pick_up_bomb(self, state: BombPeopleState, actor: PlayerState) -> None:
-        bomb = self._bomb_at(
-            state,
-            actor.x + actor.facing_x,
-            actor.y + actor.facing_y,
-        )
+        target_x, target_y = self._forward_interaction_cell(actor)
+        bomb = self._bomb_at(state, target_x, target_y)
         if bomb is None:
             return
         origin_x, origin_y = bomb.x, bomb.y
@@ -826,17 +960,31 @@ class BombPeopleEngine:
 
         base_x = world_x // POSITION_SCALE
         base_y = world_y // POSITION_SCALE
-        contact_extent = PLAYER_HITBOX_RADIUS + SOLID_HALF_EXTENT
         for cell_y in range(max(0, base_y - 1), min(BOARD_SIZE, base_y + 3)):
             for cell_x in range(max(0, base_x - 1), min(BOARD_SIZE, base_x + 3)):
                 cell = state.board[cell_y][cell_x]
                 if cell == CELL_FLOOR or (cell == CELL_SOFT and actor.has_ghost):
                     continue
-                if (
-                    abs(world_x - cell_x * POSITION_SCALE) < contact_extent
-                    and abs(world_y - cell_y * POSITION_SCALE) < contact_extent
-                ):
+                # A player is circular, so solid corners must be rounded too.
+                # Expanding the cell to a larger square made diagonal corners
+                # behave like invisible walls, especially inside soft blocks.
+                edge_x = max(
+                    0,
+                    abs(world_x - cell_x * POSITION_SCALE) - SOLID_HALF_EXTENT,
+                )
+                edge_y = max(
+                    0,
+                    abs(world_y - cell_y * POSITION_SCALE) - SOLID_HALF_EXTENT,
+                )
+                if edge_x ** 2 + edge_y ** 2 < PLAYER_HITBOX_RADIUS ** 2:
                     return False
+
+        # Ghost phase is a full body phase after solid terrain has been
+        # checked: hidden bombs and overlapping players inside a crate cluster
+        # must not become invisible blockers. Hard blocks and collapse stones
+        # above remain authoritative.
+        if actor.has_ghost:
+            return True
 
         for bomb in state.bombs.values():
             if bomb.carrier_id is not None:
@@ -918,10 +1066,10 @@ class BombPeopleEngine:
             (start_x - obstacle_x) ** 2
             + (start_y - obstacle_y) ** 2
         )
-        return not (
-            start_distance < contact_squared
-            and candidate_distance >= start_distance
-        )
+        # A bomb planted while the player overlaps its hitbox must never cage
+        # the player. Once the body has fully left it, ordinary collision is
+        # restored automatically because the next start is outside.
+        return start_distance >= contact_squared
 
     @staticmethod
     def _player_world_position(actor: PlayerState) -> tuple[int, int]:
@@ -990,6 +1138,7 @@ class BombPeopleEngine:
         bomb.motion_dy = dy
         bomb.motion_delay = 0
         bomb.travel_left = -1
+        bomb.motion_interval_ticks = KICKED_BOMB_MOVE_INTERVAL_TICKS
         bomb.credit_player_id = actor.player_id
         moved = self._move_bomb_once(state, bomb)
         if moved:
@@ -1045,7 +1194,12 @@ class BombPeopleEngine:
             self._stop_bomb(bomb)
             return False
         bomb.x, bomb.y = x, y
-        bomb.motion_delay = BOMB_MOVE_INTERVAL_TICKS - 1
+        interval = max(
+            1,
+            getattr(bomb, "motion_interval_ticks", 0)
+            or BOMB_MOVE_INTERVAL_TICKS,
+        )
+        bomb.motion_delay = interval - 1
         if bomb.travel_left > 0:
             bomb.travel_left -= 1
             if bomb.travel_left == 0:
@@ -1058,6 +1212,7 @@ class BombPeopleEngine:
         bomb.motion_dy = 0
         bomb.motion_delay = 0
         bomb.travel_left = -1
+        bomb.motion_interval_ticks = 0
 
     @staticmethod
     def _bomb_at(state: BombPeopleState, x: int, y: int) -> BombState | None:
@@ -1556,6 +1711,10 @@ class BombPeopleEngine:
         state: BombPeopleState = room.state
         names = {player.id: player.name for player in room.players}
         map_spec = MAP_BY_KEY.get(state.selected_map, MAP_SPECS[0])
+        next_map = getattr(state, "next_map", None)
+        required_ids = [
+            player.id for player in room.players if not player.left_room
+        ]
         clock_leader = next(
             (
                 player.id
@@ -1584,7 +1743,8 @@ class BombPeopleEngine:
                 ]
             ] if state.stage == "collapse" else [],
             "selectedMap": state.selected_map,
-            "mapRotation": "random_no_repeat",
+            "nextMap": next_map if next_map in MAP_BY_KEY else None,
+            "mapRotation": "consensus_or_random_no_repeat",
             "currentMap": {
                 "key": map_spec.key,
                 "name": map_spec.name,
@@ -1595,9 +1755,29 @@ class BombPeopleEngine:
                 "startingItems": list(map_spec.starting_items),
             },
             "mapCatalog": map_catalog(),
-            "mapProposal": None,
-            "canProposeMap": False,
-            "canVoteMap": False,
+            "mapProposal": (
+                {
+                    "mapKey": state.proposed_map,
+                    "proposedBy": state.proposed_by,
+                    "approvedPlayerIds": sorted(state.map_approvals),
+                    "requiredPlayerIds": required_ids,
+                    "approvalCount": len(state.map_approvals),
+                    "requiredCount": len(required_ids),
+                }
+                if state.proposed_map is not None
+                else None
+            ),
+            "canProposeMap": (
+                room.phase in {"lobby", "finished"}
+                and viewer.id == room.host_id
+                and viewer.id in required_ids
+            ),
+            "canVoteMap": (
+                room.phase in {"lobby", "finished"}
+                and state.proposed_map is not None
+                and viewer.id in required_ids
+                and viewer.id not in state.map_approvals
+            ),
             "board": [row[:] for row in state.board],
             "players": [
                 self._player_view(state, actor, names.get(actor.player_id, "玩家"))
@@ -1615,6 +1795,10 @@ class BombPeopleEngine:
                     "moving": bool(bomb.motion_dx or bomb.motion_dy),
                     "motionX": bomb.motion_dx,
                     "motionY": bomb.motion_dy,
+                    "moveIntervalTicks": (
+                        getattr(bomb, "motion_interval_ticks", 0)
+                        or BOMB_MOVE_INTERVAL_TICKS
+                    ),
                     "carriedBy": bomb.carrier_id,
                     "remote": bomb.remote,
                 }

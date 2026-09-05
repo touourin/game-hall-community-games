@@ -440,6 +440,52 @@ def test_bombs_have_an_authoritative_two_second_fuse(loaded):
     assert any(effect.kind == "bomb_exploded" for effect in room.state.effects)
 
 
+def test_between_cell_bombs_and_interactions_always_use_the_facing_side(loaded):
+    Engine, state_module, _, _ = loaded
+    engine = Engine(random.Random(2002))
+    room, members = start_active(engine, 2)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    opponent = room.state.players[members[1].id]
+    place_actor(actor, 5, 5)
+    place_actor(opponent, 18, 18)
+    actor.bomb_capacity = 4
+    actor.facing_x, actor.facing_y = 1, 0
+    actor.offset_x = 400
+
+    engine._place_bomb(room, room.state, actor)
+    assert [(bomb.x, bomb.y) for bomb in room.state.bombs.values()] == [(6, 5)]
+
+    room.state.bombs.clear()
+    actor.facing_x = -1
+    engine._place_bomb(room, room.state, actor)
+    assert [(bomb.x, bomb.y) for bomb in room.state.bombs.values()] == [(5, 5)]
+
+    room.state.bombs.clear()
+    actor.offset_x = -400
+    engine._place_bomb(room, room.state, actor)
+    assert [(bomb.x, bomb.y) for bomb in room.state.bombs.values()] == [(4, 5)]
+
+    room.state.bombs.clear()
+    actor.offset_x = 400
+    actor.facing_x = 1
+    room.state.board[5][6] = state_module.CELL_HARD
+    engine._place_bomb(room, room.state, actor)
+    assert not room.state.bombs
+
+    # A bomb overlapping the body no longer cages it. Collision becomes solid
+    # again naturally after the player has completely exited the hitbox.
+    room.state.board[5][6] = state_module.CELL_FLOOR
+    bomb = state_module.BombState(
+        99, actor.player_id, actor.player_id, 6, 5,
+        room.state.tick, 40, 2, remote=True,
+    )
+    room.state.bombs = {bomb.bomb_id: bomb}
+    before = engine._player_world_position(actor)
+    assert engine._advance_player_position(room.state, actor, 1, 0) is True
+    assert engine._player_world_position(actor)[0] > before[0]
+
+
 def test_forfeit_during_countdown_immediately_awards_the_last_survivor(loaded):
     Engine, _, _, _ = loaded
     engine = Engine(random.Random(21))
@@ -534,6 +580,35 @@ def test_kick_punch_and_throw_work_on_an_opponents_bomb(loaded):
     bomb_view = next(bomb for bomb in view["bombs"] if bomb["id"] == enemy.bomb_id)
     assert own_view["carriedBombId"] is None
     assert bomb_view["carriedBy"] is None
+
+
+def test_kicked_bombs_roll_at_twice_the_normal_speed(loaded):
+    Engine, state_module, _, engine_module = loaded
+    engine = Engine(random.Random(3003))
+    room, members = start_active(engine, 2)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    opponent = room.state.players[members[1].id]
+    place_actor(actor, 4, 5)
+    place_actor(opponent, 18, 18)
+    bomb = state_module.BombState(
+        1, opponent.player_id, opponent.player_id, 5, 5,
+        room.state.tick, 80, 2,
+    )
+    room.state.bombs = {bomb.bomb_id: bomb}
+
+    assert engine._kick_bomb(room.state, bomb, actor, 1, 0) is True
+    assert (bomb.x, bomb.y) == (6, 5)
+    assert bomb.motion_interval_ticks == engine_module.KICKED_BOMB_MOVE_INTERVAL_TICKS
+    assert (
+        engine_module.KICKED_BOMB_MOVE_INTERVAL_TICKS * 2
+        == engine_module.BOMB_MOVE_INTERVAL_TICKS
+    )
+    for _ in range(engine_module.KICKED_BOMB_MOVE_INTERVAL_TICKS):
+        engine.tick(room)
+    assert (bomb.x, bomb.y) == (7, 5)
+    bomb_view = engine.view(room, members[0])["bombs"][0]
+    assert bomb_view["moveIntervalTicks"] == engine_module.KICKED_BOMB_MOVE_INTERVAL_TICKS
 
 
 def test_blocked_second_throw_keeps_the_bomb_carried_until_forfeit(loaded):
@@ -803,7 +878,7 @@ def test_skull_removes_equipment_and_blocks_bombs_for_five_seconds(loaded):
     assert room.state.bombs
 
 
-def test_ghost_is_permanent_crosses_only_soft_walls_and_can_bomb_them(loaded):
+def test_ghost_is_permanent_crosses_soft_walls_and_can_bomb_them(loaded):
     Engine, state_module, _, engine_module = loaded
     engine = Engine(random.Random(51))
     room, members = start_active(engine, 2)
@@ -854,6 +929,44 @@ def test_ghost_is_permanent_crosses_only_soft_walls_and_can_bomb_them(loaded):
     room.state.board[15][16] = state_module.CELL_SOFT
     move_one_cell(engine, room, members[0], 11, engine_module.INPUT_RIGHT)
     assert (actor.x, actor.y) == (16, 15)
+
+
+def test_ghost_never_snags_on_hidden_bombs_players_or_square_wall_corners(loaded):
+    Engine, state_module, _, engine_module = loaded
+    engine = Engine(random.Random(5151))
+    room, members = start_active(engine, 2)
+    clear_board(room)
+    actor = room.state.players[members[0].id]
+    opponent = room.state.players[members[1].id]
+    place_actor(actor, 5, 5)
+    place_actor(opponent, 7, 5)
+    actor.has_ghost = True
+    room.state.board[5][6] = state_module.CELL_SOFT
+    room.state.board[5][7] = state_module.CELL_SOFT
+    room.state.board[5][8] = state_module.CELL_HARD
+    room.state.bombs[1] = state_module.BombState(
+        1, opponent.player_id, opponent.player_id, 6, 5,
+        room.state.tick, engine_module.BOMB_FUSE_TICKS, 2, remote=True,
+    )
+
+    engine.apply_input(room, members[0], 1, engine_module.INPUT_RIGHT)
+    for _ in range(45):
+        engine.tick(room)
+    engine.apply_input(room, members[0], 2, 0)
+    assert engine._player_world_position(actor)[0] == 7_220
+
+    # A diagonal hard-wall corner uses circle-vs-square geometry. The body can
+    # skim its rounded corner but still cannot enter the hard block itself.
+    room.state.bombs.clear()
+    place_actor(actor, 5, 5)
+    actor.offset_x = actor.offset_y = 300
+    room.state.board[5][6] = state_module.CELL_FLOOR
+    room.state.board[5][7] = state_module.CELL_FLOOR
+    room.state.board[5][8] = state_module.CELL_FLOOR
+    room.state.board[6][6] = state_module.CELL_HARD
+    start_x = engine._player_world_position(actor)[0]
+    assert engine._advance_player_position(room.state, actor, 1, 0) is True
+    assert engine._player_world_position(actor)[0] > start_x
 
 
 def test_items_are_automatically_collected_and_stacks_are_capped(loaded):
@@ -934,20 +1047,70 @@ def test_every_round_randomizes_the_map_without_consecutive_repeats(loaded):
     assert set(selected_maps) <= {spec.key for spec in maps_module.MAP_SPECS}
     assert all(current != previous for previous, current in zip(selected_maps, selected_maps[1:]))
     view = engine.view(room, members[0])
-    assert view["mapRotation"] == "random_no_repeat"
+    assert view["mapRotation"] == "consensus_or_random_no_repeat"
+    assert view["nextMap"] is None
     assert view["mapProposal"] is None
     assert view["canProposeMap"] is False
     assert view["canVoteMap"] is False
+    room.phase = "finished"
+    room.state.stage = "finished"
+    assert engine.view(room, members[0])["canProposeMap"] is True
 
 
-def test_manual_map_voting_is_rejected_because_rounds_are_random(loaded):
+def test_host_map_proposal_requires_every_player_and_drives_the_next_round(loaded):
     Engine, _, _, _ = loaded
     engine = Engine(random.Random(9))
     room, members = new_room(engine, 3)
-    with pytest.raises(GameRuleError, match="每局开始时随机切换"):
+    room.phase = "finished"
+    room.state.stage = "finished"
+    current_map = room.state.selected_map
+
+    engine.act(room, members[0], "propose_map", {"mapKey": "sky_citadel"})
+    host_view = engine.view(room, members[0])
+    member_view = engine.view(room, members[1])
+    assert host_view["mapProposal"] == {
+        "mapKey": "sky_citadel",
+        "proposedBy": members[0].id,
+        "approvedPlayerIds": [members[0].id],
+        "requiredPlayerIds": [member.id for member in members],
+        "approvalCount": 1,
+        "requiredCount": 3,
+    }
+    assert host_view["canVoteMap"] is False
+    assert member_view["canProposeMap"] is False
+    assert member_view["canVoteMap"] is True
+
+    engine.act(room, members[1], "vote_map", {"accept": True})
+    assert room.state.next_map is None
+    engine.act(room, members[2], "vote_map", {"accept": True})
+    assert room.state.selected_map == current_map
+    assert room.state.next_map == "sky_citadel"
+    committed = engine.view(room, members[1])
+    assert committed["nextMap"] == "sky_citadel"
+    assert committed["mapProposal"] is None
+
+    engine.start(room)
+    assert room.state.selected_map == "sky_citadel"
+    assert room.state.next_map is None
+
+
+def test_map_proposals_can_be_rejected_and_cannot_interrupt_a_round(loaded):
+    Engine, _, _, engine_module = loaded
+    engine = Engine(random.Random(10))
+    room, members = new_room(engine, 3)
+    with pytest.raises(GameRuleError, match="只有房主"):
+        engine.act(room, members[1], "propose_map", {"mapKey": "sky_citadel"})
+
+    engine.act(room, members[0], "propose_map", {"mapKey": "sky_citadel"})
+    engine.act(room, members[1], "vote_map", {"accept": False})
+    assert room.state.proposed_map is None
+    assert room.state.next_map is None
+
+    engine.start(room)
+    for _ in range(engine_module.COUNTDOWN_TICKS):
+        engine.tick(room)
+    with pytest.raises(GameRuleError, match="只能在开局前"):
         engine.act(room, members[0], "propose_map", {"mapKey": "sky_citadel"})
-    with pytest.raises(GameRuleError, match="每局开始时随机切换"):
-        engine.act(room, members[1], "vote_map", {"accept": True})
 
 
 def test_kills_championships_and_win_rate_are_recorded(loaded):

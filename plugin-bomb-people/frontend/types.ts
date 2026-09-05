@@ -79,6 +79,7 @@ export interface BombObject {
   moving: boolean
   motionX: number
   motionY: number
+  moveIntervalTicks?: number
   carriedBy: string | null
   remote: boolean
 }
@@ -159,7 +160,8 @@ export interface BombGame {
   collapseTotal: number
   dangerCells: [number, number][]
   selectedMap: string
-  mapRotation: 'random_no_repeat'
+  nextMap?: string | null
+  mapRotation: 'random_no_repeat' | 'consensus_or_random_no_repeat'
   currentMap: BombMap
   mapCatalog: BombMap[]
   mapProposal: MapProposal | null

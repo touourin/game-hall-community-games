@@ -37,7 +37,7 @@ function circleBlocksMotion(
   const contactSquared = contact ** 2
   if (candidateDistance >= contactSquared - POSITION_EPSILON) return false
   const startDistance = (startX - obstacleX) ** 2 + (startY - obstacleY) ** 2
-  return !(startDistance < contactSquared && candidateDistance >= startDistance)
+  return startDistance >= contactSquared - POSITION_EPSILON
 }
 
 function bombDestinationOpen(
@@ -104,20 +104,22 @@ function positionOpen(
   if (x < 0 || y < 0 || x > maximum || y > maximum) return false
 
   const playerRadius = game.playerHitboxRadius ?? DEFAULT_PLAYER_HITBOX_RADIUS
-  const contactExtent = playerRadius
-    + (game.solidHalfExtent ?? DEFAULT_SOLID_HALF_EXTENT)
+  const solidHalfExtent = game.solidHalfExtent ?? DEFAULT_SOLID_HALF_EXTENT
   const baseX = Math.floor(x)
   const baseY = Math.floor(y)
   for (let cellY = Math.max(0, baseY - 1); cellY <= Math.min(maximum, baseY + 2); cellY += 1) {
     for (let cellX = Math.max(0, baseX - 1); cellX <= Math.min(maximum, baseX + 2); cellX += 1) {
       const cell = game.board[cellY]?.[cellX]
       if (cell == null || cell === 0 || (cell === 2 && actor.equipment.ghost)) continue
-      if (
-        Math.abs(x - cellX) < contactExtent - POSITION_EPSILON
-        && Math.abs(y - cellY) < contactExtent - POSITION_EPSILON
-      ) return false
+      const edgeX = Math.max(0, Math.abs(x - cellX) - solidHalfExtent)
+      const edgeY = Math.max(0, Math.abs(y - cellY) - solidHalfExtent)
+      if (edgeX ** 2 + edgeY ** 2 < playerRadius ** 2 - POSITION_EPSILON) return false
     }
   }
+
+  // Mirror the authoritative ghost phase: terrain remains solid, but bombs
+  // and players hidden inside a crate cluster cannot become invisible walls.
+  if (actor.equipment.ghost) return true
 
   const bombContact = playerRadius + (game.bombHitboxRadius ?? DEFAULT_BOMB_HITBOX_RADIUS)
   for (const bomb of game.bombs) {

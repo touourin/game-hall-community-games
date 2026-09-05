@@ -78,6 +78,9 @@ class BombState:
     travel_left: int = -1
     carrier_id: str | None = None
     remote: bool = False
+    # Zero uses the ordinary rolling cadence. Kicks set a shorter interval,
+    # while punches and throws keep their original speed.
+    motion_interval_ticks: int = 0
 
 
 @dataclass
@@ -138,6 +141,9 @@ class BombPeopleState:
     stage_ticks_remaining: int = 0
     round_ticks_remaining: int = 0
     selected_map: str = "magma_crucible"
+    # A unanimously approved map is queued separately so the finished board
+    # can continue displaying the map that was actually played.
+    next_map: str | None = None
     proposed_map: str | None = None
     proposed_by: str | None = None
     map_approvals: set[str] = field(default_factory=set)

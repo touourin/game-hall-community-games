@@ -119,9 +119,11 @@ function playerStyle(player: BombPlayer) {
 }
 
 function bombStyle(bomb: BombObject) {
+  const intervalTicks = bomb.moveIntervalTicks ?? Math.max(1, Math.round(props.game.tickRate * 0.1))
   return {
     ...objectStyle(bomb.x, bomb.y, 14),
     '--roll-angle': `${(bomb.motionX < 0 || bomb.motionY < 0 ? -1 : 1) * 28}deg`,
+    '--bomb-move-duration': `${Math.max(20, Math.round(intervalTicks * 900 / Math.max(1, props.game.tickRate)))}ms`,
   }
 }
 
@@ -374,7 +376,7 @@ function fuseText(ticks: number) {
 .board-object { position: absolute; pointer-events: none; display: grid; place-items: center; }
 .item { padding: .25%; filter: drop-shadow(0 1px 2px #000) drop-shadow(0 0 4px #fff8); animation: item-bob .85s ease-in-out infinite alternate; }
 .item img { width: 88%; height: 88%; object-fit: contain; }
-.bomb { color: white; font-variant-numeric: tabular-nums; transition: left .09s cubic-bezier(.2, .72, .2, 1), top .09s cubic-bezier(.2, .72, .2, 1); }
+.bomb { color: white; font-variant-numeric: tabular-nums; transition: left var(--bomb-move-duration, 90ms) linear, top var(--bomb-move-duration, 90ms) linear; }
 .bomb-body { position: absolute; width: 72%; height: 72%; border-radius: 50%; background: radial-gradient(circle at 30% 27%, #65717a 0 7%, #222a30 25%, #06080a 72%); border: 1px solid #8b969d; box-shadow: 0 2px 5px #000, inset -3px -4px 5px #000; }
 .bomb-body::before { content: ''; position: absolute; width: 32%; height: 22%; left: 55%; top: -12%; border: 3px solid #b88643; border-bottom: 0; border-radius: 50% 50% 0 0; transform: rotate(35deg); }
 .bomb-body i { position: absolute; width: 14%; height: 14%; right: -5%; top: -15%; border-radius: 50%; background: #fff3a1; box-shadow: 0 0 6px 2px #ff7a18; animation: fuse .18s infinite alternate; }

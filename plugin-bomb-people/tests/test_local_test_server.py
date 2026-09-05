@@ -15,18 +15,28 @@ SPEC.loader.exec_module(SERVER_MODULE)
 LocalArena = SERVER_MODULE.LocalArena
 
 
-def test_local_arena_runs_random_map_and_complete_match_flow():
+def test_local_arena_runs_negotiated_map_and_complete_match_flow():
     arena = LocalArena(player_count=3, seed=101)
     lobby = arena.snapshot("local-p1")
     assert lobby["phase"] == "lobby"
     assert len(lobby["players"]) == 3
     assert lobby["game"]["boardSize"] == 20
-    assert lobby["game"]["mapRotation"] == "random_no_repeat"
-    assert lobby["game"]["canProposeMap"] is False
+    assert lobby["game"]["mapRotation"] == "consensus_or_random_no_repeat"
+    assert lobby["game"]["canProposeMap"] is True
+
+    proposed = arena.action(
+        "local-p1", "propose_map", {"mapKey": "sky_citadel"},
+    )
+    assert proposed["game"]["mapProposal"]["approvalCount"] == 1
+    assert arena.snapshot("local-p2")["game"]["canVoteMap"] is True
+    arena.action("local-p2", "vote_map", {"accept": True})
+    approved = arena.action("local-p3", "vote_map", {"accept": True})
+    assert approved["game"]["nextMap"] == "sky_citadel"
 
     started = arena.start("local-p1")
     assert started["phase"] == "playing"
     assert started["game"]["stage"] == "countdown"
+    assert started["game"]["selectedMap"] == "sky_citadel"
     assert len(started["game"]["players"]) == 3
 
     collapse = arena.jump_to_collapse("local-p1")

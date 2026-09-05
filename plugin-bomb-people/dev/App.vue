@@ -148,7 +148,7 @@ watch(viewerId, () => {
 
 onMounted(async () => {
   await poll()
-  notice.value = '本地测试已就绪；选择人数后开始游戏，地图会在每局开局时随机切换。'
+  notice.value = '本地测试已就绪；房主可协商下一局地图，未协商时仍会随机换图。'
   pollTimer = setInterval(poll, 33)
 })
 

@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import type { ArcadeSnapshot } from '@game-hall/plugin-sdk'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import GameView from './GameView.vue'
+import { advanceContinuousPosition } from './movement'
 import type { BombGame, BombPlayer } from './types'
 
 
@@ -77,8 +78,8 @@ function snapshot(phase: ArcadeSnapshot['phase'] = 'playing'): ArcadeSnapshot {
     stage: phase === 'lobby' ? 'lobby' : phase === 'finished' ? 'finished' : 'active',
     stageTicksRemaining: 0, roundTicksRemaining: 1_200,
     collapsePlaced: 0, collapseTotal: 400, dangerCells: [],
-    selectedMap: 'magma_crucible', currentMap: maps[0]!, mapCatalog: maps,
-    mapRotation: 'random_no_repeat', mapProposal: null, canProposeMap: false, canVoteMap: false,
+    selectedMap: 'magma_crucible', nextMap: null, currentMap: maps[0]!, mapCatalog: maps,
+    mapRotation: 'consensus_or_random_no_repeat', mapProposal: null, canProposeMap: false, canVoteMap: false,
     board, players: phase === 'lobby' ? [] : [player('p0', 0, '红队'), player('p1', 1, '蓝队')],
     bombs: [{ id: 1, ownerId: 'p0', creditPlayerId: 'p0', x: 3, y: 3, fuseTicks: 90, maxFuseTicks: 120, moving: false, motionX: 0, motionY: 0, carriedBy: null, remote: false }],
     items: [{ id: 1, kind: 'speed', x: 4, y: 4 }],
@@ -174,6 +175,38 @@ describe('Bomb People arena', () => {
     expect(remote.attributes('title')).toContain('按 C 引爆')
     expect(remote.get('small').text()).toBe('C')
     wrapper.unmount()
+  })
+
+  it('uses the authoritative doubled kick cadence for bomb interpolation', () => {
+    const data = snapshot()
+    const game = data.game as unknown as BombGame
+    game.bombs[0]!.moving = true
+    game.bombs[0]!.moveIntervalTicks = 3
+    const wrapper = render(data)
+    expect(wrapper.get('.bomb').attributes('style')).toContain('--bomb-move-duration: 45ms')
+    wrapper.unmount()
+  })
+
+  it('mirrors ghost phasing and rounded solid corners in local prediction', () => {
+    const data = snapshot()
+    const game = data.game as unknown as BombGame
+    const actor = game.players[0]!
+    actor.equipment.ghost = true
+    actor.x = 5.3
+    actor.y = 5
+    game.bombs[0]!.x = 6
+    game.bombs[0]!.y = 5
+
+    const throughBomb = advanceContinuousPosition(game, actor, 5.3, 5, 1, 0, 0.1)
+    expect(throughBomb.x).toBeCloseTo(5.4, 5)
+    expect(throughBomb.blocked).toBe(false)
+
+    game.bombs = []
+    game.board[6]![6] = 1
+    actor.x = actor.y = 5.3
+    const aroundCorner = advanceContinuousPosition(game, actor, 5.3, 5.3, 1, 0, 0.01)
+    expect(aroundCorner.x).toBeCloseTo(5.31, 5)
+    expect(aroundCorner.blocked).toBe(false)
   })
 
   it('sends WASD and action keys as authoritative input masks', async () => {
@@ -293,7 +326,8 @@ describe('Bomb People arena', () => {
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyW', cancelable: true }))
     await vi.advanceTimersByTimeAsync(100)
 
-    expect(playerPosition(self)).toEqual([1, 0.78])
+    expect(playerPosition(self)[0]).toBe(1)
+    expect(playerPosition(self)[1]).toBeCloseTo(0.78, 4)
     expect(self.classes()).toContain('locally-predicted')
     expect(self.classes()).not.toContain('walking')
     window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyW', cancelable: true }))
@@ -555,23 +589,50 @@ describe('Bomb People arena', () => {
     wrapper.unmount()
   })
 
-  it('shows a read-only random map pool with no consecutive repeats', async () => {
+  it('lets the host propose a map and lets every other player vote', async () => {
     const data = snapshot('lobby')
+    const game = data.game as unknown as BombGame
+    game.canProposeMap = true
     const wrapper = render(data)
     const cards = wrapper.findAll('.map-card')
-    expect(cards).toHaveLength((data.game as unknown as BombGame).mapCatalog.length)
-    expect(cards.every(card => card.attributes('disabled') !== undefined)).toBe(true)
-    expect(wrapper.text()).toContain('每局随机抽取，连续两局不会重复')
-    expect(wrapper.text()).toContain('上一局地图会暂时排除')
-    expect(mocks.action).not.toHaveBeenCalled()
+    expect(cards).toHaveLength(game.mapCatalog.length)
+    expect(cards.every(card => card.attributes('disabled') === undefined)).toBe(true)
+    expect(wrapper.text()).toContain('房主提议，全员确认后锁定下一局地图')
+    await cards[1]!.trigger('click')
+    await flushPromises()
+    expect(mocks.action).toHaveBeenCalledWith('propose_map', { mapKey: 'sky_citadel' })
     wrapper.unmount()
+
+    const voterData = snapshot('lobby')
+    voterData.self = { id: 'p1', name: '蓝队', seat: 1 }
+    voterData.viewer = { mode: 'player', id: 'p1', name: '蓝队', targetPlayerId: 'p1' }
+    const voterGame = voterData.game as unknown as BombGame
+    voterGame.canVoteMap = true
+    voterGame.mapProposal = {
+      mapKey: 'sky_citadel', proposedBy: 'p0',
+      approvedPlayerIds: ['p0'], requiredPlayerIds: ['p0', 'p1'],
+      approvalCount: 1, requiredCount: 2,
+    }
+    const voter = render(voterData)
+    expect(voter.text()).toContain('1/2 已同意')
+    const voteButtons = voter.findAll('.vote-actions button')
+    await voteButtons[1]!.trigger('click')
+    await flushPromises()
+    expect(mocks.action).toHaveBeenLastCalledWith('vote_map', { accept: true })
+    voter.unmount()
   })
 
-  it('explains permanent ghost wall access and stone restrictions', () => {
+  it('renders the rulebook in dark readable text and explains ghost phasing', async () => {
     const wrapper = render()
     expect(wrapper.text()).toContain('幽灵相位获得后本局永久生效')
-    expect(wrapper.text()).toContain('可穿过箱墙并在箱墙格内放雷')
+    expect(wrapper.text()).toContain('可穿过箱墙、炸弹和其他玩家并在箱墙格内放雷')
     expect(wrapper.text()).toContain('不能穿固定石块或决胜落石')
+    await wrapper.get('button[aria-label="玩法说明"]').trigger('click')
+    await flushPromises()
+    expect(['rgb(0, 0, 0)', 'rgb(23, 20, 17)']).toContain(
+      getComputedStyle(wrapper.get('.rulebook').element).color,
+    )
+    expect(wrapper.get('.rulebook').text()).toContain('脚踢雷无需单独按键')
     wrapper.unmount()
   })
 
